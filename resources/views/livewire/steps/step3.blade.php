@@ -1,0 +1,1 @@
+    <input wire:model="phone" placeholder="Phone">

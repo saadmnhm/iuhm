@@ -1,0 +1,1 @@
+    <textarea wire:model="notes"></textarea>

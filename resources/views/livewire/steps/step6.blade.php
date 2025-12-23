@@ -1,0 +1,1 @@
+    <input wire:model="country" placeholder="Country">
