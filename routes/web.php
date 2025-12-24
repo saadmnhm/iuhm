@@ -6,6 +6,7 @@ use App\Livewire\PublicFormWizard;
 Route::get('/', PublicFormWizard::class);
 
 
+
 Route::get('/lang/{locale}', function ($locale) {
     if (in_array($locale, ['en', 'ar', 'fr'])) {
         session(['locale' => $locale]);
