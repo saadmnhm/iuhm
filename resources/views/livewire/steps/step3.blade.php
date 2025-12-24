@@ -88,7 +88,6 @@
                 </thead>
 
                 <tbody>
-                    @foreach($table2Rows as $index => $row)
                         <tr>
                             <td class="border px-2 py-1">
                                 Finalisation du plan d'affaires
@@ -143,7 +142,6 @@
                                 <input type="text" wire:model="duree"  class="form-control border w-full p-1">
                             </td>
                         </tr>
-                    @endforeach
                 </tbody>
             </table>
         </div>
