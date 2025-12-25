@@ -1,0 +1,192 @@
+body{
+    background-color: #f8f9fa;
+    font-family: "Roboto", sans-serif;
+}
+.disc{
+    display: list-item;
+    list-style-type: disc;
+    margin-left: 1em;
+}
+label{
+    font-size: 16px;
+    font-weight: 500;
+
+}
+
+header{
+    padding: 20px 0 20px 0;
+}
+
+.wizard-logo-container{
+    display: flex;
+    justify-content: center;
+    img{
+        width: 150px;
+        height: auto;
+
+    }
+}
+.wizard-logo-footer{
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 50px;
+
+    img{
+        width: 200px;
+        object-fit: contain;
+    }
+}
+.parent-steps{
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+
+
+.header-form{
+    display: grid;
+    justify-content: center;
+    text-align: center;
+    color: #2f5496;
+    h1{
+          font-family: "EB Garamond", serif !important;
+          font-size: 3.5rem;
+
+    }
+    p{
+        font-size: 2rem;
+        font-weight: 600;
+    }
+}
+.step-title{
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #2f5496;
+
+}
+
+.step-progress-container {
+    margin: 30px 0;
+    padding: 0 20px;
+    .step-progress {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .step-item {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        position: relative;
+    }
+
+    .step-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #e5e7eb;
+        border: 3px solid #e5e7eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: #9ca3af;
+        transition: all 0.3s ease;
+        z-index: 2;
+        position: relative;
+    }
+
+    .step-item.active .step-circle {
+        background: #648454;
+        border-color: #c5dabc;
+        color: white;
+    }
+
+    .step-item.current .step-circle {
+        background: white;
+        border-color: #c5dabc;
+        color: #648454;
+        box-shadow: 0 0 0 4px rgba(198, 218, 188, 0.2);
+        transform: scale(1.1);
+    }
+
+    .step-circle i {
+        font-size: 20px;
+    }
+
+    .step-line {
+        flex: 1;
+        height: 3px;
+        background: #e5e7eb;
+        margin: 0 5px;
+        transition: all 0.3s ease;
+    }
+
+    .step-item.active .step-line {
+        background: #c5dabc;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .step-circle {
+            width: 32px;
+            height: 32px;
+            font-size: 14px;
+        }
+        
+        .step-circle i {
+            font-size: 16px;
+        }
+        
+        .step-line {
+            margin: 0 2px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .step-circle {
+            width: 28px;
+            height: 28px;
+            font-size: 12px;
+        }
+        
+        .step-circle i {
+            font-size: 14px;
+        }
+    }
+}
+
+.steps-indicateur{
+    text-align: center;
+    font-size: 15px;
+    color: #6c757d;
+}
+
+
+
+.instructions{
+    font-size: 14px;
+    color: #6c757d;
+    margin-top: 15px;
+}
+
+.navigation-btn{
+    width: 100px;
+    padding: 9px 0px;
+    border-radius: 10px;
+    color: white;
+}
+.btn-next{
+    background: #71a24f;
+
+}
+.btn-back{
+    background: #2f5496;
+}
