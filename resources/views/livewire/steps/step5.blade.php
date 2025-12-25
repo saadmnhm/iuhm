@@ -73,7 +73,7 @@
                         </tr>
                         <tr>
                             <td class="border px-2 py-1">
-                                total
+                                Total
                             </td>
 
                             <td class="border px-2 py-1">

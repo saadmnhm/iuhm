@@ -10,27 +10,54 @@ trait ManagesTableRows
     public $table2Rows = [];
     public $table3Rows = [];
     public $table4Rows = [];
-    
-
+    public $table5Rows = [];    
+    public $table6Rows = []; 
     // ***********************************************
     // Initialization of table rows
     // ***********************************************
 
-    public function initializeManagesTableRows()
+    public function mountManagesTableRows()
     {
-        $this->table1Rows = [
-            ['product_name' => '', 'description' => '']
-        ];
+        // Only initialize if tables are empty
+        if (empty($this->table1Rows)) {
+            $this->table1Rows = [
+                ['product_name' => '', 'description' => '']
+            ];
+        }
 
-        $this->table2Rows = [
-            ['item' => '', 'price_1' => 0, 'price_2' => 0]
-        ];
-        $this->table3Rows = [
-            ['product_name_presentation' => '', 'presentation_methode' => '']
-        ];
-        $this->table4Rows = [
-            ['product_name_livraison' => '', 'livraison_methode' => '', 'timeline' => '']
-        ];
+        if (empty($this->table2Rows)) {
+            $this->table2Rows = [
+                ['item' => '', 'price_1' => 0, 'price_2' => 0]
+            ];
+        }
+
+        if (empty($this->table3Rows)) {
+            $this->table3Rows = [
+                ['product_name_presentation' => '', 'presentation_methode' => '']
+            ];
+        }
+
+        if (empty($this->table4Rows)) {
+            $this->table4Rows = [
+                ['product_name_livraison' => '', 'livraison_methode' => '' ]
+            ];
+        }
+
+        if (empty($this->table5Rows)) {
+            $this->table5Rows = array_fill(0, 15, [
+                'equipement' => '', 
+                'reference' => '', 
+                'prix_equipement' => 0
+            ]);
+        }
+
+        if (empty($this->table6Rows)) {
+            $this->table6Rows = array_fill(0, 15, [
+                'matiere_premiere' => '', 
+                'comment_procurer' => '', 
+                'fournisseur_matiere' => ''
+            ]);
+        }
     }
 
     // ***********************************************
@@ -52,7 +79,15 @@ trait ManagesTableRows
     }
     public function addTable4Row()
     {
-        $this->table4Rows[] = ['activity' => '', 'responsible_person' => '', 'timeline' => ''];
+        $this->table4Rows[] = ['activity' => '', 'responsible_person' => ''];
+    }
+    public function addTable5Row()
+    {
+        $this->table5Rows[] = ['equipement' => '', 'reference' => '', 'prix_equipement' => 0];
+    }
+    public function addTable6Row()
+    {
+        $this->table6Rows[] = ['matiere_premiere' => '', 'comment_procurer' => '', 'fournisseur_matiere' => ''];
     }
 
     // ***********************************************
@@ -79,6 +114,16 @@ trait ManagesTableRows
     {
         unset($this->table4Rows[$index]);
         $this->table4Rows = array_values($this->table4Rows);
+    }
+    public function removeTable5Row($index)
+    {
+        unset($this->table5Rows[$index]);
+        $this->table5Rows = array_values($this->table5Rows);
+    }
+    public function removeTable6Row($index)
+    {
+        unset($this->table6Rows[$index]);
+        $this->table6Rows = array_values($this->table6Rows);
     }
 
     // ***********************************************
