@@ -192,7 +192,6 @@ class UserManagement extends Component
     {
         $query = User::query();
 
-        // Exclude current logged-in user
         $query->where('id', '!=', Auth::id());
 
         if ($this->search) {
