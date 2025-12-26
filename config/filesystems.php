@@ -60,6 +60,14 @@ return [
             'report' => false,
         ],
 
+        'uploads' => [
+            'driver' => 'local',
+            'root' => base_path('uploads'),
+            'url' => env('APP_URL').'/uploads',
+            'visibility' => 'private',
+            'throw' => false,
+            'report' => false,
+        ],
     ],
 
     /*

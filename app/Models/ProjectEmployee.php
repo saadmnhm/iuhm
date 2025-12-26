@@ -12,18 +12,20 @@ class ProjectEmployee extends Model
     protected $fillable = [
         'project_id',
         'item',
-        'price_1',
-        'price_2',
+        'total_employee_1',
+        'total_employee_2',
         'sort_order',
     ];
 
     protected $casts = [
-        'price_1' => 'decimal:2',
-        'price_2' => 'decimal:2',
+        'total_employee_1' => 'decimal:0',
+        'total_employee_2' => 'decimal:0',
+
     ];
 
     public function project()
     {
         return $this->belongsTo(Project::class);
     }
+
 }

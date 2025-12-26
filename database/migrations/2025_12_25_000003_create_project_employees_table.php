@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('project_id')->constrained()->cascadeOnDelete();
             $table->string('item')->nullable(); // Titre d'emploi
-            $table->decimal('price_1', 12, 2)->nullable(); // Première année
-            $table->decimal('price_2', 12, 2)->nullable(); // Deuxième année
+            $table->decimal('total_employee_1', 12, 2)->nullable(); // Première année
+            $table->decimal('total_employee_2', 12, 2)->nullable(); // Deuxième année
             $table->integer('sort_order')->default(0);
             $table->timestamps();
             

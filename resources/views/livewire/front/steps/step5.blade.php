@@ -38,7 +38,7 @@
                             </td>
 
                             <td class="border px-2 py-1 ">
-                                <input type="number" wire:model="couts_creation"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="couts_creation"  class="form-control border w-full p-1">
                             </td>
                         </tr>
                         <tr>
@@ -47,7 +47,7 @@
                             </td>
 
                             <td class="border px-2 py-1">
-                                <input type="number" wire:model="preparation_entreprise"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="preparation_entreprise"  class="form-control border w-full p-1">
                             </td>
                         </tr>
                         <tr>
@@ -56,7 +56,7 @@
                             </td>
 
                             <td class="border px-2 py-1">
-                                <input type="number" wire:model="achat_machines"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="achat_machines"  class="form-control border w-full p-1">
                             </td>
                         </tr>
                         <tr>
@@ -65,7 +65,7 @@
                             </td>
 
                             <td class="border px-2 py-1">
-                                <input type="number" wire:model="achat_matieres_premieres"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="achat_matieres_premieres"  class="form-control border w-full p-1">
                             </td>
                         </tr>
                         <tr>
@@ -74,7 +74,7 @@
                             </td>
 
                             <td class="border px-2 py-3 ">
-                                <input type="number" wire:model="autres_couts"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="autres_couts"  class="form-control border w-full p-1">
                             </td>
                         </tr>
                         <tr>
@@ -83,7 +83,7 @@
                             </td>
 
                             <td class="border px-2 py-3 ">
-                                <input type="number" wire:model="total"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="total" readonly class="form-control border w-full p-1 bg-gray-100">
                             </td>
                         </tr>
                 </tbody>
@@ -113,15 +113,15 @@
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="ventes_premiere_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="ventes_premiere_annee"  class="form-control border w-full p-1">
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="ventes_deuxieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="ventes_deuxieme_annee"  class="form-control border w-full p-1">
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="ventes_troisieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="ventes_troisieme_annee"  class="form-control border w-full p-1">
                             </td>
                         </tr>
                         <tr>
@@ -130,15 +130,15 @@
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="services_premiere_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="services_premiere_annee"  class="form-control border w-full p-1">
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="services_deuxieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="services_deuxieme_annee"  class="form-control border w-full p-1">
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="services_troisieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="services_troisieme_annee"  class="form-control border w-full p-1">
                             </td>
                         </tr>
                         <tr>
@@ -147,15 +147,15 @@
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="aide_financiere_premiere_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="aide_financiere_premiere_annee"  class="form-control border w-full p-1">
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="aide_financiere_deuxieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="aide_financiere_deuxieme_annee"  class="form-control border w-full p-1">
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="aide_financiere_troisieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="aide_financiere_troisieme_annee"  class="form-control border w-full p-1">
                             </td>
                         </tr>
                         <tr>
@@ -164,15 +164,15 @@
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="revenus_financiers_premiere_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="revenus_financiers_premiere_annee"  class="form-control border w-full p-1">
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="revenus_financiers_deuxieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="revenus_financiers_deuxieme_annee"  class="form-control border w-full p-1">
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="revenus_financiers_troisieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="revenus_financiers_troisieme_annee"  class="form-control border w-full p-1">
                             </td>
                         </tr>
                         <tr>
@@ -181,32 +181,15 @@
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="autres_revenus_premiere_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="autres_revenus_premiere_annee"  class="form-control border w-full p-1">
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="autres_revenus_deuxieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="autres_revenus_deuxieme_annee"  class="form-control border w-full p-1">
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="autres_revenus_troisieme_annee"  class="form-control border w-full p-1">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="border px-2 py-3 title-table">
-                                total
-                            </td>
-
-                            <td class="border px-2 py-3">
-                                <input type="number" wire:model="total_premiere_annee"  class="form-control border w-full p-1">
-                            </td>
-
-                            <td class="border px-2 py-3">
-                                <input type="number" wire:model="total_deuxieme_annee"  class="form-control border w-full p-1">
-                            </td>
-
-                            <td class="border px-2 py-3">
-                                <input type="number" wire:model="total_troisieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="autres_revenus_troisieme_annee"  class="form-control border w-full p-1">
                             </td>
                         </tr>
                 </tbody>

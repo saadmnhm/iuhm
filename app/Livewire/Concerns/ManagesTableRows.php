@@ -27,7 +27,7 @@ trait ManagesTableRows
 
         if (empty($this->table2Rows)) {
             $this->table2Rows = [
-                ['item' => '', 'price_1' => 0, 'price_2' => 0]
+                ['item' => '', 'total_employee_1' => 0, 'total_employee_2' => 0]
             ];
         }
 
@@ -71,7 +71,7 @@ trait ManagesTableRows
 
     public function addTable2Row()
     {
-        $this->table2Rows[] = ['item' => '', 'price_1' => 0, 'price_2' => 0];
+        $this->table2Rows[] = ['item' => '', 'total_employee_1' => 0, 'total_employee_2' => 0];
     }
     public function addTable3Row()
     {
@@ -134,7 +134,7 @@ trait ManagesTableRows
     public function total1()
     {
         return collect($this->table2Rows)->sum(function ($row) {
-            return floatval($row['price_1'] ?? 0);
+            return floatval($row['total_employee_1'] ?? 0);
         });
     }
 
@@ -142,8 +142,9 @@ trait ManagesTableRows
     public function total2()
     {
         return collect($this->table2Rows)->sum(function ($row) {
-            return floatval($row['price_2'] ?? 0);
+            return floatval($row['total_employee_2'] ?? 0);
         });
     }
+
 
 }

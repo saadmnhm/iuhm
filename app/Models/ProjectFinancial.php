@@ -131,4 +131,41 @@ class ProjectFinancial extends Model
     {
         return $this->belongsTo(Project::class);
     }
+    public function getTotalPrevusPremiereAnneeAttribute()
+    {
+        return $this->achat_prevue_premiere_annee + $this->frais_fonctionnement_premiere_annee + $this->charges_personnel_premiere_annee +
+               $this->dettes_premiere_annee + $this->etablissement_bancaire_premiere_annee + $this->fournisseurs_premiere_annee +
+               $this->autres_dettes_premiere_annee + $this->autres_charges_premiere_annee;
+    }
+    public function getTotalPrevusDeuxiemeAnneeAttribute()
+    {
+        return $this->achat_prevue_deuxieme_annee + $this->frais_fonctionnement_deuxieme_annee + $this->charges_personnel_deuxieme_annee +
+               $this->dettes_deuxieme_annee + $this->etablissement_bancaire_deuxieme_annee + $this->fournisseurs_deuxieme_annee +
+               $this->autres_dettes_deuxieme_annee + $this->autres_charges_deuxieme_annee;
+    }
+    public function getTotalPrevusTroisiemeAnneeAttribute()
+    {
+        return $this->achat_prevue_troisieme_annee + $this->frais_fonctionnement_troisieme_annee + $this->charges_personnel_troisieme_annee +
+               $this->dettes_troisieme_annee + $this->etablissement_bancaire_troisieme_annee + $this->fournisseurs_troisieme_annee +
+               $this->autres_dettes_troisieme_annee + $this->autres_charges_troisieme_annee;
+    }
+    public function getTotalInvestissementsPremiereAnneeAttribute()
+    {
+        return $this->ventes_premiere_annee + $this->services_premiere_annee + $this->aide_financiere_premiere_annee +
+               $this->revenus_financiers_premiere_annee + $this->autres_revenus_premiere_annee;
+    }
+    public function getTotalInvestissementsDeuxiemeAnneeAttribute()
+    {
+        return $this->ventes_deuxieme_annee + $this->services_deuxieme_annee + $this->aide_financiere_deuxieme_annee +
+               $this->revenus_financiers_deuxieme_annee + $this->autres_revenus_deuxieme_annee;
+    }
+    public function getTotalInvestissementsTroisiemeAnneeAttribute()
+    {
+        return $this->ventes_troisieme_annee + $this->services_troisieme_annee + $this->aide_financiere_troisieme_annee +
+               $this->revenus_financiers_troisieme_annee + $this->autres_revenus_troisieme_annee;
+    }
+
+
+
+
 }

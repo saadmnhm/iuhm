@@ -149,23 +149,7 @@
                                 <input type="number" wire:model="autres_charges_troisieme_annee"  class="form-control border w-full p-1">
                             </td>
                         </tr>                                                                        
-                        <tr>
-                            <td class="border px-2 py-3 title-table">
-                                Total
-                            </td>
-
-                            <td class="border px-2 py-3">
-                                <input type="number" wire:model="total_prevus_premiere_annee"  class="form-control border w-full p-1">
-                            </td>
-
-                            <td class="border px-2 py-3">
-                                <input type="number" wire:model="total_prevus_deuxieme_annee"  class="form-control border w-full p-1">
-                            </td>
-
-                            <td class="border px-2 py-3">
-                                <input type="number" wire:model="total_prevus_troisieme_annee"  class="form-control border w-full p-1">
-                            </td>
-                        </tr>
+                        
                 </tbody>
             </table>
         </div>
@@ -191,15 +175,15 @@
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="revenus_premiere_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="revenus_premiere_annee"  class="form-control border w-full p-1">
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="revenus_deuxieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="revenus_deuxieme_annee"  class="form-control border w-full p-1">
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="revenus_troisieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="revenus_troisieme_annee"  class="form-control border w-full p-1">
                             </td>
                         </tr>
                         <tr>
@@ -208,15 +192,15 @@
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="depenses_premiere_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="depenses_premiere_annee"  class="form-control border w-full p-1">
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="depenses_deuxieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="depenses_deuxieme_annee"  class="form-control border w-full p-1">
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="depenses_troisieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="depenses_troisieme_annee"  class="form-control border w-full p-1">
                             </td>
                         </tr>
                         <tr>

@@ -40,7 +40,13 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="field-ceo_name mt-4 ">
+        <label for="ceo_name" class="block disc mb-2 font-semibold">Nom du PDG</label>
+        <input type="text" class="form-control border border-gray-300 rounded p-2 w-full" id="ceo_name" wire:model="ceo_name" >
+        @error('ceo_name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
         <div class="field-age mb-2">
             <label for="age" class="block disc mb-2 font-semibold">Âge *</label>
             <input type="number" class="form-control border border-gray-300 rounded p-2 w-full" id="age" wire:model="age" min="18" max="100" placeholder="Ex: 25">

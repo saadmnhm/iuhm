@@ -19,7 +19,7 @@
         <hr class="my-4">
 
         <div class="parent-table-six">
-            <p class="block disc mb-2">Comment livrerez-vous vos produits ou services ?</p>
+            <p class="block disc mb-2">Comment Presenterez-vous vos produits ou services ?</p>
             <div class="table-part-six mt-4">
                 <table class="table-auto border border-gray-300 w-full">
                     <thead>

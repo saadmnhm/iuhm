@@ -45,11 +45,11 @@
                             </td>
 
                             <td class="border px-2 py-1">
-                                <input type="number" wire:model.live="table2Rows.{{ $index }}.price_1" min="0" step="0.01" class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="table2Rows.{{ $index }}.total_employee_1" min="0" step="0.01" class="form-control border w-full p-1">
                             </td>
 
                             <td class="border px-2 py-1">
-                                <input type="number" wire:model.live="table2Rows.{{ $index }}.price_2" min="0" step="0.01" class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="table2Rows.{{ $index }}.total_employee_2" min="0" step="0.01" class="form-control border w-full p-1">
                             </td>
 
                         
@@ -62,10 +62,10 @@
                             Total
                         </td>
                         <td class="border px-3 py-2">
-                            {{ number_format($this->total1, 2) }} MAD
+                            {{ number_format($this->total1, 2) }} 
                         </td>
                         <td class="border px-3 py-2">
-                            {{ number_format($this->total2, 2) }} MAD
+                            {{ number_format($this->total2, 2) }} 
                         </td>
                     </tr>
                 </tbody>

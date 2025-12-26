@@ -1,0 +1,15 @@
+.aside-admin{
+    background: #09134e;
+    .logo{
+        display: flex;
+        justify-content: center;
+        img {
+            width: 130px;
+            object-fit: contain;
+            filter: brightness(45);
+        }
+    }
+    .bg-white\/20 {
+        background-color: #648454 !important;
+    }
+}

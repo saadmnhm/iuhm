@@ -123,7 +123,7 @@ class PublicFormWizard extends Component
             // Upload profile image if exists
             $imagePath = null;
             if ($this->profile_image) {
-                $imagePath = $this->profile_image->store('profile-images', 'public');
+                $imagePath = $this->profile_image->store('profile-images', 'uploads');
                 \Log::info('Image uploaded: ' . $imagePath);
             }
 
@@ -195,8 +195,8 @@ class PublicFormWizard extends Component
                 if (!empty($row['item'])) {
                     $project->employees()->create([
                         'item' => $row['item'],
-                        'price_1' => $row['price_1'] ?? 0,
-                        'price_2' => $row['price_2'] ?? 0,
+                        'total_employee_1' => $row['total_employee_1'] ?? 0,
+                        'total_employee_2' => $row['total_employee_2'] ?? 0,
                         'sort_order' => $index,
                     ]);
                 }
@@ -369,7 +369,7 @@ class PublicFormWizard extends Component
         
         // Reinitialize tables with empty structure
         $this->table1Rows = [['product_name' => '', 'description' => '']];
-        $this->table2Rows = [['item' => '', 'price_1' => 0, 'price_2' => 0]];
+        $this->table2Rows = [['item' => '', 'total_employee_1' => 0, 'total_employee_2' => 0]];
         $this->table3Rows = [['product_name_presentation' => '', 'presentation_methode' => '']];
         $this->table4Rows = [['product_name_livraison' => '', 'livraison_methode' => '']];
         $this->table5Rows = array_fill(0, 15, ['equipement' => '', 'reference' => '', 'prix_equipement' => 0]);
@@ -378,7 +378,7 @@ class PublicFormWizard extends Component
 
     public function render()
     {
-        return view('livewire.public-form-wizard');
+        return view('livewire.front.public-form-wizard');
     }
 
     public function save()
@@ -447,7 +447,6 @@ class PublicFormWizard extends Component
         $this->achat_machines = 20000;
         $this->achat_matieres_premieres = 8000;
         $this->autres_couts = 3000;
-        $this->total = 46000;
         
         // Step 5 - Revenue Projections
         $this->ventes_premiere_annee = 50000;
@@ -505,9 +504,6 @@ class PublicFormWizard extends Component
         $this->depenses_premiere_annee = 85000;
         $this->depenses_deuxieme_annee = 104500;
         $this->depenses_troisieme_annee = 124000;
-        $this->resultat_premiere_annee = -2000;
-        $this->resultat_deuxieme_annee = 10500;
-        $this->resultat_troisieme_annee = 23000;
         $this->generer_profits = 'Le projet générera des profits à partir de la deuxième année';
         $this->projet_durable = 'Le projet est durable grâce à la croissance constante';
         
@@ -518,8 +514,8 @@ class PublicFormWizard extends Component
         ];
         
         $this->table2Rows = [
-            ['item' => 'Directeur', 'price_1' => 5000, 'price_2' => 6000],
-            ['item' => 'Employé', 'price_1' => 3000, 'price_2' => 3500],
+            ['item' => 'Directeur', 'total_employee_1' => 5000, 'total_employee_2' => 6000],
+            ['item' => 'Employé', 'total_employee_1' => 3000, 'total_employee_2' => 3500],
         ];
         
         $this->table3Rows = [
@@ -573,5 +569,80 @@ class PublicFormWizard extends Component
             session()->flash('error', 'Test failed: ' . $e->getMessage());
         }
     }
+
+    public function updatedCoutsCreation()
+    {
+        $this->calculateInvestmentTotal();
+    }
+
+    public function updatedPreparationEntreprise()
+    {
+        $this->calculateInvestmentTotal();
+    }
+
+    public function updatedAchatMachines()
+    {
+        $this->calculateInvestmentTotal();
+    }
+
+    public function updatedAchatMatieresPremieres()
+    {
+        $this->calculateInvestmentTotal();
+    }
+
+    public function updatedAutresCouts()
+    {
+        $this->calculateInvestmentTotal();
+    }
+
+    private function calculateInvestmentTotal()
+    {
+        $this->total = 
+            ($this->couts_creation ?? 0) +
+            ($this->preparation_entreprise ?? 0) +
+            ($this->achat_machines ?? 0) +
+            ($this->achat_matieres_premieres ?? 0) +
+            ($this->autres_couts ?? 0);
+    }
+
+    public function updatedRevenusPremiereAnnee()
+    {
+        $this->calculateResultatNet();
+    }
+
+    public function updatedRevenusDeuxiemeAnnee()
+    {
+        $this->calculateResultatNet();
+    }
+
+    public function updatedRevenusTroisiemeAnnee()
+    {
+        $this->calculateResultatNet();
+    }
+
+    public function updatedDepensesPremiereAnnee()
+    {
+        $this->calculateResultatNet();
+    }
+
+    public function updatedDepensesDeuxiemeAnnee()
+    {
+        $this->calculateResultatNet();
+    }
+
+    public function updatedDepensesTroisiemeAnnee()
+    {
+        $this->calculateResultatNet();
+    }
+
+    private function calculateResultatNet()
+    {
+        $this->resultat_premiere_annee = ($this->revenus_premiere_annee ?? 0) - ($this->depenses_premiere_annee ?? 0);
+        $this->resultat_deuxieme_annee = ($this->revenus_deuxieme_annee ?? 0) - ($this->depenses_deuxieme_annee ?? 0);
+        $this->resultat_troisieme_annee = ($this->revenus_troisieme_annee ?? 0) - ($this->depenses_troisieme_annee ?? 0);
+    }
+
+
+
 }
 
