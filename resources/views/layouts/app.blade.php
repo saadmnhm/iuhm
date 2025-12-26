@@ -16,6 +16,36 @@
     @livewireStyles
 </head>
 <body>
+
+<div
+    x-data="{
+        open: !localStorage.getItem('termsAccepted'),
+        agreed: false
+    }"
+    x-show="open"
+    x-cloak
+    class="overlay"
+>
+    <div class="modal-card">
+        <h2>Terms & Conditions</h2>
+
+        <label class="checkbox">
+            <input type="checkbox" x-model="agreed">
+            I agree to the terms
+        </label>
+
+        <br>
+        <button
+            :disabled="!agreed"
+            @click="localStorage.setItem('termsAccepted','true'); open=false"
+        >
+            Accept
+        </button>
+    </div>
+</div>
+
+
+
     <div class="wizard-layout">
         <!-- Header with Logo -->
         <header class="wizard-header">

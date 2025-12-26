@@ -98,11 +98,13 @@ class PublicFormWizard extends Component
     {
         $this->validate();
         $this->step++;
+        $this->dispatch('scroll-to-top');
     }
 
     public function back()
     {
             $this->step--;
+            $this->dispatch('scroll-to-top');
     }
 
     public function submit()
@@ -545,7 +547,6 @@ class PublicFormWizard extends Component
 
     public function goToStep($stepNumber)
     {
-        // Only allow in development
         if (!app()->environment('local')) {
             return;
         }

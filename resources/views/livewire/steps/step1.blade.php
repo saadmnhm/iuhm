@@ -41,7 +41,7 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="field-age">
+        <div class="field-age mb-2">
             <label for="age" class="block disc mb-2 font-semibold">Âge *</label>
             <input type="number" class="form-control border border-gray-300 rounded p-2 w-full" id="age" wire:model="age" min="18" max="100" placeholder="Ex: 25">
             @error('age') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
@@ -83,23 +83,23 @@
 
 
     <div class="field-project-name mt-4">
-        <label class=" disc" for="project-name">Nom de projet</label>
+        <label class=" disc mb-2" for="project-name">Nom de projet</label>
         <input  class="form-control" id="project-name" wire:model="project_name" >
         @error('project_name') <span>{{ $message }}</span> @enderror
     </div> 
 
     <div class="field-project-description mt-4">
-        <label class=" disc" for="project-description">Description du projet</label>
+        <label class=" disc mb-2" for="project-description">Description du projet</label>
         <textarea class="form-control" id="project-description" wire:model="description" ></textarea>
         @error('description') <span>{{ $message }}</span> @enderror
     </div>
     <div class="field-legal-structure mt-4">
-        <label class=" disc" for="legal-structure">Forme juridique du projet</label>
+        <label class=" disc mb-2" for="legal-structure">Forme juridique du projet</label>
         <input class="form-control" id="legal-structure" wire:model="legal_structure" >
         @error('legal_structure') <span>{{ $message }}</span> @enderror
     </div>
     <div class="field-Resume-executif mt-4">
-        <label class=" disc" for="resume">Résumé exécutif</label>
+        <label class=" disc mb-2 " for="resume">Résumé exécutif</label>
         <p class="instructions">(Le résumé analytique donne un aperçu du contenu du plan d'affaires. Cette section devrait idéalement être rédigée après la finalisation du plan.)</p>
         <textarea class="form-control" id="resume" wire:model="resume_executif"  rows="9"></textarea>
         @error('resume_executif') <span>{{ $message }}</span> @enderror
