@@ -6,6 +6,23 @@
     <p>{{ __('messages.submit') }}</p> -->
     <h1>Business Plan</h1>
     <p>(خطة العمل)</p>
+    <div class="language-switcher" style="display: flex; gap: 10px; margin-top: 10px; justify-content: space-evenly;">
+        <a href="{{ route('lang.switch', ['locale' => 'en']) }}" 
+           class="lang-btn {{ app()->getLocale() === 'en' ? 'active' : '' }}"
+           style="padding: 5px 15px; border: 1px solid #ccc; border-radius: 5px; text-decoration: none; {{ app()->getLocale() === 'en' ? 'background: #648454; color: white;' : 'background: white; color: #333;' }}">
+            EN
+        </a>
+        <a href="{{ route('lang.switch', ['locale' => 'fr']) }}" 
+           class="lang-btn {{ app()->getLocale() === 'fr' ? 'active' : '' }}"
+           style="padding: 5px 15px; border: 1px solid #ccc; border-radius: 5px; text-decoration: none; {{ app()->getLocale() === 'fr' ? 'background: #648454; color: white;' : 'background: white; color: #333;' }}">
+            FR
+        </a>
+        <a href="{{ route('lang.switch', ['locale' => 'ar']) }}" 
+           class="lang-btn {{ app()->getLocale() === 'ar' ? 'active' : '' }}"
+           style="padding: 5px 15px; border: 1px solid #ccc; border-radius: 5px; text-decoration: none; {{ app()->getLocale() === 'ar' ? 'background: #648454; color: white;' : 'background: white; color: #333;' }}">
+            AR
+        </a>
+    </div>
 </div>
     
 
@@ -56,14 +73,14 @@
 
     <div class="navigation-buttons mt-4 flex justify-center gap-4">
         @if ($step > 1)
-            <button wire:click="back" class="navigation-btn btn-back"><i class="ri-arrow-left-circle-fill me-1 ms-1"></i>Précedent</button>
+            <button wire:click="back" class="navigation-btn btn-back"><i class="ri-arrow-left-circle-fill me-1 ms-1"></i>{{ __('messages.precedent') }}</button>
         @endif
 
         @if ($step < 8)
-            <button wire:click="next" class="navigation-btn btn-next">Suivant <i class="ri-arrow-right-circle-fill me-1 ms-1"></i></button>
+            <button wire:click="next" class="navigation-btn btn-next">{{ __('messages.suivant') }} <i class="ri-arrow-right-circle-fill me-1 ms-1"></i></button>
         @endif
         @if ($step == 8)
-            <button wire:click="submit" class="navigation-btn btn-submit">Soumettre <i class="ri-send-plane-fill me-1 ms-1"></i></button>
+            <button wire:click="submit" class="navigation-btn btn-submit">{{ __('messages.submitter') }} <i class="ri-send-plane-fill me-1 ms-1"></i></button>
         @endif
     </div>
 

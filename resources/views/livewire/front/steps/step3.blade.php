@@ -1,39 +1,39 @@
 <div>
     <div class="fourd-part">
-        <h3 class="step-title">4. Stratégie marketing</h3>
-        <p class="instructions">(Cette section explique comment commercialiser le produit ou le service. Vos efforts marketing doivent être axés sur les publics cibles.)</p>
+        <h3 class="step-title">{{ __('messages.strategie_marketing') }}</h3>
+        <p class="instructions">{{ __('messages.instruction4') }}</p>
 
         <div class="field-méthodes_marketing mb-2">
-            <label class="block disc mb-2 font-semibold" for="méthodes_marketing">Quelles méthodes marketing allez-vous utiliser ?</label>
+            <label class="block disc mb-2 font-semibold" for="méthodes_marketing">{{ __('messages.methodes_marketing') }}</label>
             <input class="form-control" id="méthodes_marketing" wire:model="méthodes_marketing" >
         </div>
 
         <div class="field-adaptation_methodes mb-2">
-            <label class="block disc mb-2 font-semibold"  for="adaptation_methodes">Ces méthodes sont-elles adaptées à votre public cible (expliquez) ?</label>
+            <label class="block disc mb-2 font-semibold"  for="adaptation_methodes">{{ __('messages.adaptation_methodes') }}</label>
             <input class="form-control" id="adaptation_methodes" wire:model="adaptation_methodes" >
         </div>
         <div class="field-differenciation_marketing mb-2">
-            <label class="block disc mb-2 font-semibold" for="differenciation_marketing">Comment vous différencier de vos concurrents en matière de marketing ?</label>
+            <label class="block disc mb-2 font-semibold" for="differenciation_marketing">{{ __('messages.differenciation_marketing') }}</label>
             <input class="form-control" id="differenciation_marketing" wire:model="differenciation_marketing" >
         </div>
 
     </div>
 
     <div class="part-five">
-        <h3 class="step-title" >5- Entreprise et personnel.</h3>
-        <p class="instructions">(Le projet nécessite du personnel, et cette section déterminera le nombre d'employés requis. Il est également nécessaire d'anticiper l'arrivée de nouveaux produits ou services, ce qui augmentera les besoins en personnel.)</p>
-        <p class="block disc mb-2">De combien d'utilisateurs aurez-vous besoin ?</p>
+        <h3 class="step-title" >{{ __('messages.entreprise_personnel') }}</h3>
+        <p class="instructions">{{ __('messages.instruction5') }}</p>
+        <p class="block disc mb-2">{{ __('messages.nombre_utilisateurs') }}</p>
         <div class="table-part-five mt-4">
 
             <table class="table-auto  border-gray-300 w-full">
                 <thead>
                     <tr>
-                        <th rowspan="2" class="border px-3 py-2 title-table">Titre d'emploi</th>
-                        <th colspan="2" class="border px-3 py-2 text-center title-table">nombre</th>
+                        <th rowspan="2" class="border px-3 py-2 title-table">{{ __('messages.titre_emploi') }}</th>
+                        <th colspan="2" class="border px-3 py-2 text-center title-table">{{ __('messages.nombre') }}</th>
                     </tr>
                     <tr>
-                        <th class="border px-3 py-2 title-table">Première année</th>
-                        <th class="border px-3 py-2 title-table">deuxième année</th>
+                        <th class="border px-3 py-2 title-table">{{ __('messages.premiere_annee') }}</th>
+                        <th class="border px-3 py-2 title-table">{{ __('messages.deuxieme_annee') }}</th>
                     </tr>
                 </thead>
 
@@ -59,7 +59,7 @@
                     {{-- TOTAL ROW --}}
                     <tr class="bg-gray-100 font-bold">
                         <td  class="border px-3 py-2 text-right title-table">
-                            Total
+                            {{ __('messages.total') }}
                         </td>
                         <td class="border px-3 py-2">
                             {{ number_format($this->total1, 2) }} 
@@ -71,7 +71,7 @@
                 </tbody>
             </table>
 
-            <button wire:click="addTable2Row" class="more-row">Ajouter des lignes</button>
+            <button wire:click="addTable2Row" class="more-row">{{ __('messages.ajouter_lignes') }}</button>
         </div>
 
 
@@ -79,14 +79,14 @@
     </div>
 
     <div class="part-six">
-        <h3 class="step-title mt-3">5- Le calendrier</h3>
-        <p class="instructions">(Cette section vise à définir un échéancier pour que les travaux soient réalisés avec précision et perfection afin de mettre en œuvre le produit ou le service fourni.)</p>
+        <h3 class="step-title mt-3">{{ __('messages.calendrier') }}</h3>
+        <p class="instructions">{{ __('messages.instruction_calendrier') }}</p>
         <div class="table-part-six mt-4">
             <table class="table-auto  border-gray-300 w-full">
                 <thead>
                     <tr>
-                        <th  class="border px-3 py-2 title-table">Tâche</th>
-                        <th  class="border px-3 py-2 text-center title-table">Date / Échéance prévue</th>
+                        <th  class="border px-3 py-2 title-table">{{ __('messages.tache') }}</th>
+                        <th  class="border px-3 py-2 text-center title-table">{{ __('messages.date_echeance') }}</th>
                     </tr>
                 
                 </thead>
@@ -94,7 +94,7 @@
                 <tbody>
                         <tr>
                             <td class="border px-2 py-1">
-                                Finalisation du plan d'affaires
+                                {{ __('messages.finalisation_plan_affaires') }}
                             </td>
 
                             <td class="border px-2 py-1">
@@ -103,7 +103,7 @@
                         </tr>
                         <tr>
                             <td class="border px-2 py-1">
-                                Obtention du financement
+                                {{ __('messages.obtention_financement') }}
                             </td>
 
                             <td class="border px-2 py-1">
@@ -112,7 +112,7 @@
                         </tr>
                         <tr>
                             <td class="border px-2 py-1">
-                                L’ouverture du procès
+                                {{ __('messages.ouverture_proces') }}
                             </td>
 
                             <td class="border px-2 py-1">
@@ -121,7 +121,7 @@
                         </tr>
                         <tr>
                             <td class="border px-2 py-1">
-                                Lancement du recrutement
+                                {{ __('messages.lancement_recrutement') }}
                             </td>
 
                             <td class="border px-2 py-1">
@@ -130,7 +130,7 @@
                         </tr>
                         <tr>
                             <td class="border px-2 py-1">
-                                Ouverture définitive
+                                {{ __('messages.ouverture_definitive') }}
                             </td>
 
                             <td class="border px-2 py-1">
@@ -139,7 +139,7 @@
                         </tr>
                         <tr>
                             <td class="border px-2 py-1 title-table">
-                                Durée
+                                {{ __('messages.duree') }}
                             </td>
 
                             <td class="border px-2 py-1">

@@ -1,20 +1,20 @@
 <div>
     <div class="parent-table-11 mt-4">
         <div class="table-11">
-            <p class="block disc mb-2">Quels sont les frais prévus ?</p>
+            <p class="block disc mb-2">{{ __('messages.frais_prevus') }}</p>
             <table class="table-auto border border-gray-300 w-full">
                 <thead>
                     <tr>
-                        <th class="border px-2 py-3 title-table">les frais</th>
-                        <th class="border px-2 py-3 title-table">Premier année</th>
-                        <th class="border px-2 py-3 title-table">Deuxième année</th>
-                        <th class="border px-2 py-3 title-table">Troisième année</th>
+                        <th class="border px-2 py-3 title-table">{{ __('messages.les_frais') }}</th>
+                        <th class="border px-2 py-3 title-table">{{ __('messages.premier_annee') }}</th>
+                        <th class="border px-2 py-3 title-table">{{ __('messages.deuxieme_annee') }}</th>
+                        <th class="border px-2 py-3 title-table">{{ __('messages.troisieme_annee') }}</th>
                     </tr>
                 </thead>
                 <tbody>
                         <tr>
                             <td class="border px-2 py-3 title-table">
-                                  Achats
+                                  {{ __('messages.achats') }}
 
                             </td>
 
@@ -32,7 +32,7 @@
                         </tr>
                         <tr>
                             <td class="border px-2 py-3 title-table">
-                                 Frais de fonctionnement (loyer, transport, électricité, eau, téléphone)
+                                 {{ __('messages.frais_fonctionnement') }}
                             </td>
 
                             <td class="border px-2 py-3">
@@ -49,7 +49,7 @@
                         </tr>
                         <tr>
                             <td class="border px-2 py-3 title-table">
-                                Charges de personnel
+                                {{ __('messages.charges_personnel') }}
                             </td>
 
                             <td class="border px-2 py-3">
@@ -66,7 +66,7 @@
                         </tr>
                         <tr>
                             <td class="border px-2 py-3 title-table">
-                                Dettes
+                                {{ __('messages.dettes') }}
                             </td>
 
                             <td class="border px-2 py-3">
@@ -83,7 +83,7 @@
                         </tr>
                         <tr>
                             <td class="border px-2 py-3 title-table">
-                                Établissement bancaire
+                                {{ __('messages.etablissement_bancaire') }}
                             </td>
 
                             <td class="border px-2 py-3">

@@ -1,15 +1,23 @@
+header{
+    border-bottom: 1px solid #e5e7eb;
+}
 .aside-admin{
-    background: #09134e;
+    background: white;
+    color: #344054;
+    border-right: 1px solid #e5e7eb;
+    font-size: 16px;
+    font-weight: 400;
+    font-family: "Outfit", sans-serif;
     .logo{
         display: flex;
         justify-content: center;
         img {
             width: 130px;
             object-fit: contain;
-            filter: brightness(45);
         }
     }
     .bg-white\/20 {
-        background-color: #648454 !important;
+        background-color: #edffe4 !important;
+        color: #648454;
     }
 }

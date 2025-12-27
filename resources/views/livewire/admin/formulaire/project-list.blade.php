@@ -50,11 +50,6 @@
             <h3 class="text-lg font-semibold text-gray-900">All Project Submissions</h3>
         </div>
 
-        <!-- Search -->
-        <div class="px-6 py-4 border-b border-gray-100">
-            <input wire:model.live="search" type="text" placeholder="Search projects..." 
-                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
-        </div>
 
         <div class="overflow-x-auto">
             <table class="w-full">
@@ -76,12 +71,17 @@
                         </td>
                         <td class="px-6 py-4">
                             <div class="flex items-center">
+                                @if($project->profile_image)
+                                    <img class="h-10 w-10 rounded-full object-cover" src=" uploads/{{ $project->profile_image  }}" alt="{{ $project->ceo_name }}">
+                                @else
                                 <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-600 to-purple-700 flex items-center justify-center text-white text-sm font-semibold mr-3">
-                                    {{ strtoupper(substr($project->user->name, 0, 1)) }}
+                                    {{ strtoupper(substr($project->ceo_name, 0, 1)) }}
                                 </div>
+                                @endif
+
                                 <div>
-                                    <div class="text-sm font-medium text-gray-900">{{ $project->user->name }}</div>
-                                    <div class="text-sm text-gray-500">{{ $project->user->email }}</div>
+                                    <div class="text-sm font-medium text-gray-900">{{ $project->ceo_name }}</div>
+                                    <div class="text-sm text-gray-500">{{ $project->email }}</div>
                                 </div>
                             </div>
                         </td>

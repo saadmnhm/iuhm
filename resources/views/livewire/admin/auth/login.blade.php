@@ -24,7 +24,6 @@
 
         .image-section {
             flex: 1;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -32,45 +31,7 @@
             overflow: hidden;
         }
 
-        .image-section::before {
-            content: '';
-            position: absolute;
-            width: 500px;
-            height: 500px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            top: -100px;
-            right: -100px;
-        }
 
-        .image-section::after {
-            content: '';
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            bottom: -50px;
-            left: -50px;
-        }
-
-        .image-content {
-            text-align: center;
-            color: white;
-            z-index: 1;
-            padding: 40px;
-        }
-
-        .image-content h1 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            font-weight: 700;
-        }
-
-        .image-content p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
 
         .login-section {
             flex: 1;
@@ -167,7 +128,7 @@
         .login-button {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #8ab667;
             color: white;
             border: none;
             border-radius: 10px;
@@ -211,13 +172,6 @@
 </head>
 <body>
     <div class="login-container">
-        <div class="image-section">
-            <div class="image-content">
-                <h1>Admin Portal</h1>
-                <p>Manage your projects and users efficiently</p>
-            </div>
-        </div>
-
         <div class="login-section">
             <div class="login-box">
                 <h2>Welcome Back</h2>
@@ -271,6 +225,14 @@
                 </form>
             </div>
         </div>
+
+        <div class="image-section">
+            <div class="image-content">
+                <img src="{{asset('assets/admin/image/iuhm_logo.png')}}" alt="">
+            </div>
+        </div>
+
+
     </div>
 </body>
 </html>

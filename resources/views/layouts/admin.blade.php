@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="{{ asset('assets/admin/css/style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     @livewireStyles
@@ -17,10 +20,12 @@
 <body class="bg-gray-50">
     <div class="flex min-h-screen">
         <!-- Sidebar -->
-        <aside class="aside-admin w-64  text-white shadow-xl">
+        <aside class="aside-admin w-64 ">
             <div class="logo p-6 border-b border-white/10">
                 <img src="{{asset('assets/admin/image/iuhm_logo.png')}}" alt="">
             </div>
+
+            
             
             <nav class="p-4 space-y-2">
                 <a href="{{ route('admin.dashboard') }}" 
@@ -52,7 +57,7 @@
         <!-- Main Content -->
         <div class="flex-1 flex flex-col">
             <!-- Header -->
-            <header class="bg-white shadow-sm px-8 py-4">
+            <header class="bg-white  px-8 py-4">
                 <div class="flex justify-between items-center">
                     <h1 class="text-2xl font-semibold text-gray-800">{{ $header ?? 'Dashboard' }}</h1>
                     

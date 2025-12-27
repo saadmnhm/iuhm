@@ -81,6 +81,12 @@
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Gender Distribution</h3>
             <canvas id="genderChart" class="w-full" style="max-height: 300px;"></canvas>
         </div>
+
+        <!-- adresse Distribution Chart -->
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Adresse Distribution</h3>
+            <canvas id="adresseChart" class="w-full" style="max-height: 300px;"></canvas>
+        </div>
     </div>
 
     <!-- Recent Projects Table -->
@@ -193,6 +199,32 @@
                     backgroundColor: [
                         'rgba(6, 182, 212, 0.8)',
                         'rgba(236, 72, 153, 0.8)',
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    }
+                }
+            }
+        });
+
+        const adresseCtx = document.getElementById('adresseChart').getContext('2d');
+        new Chart(adresseCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Ain Sbaa', 'Hay Mohamadi', 'Rochnoir'],
+                datasets: [{
+                    data: [{{ $statistics['as'] }}, {{ $statistics['hm'] }}, {{ $statistics['rn'] }}],
+                    backgroundColor: [
+                        'rgba(45, 26, 110, 0.8)',
+                        'rgba(11, 110, 44, 0.8)',
+                        'rgba(133, 12, 12, 0.8)',  
                     ],
                     borderWidth: 0
                 }]

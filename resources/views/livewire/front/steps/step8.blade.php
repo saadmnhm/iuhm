@@ -1,13 +1,13 @@
 <div class="table-part-14">
     <div class="Table-14">
-        <p class="block disc mb-2">Supplément de matières premières</p>
+        <p class="block disc mb-2">{{ __('messages.supplement_matieres_premieres') }}</p>
         <table class="table-auto  border-gray-300 w-full">
             <thead>
                 <tr>
                     <th></th>
-                    <th  class="border px-3 py-3 title-table">Matières premières</th>
-                    <th  class="border px-3 py-3 text-center title-table">Comment se les procurer</th>
-                    <th  class="border px-3 py-3 text-center title-table">Fournisseur</th>
+                    <th  class="border px-3 py-3 title-table">{{ __('messages.matieres_premieres') }}</th>
+                    <th  class="border px-3 py-3 text-center title-table">{{ __('messages.comment_procurer') }}</th>
+                    <th  class="border px-3 py-3 text-center title-table">{{ __('messages.fournisseur') }}</th>
                 </tr>
             
             </thead>
@@ -35,7 +35,7 @@
             </tbody>
         </table>
         <div class="mt-2">
-            <button wire:click.prevent="addTable6Row" class="more-row">Ajouter des lignes</button>
+            <button wire:click.prevent="addTable6Row" class="more-row">{{ __('messages.ajouter_lignes') }}</button>
         </div>
     </div>
 </div>

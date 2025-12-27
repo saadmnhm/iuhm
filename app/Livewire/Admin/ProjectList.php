@@ -37,8 +37,8 @@ class ProjectList extends Component
 
         $statistics = [
             'total' => Project::count(),
-            'male' => Project::where('gender', 'male')->count(),
-            'female' => Project::where('gender', 'female')->count(),
+            'male' => Project::where('gender', 'homme')->count(),
+            'female' => Project::where('gender', 'femme')->count(),
         ];
 
         return view('livewire.admin.formulaire.project-list', [

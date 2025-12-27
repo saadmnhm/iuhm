@@ -1,25 +1,25 @@
 <div>
     <div class="part-8">
-        <h3 class="step-title">8- Capacités</h3>
-        <p class="instructions">(Cette section vise à évaluer le niveau de difficulté du projet et votre capacité à le mener à bien.)</p>
+        <h3 class="step-title">{{ __('messages.capacites') }}</h3>
+        <p class="instructions">{{ __('messages.instruction_capacites') }}</p>
 
         <div class="field-step_8_1 mb-2">
-            <label for="step_8_1" class="block disc mb-2 font-semibold" >* Possédez-vous les compétences nécessaires à la réalisation du projet ?</label>
+            <label for="step_8_1" class="block disc mb-2 font-semibold" >{{ __('messages.competences_necessaires') }}</label>
             <input type="text" id="step_8_1" wire:model="step_8_1"  class="form-control border w-full p-1">
         </div>
 
         <div class="field-step_8_2 mb-2">
-            <label for="step_8_2" class="block disc mb-2 font-semibold" >* Pouvez-vous fournir le matériel et les outils nécessaires à la réalisation du projet ?</label>
+            <label for="step_8_2" class="block disc mb-2 font-semibold" >{{ __('messages.materiel_necessaire') }}</label>
             <input type="text" id="step_8_2" wire:model="step_8_2"  class="form-control border w-full p-1">
         </div>
         
         <div class="field-step_8_3 mb-2">
-            <label for="step_8_3" class="block disc mb-2 font-semibold" >* Avez-vous l’expérience nécessaire pour mener à bien le projet ?</label>
+            <label for="step_8_3" class="block disc mb-2 font-semibold" >{{ __('messages.experience_necessaire') }}</label>
             <input type="text" id="step_8_3" wire:model="step_8_3"  class="form-control border w-full p-1">
         </div>
 
         <div class="field-step_8_4 mb-2">
-            <label for="step_8_4" class="block disc mb-2 font-semibold" >* Pouvez-vous obtenir les fonds nécessaires au démarrage du projet ?</label>
+            <label for="step_8_4" class="block disc mb-2 font-semibold" >{{ __('messages.fonds_necessaires') }}</label>
             <input type="text" id="step_8_4" wire:model="step_8_4"  class="form-control border w-full p-1">
         </div>
 
@@ -27,13 +27,13 @@
 
     <div class="parent-table-9 mt-4">
         <div class="table-9">
-            <h3  class="step-title">9- Prévisions financières</h3>
-            <p class="block disc mb-2">Programme d'investissement</p>
+            <h3  class="step-title">{{ __('messages.previsions_financieres') }}</h3>
+            <p class="block disc mb-2">{{ __('messages.programme_investissement') }}</p>
             <table class="table-auto border border-gray-300 w-full">
                 <tbody>
                         <tr>
                             <td class="border px-2 py-3 title-table">
-                                Coûts de création d'entreprise
+                                {{ __('messages.couts_creation_entreprise') }}
 
                             </td>
 
@@ -43,7 +43,7 @@
                         </tr>
                         <tr>
                             <td class="border px-2 py-3 title-table">
-                                Préparation de l'entreprise
+                                {{ __('messages.preparation_entreprise') }}
                             </td>
 
                             <td class="border px-2 py-1">
@@ -52,7 +52,7 @@
                         </tr>
                         <tr>
                             <td class="border px-2 py-3 title-table">
-                                Achat de machines
+                                {{ __('messages.achat_machines') }}
                             </td>
 
                             <td class="border px-2 py-1">
@@ -61,7 +61,7 @@
                         </tr>
                         <tr>
                             <td class="border px-2 py-3 title-table">
-                                Achat de matières premières (six mois)
+                                {{ __('messages.achat_matieres_premieres_six_mois') }}
                             </td>
 
                             <td class="border px-2 py-1">
@@ -70,7 +70,7 @@
                         </tr>
                         <tr>
                             <td class="border px-2 py-3 title-table">
-                                Autres coûts (six mois)
+                                {{ __('messages.autres_couts_six_mois') }}
                             </td>
 
                             <td class="border px-2 py-3 ">
@@ -79,7 +79,7 @@
                         </tr>
                         <tr>
                             <td class="border px-2 py-3 title-table">
-                                Total
+                                {{ __('messages.total') }}
                             </td>
 
                             <td class="border px-2 py-3 ">
@@ -94,21 +94,21 @@
     
     <div class="parent-table-10 mt-4">
         <div class="table-10">
-            <h3 class="step-title">10- Prévisions financières</h3>
-            <p class="block disc mb-2">Programme d'investissement</p>
+            <h3 class="step-title">{{ __('messages.previsions_financieres_10') }}</h3>
+            <p class="block disc mb-2">{{ __('messages.programme_investissement') }}</p>
             <table class="table-auto border border-gray-300 w-full">
                 <thead>
                     <tr>
-                        <th class="border px-2 py-3 title-table">Quelles sont les prévisions de revenus</th>
-                        <th class="border px-2 py-3 title-table">Premier année</th>
-                        <th class="border px-2 py-3 title-table">Deuxième année</th>
-                        <th class="border px-2 py-3 title-table">Troisième année</th>
+                        <th class="border px-2 py-3 title-table">{{ __('messages.previsions_revenus') }}</th>
+                        <th class="border px-2 py-3 title-table">{{ __('messages.premier_annee') }}</th>
+                        <th class="border px-2 py-3 title-table">{{ __('messages.deuxieme_annee') }}</th>
+                        <th class="border px-2 py-3 title-table">{{ __('messages.troisieme_annee') }}</th>
                     </tr>
                 </thead>
                 <tbody>
                         <tr>
                             <td class="border px-2 py-3 title-table">
-                                 Ventes
+                                 {{ __('messages.ventes') }}
 
                             </td>
 
@@ -126,7 +126,7 @@
                         </tr>
                         <tr>
                             <td class="border px-2 py-3 title-table">
-                                 Services
+                                 {{ __('messages.services') }}
                             </td>
 
                             <td class="border px-2 py-3">
@@ -143,7 +143,7 @@
                         </tr>
                         <tr>
                             <td class="border px-2 py-3 title-table" >
-                                aide financière
+                                {{ __('messages.aide_financiere') }}
                             </td>
 
                             <td class="border px-2 py-3">
@@ -160,7 +160,7 @@
                         </tr>
                         <tr>
                             <td class="border px-2 py-3 title-table">
-                                Revenus financiers
+                                {{ __('messages.revenus_financiers') }}
                             </td>
 
                             <td class="border px-2 py-3">
@@ -177,7 +177,7 @@
                         </tr>
                         <tr>
                             <td class="border px-2 py-3 title-table">
-                                Autres revenus
+                                {{ __('messages.autres_revenus') }}
                             </td>
 
                             <td class="border px-2 py-3">
