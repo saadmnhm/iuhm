@@ -1,19 +1,48 @@
 <div>
+    @if(session()->has('success'))
+    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+        <span class="block sm:inline">{{ session('success') }}</span>
+    </div>
+    @endif
+
     @if($project)
     <!-- En-tête du Projet -->
     <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 mb-6">
-        <div class="flex justify-between items-start mb-6">
-            <div>
-                <h2 class="text-2xl font-bold text-gray-900">{{ $project->project_name ?? $project->project_title ?? 'Sans titre' }}</h2>
-                <div class="flex gap-4 mt-2 text-sm text-gray-500">
-                    <span>ID: #{{ $project->id }}</span>
-                    <span>{{ $project->created_at->format('d M Y') }}</span>
-                </div>
-            </div>
-            <a href="{{ route('admin.projects') }}" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition">
-                Retour à la liste
-            </a>
+<div class="flex justify-between items-start mb-6">
+    <div>
+        <h2 class="text-2xl font-bold text-gray-900">{{ $project->project_name ?? $project->project_title ?? 'Sans titre' }}</h2>
+        <div class="flex gap-4 mt-2 text-sm text-gray-500">
+            <span>ID: #{{ $project->id }}</span>
+            <span>{{ $project->created_at->format('d M Y') }}</span>
         </div>
+    </div>
+    <div class="flex gap-2">
+        <!-- Export PDF Button -->
+        <a href="{{ route('admin.projects.export.pdf', $project->id) }}" 
+           class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            Export PDF
+        </a>
+        
+        @if(!$project->registration)
+        <button wire:click="$set('showModal', true)" class="px-4 py-2 bg-green-logo text-white rounded-lg hover:bg-green-600 transition">
+            <i class="fas fa-plus-circle me-2"></i>
+            Ajouter la Matriculation
+        </button>
+        @else
+        <span class="px-4 py-2 bg-green-100 text-green-800 rounded-lg">
+            <i class="fas fa-check-circle me-2"></i>
+            Matriculation: {{ $project->registration }}
+        </span>
+        @endif
+        
+        <a href="{{ route('admin.projects') }}" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition">
+            Retour à la liste
+        </a>
+    </div>
+</div>
 
         <!-- Informations Utilisateur -->
         <div class="bg-gray-50 rounded-lg p-4 flex items-center gap-4">
@@ -22,7 +51,7 @@
                 <img src="{{ $project->profile_image ? route('uploads.show', $project->profile_image) : asset('assets/images/default-avatar.png') }}" alt="{{ $project->ceo_name }}" class="w-14 h-14 rounded-full object-cover">
             </div>
             @else
-            <div class="w-16 h-16 rounded-full bg-gradient-to-br from-indigo-600 to-purple-700 flex items-center justify-center text-white text-xl font-bold">
+            <div class="w-16 h-16 rounded-full bg-green-logo flex items-center justify-center text-white text-xl font-bold">
                 {{ strtoupper(substr($project->user->name, 0, 1)) }}
             </div>
             @endif
@@ -82,7 +111,7 @@
                     <span class="font-medium text-gray-900 text-right">{{ $project->project_name ?? 'N/A' }}</span>
                 </div>
                 <div class="flex justify-between border-b border-gray-100 pb-2">
-                    <span class="text-gray-600">Nom du PDG</span>
+                    <span class="text-gray-600">Nom du porteur de projet</span>
                     <span class="font-medium text-gray-900">{{ $project->ceo_name ?? 'N/A' }}</span>
                 </div>
                 <div class="flex justify-between border-b border-gray-100 pb-2">
@@ -693,5 +722,62 @@
     </div>
 
 
+    @endif
+
+    <!-- Modal pour ajouter la matriculation -->
+    @if($showModal ?? false)
+    <div class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" wire:click="$set('showModal', false)">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white" wire:click.stop>
+            <div class="mt-3">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-gray-900">
+                        <i class="fas fa-id-card me-2 text-green-600"></i>
+                        Ajouter la Matriculation
+                    </h3>
+                    <button wire:click="$set('showModal', false)" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <form wire:submit.prevent="saveRegistration">
+                    <div class="mb-4">
+                        <label for="registration" class="block text-sm font-medium text-gray-700 mb-2">
+                            Numéro de Matriculation <span class="text-red-500">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="registration" 
+                            wire:model="registration"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                            placeholder="Ex: MAT-2025-001"
+                            required
+                        >
+                        @error('registration')
+                            <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="flex justify-end gap-3 mt-6">
+                        <button 
+                            type="button"
+                            wire:click="$set('showModal', false)"
+                            class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition"
+                        >
+                            Annuler
+                        </button>
+                        <button 
+                            type="submit"
+                            class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition"
+                        >
+                            <i class="fas fa-save me-2"></i>
+                            Enregistrer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     @endif
 </div>

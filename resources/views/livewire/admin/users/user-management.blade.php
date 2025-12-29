@@ -76,7 +76,7 @@
             <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
                 <h3 class="text-lg font-semibold text-gray-900">All Users</h3>
                 @if(Auth::user()->isSuperAdmin() || Auth::user()->isAdmin())
-                <a href="{{ route('admin.users.create') }}" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition">
+                <a href="{{ route('admin.users.create') }}" class="px-4 py-2 bg-green-logo text-white rounded-lg transition">
                     <span class="flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -96,7 +96,7 @@
                 <div class="p-6">
                     <!-- User Avatar and Info -->
                     <div class="flex items-center mb-4 pb-4 border-b border-gray-100">
-                        <div class="w-14 h-14 rounded-full bg-gradient-to-br from-indigo-600 to-purple-700 flex items-center justify-center text-white text-xl font-semibold mr-4">
+                        <div class="w-14 h-14 rounded-full bg-green-logo flex items-center justify-center text-white text-xl font-semibold mr-4">
                             {{ strtoupper(substr($user->name, 0, 1)) }}
                         </div>
                         <div class="flex-1 min-w-0">
@@ -136,7 +136,7 @@
                         </a>
                         @if(Auth::user()->isSuperAdmin())
                         <a href="{{ route('admin.users.edit', $user->id) }}" 
-                           class="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 text-center">
+                           class="flex-1 px-4 py-2 bg-green-logo text-white text-sm font-medium rounded-lg transition-colors duration-200 text-center">
                             Edit
                         </a>
                         @endif

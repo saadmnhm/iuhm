@@ -11,7 +11,7 @@ trait HasValidationRules
             'profile_image' => 'nullable|image|max:2048',
             'age' => 'nullable|integer|min:18|max:100',
             'gender' => 'nullable|in:homme,femme',
-            'address_house' => 'nullable|in:hay_mohamadi,ain_sbaa,rochnoir',
+            'address_house' => 'nullable|in:Hay Mohamadi,Ain Sbaa,Roches Noires',
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|regex:/^[0-9]{10}$/',            
             'project_name' => 'nullable|string',

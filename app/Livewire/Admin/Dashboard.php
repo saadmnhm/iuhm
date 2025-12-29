@@ -16,9 +16,9 @@ class Dashboard extends Component
             'male_count' => Project::where('gender', 'homme')->count(),
             'female_count' => Project::where('gender', 'femme')->count(),
             'recent_projects' => Project::with('user')->latest()->take(10)->get(),
-            'as' => Project::where('address', 'ain_sbaa')->count(),
-            'hm' => Project::where('address', 'hay_mohamadi')->count(),
-            'rn' => Project::where('address', 'rochnoir')->count(),
+            'as' => Project::where('address', 'Ain Sbaa')->count(),
+            'hm' => Project::where('address', 'Hay Mohamadi')->count(),
+            'rn' => Project::where('address', 'Roches noires')->count(),
         ];
 
         $monthlyData = Project::selectRaw('MONTH(created_at) as month, COUNT(*) as count')

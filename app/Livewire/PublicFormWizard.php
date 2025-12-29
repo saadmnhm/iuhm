@@ -32,7 +32,7 @@ class PublicFormWizard extends Component
         $this->mountManagesTableRows();
     }
         // Step 1 - Project Info
-    public $profile_image, $age, $gender, $address_house, $email, $phone, $project_name, $ceo_name, $description, $legal_structure, $resume_executif;
+    public $profile_image, $age,$registration, $gender, $address_house, $email, $phone, $project_name, $ceo_name, $description, $legal_structure, $resume_executif;
     
     // Step 2 - Market Analysis
     public $public_cible, $concurrent, $volume_produits_locaux, $volume_demande;
@@ -132,6 +132,7 @@ class PublicFormWizard extends Component
                 'user_id' => auth()->id(),
                 'profile_image' => $imagePath,
                 'age' => $this->age,
+                'registration' => $this->registration,
                 'gender' => $this->gender,
                 'address' => $this->address_house,
                 'email' => $this->email,
@@ -334,6 +335,7 @@ class PublicFormWizard extends Component
         $this->project_name = null;
         $this->ceo_name = null;
         $this->description = null;
+        $this->registration = null;
         $this->legal_structure = null;
         $this->resume_executif = null;
         $this->public_cible = null;
@@ -400,7 +402,7 @@ class PublicFormWizard extends Component
         // Step 0 - Personal Info
         $this->age = 25;
         $this->gender = 'homme';
-        $this->address = 'hay_mohamadi';
+        $this->address = 'Hay Mohamadi';
         $this->email = 'test@example.com';
         $this->phone = '0612345678';
         

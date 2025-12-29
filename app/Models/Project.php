@@ -23,6 +23,7 @@ class Project extends Model
         'project_name',
         'ceo_name',
         'description',
+        'registration',
         'legal_structure',
         'resume_executif',
         // Step 2 - Market Analysis

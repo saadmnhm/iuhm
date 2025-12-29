@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('profile_image')->nullable();
             $table->integer('age')->nullable();
             $table->enum('gender', ['homme', 'femme'])->nullable();
-            $table->enum('address', ['hay_mohamadi', 'ain_sbaa', 'rochnoir'])->nullable();
+            $table->enum('address', ['Hay Mohamadi', 'Ain Sbaa', 'Roches Noires'])->nullable();
             $table->string('email')->nullable();
             $table->string('phone', 20)->nullable();
             

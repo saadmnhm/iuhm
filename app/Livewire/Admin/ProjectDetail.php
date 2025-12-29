@@ -9,6 +9,8 @@ class ProjectDetail extends Component
 {
     public $projectId;
     public $project;
+    public $showModal = false;
+    public $registration;
 
     public function mount($id)
     {
@@ -28,6 +30,27 @@ class ProjectDetail extends Component
             'rawMaterials',
             'financials'
         ])->findOrFail($this->projectId);
+    }
+
+    public function saveRegistration()
+    {
+        $this->validate([
+            'registration' => 'required|string|max:255|unique:projects,registration,' . $this->projectId,
+        ], [
+            'registration.required' => 'Le numéro de matriculation est requis.',
+            'registration.unique' => 'Ce numéro de matriculation existe déjà.',
+            'registration.max' => 'Le numéro de matriculation ne peut pas dépasser 255 caractères.',
+        ]);
+
+        $this->project->update([
+            'registration' => $this->registration
+        ]);
+
+        $this->showModal = false;
+        $this->registration = '';
+        $this->loadProject();
+
+        session()->flash('success', 'Matriculation ajoutée avec succès!');
     }
 
     public function render()

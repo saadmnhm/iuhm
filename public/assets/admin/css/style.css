@@ -21,3 +21,10 @@ header{
         color: #648454;
     }
 }
+.bg-green-logo{
+    background-color: #648454;
+}
+.svg-view-detail{
+    width: 30px;
+    display: block;
+}

@@ -174,8 +174,6 @@
     <div class="login-container">
         <div class="login-section">
             <div class="login-box">
-                <h2>Welcome Back</h2>
-                <p class="subtitle">Please login to your admin account</p>
 
                 <form method="POST" action="{{ route('admin.login.post') }}">
                     @csrf

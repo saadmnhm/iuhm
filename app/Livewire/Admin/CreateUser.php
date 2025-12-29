@@ -57,6 +57,6 @@ class CreateUser extends Component
 
     public function render()
     {
-        return view('livewire.admin.create-user');
+        return view('livewire.admin.users.create-user');
     }
 }

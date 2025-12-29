@@ -68,9 +68,9 @@
         <label for="address" class="block disc mb-2 font-semibold">{{ __('messages.adresse') }}</label>
         <select class="form-control border border-gray-300 rounded p-2 w-full" id="address" wire:model="address_house">
             <option value="">{{ __('messages.selectionner_adresse') }}</option>
-            <option value="hay_mohamadi">{{ __('messages.hay_mohamadi') }}</option>
-            <option value="ain_sbaa">{{ __('messages.ain_sbaa') }}</option>
-            <option value="rochnoir">{{ __('messages.rochnoir') }}</option>
+            <option value="Hay Mohamadi">{{ __('messages.hay_mohamadi') }}</option>
+            <option value="Ain Sbaa">{{ __('messages.ain_sbaa') }}</option>
+            <option value="Roches Noires">{{ __('messages.rochnoir') }}</option>
         </select>
         @error('address') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
     </div>

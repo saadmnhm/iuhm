@@ -159,7 +159,7 @@ CREATE TABLE `projects` (
   `profile_image` varchar(255) DEFAULT NULL,
   `age` int(11) DEFAULT NULL,
   `gender` enum('Homme','Femme') DEFAULT NULL,
-  `address` enum('hay_mohamadi','ain_sbaa','rochnoir') DEFAULT NULL,
+  `address` enum('Hay Mohamadi','Ain Sbaa','Roches Noires') DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `phone` varchar(20) DEFAULT NULL,
   `project_name` varchar(255) DEFAULT NULL,

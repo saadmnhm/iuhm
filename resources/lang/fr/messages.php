@@ -6,7 +6,7 @@ return [
     'Photo_profil' => 'Photo de profil *',
     'aucune_image' => 'Aucune image',
     'telechargement_cours' => 'Téléchargement en cours...',
-    'nom_pdg' => 'Nom du PDG',
+    'nom_pdg' => 'Nom du porteur de projet',
     'age' => 'Âge *',
     'genre' => 'Genre *',
     'selectionner' => 'Sélectionner...',

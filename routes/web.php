@@ -15,10 +15,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', \App\Livewire\Admin\Dashboard::class)->name('dashboard');
         Route::get('/projects', \App\Livewire\Admin\ProjectList::class)->name('projects');
         Route::get('/projects/{id}', \App\Livewire\Admin\ProjectDetail::class)->name('projects.show');
+        Route::get('/projects/{id}/export-pdf', [\App\Http\Controllers\Admin\ProjectExportController::class, 'exportPdf'])->name('projects.export.pdf');
+            Route::get('/projects/{id}/preview-pdf', [\App\Http\Controllers\Admin\ProjectExportController::class, 'previewPdf'])->name('projects.preview.pdf');
+
         Route::get('/users', \App\Livewire\Admin\UserManagement::class)->name('users.index');
         Route::get('/users/create', \App\Livewire\Admin\CreateUser::class)->name('users.create');
         Route::get('/users/{id}', \App\Livewire\Admin\ShowUser::class)->name('users.show');
         Route::get('/users/{id}/edit', \App\Livewire\Admin\EditUser::class)->name('users.edit');
+        Route::get('/projects/{id}/add-registration', \App\Livewire\Admin\RegistrationId::class)->name('add.registration');
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     });
 });

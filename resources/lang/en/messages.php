@@ -11,7 +11,7 @@ return [
     'photo_profil' => 'Profile Photo *',
     'aucune_image' => 'No image',
     'telechargement_cours' => 'Uploading...',
-    'nom_pdg' => 'CEO Name',
+    'nom_pdg' => 'Name of the project leader',
     'age' => 'Age *',
     'genre' => 'Gender *',
     'selectionner' => 'Select...',

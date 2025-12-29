@@ -25,7 +25,7 @@
         <div class="p-6">
             <!-- User Avatar and Name -->
             <div class="flex items-center pb-6 border-b border-gray-200 mb-6">
-                <div class="w-24 h-24 rounded-full bg-gradient-to-br from-indigo-600 to-purple-700 flex items-center justify-center text-white text-3xl font-semibold mr-6">
+                <div class="w-24 h-24 rounded-full bg-green-logo to-purple-700 flex items-center justify-center text-white text-3xl font-semibold mr-6">
                     {{ strtoupper(substr($user->name, 0, 1)) }}
                 </div>
                 <div class="flex-1">
@@ -99,7 +99,7 @@
             @if(Auth::user()->isSuperAdmin())
             <div class="flex gap-3 pt-6 border-t border-gray-200">
                 <a href="{{ route('admin.users.edit', $user->id) }}" 
-                   class="flex-1 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-center font-medium rounded-lg transition-colors duration-200">
+                   class="flex-1 px-6 py-3 bg-green-logo text-white text-center font-medium rounded-lg transition-colors duration-200">
                     <span class="flex items-center justify-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
@@ -110,7 +110,7 @@
 
                 @if($user->id !== Auth::id())
                 <button wire:click="toggleStatus" 
-                        class="flex-1 px-6 py-3 {{ ($user->is_active ?? true) ? 'bg-orange-600 hover:bg-orange-700' : 'bg-green-600 hover:bg-green-700' }} text-white font-medium rounded-lg transition-colors duration-200">
+                        class="flex-1 px-6 py-3 {{ ($user->is_active ?? true) ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700' }} text-white font-medium rounded-lg transition-colors duration-200">
                     <span class="flex items-center justify-center gap-2">
                         @if($user->is_active ?? true)
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

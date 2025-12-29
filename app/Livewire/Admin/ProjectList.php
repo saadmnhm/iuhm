@@ -46,4 +46,15 @@ class ProjectList extends Component
             'statistics' => $statistics,
         ])->layout('layouts.admin', ['header' => 'Projects Management']);
     }
+        public function updateRegistration(Request $request, $id)
+    {
+        $request->validate([
+            'registration' => 'required|string|max:255'
+        ]);
+
+        $project = Project::findOrFail($id);
+        $project->update(['registration' => $request->registration]);
+
+        return redirect()->back()->with('success', 'Project registration updated successfully!');
+    }
 }
