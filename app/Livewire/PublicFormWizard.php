@@ -129,7 +129,6 @@ class PublicFormWizard extends Component
 
             // Create main project
             $project = Project::create([
-                'user_id' => auth()->id(),
                 'profile_image' => $imagePath,
                 'age' => $this->age,
                 'registration' => $this->registration,
@@ -402,7 +401,7 @@ class PublicFormWizard extends Component
         // Step 0 - Personal Info
         $this->age = 25;
         $this->gender = 'homme';
-        $this->address = 'Hay Mohamadi';
+        $this->address_house = 'Hay Mohamadi';
         $this->email = 'test@example.com';
         $this->phone = '0612345678';
         
@@ -607,6 +606,13 @@ class PublicFormWizard extends Component
             ($this->autres_couts ?? 0);
     }
 
+    private function calculateResultatNet()
+    {
+        $this->resultat_premiere_annee = ($this->revenus_premiere_annee ?? 0) - ($this->depenses_premiere_annee ?? 0);
+        $this->resultat_deuxieme_annee = ($this->revenus_deuxieme_annee ?? 0) - ($this->depenses_deuxieme_annee ?? 0);
+        $this->resultat_troisieme_annee = ($this->revenus_troisieme_annee ?? 0) - ($this->depenses_troisieme_annee ?? 0);
+    }
+
     public function updatedRevenusPremiereAnnee()
     {
         $this->calculateResultatNet();
@@ -637,12 +643,7 @@ class PublicFormWizard extends Component
         $this->calculateResultatNet();
     }
 
-    private function calculateResultatNet()
-    {
-        $this->resultat_premiere_annee = ($this->revenus_premiere_annee ?? 0) - ($this->depenses_premiere_annee ?? 0);
-        $this->resultat_deuxieme_annee = ($this->revenus_deuxieme_annee ?? 0) - ($this->depenses_deuxieme_annee ?? 0);
-        $this->resultat_troisieme_annee = ($this->revenus_troisieme_annee ?? 0) - ($this->depenses_troisieme_annee ?? 0);
-    }
+
 
 
 

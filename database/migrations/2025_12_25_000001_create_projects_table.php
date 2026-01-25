@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             
             // Step 0 - Personal Info
             $table->string('profile_image')->nullable();

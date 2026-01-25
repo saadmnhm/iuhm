@@ -563,7 +563,7 @@
 
     <!-- XII. RISQUES ET OPPORTUNITÉS -->
         <div class="section-title">XII. Programme d'investissement</div>
-            @if($project->financials->count() > 0)
+            @if($project->financials)
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
                     <div class="px-6 py-4 border-b border-gray-100">
                         <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
@@ -574,9 +574,8 @@
                         </h3>
                     </div>
                     @php
-                        $financial = $project->financials->first();
+                        $financial = $project->financials;
                     @endphp
-                    @if($financial)
                     <div class="overflow-x-auto">
                         <table class="w-full">
                             <thead class="bg-gray-50">
@@ -718,7 +717,6 @@
                             </tbody>
                         </table>
                     </div>
-                    @endif
                 </div>
             @endif
     

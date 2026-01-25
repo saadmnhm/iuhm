@@ -2,8 +2,6 @@
 <div class="parent-steps container">
 
 <div class="header-form">
-    <!-- <h1>{{ __('messages.welcome') }}</h1>
-    <p>{{ __('messages.submit') }}</p> -->
     <h1>Business Plan</h1>
     <p>(خطة العمل)</p>
     <div class="language-switcher" style="display: flex; gap: 10px; margin-top: 10px; justify-content: space-evenly;">

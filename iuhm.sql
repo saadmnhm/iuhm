@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Hôte : 127.0.0.1
--- Généré le : ven. 26 déc. 2025 à 17:59
--- Version du serveur : 10.4.32-MariaDB
--- Version de PHP : 8.2.12
+-- Host: 127.0.0.1
+-- Generation Time: Jan 25, 2026 at 01:42 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de données : `iuhm`
+-- Database: `iuhm`
 --
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `cache`
+-- Table structure for table `cache`
 --
 
 CREATE TABLE `cache` (
@@ -34,17 +34,17 @@ CREATE TABLE `cache` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Déchargement des données de la table `cache`
+-- Dumping data for table `cache`
 --
 
 INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
-('laravel-cache-356a192b7913b04c54574d18c28d46e6395428ab', 'i:1;', 1766764459),
-('laravel-cache-356a192b7913b04c54574d18c28d46e6395428ab:timer', 'i:1766764459;', 1766764459);
+('laravel-cache-356a192b7913b04c54574d18c28d46e6395428ab', 'i:1;', 1769299260),
+('laravel-cache-356a192b7913b04c54574d18c28d46e6395428ab:timer', 'i:1769299260;', 1769299260);
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `cache_locks`
+-- Table structure for table `cache_locks`
 --
 
 CREATE TABLE `cache_locks` (
@@ -56,7 +56,7 @@ CREATE TABLE `cache_locks` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `failed_jobs`
+-- Table structure for table `failed_jobs`
 --
 
 CREATE TABLE `failed_jobs` (
@@ -72,7 +72,7 @@ CREATE TABLE `failed_jobs` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `jobs`
+-- Table structure for table `jobs`
 --
 
 CREATE TABLE `jobs` (
@@ -88,7 +88,7 @@ CREATE TABLE `jobs` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `job_batches`
+-- Table structure for table `job_batches`
 --
 
 CREATE TABLE `job_batches` (
@@ -107,7 +107,7 @@ CREATE TABLE `job_batches` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `migrations`
+-- Table structure for table `migrations`
 --
 
 CREATE TABLE `migrations` (
@@ -117,7 +117,7 @@ CREATE TABLE `migrations` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Déchargement des données de la table `migrations`
+-- Dumping data for table `migrations`
 --
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
@@ -132,13 +132,14 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (9, '2025_12_25_000006_create_project_equipment_table', 1),
 (10, '2025_12_25_000007_create_project_raw_materials_table', 1),
 (11, '2025_12_25_000008_create_project_financials_table', 1),
-(12, '2025_12_26_120116_add_role_to_users_table', 2),
-(13, '2025_12_26_130000_add_status_to_users_table', 3);
+(12, '2025_12_26_120116_add_role_to_users_table', 1),
+(13, '2025_12_26_130000_add_status_to_users_table', 1),
+(14, '2025_12_29_091931_add_registration_to_project_table', 1);
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `password_reset_tokens`
+-- Table structure for table `password_reset_tokens`
 --
 
 CREATE TABLE `password_reset_tokens` (
@@ -150,21 +151,21 @@ CREATE TABLE `password_reset_tokens` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `projects`
+-- Table structure for table `projects`
 --
 
 CREATE TABLE `projects` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `user_id` bigint(20) UNSIGNED DEFAULT NULL,
   `profile_image` varchar(255) DEFAULT NULL,
   `age` int(11) DEFAULT NULL,
-  `gender` enum('Homme','Femme') DEFAULT NULL,
+  `gender` enum('homme','femme') DEFAULT NULL,
   `address` enum('Hay Mohamadi','Ain Sbaa','Roches Noires') DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `phone` varchar(20) DEFAULT NULL,
   `project_name` varchar(255) DEFAULT NULL,
   `ceo_name` varchar(255) DEFAULT NULL,
   `description` text DEFAULT NULL,
+  `registration` varchar(255) DEFAULT NULL,
   `legal_structure` varchar(255) DEFAULT NULL,
   `resume_executif` text DEFAULT NULL,
   `public_cible` text DEFAULT NULL,
@@ -207,20 +208,19 @@ CREATE TABLE `projects` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Déchargement des données de la table `projects`
+-- Dumping data for table `projects`
 --
 
-INSERT INTO `projects` (`id`, `user_id`, `profile_image`, `age`, `gender`, `address`, `email`, `phone`, `project_name`, `ceo_name`, `description`, `legal_structure`, `resume_executif`, `public_cible`, `concurrent`, `volume_produits_locaux`, `volume_demande`, `demande_offre`, `motivations_achat`, `raison_choix_client`, `méthodes_marketing`, `adaptation_methodes`, `differenciation_marketing`, `plan_affaires`, `obtention_financement`, `ouverture_proces`, `lancement_recrutement`, `ouverture_definitive`, `duree`, `lieu_projet`, `adaptation_lieu`, `benefices_from_projet`, `valeur_projet`, `step_8_1`, `step_8_2`, `step_8_3`, `step_8_4`, `couts_creation`, `preparation_entreprise`, `achat_machines`, `achat_matieres_premieres`, `autres_couts`, `total`, `generer_profits`, `projet_durable`, `status`, `current_step`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 1, 'profile-images/Benu0sXg9AmAwoiHNEK7frcX1PHCATntXbh8KunM.png', 25, 'Homme', 'hay_mohamadi', 'test@example.com', '0612345678', 'Mon Projet Test', 'Ahmed Hassan', 'Description du projet de test', 'SARL', 'Résumé exécutif du projet', 'Jeunes entrepreneurs', 'Concurrent A, Concurrent B', 'Volume moyen', 'Forte demande', 'Équilibrée', 'Qualité et prix', 'Meilleur rapport qualité-prix', 'Réseaux sociaux, publicité locale', 'Adaptation selon le budget', 'Prix compétitifs', 'Janvier 2026', 'Février 2026', 'Mars 2026', 'Avril 2026', 'Mai 2026', '6 mois', 'Casablanca, Hay Mohamadi', 'Oui, très adapté', 'Revenus mensuels stables', 'Bénéfices + expérience + réseau', 'Oui, compétences acquises', 'Oui, matériel disponible', 'Oui, 5 ans d\'expérience', 'Oui, fonds disponibles', 10000.00, 5000.00, 20000.00, 8000.00, 3000.00, 46000.00, 'Le projet générera des profits à partir de la deuxième année', 'Le projet est durable grâce à la croissance constante', 'submitted', 8, '2025-12-26 10:55:09', '2025-12-26 10:55:09', NULL),
-(8, 1, 'profile-images/Benu0sXg9AmAwoiHNEK7frcX1PHCATntXbh8KunM.png', 25, 'Homme', 'hay_mohamadi', 'test@example.com', '0612345678', 'Mon Projet Test', 'Ahmed Hassan', 'Description du projet de test', 'SARL', 'Résumé exécutif du projet', 'Jeunes entrepreneurs', 'Concurrent A, Concurrent B', 'Volume moyen', 'Forte demande', 'Équilibrée', 'Qualité et prix', 'Meilleur rapport qualité-prix', 'Réseaux sociaux, publicité locale', 'Adaptation selon le budget', 'Prix compétitifs', 'Janvier 2026', 'Février 2026', 'Mars 2026', 'Avril 2026', 'Mai 2026', '6 mois', 'Casablanca, Hay Mohamadi', 'Oui, très adapté', 'Revenus mensuels stables', 'Bénéfices + expérience + réseau', 'Oui, compétences acquises', 'Oui, matériel disponible', 'Oui, 5 ans d\'expérience', 'Oui, fonds disponibles', 10000.00, 5000.00, 20000.00, 8000.00, 3000.00, 46000.00, 'Le projet générera des profits à partir de la deuxième année', 'Le projet est durable grâce à la croissance constante', 'submitted', 8, '2025-12-26 12:00:55', '2025-12-26 12:00:55', NULL),
-(9, 1, 'profile-images/33bMYCTHPsWaxknffAPKME9LaN0g2I8joWjVNhas.jpg', 25, 'Femme', 'rochnoir', 'test@example.com', '0612345678', 'Mon Projet Test', 'Ahmed Hassan', 'Description du projet de test', 'SARL', 'Résumé exécutif du projet', 'Jeunes entrepreneurs', 'Concurrent A, Concurrent B', 'Volume moyen', 'Forte demande', 'Équilibrée', 'Qualité et prix', 'Meilleur rapport qualité-prix', 'Réseaux sociaux, publicité locale', 'Adaptation selon le budget', 'Prix compétitifs', 'Janvier 2026', 'Février 2026', 'Mars 2026', 'Avril 2026', 'Mai 2026', '6 mois', 'Casablanca, Hay Mohamadi', 'Oui, très adapté', 'Revenus mensuels stables', 'Bénéfices + expérience + réseau', 'Oui, compétences acquises', 'Oui, matériel disponible', 'Oui, 5 ans d\'expérience', 'Oui, fonds disponibles', 10000.00, 5000.00, 20000.00, 8000.00, 3000.00, NULL, 'Le projet générera des profits à partir de la deuxième année', 'Le projet est durable grâce à la croissance constante', 'submitted', 8, '2025-12-26 14:53:30', '2025-12-26 14:53:30', NULL),
-(10, 1, NULL, 25, 'Homme', NULL, 'test@example.com', '0612345678', 'Mon Projet Test', 'Ahmed Hassan', 'Description du projet de test', 'SARL', 'Résumé exécutif du projet', 'Jeunes entrepreneurs', 'Concurrent A, Concurrent B', 'Volume moyen', 'Forte demande', 'Équilibrée', 'Qualité et prix', 'Meilleur rapport qualité-prix', 'Réseaux sociaux, publicité locale', 'Adaptation selon le budget', 'Prix compétitifs', 'Janvier 2026', 'Février 2026', 'Mars 2026', 'Avril 2026', 'Mai 2026', '6 mois', 'Casablanca, Hay Mohamadi', 'Oui, très adapté', 'Revenus mensuels stables', 'Bénéfices + expérience + réseau', 'Oui, compétences acquises', 'Oui, matériel disponible', 'Oui, 5 ans d\'expérience', 'Oui, fonds disponibles', 10000.00, 5000.00, 20000.00, 8000.00, 30002.00, 73002.00, 'Le projet générera des profits à partir de la deuxième année', 'Le projet est durable grâce à la croissance constante', 'submitted', 8, '2025-12-26 14:56:16', '2025-12-26 14:56:16', NULL),
-(11, 1, NULL, 25, 'Homme', NULL, 'test@example.com', '0612345678', 'Mon Projet Test', 'Ahmed Hassan', 'Description du projet de test', 'SARL', 'Résumé exécutif du projet', 'Jeunes entrepreneurs', 'Concurrent A, Concurrent B', 'Volume moyen', 'Forte demande', 'Équilibrée', 'Qualité et prix', 'Meilleur rapport qualité-prix', 'Réseaux sociaux, publicité locale', 'Adaptation selon le budget', 'Prix compétitifs', 'Janvier 2026', 'Février 2026', 'Mars 2026', 'Avril 2026', 'Mai 2026', '6 mois', 'Casablanca, Hay Mohamadi', 'Oui, très adapté', 'Revenus mensuels stables', 'Bénéfices + expérience + réseau', 'Oui, compétences acquises', 'Oui, matériel disponible', 'Oui, 5 ans d\'expérience', 'Oui, fonds disponibles', 10000.00, 5000.00, 20000.00, 8000.00, 3000.00, NULL, 'Le projet générera des profits à partir de la deuxième année', 'Le projet est durable grâce à la croissance constante', 'submitted', 8, '2025-12-26 15:35:42', '2025-12-26 15:35:42', NULL);
+INSERT INTO `projects` (`id`, `profile_image`, `age`, `gender`, `address`, `email`, `phone`, `project_name`, `ceo_name`, `description`, `registration`, `legal_structure`, `resume_executif`, `public_cible`, `concurrent`, `volume_produits_locaux`, `volume_demande`, `demande_offre`, `motivations_achat`, `raison_choix_client`, `méthodes_marketing`, `adaptation_methodes`, `differenciation_marketing`, `plan_affaires`, `obtention_financement`, `ouverture_proces`, `lancement_recrutement`, `ouverture_definitive`, `duree`, `lieu_projet`, `adaptation_lieu`, `benefices_from_projet`, `valeur_projet`, `step_8_1`, `step_8_2`, `step_8_3`, `step_8_4`, `couts_creation`, `preparation_entreprise`, `achat_machines`, `achat_matieres_premieres`, `autres_couts`, `total`, `generer_profits`, `projet_durable`, `status`, `current_step`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, NULL, 25, 'homme', 'Ain Sbaa', 'test@example.com', '0612345678', 'Mon Projet Test', 'ts saad', 'Description du projet de test', NULL, 'SARL', 'Résumé exécutif du projet', 'Jeunes entrepreneurs', 'Concurrent A, Concurrent B', 'Volume moyen', 'Forte demande', 'Équilibrée', 'Qualité et prix', 'Meilleur rapport qualité-prix', 'Réseaux sociaux, publicité locale', 'Adaptation selon le budget', 'Prix compétitifs', 'Janvier 2026', 'Février 2026', 'Mars 2026', 'Avril 2026', 'Mai 2026', '6 mois', 'Casablanca, Hay Mohamadi', 'Oui, très adapté', 'Revenus mensuels stables', 'Bénéfices + expérience + réseau', 'Oui, compétences acquises', 'Oui, matériel disponible', 'Oui, 5 ans d\'expérience', 'Oui, fonds disponibles', 10000.00, 5000.00, 20000.00, 8000.00, 3000.00, NULL, 'Le projet générera des profits à partir de la deuxième année', 'Le projet est durable grâce à la croissance constante', 'submitted', 8, '2026-01-24 21:36:48', '2026-01-24 21:36:48', NULL),
+(2, 'profile-images/XyZ3jhQ1VQKOZHedGw1H5ELW3yfKmSzp447QzUDK.png', 25, 'homme', 'Hay Mohamadi', 'test@example.com', '0612345678', 'Mon Projet Test', 'Ahmed Hassan', 'Description du projet de test', 'MAT-2223454', 'SARL', 'Résumé exécutif du projet', 'Jeunes entrepreneurs', 'Concurrent A, Concurrent B', 'Volume moyen', 'Forte demande', 'Équilibrée', 'Qualité et prix', 'Meilleur rapport qualité-prix', 'Réseaux sociaux, publicité locale', 'Adaptation selon le budget', 'Prix compétitifs', 'Janvier 2026', 'Février 2026', 'Mars 2026', 'Avril 2026', 'Mai 2026', '6 mois', 'Casablanca, Hay Mohamadi', 'Oui, très adapté', 'Revenus mensuels stables', 'Bénéfices + expérience + réseau', 'Oui, compétences acquises', 'Oui, matériel disponible', 'Oui, 5 ans d\'expérience', 'Oui, fonds disponibles', 10000.00, 5000.00, 20000.00, 8000.00, 3000.00, NULL, 'Le projet générera des profits à partir de la deuxième année', 'Le projet est durable grâce à la croissance constante', 'submitted', 8, '2026-01-24 21:38:29', '2026-01-24 22:17:55', NULL),
+(3, 'profile-images/jcpnTh1XLbolaK4eh7MzqJqKtYBwanppl08xSsVB.png', 25, 'homme', 'Hay Mohamadi', 'test@example.com', '0612345678', 'Mon Projet Test', 'Ahmed Hassan', 'Description du projet de test', NULL, 'SARL', 'Résumé exécutif du projet', 'Jeunes entrepreneurs', 'Concurrent A, Concurrent B', 'Volume moyen', 'Forte demande', 'Équilibrée', 'Qualité et prix', 'Meilleur rapport qualité-prix', 'Réseaux sociaux, publicité locale', 'Adaptation selon le budget', 'Prix compétitifs', 'Janvier 2026', 'Février 2026', 'Mars 2026', 'Avril 2026', 'Mai 2026', '6 mois', 'Casablanca, Hay Mohamadi', 'Oui, très adapté', 'Revenus mensuels stables', 'Bénéfices + expérience + réseau', 'Oui, compétences acquises', 'Oui, matériel disponible', 'Oui, 5 ans d\'expérience', 'Oui, fonds disponibles', 10000.00, 5000.00, 20000.00, 8000.00, 30009.00, 73009.00, 'Le projet générera des profits à partir de la deuxième année', 'Le projet est durable grâce à la croissance constante', 'submitted', 8, '2026-01-24 22:04:42', '2026-01-24 22:04:42', NULL),
+(4, 'profile-images/9xiIvLH7WJ1t3t3BVS2lN9ICvQkBBDupVrm9qdRS.png', 25, 'femme', 'Roches Noires', 'test@example.com', '0612345678', 'Mon Projet Test', 'test 4', 'Description du projet de test', NULL, 'SARL', 'Résumé exécutif du projet', 'Jeunes entrepreneurs', 'Concurrent A, Concurrent B', 'Volume moyen', 'Forte demande', 'Équilibrée', 'Qualité et prix', 'Meilleur rapport qualité-prix', 'Réseaux sociaux, publicité locale', 'Adaptation selon le budget', 'Prix compétitifs', 'Janvier 2026', 'Février 2026', 'Mars 2026', 'Avril 2026', 'Mai 2026', '6 mois', 'Casablanca, Hay Mohamadi', 'Oui, très adapté', 'Revenus mensuels stables', 'Bénéfices + expérience + réseau', 'Oui, compétences acquises', 'Oui, matériel disponible', 'Oui, 5 ans d\'expérience', 'Oui, fonds disponibles', 10000.00, 5000.00, 20000.00, 8000.00, 30004.00, 73004.00, 'Le projet générera des profits à partir de la deuxième année', 'Le projet est durable grâce à la croissance constante', 'submitted', 8, '2026-01-24 23:00:11', '2026-01-24 23:00:11', NULL);
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `project_deliveries`
+-- Table structure for table `project_deliveries`
 --
 
 CREATE TABLE `project_deliveries` (
@@ -234,58 +234,54 @@ CREATE TABLE `project_deliveries` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Déchargement des données de la table `project_deliveries`
+-- Dumping data for table `project_deliveries`
 --
 
 INSERT INTO `project_deliveries` (`id`, `project_id`, `product_name_livraison`, `livraison_methode`, `sort_order`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Produit A', 'Livraison à domicile', 0, '2025-12-26 10:55:09', '2025-12-26 10:55:09'),
-(2, 1, 'Produit B', 'Retrait en magasin', 1, '2025-12-26 10:55:09', '2025-12-26 10:55:09'),
-(5, 8, 'Produit A', 'Livraison à domicile', 0, '2025-12-26 12:00:55', '2025-12-26 12:00:55'),
-(6, 8, 'Produit B', 'Retrait en magasin', 1, '2025-12-26 12:00:55', '2025-12-26 12:00:55'),
-(7, 9, 'Produit A', 'Livraison à domicile', 0, '2025-12-26 14:53:30', '2025-12-26 14:53:30'),
-(8, 9, 'Produit B', 'Retrait en magasin', 1, '2025-12-26 14:53:30', '2025-12-26 14:53:30'),
-(9, 10, 'Produit A', 'Livraison à domicile', 0, '2025-12-26 14:56:16', '2025-12-26 14:56:16'),
-(10, 10, 'Produit B', 'Retrait en magasin', 1, '2025-12-26 14:56:16', '2025-12-26 14:56:16'),
-(11, 11, 'Produit A', 'Livraison à domicile', 0, '2025-12-26 15:35:42', '2025-12-26 15:35:42'),
-(12, 11, 'Produit B', 'Retrait en magasin', 1, '2025-12-26 15:35:42', '2025-12-26 15:35:42');
+(1, 1, 'Produit A', 'Livraison à domicile', 0, '2026-01-24 21:36:48', '2026-01-24 21:36:48'),
+(2, 1, 'Produit B', 'Retrait en magasin', 1, '2026-01-24 21:36:48', '2026-01-24 21:36:48'),
+(3, 2, 'Produit A', 'Livraison à domicile', 0, '2026-01-24 21:38:29', '2026-01-24 21:38:29'),
+(4, 2, 'Produit B', 'Retrait en magasin', 1, '2026-01-24 21:38:29', '2026-01-24 21:38:29'),
+(5, 3, 'Produit A', 'Livraison à domicile', 0, '2026-01-24 22:04:42', '2026-01-24 22:04:42'),
+(6, 3, 'Produit B', 'Retrait en magasin', 1, '2026-01-24 22:04:42', '2026-01-24 22:04:42'),
+(7, 4, 'poduit 4', 'Livraison à domicile', 0, '2026-01-24 23:00:11', '2026-01-24 23:00:11'),
+(8, 4, 'Produit B', 'Retrait en magasin', 1, '2026-01-24 23:00:11', '2026-01-24 23:00:11');
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `project_employees`
+-- Table structure for table `project_employees`
 --
 
 CREATE TABLE `project_employees` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `project_id` bigint(20) UNSIGNED NOT NULL,
   `item` varchar(255) DEFAULT NULL,
-  `total_employee_1` decimal(10,0) DEFAULT NULL,
-  `total_employee_2` decimal(10,0) DEFAULT NULL,
+  `total_employee_1` decimal(12,2) DEFAULT NULL,
+  `total_employee_2` decimal(12,2) DEFAULT NULL,
   `sort_order` int(11) NOT NULL DEFAULT 0,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Déchargement des données de la table `project_employees`
+-- Dumping data for table `project_employees`
 --
 
 INSERT INTO `project_employees` (`id`, `project_id`, `item`, `total_employee_1`, `total_employee_2`, `sort_order`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Directeur', 500, 600, 0, '2025-12-26 10:55:09', '2025-12-26 10:55:09'),
-(2, 1, 'Employé', 3000, 3500, 1, '2025-12-26 10:55:09', '2025-12-26 10:55:09'),
-(5, 8, 'Directeur', 500, 600, 0, '2025-12-26 12:00:55', '2025-12-26 12:00:55'),
-(6, 8, 'Employé', 3000, 3500, 1, '2025-12-26 12:00:55', '2025-12-26 12:00:55'),
-(7, 9, 'Directeur', 5000, 6000, 0, '2025-12-26 14:53:30', '2025-12-26 14:53:30'),
-(8, 9, 'Employé', 3000, 3500, 1, '2025-12-26 14:53:30', '2025-12-26 14:53:30'),
-(9, 10, 'Directeur', 5000, 6000, 0, '2025-12-26 14:56:16', '2025-12-26 14:56:16'),
-(10, 10, 'Employé', 3000, 3500, 1, '2025-12-26 14:56:16', '2025-12-26 14:56:16'),
-(11, 11, 'Directeur', 5000, 6000, 0, '2025-12-26 15:35:42', '2025-12-26 15:35:42'),
-(12, 11, 'Employé', 3000, 3500, 1, '2025-12-26 15:35:42', '2025-12-26 15:35:42');
+(1, 1, 'Directeur', 5000.00, 6000.00, 0, '2026-01-24 21:36:48', '2026-01-24 21:36:48'),
+(2, 1, 'Employé', 3000.00, 3500.00, 1, '2026-01-24 21:36:48', '2026-01-24 21:36:48'),
+(3, 2, 'Directeur', 5000.00, 6000.00, 0, '2026-01-24 21:38:29', '2026-01-24 21:38:29'),
+(4, 2, 'Employé', 3000.00, 3500.00, 1, '2026-01-24 21:38:29', '2026-01-24 21:38:29'),
+(5, 3, 'Directeur', 5000.00, 6000.00, 0, '2026-01-24 22:04:42', '2026-01-24 22:04:42'),
+(6, 3, 'Employé', 3000.00, 3500.00, 1, '2026-01-24 22:04:42', '2026-01-24 22:04:42'),
+(7, 4, 'Directeur', 5000.00, 6000.00, 0, '2026-01-24 23:00:11', '2026-01-24 23:00:11'),
+(8, 4, 'Employé', 3000.00, 3500.00, 1, '2026-01-24 23:00:11', '2026-01-24 23:00:11');
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `project_equipment`
+-- Table structure for table `project_equipment`
 --
 
 CREATE TABLE `project_equipment` (
@@ -300,25 +296,23 @@ CREATE TABLE `project_equipment` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Déchargement des données de la table `project_equipment`
+-- Dumping data for table `project_equipment`
 --
 
 INSERT INTO `project_equipment` (`id`, `project_id`, `equipement`, `reference`, `prix_equipement`, `sort_order`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Machine A', 'REF001', 15000.00, 0, '2025-12-26 10:55:09', '2025-12-26 10:55:09'),
-(2, 1, 'Machine B', 'REF002', 8000.00, 1, '2025-12-26 10:55:09', '2025-12-26 10:55:09'),
-(5, 8, 'Machine A', 'REF001', 15000.00, 0, '2025-12-26 12:00:55', '2025-12-26 12:00:55'),
-(6, 8, 'Machine B', 'REF002', 8000.00, 1, '2025-12-26 12:00:55', '2025-12-26 12:00:55'),
-(7, 9, 'Machine A', 'REF001', 15000.00, 0, '2025-12-26 14:53:30', '2025-12-26 14:53:30'),
-(8, 9, 'Machine B', 'REF002', 8000.00, 1, '2025-12-26 14:53:30', '2025-12-26 14:53:30'),
-(9, 10, 'Machine A', 'REF001', 15000.00, 0, '2025-12-26 14:56:16', '2025-12-26 14:56:16'),
-(10, 10, 'Machine B', 'REF002', 8000.00, 1, '2025-12-26 14:56:16', '2025-12-26 14:56:16'),
-(11, 11, 'Machine A', 'REF001', 15000.00, 0, '2025-12-26 15:35:42', '2025-12-26 15:35:42'),
-(12, 11, 'Machine B', 'REF002', 8000.00, 1, '2025-12-26 15:35:42', '2025-12-26 15:35:42');
+(1, 1, 'Machine A', 'REF001', 15000.00, 0, '2026-01-24 21:36:48', '2026-01-24 21:36:48'),
+(2, 1, 'Machine B', 'REF002', 8000.00, 1, '2026-01-24 21:36:48', '2026-01-24 21:36:48'),
+(3, 2, 'Machine A', 'REF001', 15000.00, 0, '2026-01-24 21:38:29', '2026-01-24 21:38:29'),
+(4, 2, 'Machine B', 'REF002', 8000.00, 1, '2026-01-24 21:38:29', '2026-01-24 21:38:29'),
+(5, 3, 'Machine A', 'REF001', 15000.00, 0, '2026-01-24 22:04:42', '2026-01-24 22:04:42'),
+(6, 3, 'Machine B', 'REF002', 8000.00, 1, '2026-01-24 22:04:42', '2026-01-24 22:04:42'),
+(7, 4, 'Machine A', 'REF001', 15000.00, 0, '2026-01-24 23:00:11', '2026-01-24 23:00:11'),
+(8, 4, 'Machine B', 'REF002', 8000.00, 1, '2026-01-24 23:00:11', '2026-01-24 23:00:11');
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `project_financials`
+-- Table structure for table `project_financials`
 --
 
 CREATE TABLE `project_financials` (
@@ -383,20 +377,19 @@ CREATE TABLE `project_financials` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Déchargement des données de la table `project_financials`
+-- Dumping data for table `project_financials`
 --
 
 INSERT INTO `project_financials` (`id`, `project_id`, `ventes_premiere_annee`, `ventes_deuxieme_annee`, `ventes_troisieme_annee`, `services_premiere_annee`, `services_deuxieme_annee`, `services_troisieme_annee`, `aide_financiere_premiere_annee`, `aide_financiere_deuxieme_annee`, `aide_financiere_troisieme_annee`, `revenus_financiers_premiere_annee`, `revenus_financiers_deuxieme_annee`, `revenus_financiers_troisieme_annee`, `autres_revenus_premiere_annee`, `autres_revenus_deuxieme_annee`, `autres_revenus_troisieme_annee`, `total_revenus_premiere_annee`, `total_revenus_deuxieme_annee`, `total_revenus_troisieme_annee`, `achat_prevue_premiere_annee`, `achat_prevue_deuxieme_annee`, `achat_prevue_troisieme_annee`, `frais_fonctionnement_premiere_annee`, `frais_fonctionnement_deuxieme_annee`, `frais_fonctionnement_troisieme_annee`, `charges_personnel_premiere_annee`, `charges_personnel_deuxieme_annee`, `charges_personnel_troisieme_annee`, `dettes_premiere_annee`, `dettes_deuxieme_annee`, `dettes_troisieme_annee`, `etablissement_bancaire_premiere_annee`, `etablissement_bancaire_deuxieme_annee`, `etablissement_bancaire_troisieme_annee`, `fournisseurs_premiere_annee`, `fournisseurs_deuxieme_annee`, `fournisseurs_troisieme_annee`, `autres_dettes_premiere_annee`, `autres_dettes_deuxieme_annee`, `autres_dettes_troisieme_annee`, `autres_charges_premiere_annee`, `autres_charges_deuxieme_annee`, `autres_charges_troisieme_annee`, `total_frais_premiere_annee`, `total_frais_deuxieme_annee`, `total_frais_troisieme_annee`, `revenus_premiere_annee`, `revenus_deuxieme_annee`, `revenus_troisieme_annee`, `depenses_premiere_annee`, `depenses_deuxieme_annee`, `depenses_troisieme_annee`, `resultat_premiere_annee`, `resultat_deuxieme_annee`, `resultat_troisieme_annee`, `created_at`, `updated_at`) VALUES
-(1, 1, 50000.00, 75000.00, 100000.00, 20000.00, 30000.00, 40000.00, 10000.00, 5000.00, 0.00, 2000.00, 3000.00, 4000.00, 1000.00, 2000.00, 3000.00, 83000.00, 115000.00, 147000.00, 30000.00, 40000.00, 50000.00, 12000.00, 15000.00, 18000.00, 24000.00, 30000.00, 36000.00, 5000.00, 3000.00, 1000.00, 2000.00, 2000.00, 2000.00, 8000.00, 10000.00, 12000.00, 1000.00, 500.00, 0.00, 3000.00, 4000.00, 5000.00, 85000.00, 104500.00, 124000.00, 83000.00, 115000.00, 147000.00, 85000.00, 104500.00, 124000.00, -2000.00, 10500.00, 23000.00, '2025-12-26 10:55:09', '2025-12-26 10:55:09'),
-(3, 8, 50000.00, 75000.00, 100000.00, 20000.00, 30000.00, 40000.00, 10000.00, 5000.00, 0.00, 2000.00, 3000.00, 4000.00, 1000.00, 2000.00, 3000.00, 83000.00, 115000.00, 147000.00, 30000.00, 40000.00, 50000.00, 12000.00, 15000.00, 18000.00, 24000.00, 30000.00, 36000.00, 5000.00, 3000.00, 1000.00, 2000.00, 2000.00, 2000.00, 8000.00, 10000.00, 12000.00, 1000.00, 500.00, 0.00, 3000.00, 4000.00, 5000.00, 85000.00, 104500.00, 124000.00, 83000.00, 115000.00, 147000.00, 85000.00, 104500.00, 124000.00, -2000.00, 10500.00, 23000.00, '2025-12-26 12:00:55', '2025-12-26 12:00:55'),
-(4, 9, 50000.00, 75000.00, 100000.00, 20000.00, 30000.00, 40000.00, 10000.00, 5000.00, 0.00, 2000.00, 3000.00, 4000.00, 1000.00, 2000.00, 3000.00, 83000.00, 115000.00, 147000.00, 30000.00, 40000.00, 50000.00, 12000.00, 15000.00, 18000.00, 24000.00, 30000.00, 36000.00, 5000.00, 3000.00, 1000.00, 2000.00, 2000.00, 2000.00, 8000.00, 10000.00, 12000.00, 1000.00, 500.00, 0.00, 3000.00, 4000.00, 5000.00, 85000.00, 104500.00, 124000.00, 83000.00, 115000.00, 147000.00, 85000.00, 104500.00, 124000.00, NULL, NULL, NULL, '2025-12-26 14:53:30', '2025-12-26 14:53:30'),
-(5, 10, 50000.00, 75000.00, 100000.00, 20000.00, 30000.00, 40000.00, 10000.00, 5000.00, 0.00, 2000.00, 3000.00, 4000.00, 1000.00, 2000.00, 3000.00, 83000.00, 115000.00, 147000.00, 30000.00, 40000.00, 50000.00, 12000.00, 15000.00, 18000.00, 24000.00, 30000.00, 36000.00, 5000.00, 3000.00, 1000.00, 2000.00, 2000.00, 2000.00, 8000.00, 10000.00, 12000.00, 1000.00, 500.00, 0.00, 3000.00, 4000.00, 5000.00, 85000.00, 104500.00, 124000.00, 83000.00, 115000.00, 147000.00, 850005.00, 1045005.00, 1240006.00, -767005.00, -930005.00, -1093006.00, '2025-12-26 14:56:16', '2025-12-26 14:56:16'),
-(6, 11, 50000.00, 75000.00, 100000.00, 20000.00, 30000.00, 40000.00, 10000.00, 5000.00, 0.00, 2000.00, 3000.00, 4000.00, 1000.00, 2000.00, 3000.00, 83000.00, 115000.00, 147000.00, 30000.00, 40000.00, 50000.00, 12000.00, 15000.00, 18000.00, 24000.00, 30000.00, 36000.00, 5000.00, 3000.00, 1000.00, 2000.00, 2000.00, 2000.00, 8000.00, 10000.00, 12000.00, 1000.00, 500.00, 0.00, 3000.00, 4000.00, 5000.00, 85000.00, 104500.00, 124000.00, 83000.00, 115000.00, 147000.00, 85000.00, 104500.00, 124000.00, NULL, NULL, NULL, '2025-12-26 15:35:42', '2025-12-26 15:35:42');
+(1, 1, 50000.00, 75000.00, 100000.00, 20000.00, 30000.00, 40000.00, 10000.00, 5000.00, 0.00, 2000.00, 3000.00, 4000.00, 1000.00, 2000.00, 3000.00, 1.00, 115000.00, 147000.00, 30000.00, 40000.00, 50000.00, 12000.00, 15000.00, 18000.00, 24000.00, 30000.00, 36000.00, 5000.00, 3000.00, 1000.00, 2000.00, 2000.00, 2000.00, 8000.00, 10000.00, 12000.00, 1000.00, 500.00, 0.00, 3000.00, 4000.00, 5000.00, 85000.00, 104500.00, 124000.00, 1.00, 115000.00, 147000.00, 85000.00, 104500.00, 124000.00, -2000.00, 10500.00, 23000.00, '2026-01-24 21:36:48', '2026-01-24 23:30:13'),
+(2, 2, 50000.00, 75000.00, 100000.00, 20000.00, 30000.00, 40000.00, 10000.00, 5000.00, 0.00, 2000.00, 3000.00, 4000.00, 1000.00, 2000.00, 3000.00, 1.00, 115000.00, 147000.00, 30000.00, 40000.00, 50000.00, 12000.00, 15000.00, 18000.00, 24000.00, 30000.00, 36000.00, 5000.00, 3000.00, 1000.00, 2000.00, 2000.00, 2000.00, 8000.00, 10000.00, 12000.00, 1000.00, 500.00, 0.00, 3000.00, 4000.00, 5000.00, 85000.00, 104500.00, 124000.00, 83000.00, 115000.00, 147000.00, 85000.00, 104500.00, 124000.00, -2000.00, 10500.00, 23000.00, '2026-01-24 21:38:29', '2026-01-24 23:30:13'),
+(3, 3, 50000.00, 75000.00, 100000.00, 20000.00, 30000.00, 40000.00, 10000.00, 5000.00, 0.00, 2000.00, 3000.00, 4000.00, 1000.00, 2000.00, 3000.00, 1.00, 115000.00, 147000.00, 30000.00, 40000.00, 50000.00, 12000.00, 15000.00, 18000.00, 24000.00, 30000.00, 36000.00, 5000.00, 3000.00, 1000.00, 2000.00, 2000.00, 2000.00, 8000.00, 10000.00, 12000.00, 1000.00, 500.00, 0.00, 3000.00, 4000.00, 5000.00, 85000.00, 104500.00, 124000.00, 83000.00, 115000.00, 147000.00, 850000.00, 104500.00, 124000.00, -767000.00, 10500.00, 23000.00, '2026-01-24 22:04:42', '2026-01-24 23:30:13'),
+(4, 4, 50000.00, 75000.00, 100000.00, 20000.00, 30000.00, 40000.00, 10000.00, 5000.00, 0.00, 2000.00, 3000.00, 4000.00, 1000.00, 2000.00, 3000.00, 1.00, 115000.00, 147000.00, 30000.00, 40000.00, 50000.00, 12000.00, 15000.00, 18000.00, 24000.00, 30000.00, 36000.00, 5000.00, 3000.00, 1000.00, 2000.00, 2000.00, 2000.00, 8000.00, 10000.00, 12000.00, 1000.00, 500.00, 0.00, 3000.00, 4000.00, 5000.00, 85000.00, 104500.00, 124000.00, 2.00, 115000.00, 147000.00, 85000.00, 104500.00, 124000.00, 1.00, 10500.00, 23000.00, '2026-01-24 23:00:11', '2026-01-24 23:30:13');
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `project_presentations`
+-- Table structure for table `project_presentations`
 --
 
 CREATE TABLE `project_presentations` (
@@ -410,25 +403,23 @@ CREATE TABLE `project_presentations` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Déchargement des données de la table `project_presentations`
+-- Dumping data for table `project_presentations`
 --
 
 INSERT INTO `project_presentations` (`id`, `project_id`, `product_name_presentation`, `presentation_methode`, `sort_order`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Produit A', 'En magasin', 0, '2025-12-26 10:55:09', '2025-12-26 10:55:09'),
-(2, 1, 'Produit B', 'En ligne', 1, '2025-12-26 10:55:09', '2025-12-26 10:55:09'),
-(5, 8, 'Produit A', 'En magasin', 0, '2025-12-26 12:00:55', '2025-12-26 12:00:55'),
-(6, 8, 'Produit B', 'En ligne', 1, '2025-12-26 12:00:55', '2025-12-26 12:00:55'),
-(7, 9, 'Produit A', 'En magasin', 0, '2025-12-26 14:53:30', '2025-12-26 14:53:30'),
-(8, 9, 'Produit B', 'En ligne', 1, '2025-12-26 14:53:30', '2025-12-26 14:53:30'),
-(9, 10, 'Produit A', 'En magasin', 0, '2025-12-26 14:56:16', '2025-12-26 14:56:16'),
-(10, 10, 'Produit B', 'En ligne', 1, '2025-12-26 14:56:16', '2025-12-26 14:56:16'),
-(11, 11, 'Produit A', 'En magasin', 0, '2025-12-26 15:35:42', '2025-12-26 15:35:42'),
-(12, 11, 'Produit B', 'En ligne', 1, '2025-12-26 15:35:42', '2025-12-26 15:35:42');
+(1, 1, 'Produit A', 'En magasin', 0, '2026-01-24 21:36:48', '2026-01-24 21:36:48'),
+(2, 1, 'Produit B', 'En ligne', 1, '2026-01-24 21:36:48', '2026-01-24 21:36:48'),
+(3, 2, 'Produit A', 'En magasin', 0, '2026-01-24 21:38:29', '2026-01-24 21:38:29'),
+(4, 2, 'Produit B', 'En ligne', 1, '2026-01-24 21:38:29', '2026-01-24 21:38:29'),
+(5, 3, 'Produit A', 'En magasin', 0, '2026-01-24 22:04:42', '2026-01-24 22:04:42'),
+(6, 3, 'Produit B', 'En ligne', 1, '2026-01-24 22:04:42', '2026-01-24 22:04:42'),
+(7, 4, 'Produit A', 'En magasin', 0, '2026-01-24 23:00:11', '2026-01-24 23:00:11'),
+(8, 4, 'Produit B', 'En ligne', 1, '2026-01-24 23:00:11', '2026-01-24 23:00:11');
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `project_products`
+-- Table structure for table `project_products`
 --
 
 CREATE TABLE `project_products` (
@@ -442,25 +433,23 @@ CREATE TABLE `project_products` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Déchargement des données de la table `project_products`
+-- Dumping data for table `project_products`
 --
 
 INSERT INTO `project_products` (`id`, `project_id`, `product_name`, `description`, `sort_order`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Produit A', 'Description produit A', 0, '2025-12-26 10:55:09', '2025-12-26 10:55:09'),
-(2, 1, 'Produit B', 'Description produit B', 1, '2025-12-26 10:55:09', '2025-12-26 10:55:09'),
-(11, 8, 'Produit A', 'Description produit A', 0, '2025-12-26 12:00:55', '2025-12-26 12:00:55'),
-(12, 8, 'Produit B', 'Description produit B', 1, '2025-12-26 12:00:55', '2025-12-26 12:00:55'),
-(13, 9, 'Produit A', 'Description produit A', 0, '2025-12-26 14:53:30', '2025-12-26 14:53:30'),
-(14, 9, 'Produit B', 'Description produit B', 1, '2025-12-26 14:53:30', '2025-12-26 14:53:30'),
-(15, 10, 'Produit A', 'Description produit A', 0, '2025-12-26 14:56:16', '2025-12-26 14:56:16'),
-(16, 10, 'Produit B', 'Description produit B', 1, '2025-12-26 14:56:16', '2025-12-26 14:56:16'),
-(17, 11, 'Produit A', 'Description produit A', 0, '2025-12-26 15:35:42', '2025-12-26 15:35:42'),
-(18, 11, 'Produit B', 'Description produit B', 1, '2025-12-26 15:35:42', '2025-12-26 15:35:42');
+(1, 1, 'Produit A', 'Description produit A', 0, '2026-01-24 21:36:48', '2026-01-24 21:36:48'),
+(2, 1, 'Produit B', 'Description produit B', 1, '2026-01-24 21:36:48', '2026-01-24 21:36:48'),
+(3, 2, 'Produit A', 'Description produit A', 0, '2026-01-24 21:38:29', '2026-01-24 21:38:29'),
+(4, 2, 'Produit B', 'Description produit B', 1, '2026-01-24 21:38:29', '2026-01-24 21:38:29'),
+(5, 3, 'Produit A', 'Description produit A', 0, '2026-01-24 22:04:42', '2026-01-24 22:04:42'),
+(6, 3, 'Produit B', 'Description produit B', 1, '2026-01-24 22:04:42', '2026-01-24 22:04:42'),
+(7, 4, 'Produit A', 'Description produit A', 0, '2026-01-24 23:00:11', '2026-01-24 23:00:11'),
+(8, 4, 'Produit B', 'Description produit B', 1, '2026-01-24 23:00:11', '2026-01-24 23:00:11');
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `project_raw_materials`
+-- Table structure for table `project_raw_materials`
 --
 
 CREATE TABLE `project_raw_materials` (
@@ -475,25 +464,24 @@ CREATE TABLE `project_raw_materials` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Déchargement des données de la table `project_raw_materials`
+-- Dumping data for table `project_raw_materials`
 --
 
 INSERT INTO `project_raw_materials` (`id`, `project_id`, `matiere_premiere`, `comment_procurer`, `fournisseur_matiere`, `sort_order`, `created_at`, `updated_at`) VALUES
-(1, 1, 'Matière A', 'Fournisseur local', 'Fournisseur 1', 0, '2025-12-26 10:55:09', '2025-12-26 10:55:09'),
-(2, 1, 'Matière B', 'Import', 'Fournisseur 2', 1, '2025-12-26 10:55:09', '2025-12-26 10:55:09'),
-(5, 8, 'Matière A', 'Fournisseur local', 'Fournisseur 1', 0, '2025-12-26 12:00:55', '2025-12-26 12:00:55'),
-(6, 8, 'Matière B', 'Import', 'Fournisseur 2', 1, '2025-12-26 12:00:55', '2025-12-26 12:00:55'),
-(7, 9, 'Matière A', 'Fournisseur local', 'Fournisseur 1', 0, '2025-12-26 14:53:30', '2025-12-26 14:53:30'),
-(8, 9, 'Matière B', 'Import', 'Fournisseur 2', 1, '2025-12-26 14:53:30', '2025-12-26 14:53:30'),
-(9, 10, 'Matière A', 'Fournisseur local', 'Fournisseur 1', 0, '2025-12-26 14:56:16', '2025-12-26 14:56:16'),
-(10, 10, 'Matière B', 'Import', 'Fournisseur 2', 1, '2025-12-26 14:56:16', '2025-12-26 14:56:16'),
-(11, 11, 'Matière A', 'Fournisseur local', 'Fournisseur 1', 0, '2025-12-26 15:35:42', '2025-12-26 15:35:42'),
-(12, 11, 'Matière B', 'Import', 'Fournisseur 2', 1, '2025-12-26 15:35:42', '2025-12-26 15:35:42');
+(1, 1, 'Matière A', 'Fournisseur local', 'Fournisseur 1', 0, '2026-01-24 21:36:48', '2026-01-24 21:36:48'),
+(2, 1, 'Matière B', 'Import', 'Fournisseur 2', 1, '2026-01-24 21:36:48', '2026-01-24 21:36:48'),
+(3, 2, 'Matière A', 'Fournisseur local', 'Fournisseur 1', 0, '2026-01-24 21:38:29', '2026-01-24 21:38:29'),
+(4, 2, 'Matière B', 'Import', 'Fournisseur 2', 1, '2026-01-24 21:38:29', '2026-01-24 21:38:29'),
+(5, 3, 'Matière A', 'Fournisseur local', 'Fournisseur 1', 0, '2026-01-24 22:04:42', '2026-01-24 22:04:42'),
+(6, 3, 'Matière B', 'Import', 'Fournisseur 2', 1, '2026-01-24 22:04:42', '2026-01-24 22:04:42'),
+(7, 3, 'Matière s', 'Import', 'Fournisseur local', 2, '2026-01-24 22:04:42', '2026-01-24 22:04:42'),
+(8, 4, 'Matière A', 'Fournisseur local', 'Fournisseur 1', 0, '2026-01-24 23:00:11', '2026-01-24 23:00:11'),
+(9, 4, 'Matière B', 'Import', 'Fournisseur 2', 1, '2026-01-24 23:00:11', '2026-01-24 23:00:11');
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `sessions`
+-- Table structure for table `sessions`
 --
 
 CREATE TABLE `sessions` (
@@ -506,20 +494,17 @@ CREATE TABLE `sessions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Déchargement des données de la table `sessions`
+-- Dumping data for table `sessions`
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('CpT3OYX2Scn9DJcCIJy4R93SfRQW5tJeZKn8pfIm', 1, '192.168.11.104', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiTTdkbHhGUWVJOU1QdDd4UzNjelpiN3dsY3lXQ043TG14a3B3amR1ZyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDI6Imh0dHA6Ly8xOTIuMTY4LjExLjEwNjo4MDgwL2FkbWluL2Rhc2hib2FyZCI7czo1OiJyb3V0ZSI7czoxNToiYWRtaW4uZGFzaGJvYXJkIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTt9', 1766768353),
-('nRlOyPGifo8PKzmEAkd6ZTmVn45LlfDQJXWr6ooc', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoibmpQR3NkMW4yS2ZhZTRUYXl4WGZOVkpqdFRKak95ZGNTdTlaWUVhOCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi91c2Vycy8xIjtzOjU6InJvdXRlIjtzOjE2OiJhZG1pbi51c2Vycy5zaG93Ijt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTt9', 1766768027),
-('QqWstnHkLlYkMASr9ByFpoSJBUKi0ApVWjeDgbRi', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoibjJFYVlORlYwRWJ4c0JQTlo1UEdHNGoyUzR2bWo5QWJobnlhV0JVZiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzM6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9sb2dpbiI7czo1OiJyb3V0ZSI7czoxMToiYWRtaW4ubG9naW4iO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1766761045),
-('r07HtBBeGL8NXYEcUYWiIzPxe3p6ftdJIWKw86pS', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiOGZacXVpbHhnZ1NJdk1xa04yeDhUa2R0eW1xTVpwVjVzdmRLMVJyOCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6ODk6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC91cGxvYWRzL3Byb2ZpbGUtaW1hZ2VzL0JlbnUwc1hnOUFtQXdvaUhORUs3ZnJjWDFQSENBVG50WGJoOEt1bk0ucG5nIjtzOjU6InJvdXRlIjtzOjEyOiJ1cGxvYWRzLnNob3ciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO30=', 1766762456),
-('sRqY92DFIWCC1CGP8GMUIXEZWH8sBp1HbuKnUuu7', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiWjhjRTdwMjZhMENjV0J5c2VLc0Q0Z0Y0MEVMYnk5aFpFWDlJVXBoaCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzM6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9sb2dpbiI7czo1OiJyb3V0ZSI7czoxMToiYWRtaW4ubG9naW4iO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1766761002);
+('ehJjHtX31T8UHfRl9m4UJ3HJmeE5SGMSonW0Y6gH', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiN0FFSDFHaTRHNmxGSG1FNTdFZmhqMFJQNFhBenNvVTZOOGJlSUpmOCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzM6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9sb2dpbiI7czo1OiJyb3V0ZSI7czoxMToiYWRtaW4ubG9naW4iO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1769344474),
+('kIHQRcRz28x2mqplOW7e4hzN7ruNplOg3QXDix1d', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoidklCNFVyYUpQUUpuY3g5QmxRTzVmYTU4bjVvTXNMSUtMOWpVa20zSiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MjE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMCI7czo1OiJyb3V0ZSI7Tjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1769344473);
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `users`
+-- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
@@ -536,73 +521,72 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Déchargement des données de la table `users`
+-- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `role`, `is_active`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Admin', 'admin@admin.com', NULL, '$2y$12$acce67vErQVY/YXgFCmHq.Usnjr3HTakwzfcxTPZObjMXYigAb7My', 'super_admin', 1, NULL, '2025-12-26 10:47:27', '2025-12-26 11:03:05'),
-(2, 'Super Admin', 'superadmin@admin.com', NULL, '$2y$12$nklBWtXlfXTfiTh9qyV5uuF3OzoPPZXMjk3ejZ7n8PGibVS7v01fS', 'super_admin', 1, NULL, '2025-12-26 11:02:55', '2025-12-26 11:03:05');
+(1, 'saad', 'admin@admin.com', NULL, '$2y$12$acce67vErQVY/YXgFCmHq.Usnjr3HTakwzfcxTPZObjMXYigAb7My', 'super_admin', 1, NULL, '2025-12-26 09:47:27', '2025-12-26 10:03:05'),
+(2, 'simple', 'superadmin@admin.com', NULL, '$2y$12$nklBWtXlfXTfiTh9qyV5uuF3OzoPPZXMjk3ejZ7n8PGibVS7v01fS', 'super_admin', 1, NULL, '2025-12-26 10:02:55', '2025-12-26 10:03:05');
 
 --
--- Index pour les tables déchargées
+-- Indexes for dumped tables
 --
 
 --
--- Index pour la table `cache`
+-- Indexes for table `cache`
 --
 ALTER TABLE `cache`
   ADD PRIMARY KEY (`key`);
 
 --
--- Index pour la table `cache_locks`
+-- Indexes for table `cache_locks`
 --
 ALTER TABLE `cache_locks`
   ADD PRIMARY KEY (`key`);
 
 --
--- Index pour la table `failed_jobs`
+-- Indexes for table `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`);
 
 --
--- Index pour la table `jobs`
+-- Indexes for table `jobs`
 --
 ALTER TABLE `jobs`
   ADD PRIMARY KEY (`id`),
   ADD KEY `jobs_queue_index` (`queue`);
 
 --
--- Index pour la table `job_batches`
+-- Indexes for table `job_batches`
 --
 ALTER TABLE `job_batches`
   ADD PRIMARY KEY (`id`);
 
 --
--- Index pour la table `migrations`
+-- Indexes for table `migrations`
 --
 ALTER TABLE `migrations`
   ADD PRIMARY KEY (`id`);
 
 --
--- Index pour la table `password_reset_tokens`
+-- Indexes for table `password_reset_tokens`
 --
 ALTER TABLE `password_reset_tokens`
   ADD PRIMARY KEY (`email`);
 
 --
--- Index pour la table `projects`
+-- Indexes for table `projects`
 --
 ALTER TABLE `projects`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `projects_user_id_index` (`user_id`),
   ADD KEY `projects_status_index` (`status`),
   ADD KEY `projects_email_index` (`email`),
   ADD KEY `projects_created_at_index` (`created_at`);
 
 --
--- Index pour la table `project_deliveries`
+-- Indexes for table `project_deliveries`
 --
 ALTER TABLE `project_deliveries`
   ADD PRIMARY KEY (`id`),
@@ -610,7 +594,7 @@ ALTER TABLE `project_deliveries`
   ADD KEY `project_deliveries_sort_order_index` (`sort_order`);
 
 --
--- Index pour la table `project_employees`
+-- Indexes for table `project_employees`
 --
 ALTER TABLE `project_employees`
   ADD PRIMARY KEY (`id`),
@@ -618,7 +602,7 @@ ALTER TABLE `project_employees`
   ADD KEY `project_employees_sort_order_index` (`sort_order`);
 
 --
--- Index pour la table `project_equipment`
+-- Indexes for table `project_equipment`
 --
 ALTER TABLE `project_equipment`
   ADD PRIMARY KEY (`id`),
@@ -626,14 +610,14 @@ ALTER TABLE `project_equipment`
   ADD KEY `project_equipment_sort_order_index` (`sort_order`);
 
 --
--- Index pour la table `project_financials`
+-- Indexes for table `project_financials`
 --
 ALTER TABLE `project_financials`
   ADD PRIMARY KEY (`id`),
   ADD KEY `project_financials_project_id_index` (`project_id`);
 
 --
--- Index pour la table `project_presentations`
+-- Indexes for table `project_presentations`
 --
 ALTER TABLE `project_presentations`
   ADD PRIMARY KEY (`id`),
@@ -641,7 +625,7 @@ ALTER TABLE `project_presentations`
   ADD KEY `project_presentations_sort_order_index` (`sort_order`);
 
 --
--- Index pour la table `project_products`
+-- Indexes for table `project_products`
 --
 ALTER TABLE `project_products`
   ADD PRIMARY KEY (`id`),
@@ -649,7 +633,7 @@ ALTER TABLE `project_products`
   ADD KEY `project_products_sort_order_index` (`sort_order`);
 
 --
--- Index pour la table `project_raw_materials`
+-- Indexes for table `project_raw_materials`
 --
 ALTER TABLE `project_raw_materials`
   ADD PRIMARY KEY (`id`),
@@ -657,7 +641,7 @@ ALTER TABLE `project_raw_materials`
   ADD KEY `project_raw_materials_sort_order_index` (`sort_order`);
 
 --
--- Index pour la table `sessions`
+-- Indexes for table `sessions`
 --
 ALTER TABLE `sessions`
   ADD PRIMARY KEY (`id`),
@@ -665,136 +649,130 @@ ALTER TABLE `sessions`
   ADD KEY `sessions_last_activity_index` (`last_activity`);
 
 --
--- Index pour la table `users`
+-- Indexes for table `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `users_email_unique` (`email`);
 
 --
--- AUTO_INCREMENT pour les tables déchargées
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT pour la table `failed_jobs`
+-- AUTO_INCREMENT for table `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT pour la table `jobs`
+-- AUTO_INCREMENT for table `jobs`
 --
 ALTER TABLE `jobs`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT pour la table `migrations`
+-- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
--- AUTO_INCREMENT pour la table `projects`
+-- AUTO_INCREMENT for table `projects`
 --
 ALTER TABLE `projects`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT pour la table `project_deliveries`
+-- AUTO_INCREMENT for table `project_deliveries`
 --
 ALTER TABLE `project_deliveries`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT pour la table `project_employees`
+-- AUTO_INCREMENT for table `project_employees`
 --
 ALTER TABLE `project_employees`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT pour la table `project_equipment`
+-- AUTO_INCREMENT for table `project_equipment`
 --
 ALTER TABLE `project_equipment`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT pour la table `project_financials`
+-- AUTO_INCREMENT for table `project_financials`
 --
 ALTER TABLE `project_financials`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT pour la table `project_presentations`
+-- AUTO_INCREMENT for table `project_presentations`
 --
 ALTER TABLE `project_presentations`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT pour la table `project_products`
+-- AUTO_INCREMENT for table `project_products`
 --
 ALTER TABLE `project_products`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT pour la table `project_raw_materials`
+-- AUTO_INCREMENT for table `project_raw_materials`
 --
 ALTER TABLE `project_raw_materials`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
--- AUTO_INCREMENT pour la table `users`
+-- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
--- Contraintes pour les tables déchargées
+-- Constraints for dumped tables
 --
 
 --
--- Contraintes pour la table `projects`
---
-ALTER TABLE `projects`
-  ADD CONSTRAINT `projects_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL;
-
---
--- Contraintes pour la table `project_deliveries`
+-- Constraints for table `project_deliveries`
 --
 ALTER TABLE `project_deliveries`
   ADD CONSTRAINT `project_deliveries_project_id_foreign` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE;
 
 --
--- Contraintes pour la table `project_employees`
+-- Constraints for table `project_employees`
 --
 ALTER TABLE `project_employees`
   ADD CONSTRAINT `project_employees_project_id_foreign` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE;
 
 --
--- Contraintes pour la table `project_equipment`
+-- Constraints for table `project_equipment`
 --
 ALTER TABLE `project_equipment`
   ADD CONSTRAINT `project_equipment_project_id_foreign` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE;
 
 --
--- Contraintes pour la table `project_financials`
+-- Constraints for table `project_financials`
 --
 ALTER TABLE `project_financials`
   ADD CONSTRAINT `project_financials_project_id_foreign` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE;
 
 --
--- Contraintes pour la table `project_presentations`
+-- Constraints for table `project_presentations`
 --
 ALTER TABLE `project_presentations`
   ADD CONSTRAINT `project_presentations_project_id_foreign` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE;
 
 --
--- Contraintes pour la table `project_products`
+-- Constraints for table `project_products`
 --
 ALTER TABLE `project_products`
   ADD CONSTRAINT `project_products_project_id_foreign` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE;
 
 --
--- Contraintes pour la table `project_raw_materials`
+-- Constraints for table `project_raw_materials`
 --
 ALTER TABLE `project_raw_materials`
   ADD CONSTRAINT `project_raw_materials_project_id_foreign` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE;

@@ -507,7 +507,7 @@
     @endif
     
     <!-- Prévisions financières -->
-    @if($project->financials->count() > 0)
+    @if($project->financials)
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
         <div class="px-6 py-4 border-b border-gray-100">
             <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
@@ -518,9 +518,8 @@
             </h3>
         </div>
         @php
-            $financial = $project->financials->first();
+            $financial = $project->financials;
         @endphp
-        @if($financial)
         <div class="overflow-x-auto">
             <table class="w-full">
                 <thead class="bg-gray-50">
@@ -657,12 +656,11 @@
                         <td class="border px-6 py-4 text-sm font-bold text-gray-900">Résultat (Revenus - Dépenses) RÉSULTAT (REVENUS - DÉPENSES)</td>
                         <td class="border px-6 py-4 text-sm font-bold text-blue-700 text-center">{{ number_format($financial->resultat_premiere_annee ?? 0, 2) }} DH</td>
                         <td class="border px-6 py-4 text-sm font-bold text-blue-700 text-center">{{ number_format($financial->resultat_deuxieme_annee ?? 0, 2) }} DH</td>
-                        <td class="border px-6 py-4 text-sm font-bold text-blue-700 text-center">{{ number_format($financial->resultat_troisieme_annee ?? 0, 2) }} DH</td>
+                        <td class="border px-6 py-4 text-sm font-bold text-blue-700 text-center">{{ number_format($financial->resultat_troisieme_annee ?? 0, 2) }} DH </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        @endif
     </div>
     @endif
 
