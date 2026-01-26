@@ -47,8 +47,7 @@
 
 
 
-    @if(app()->environment('local'))
-        <div class="bg-yellow-100 border border-yellow-400 p-4 mb-4 rounded">
+        <div class="bg-yellow-100 border border-yellow-400 p-4 mb-4 rounded d-none">
             <h4 class="font-bold mb-2">🧪 Development Testing Tools</h4>
             <div class="flex gap-2 flex-wrap">
                 <button wire:click="fillTestData" class=" text-black px-3 py-1 rounded text-sm">
@@ -64,7 +63,6 @@
                 @endfor
             </div>
         </div>
-    @endif
 
 
     <p class="steps-indicateur mt-4">( {{ $step }} / 8 )</p>
