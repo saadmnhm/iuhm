@@ -28,7 +28,7 @@
     class="overlay"
 >
     <div class="modal-card">
-        <h2>Terms & Conditions</h2>
+        <h1><strong>tout les champs sont obligatoires</strong></h1>
 
         <label class="checkbox">
             <input type="checkbox" x-model="agreed">
