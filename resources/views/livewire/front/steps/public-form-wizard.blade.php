@@ -1,4 +1,32 @@
 
+
+<div
+    x-data="{
+        open: !localStorage.getItem('termsAccepted'),
+        agreed: false
+    }"
+    x-show="open"
+    x-cloak
+    class="overlay"
+>
+    <div class="modal-card">
+        <h1><strong>tout les champs sont obligatoires</strong></h1>
+
+        <label class="checkbox">
+            <input type="checkbox" x-model="agreed">
+            I agree to the terms
+        </label>
+
+        <br>
+        <button
+            :disabled="!agreed"
+            @click="localStorage.setItem('termsAccepted','true'); open=false"
+        >
+            Accept
+        </button>
+    </div>
+</div>
+
 <div class="parent-steps container">
 
 <div class="header-form">
@@ -84,6 +112,33 @@
         <p>{{ session('success') }}</p>
     @endif
 
+
+        <div class="wizard-layout">
+        <!-- Header with Logo -->
+        <header class="wizard-header">
+            <div class="wizard-logo-container">
+                <img src="{{ asset('assets/images/iuhm_logo.png') }}" alt="Logo" class="wizard-logo">
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="wizard-content">
+            {{ $slot }}
+        </main>
+
+        <!-- Footer -->
+        <footer class="wizard-footer">
+            <div class="wizard-footer-content">
+                <div class="wizard-logo-footer">
+                    <img src="{{ asset('assets/images/iuhm_logo.png') }}" alt="iuhm-logo-footer">
+                    <img src="{{ asset('assets/images/indh_logo.png') }}" alt="indh-logo-footer" >
+                    <img src="{{ asset('assets/images/logo_zettat.png') }}" alt="zettat-logo-footer" >
+                </div>
+                <p class="text-center mt-5">&copy; {{ date('Y') }} Tous droits réservés par <a href="www.iuhm.org" style='color:#2f5496'>initiative urbaine hay mohammadi</a></p>
+            </div>
+        </footer>
+    </div>
+
     <script>
         document.addEventListener('livewire:init', () => {
             Livewire.on('scroll-to-top', () => {
@@ -92,3 +147,5 @@
         });
     </script>
 </div>
+
+

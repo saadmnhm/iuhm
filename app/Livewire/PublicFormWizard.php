@@ -379,7 +379,7 @@ class PublicFormWizard extends Component
 
     public function render()
     {
-        return view('livewire.front.public-form-wizard');
+        return view('livewire.front.steps.public-form-wizard');
     }
 
     public function save()
