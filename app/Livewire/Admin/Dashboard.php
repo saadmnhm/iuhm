@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use App\Models\Project;
 use App\Models\User;
+use App\Models\Candidat;
 use Livewire\Component;
 
 class Dashboard extends Component
@@ -13,12 +14,13 @@ class Dashboard extends Component
         $statistics = [
             'total_projects' => Project::count(),
             'total_users' => User::count(),
-            'male_count' => Project::where('gender', 'homme')->count(),
-            'female_count' => Project::where('gender', 'femme')->count(),
+            'total_candidats' => Candidat::count(),
+            'male_count' => Candidat::where('gender', 'homme')->count(),
+            'female_count' => Candidat::where('gender', 'femme')->count(),
             'recent_projects' => Project::with('user')->latest()->take(10)->get(),
-            'as' => Project::where('address', 'Ain Sbaa')->count(),
-            'hm' => Project::where('address', 'Hay Mohamadi')->count(),
-            'rn' => Project::where('address', 'Roches noires')->count(),
+            'as' => Candidat::where('address', 'Ain Sbaa')->count(),
+            'hm' => Candidat::where('address', 'Hay Mohamadi')->count(),
+            'rn' => Candidat::where('address', 'Roches noires')->count(),
         ];
 
         $monthlyData = Project::selectRaw('MONTH(created_at) as month, COUNT(*) as count')

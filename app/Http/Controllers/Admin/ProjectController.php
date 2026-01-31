@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Project;
+use App\Models\Candidat;
 use Illuminate\Http\Request;
 
 class ProjectController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Project::with('user')->latest();
+        $query = Project::with('candidat')->latest();
 
         // Filter by status
         if ($request->filled('status') && $request->status !== 'all') {
@@ -22,9 +23,9 @@ class ProjectController extends Controller
             $search = $request->search;
             $query->where(function($q) use ($search) {
                 $q->where('project_title', 'like', "%{$search}%")
-                  ->orWhereHas('user', function($q) use ($search) {
-                      $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
+                  ->orWhereHas('candidat', function($q) use ($search) {
+                      $q->where('nom', 'like', "%{$search}%")
+                        ->orWhere('prenom', 'like', "%{$search}%");
                   });
             });
         }
@@ -46,6 +47,7 @@ class ProjectController extends Controller
         $project = Project::with([
             'user',
             'products',
+            'candidat',
             'employees',
             'presentations',
             'deliveries',

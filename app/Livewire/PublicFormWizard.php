@@ -16,6 +16,7 @@ use App\Models\ProjectEquipment;
 use App\Models\ProjectRawMaterial;
 use App\Models\ProjectFinancial;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 #[Layout('layouts.app')]
 class PublicFormWizard extends Component
@@ -32,7 +33,7 @@ class PublicFormWizard extends Component
         $this->mountManagesTableRows();
     }
         // Step 1 - Project Info
-    public $profile_image, $age,$registration, $gender, $address_house, $email, $phone, $project_name, $ceo_name, $description, $legal_structure, $resume_executif;
+    public $candidat_id, $registration, $project_name, $ceo_name, $description, $legal_structure, $resume_executif;
     
     // Step 2 - Market Analysis
     public $public_cible, $concurrent, $volume_produits_locaux, $volume_demande;
@@ -120,22 +121,11 @@ class PublicFormWizard extends Component
 
             \Log::info('Transaction started');
 
-            // Upload profile image if exists
-            $imagePath = null;
-            if ($this->profile_image) {
-                $imagePath = $this->profile_image->store('profile-images', 'uploads');
-                \Log::info('Image uploaded: ' . $imagePath);
-            }
-
-            // Create main project
+            $candidat_id = Auth::guard('candidat')->user()->id;
+            
             $project = Project::create([
-                'profile_image' => $imagePath,
-                'age' => $this->age,
+                'candidat_id' => $candidat_id,
                 'registration' => $this->registration,
-                'gender' => $this->gender,
-                'address' => $this->address_house,
-                'email' => $this->email,
-                'phone' => $this->phone,
                 'project_name' => $this->project_name,
                 'ceo_name' => $this->ceo_name,
                 'description' => $this->description,
@@ -325,12 +315,6 @@ class PublicFormWizard extends Component
     protected function clearFormData()
     {
         // Clear all fields except tables
-        $this->profile_image = null;
-        $this->age = null;
-        $this->gender = null;
-        $this->address_house = null;
-        $this->email = null;
-        $this->phone = null;
         $this->project_name = null;
         $this->ceo_name = null;
         $this->description = null;
@@ -398,12 +382,6 @@ class PublicFormWizard extends Component
             return;
         }
 
-        // Step 0 - Personal Info
-        $this->age = 25;
-        $this->gender = 'homme';
-        $this->address_house = 'Hay Mohamadi';
-        $this->email = 'test@example.com';
-        $this->phone = '0612345678';
         
         // Step 1 - Project Info
         $this->project_name = 'Mon Projet Test';

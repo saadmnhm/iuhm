@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use App\Models\Project;
 use Livewire\Component;
+use App\Models\Candidat;
 use Livewire\WithPagination;
 
 class ProjectList extends Component
@@ -37,8 +38,8 @@ class ProjectList extends Component
 
         $statistics = [
             'total' => Project::count(),
-            'male' => Project::where('gender', 'homme')->count(),
-            'female' => Project::where('gender', 'femme')->count(),
+            'male' => Candidat::where('gender', 'homme')->count(),
+            'female' => Candidat::where('gender', 'femme')->count(),
         ];
 
         return view('livewire.admin.formulaire.project-list', [

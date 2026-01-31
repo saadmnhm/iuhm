@@ -40,9 +40,12 @@ Route::prefix('user')->name('user.')->group(function () {
 });
 
 // Protected User Dashboard Routes
-Route::prefix('form')->name('form.')->middleware('user')->group(function () {
+Route::prefix('form')->name('form.')->middleware('candidat')->group(function () {
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
+    Route::get('/settings', \App\Livewire\Front\Dashboard\Settings::class)->name('settings');
+    Route::get('/business-plan', PublicFormWizard::class)->name('business_plan');
     Route::post('/logout', [FrontAuthController::class, 'logout'])->name('logout');
+    
 });
 
 Route::get('/lang/{locale}', function ($locale) {

@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/site/css/styles.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.css" integrity="sha512-kJlvECunwXftkPwyvHbclArO8wszgBGisiLeuDFwNM8ws+wKIw0sv1os3ClWZOcrEB2eRXULYUsm8OVRGJKwGA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
 
@@ -17,16 +17,23 @@
     @livewireStyles
 </head>
 <body>
-
-
- {{ $slot }}
-
-
-
+<div class="dashboard-container">
+    <div class="dashboard-wrapper d-flex">
+        <livewire:components.aside />
+        
+        <div class="main-content">
+            <livewire:components.navbar :pageTitle="$pageTitle ?? 'Dashboard'" />
+            
+            <div class="content-area">
+                {{ $slot }}
+            </div>
+        </div>
+    </div>
+</div>
 
     @livewireScripts
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-<script src="{{ asset('assets/js/scripts.js') }}"></script>
+<script src="{{ asset('assets/site/js/scripts.js') }}"></script>
 </body>
 </html>

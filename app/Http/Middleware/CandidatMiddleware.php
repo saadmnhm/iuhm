@@ -14,21 +14,16 @@ class CandidatMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::check()) {
+        if (!Auth::guard('candidat')->check()) {
             return redirect()->route('user.login');
         }
 
-        if (!Auth::user()->is_active) {
-            Auth::logout();
-            return redirect()->route('user.login')->withErrors([
-                'email' => 'Your account has been disabled.'
-            ]);
-        }
+        $candidat = Auth::guard('candidat')->user();
 
-        if (Auth::user()->role !== 'user') {
-            Auth::logout();
+        if (!$candidat->is_active) {
+            Auth::guard('candidat')->logout();
             return redirect()->route('user.login')->withErrors([
-                'email' => 'You are not authorized to access this area.'
+                'login' => 'Your account has been disabled.'
             ]);
         }
 

@@ -8,14 +8,7 @@ trait HasValidationRules
     protected function step1Rules(): array
     {
         return [
-            'profile_image' => 'required|image|max:2048',
-            'age' => 'required|integer|min:18|max:100',
-            'gender' => 'required|in:homme,femme',
-            'address_house' => 'required|in:Hay Mohamadi,Ain Sbaa,Roches Noires',
-            'email' => 'required|email|max:255',
-            'phone' => 'required|regex:/^[0-9]{10}$/',            
             'project_name' => 'required|string',
-            'ceo_name' => 'required|string',
             'description' => 'required|string',
             'legal_structure' => 'required|string',
             'resume_executif' => 'required|string'

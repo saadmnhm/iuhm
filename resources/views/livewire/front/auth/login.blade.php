@@ -109,9 +109,7 @@ button:hover {
   color: var(--main-color);
 }
 
-button:active {
-  transform: scale(0.95);
-}
+
 
 button:focus {
   outline: none;
@@ -293,7 +291,37 @@ input {
   transition: all 0.3s ease;
 }
 
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
 
+.password-wrapper input {
+  width: 100%;
+  padding-right: 45px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  color: #666;
+  font-size: 18px;
+  transition: color 0.3s ease;
+}
+
+.password-toggle:hover {
+  color: var(--main-color);
+}
+
+.password-toggle:focus {
+  outline: none;
+}
 
 /* Desktop Styles */
 @media (min-width: 768px) {
@@ -312,7 +340,7 @@ input {
   .container {
     width: 768px;
     max-width: 100%;
-    height: 480px;
+    height: 570px;
     min-height: auto;
   }
 
@@ -434,11 +462,23 @@ input {
                     @endforeach
                 </div>
             @endif
+            <div style="display: flex; gap: 15px;">
 
-            <input type="text" name="name" placeholder="Name" value="{{ old('name') }}" required />
+            <input type="text" name="nom" placeholder="nom" value="{{ old('nom') }}" required />
+            <input type="text" name="prenom" placeholder="prenom" value="{{ old('prenom') }}" required />
+
+            </div>
+            <input type="text" name="login" placeholder="login" value="{{ old('login') }}" required />
             <input type="email" name="email" placeholder="Email" value="{{ old('email') }}" required />
-            <input type="password" name="password" placeholder="Password" required />
-            <input type="password" name="password_confirmation" placeholder="Confirm Password" required />
+            
+            <div class="password-wrapper">
+                <input type="password" id="signup-password" name="password" placeholder="Password" required />
+                <button type="button" class="password-toggle" onclick="togglePassword('signup-password', this)">
+                    <i class="ri-eye-line"></i>
+                </button>
+            </div>
+            
+
             <button type="submit" class="mt-4">Sign Up</button>
             
             <div class="mobile-toggle" id="mobileSignIn">
@@ -472,8 +512,16 @@ input {
                 </div>
             @endif
 
-            <input type="email" name="email" placeholder="Email" value="{{ old('email') }}" required />
-            <input type="password" name="password" placeholder="Password" required />
+          
+            <input type="text" name="login" placeholder="Login or Email" value="{{ old('login') }}" required />            
+           
+            <div class="password-wrapper">
+                <input type="password" id="signin-password" name="password" placeholder="Password" required />
+                <button type="button" class="password-toggle" onclick="togglePassword('signin-password', this)">
+                    <i class="ri-eye-line"></i>
+                </button>
+            </div>
+            
             <a href="#">Forgot your password?</a>
             <button type="submit">Sign In</button>
             
@@ -501,6 +549,21 @@ input {
 </div>
 
 <script>
+    function togglePassword(inputId, button) {
+        const input = document.getElementById(inputId);
+        const icon = button.querySelector('i');
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('ri-eye-line');
+            icon.classList.add('ri-eye-off-line');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('ri-eye-off-line');
+            icon.classList.add('ri-eye-line');
+        }
+    }
+
     const signUpButton = document.getElementById("signUp");
     const signInButton = document.getElementById("signIn");
     const mobileSignUp = document.getElementById("mobileSignUp");

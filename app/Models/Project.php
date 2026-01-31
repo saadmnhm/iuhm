@@ -13,15 +13,9 @@ class Project extends Model
     protected $fillable = [
         'user_id',
         // Step 0 - Personal Info
-        'profile_image',
-        'age',
-        'gender',
-        'address',
-        'email',
-        'phone',
+        'candidat_id',
         // Step 1 - Project Info
         'project_name',
-        'ceo_name',
         'description',
         'registration',
         'legal_structure',
@@ -86,6 +80,10 @@ class Project extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function candidat()
+    {
+        return $this->belongsTo(Candidat::class);
+    }
     public function products()
     {
         return $this->hasMany(ProjectProduct::class);

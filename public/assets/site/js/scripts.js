@@ -53,3 +53,41 @@
 
 
 
+
+    // Mobile sidebar toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.querySelector('.sidebar');
+    const dashboardWrapper = document.querySelector('.dashboard-wrapper');
+    
+    // Create overlay element if it doesn't exist
+    let overlay = document.querySelector('.sidebar-overlay');
+    if (!overlay && sidebarToggle) {
+        overlay = document.createElement('div');
+        overlay.className = 'sidebar-overlay';
+        dashboardWrapper.appendChild(overlay);
+    }
+    
+    if (sidebarToggle && sidebar && overlay) {
+        // Toggle sidebar on button click
+        sidebarToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+        });
+        
+        // Close sidebar when clicking overlay
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+        });
+        
+        // Close sidebar on window resize to desktop
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 992) {
+                sidebar.classList.remove('show');
+                overlay.classList.remove('show');
+            }
+        });
+    }
+});

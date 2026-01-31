@@ -27,16 +27,22 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $request->filled('remember'))) {
             $user = Auth::user();
 
-            if($user->is_active){
-                if ($user->isAdmin()) {
-                    $request->session()->regenerate();
-                    return redirect()->intended(route('admin.dashboard'));
-                }
+            if (!$user->is_active) {
+                Auth::logout();
+                return back()->withErrors([
+                    'email' => 'Your account has been disabled.',
+                ])->withInput($request->only('email'));
             }
+
+            if ($user->isAdmin()) {
+                $request->session()->regenerate();
+                return redirect()->intended(route('admin.dashboard'));
+            }
+
             Auth::logout();
             return back()->withErrors([
                 'email' => 'You are not authorized to access admin area.',
-            ]);
+            ])->withInput($request->only('email'));
         }
 
         return back()->withErrors([

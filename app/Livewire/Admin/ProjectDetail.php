@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Project;
+use App\Models\Candidat;
 use Livewire\Component;
 
 class ProjectDetail extends Component
@@ -11,6 +12,7 @@ class ProjectDetail extends Component
     public $project;
     public $showModal = false;
     public $registration;
+    public $candidat;
 
     public function mount($id)
     {
@@ -23,6 +25,7 @@ class ProjectDetail extends Component
         $this->project = Project::with([
             'user',
             'products',
+            'candidat',
             'employees',
             'presentations',
             'deliveries',
@@ -30,6 +33,8 @@ class ProjectDetail extends Component
             'rawMaterials',
             'financials'
         ])->findOrFail($this->projectId);
+
+        $this->candidat = $this->project->candidat;
     }
 
     public function saveRegistration()
@@ -49,6 +54,7 @@ class ProjectDetail extends Component
         $this->showModal = false;
         $this->registration = '';
         $this->loadProject();
+        $this->candidat = $this->project->candidat;
 
         session()->flash('success', 'Matriculation ajoutée avec succès!');
     }

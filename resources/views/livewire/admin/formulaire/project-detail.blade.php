@@ -52,13 +52,13 @@
             </div>
             @else
             <div class="w-16 h-16 rounded-full bg-green-logo flex items-center justify-center text-white text-xl font-bold">
-                {{ strtoupper(substr($project->user->name, 0, 1)) }}
+                {{ strtoupper(substr($candidat->nom, 0, 1)) }}
             </div>
             @endif
 
             <div>
-                <h3 class="font-semibold text-gray-900">{{ $project->ceo_name }}</h3>
-                <p class="text-gray-600">{{ $project->email }}</p>
+                <h3 class="font-semibold text-gray-900">{{ $candidat->nom }} {{ $candidat->prenom }}</h3>
+                <p class="text-gray-600">{{ $candidat->email }}</p>
             </div>
         </div>
     </div>
@@ -76,23 +76,23 @@
             <div class="space-y-3">
                 <div class="flex justify-between border-b border-gray-100 pb-2">
                     <span class="text-gray-600">Âge</span>
-                    <span class="font-medium text-gray-900">{{ $project->age ?? 'N/A' }}</span>
+                    <span class="font-medium text-gray-900">{{ $candidat->age ?? 'N/A' }}</span>
                 </div>
                 <div class="flex justify-between border-b border-gray-100 pb-2">
                     <span class="text-gray-600">Genre</span>
-                    <span class="font-medium text-gray-900">{{ $project->gender ?? 'N/A' }}</span>
+                    <span class="font-medium text-gray-900">{{ $candidat->gender ?? 'N/A' }}</span>
                 </div>
                 <div class="flex justify-between border-b border-gray-100 pb-2">
                     <span class="text-gray-600">Adresse</span>
-                    <span class="font-medium text-gray-900 text-right">{{ $project->address ?? 'N/A' }}</span>
+                    <span class="font-medium text-gray-900 text-right">{{ $candidat->address ?? 'N/A' }}</span>
                 </div>
                 <div class="flex justify-between border-b border-gray-100 pb-2">
                     <span class="text-gray-600">Email</span>
-                    <span class="font-medium text-gray-900">{{ $project->email ?? 'N/A' }}</span>
+                    <span class="font-medium text-gray-900">{{ $candidat->email ?? 'N/A' }}</span>
                 </div>
                 <div class="flex justify-between">
                     <span class="text-gray-600">Téléphone</span>
-                    <span class="font-medium text-gray-900">{{ $project->phone ?? 'N/A' }}</span>
+                    <span class="font-medium text-gray-900">{{ $candidat->phone ?? 'N/A' }}</span>
                 </div>
             </div>
         </div>
@@ -112,7 +112,7 @@
                 </div>
                 <div class="flex justify-between border-b border-gray-100 pb-2">
                     <span class="text-gray-600">Nom du porteur de projet</span>
-                    <span class="font-medium text-gray-900">{{ $project->ceo_name ?? 'N/A' }}</span>
+                    <span class="font-medium text-gray-900">{{ $candidat->nom }} {{ $candidat->prenom }}</span>
                 </div>
                 <div class="flex justify-between border-b border-gray-100 pb-2">
                     <span class="text-gray-600">Structure Juridique</span>

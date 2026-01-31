@@ -40,6 +40,10 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'candidat' => [
+            'driver' => 'session',
+            'provider' => 'candidats',
+        ],
     ],
 
     /*
@@ -62,13 +66,12 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
+            'model' => App\Models\User::class,
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'candidats' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Candidat::class,
+        ],
     ],
 
     /*
@@ -97,6 +100,12 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
+        'candidats' => [
+            'provider' => 'candidats',
+            'table' => 'password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
     ],
 
     /*
@@ -111,5 +120,4 @@ return [
     */
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
-
 ];

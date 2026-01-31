@@ -5,29 +5,34 @@ namespace App\Livewire\Front\Dashboard;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Models\Project;
-use App\Models\User;
+use App\Models\Candidat;
 use Illuminate\Support\Facades\Auth;
 
 #[Layout('layouts.app')]
 class Dashboard extends Component
 {
-    public $totalProjects;
-    public $pendingProjects;
-    public $completedProjects;
-    public $recentProjects;
-    public $userInfo;
+    public $candidat;
+    public $showCompleteProfileModal = false;
 
     public function mount()
     {
-        // Initialize dashboard statistics
-        $this->totalProjects = Project::count();
-        $this->pendingProjects = Project::whereNull('registration')->count();
-        $this->completedProjects = Project::whereNotNull('registration')->count();
-        $this->recentProjects = Project::latest()->take(5)->get();
+        $this->candidat = Auth::guard('candidat')->user();
         
-        // You can add user authentication if needed
-        // $this->userInfo = Auth::user();
+        $this->checkProfileCompletion();
     }
+
+    public function checkProfileCompletion()
+    {
+        if(!$this->candidat->phone || !$this->candidat->address ) {
+            $this->showCompleteProfileModal = true;
+        }
+    }
+
+    public function goToSettings()
+    {
+        return redirect()->route('form.settings');
+    }
+
 
     public function render()
     {

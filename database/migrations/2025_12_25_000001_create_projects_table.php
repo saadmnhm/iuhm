@@ -13,18 +13,10 @@ return new class extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            
-            // Step 0 - Personal Info
-            $table->string('profile_image')->nullable();
-            $table->integer('age')->nullable();
-            $table->enum('gender', ['homme', 'femme'])->nullable();
-            $table->enum('address', ['Hay Mohamadi', 'Ain Sbaa', 'Roches Noires'])->nullable();
-            $table->string('email')->nullable();
-            $table->string('phone', 20)->nullable();
+            $table->foreignId('candidat_id')->constrained()->onDelete('cascade');
             
             // Step 1 - Project Info
             $table->string('project_name')->nullable();
-            $table->string('ceo_name')->nullable();
             $table->text('description')->nullable();
             $table->string('legal_structure')->nullable();
             $table->text('resume_executif')->nullable();

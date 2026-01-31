@@ -180,33 +180,33 @@
         <div class="section-title">I. INFORMATIONS PERSONNELLES DU PORTEUR DE PROJET</div>
         <div class="section-content">
             <div class="profile-photo">
-                <img src="{{ base_path('uploads/' . $project->profile_image) }}" alt="Photo de profil">
+                <img src="{{ base_path('uploads/' . $candidat->profile_image) }}" alt="Photo de profil">
             </div>
             
             <table class="info-table">
                 <tr>
                     <td class="info-label">Nom du porteur du projet</td>
-                    <td class="info-value">{{ $project->ceo_name ?? 'N/A' }}</td>
+                    <td class="info-value">{{ $candidat->nom }} {{ $candidat->prenom }}</td>
                 </tr>
                 <tr>
                     <td class="info-label">Âge</td>
-                    <td class="info-value">{{ $project->age ?? 'N/A' }} ans</td>
+                    <td class="info-value">{{ $candidat->age ?? 'N/A' }} ans</td>
                 </tr>
                 <tr>
                     <td class="info-label">Genre</td>
-                    <td class="info-value">{{ ucfirst($project->gender ?? 'N/A') }}</td>
+                    <td class="info-value">{{ ucfirst($candidat->gender ?? 'N/A') }}</td>
                 </tr>
                 <tr>
                     <td class="info-label">Adresse</td>
-                    <td class="info-value">{{ $project->address ?? 'N/A' }}</td>
+                    <td class="info-value">{{ $candidat->address ?? 'N/A' }}</td>
                 </tr>
                 <tr>
                     <td class="info-label">Email</td>
-                    <td class="info-value">{{ $project->email ?? 'N/A' }}</td>
+                    <td class="info-value">{{ $candidat->email ?? 'N/A' }}</td>
                 </tr>
                 <tr>
                     <td class="info-label">Téléphone</td>
-                    <td class="info-value">{{ $project->phone ?? 'N/A' }}</td>
+                    <td class="info-value">{{ $candidat->phone ?? 'N/A' }}</td>
                 </tr>
             </table>
         </div>

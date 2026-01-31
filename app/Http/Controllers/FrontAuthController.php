@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\Candidat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -12,7 +12,7 @@ class FrontAuthController extends Controller
 {
     public function showLogin()
     {
-        if (Auth::check() && Auth::user()->role === 'user') {
+        if (Auth::guard('candidat')->check()) {
             return redirect()->route('form.dashboard');
         }
         
@@ -22,64 +22,72 @@ class FrontAuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'login' => ['required', 'string'],
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials, $request->filled('remember'))) {
-            $user = Auth::user();
+        // Determine if login is email or username
+        $loginType = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'login';
+        
+        $credentials = [
+            $loginType => $request->login,
+            'password' => $request->password,
+        ];
 
-            if ($user->is_active) {
-                if ($user->role === 'user') {
-                    $request->session()->regenerate();
-                    return redirect()->intended(route('form.dashboard'));
-                }
+        if (Auth::guard('candidat')->attempt($credentials, $request->filled('remember'))) {
+            $candidat = Auth::guard('candidat')->user();
+
+            if ($candidat->is_active) {
+                $request->session()->regenerate();
+                return redirect()->intended(route('form.dashboard'));
             }
 
-            Auth::logout();
+            Auth::guard('candidat')->logout();
             return back()->withErrors([
-                'email' => 'Your account is disabled.',
-            ])->withInput($request->only('email'));
+                'login' => 'Your account is disabled.',
+            ])->withInput($request->only('login'));
         }
 
         return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->withInput($request->only('email'));
+            'login' => 'The provided credentials do not match our records.',
+        ])->withInput($request->only('login'));
     }
 
     public function showRegister()
     {
-        if (Auth::check()) {
+        if (Auth::guard('candidat')->check()) {
             return redirect()->route('form.dashboard');
         }
         
-        return view('front.auth.register');
+        return view('livewire.front.auth.register');
     }
 
     public function register(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6|confirmed',
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'email' => 'required|email|unique:candidat,email',
+            'password' => 'required|min:6',
         ]);
 
-        $user = User::create([
-            'name' => $validated['name'],
+        $candidat = Candidat::create([
+            'nom' => $validated['nom'],
+            'prenom' => $validated['prenom'], 
+            'login' => $validated['email'], 
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role' => 'user',
             'is_active' => true,
         ]);
 
-        Auth::login($user);
+        Auth::guard('candidat')->login($candidat);
 
         return redirect()->route('form.dashboard');
     }
 
     public function logout(Request $request)
     {
-        Auth::logout();
+        Auth::guard('candidat')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         
