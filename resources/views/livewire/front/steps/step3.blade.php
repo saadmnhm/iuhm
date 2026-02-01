@@ -5,16 +5,16 @@
 
         <div class="field-méthodes_marketing mb-2">
             <label class="block disc mb-2 font-semibold" for="méthodes_marketing">{{ __('messages.methodes_marketing') }}</label>
-            <input class="form-control" id="méthodes_marketing" wire:model="méthodes_marketing" >
+            <input class="form-control" id="méthodes_marketing" wire:model="méthodes_marketing" @if($isReadOnly) readonly @endif>
         </div>
 
         <div class="field-adaptation_methodes mb-2">
             <label class="block disc mb-2 font-semibold"  for="adaptation_methodes">{{ __('messages.adaptation_methodes') }}</label>
-            <input class="form-control" id="adaptation_methodes" wire:model="adaptation_methodes" >
+            <input class="form-control" id="adaptation_methodes" wire:model="adaptation_methodes" @if($isReadOnly) readonly @endif>
         </div>
         <div class="field-differenciation_marketing mb-2">
             <label class="block disc mb-2 font-semibold" for="differenciation_marketing">{{ __('messages.differenciation_marketing') }}</label>
-            <input class="form-control" id="differenciation_marketing" wire:model="differenciation_marketing" >
+            <input class="form-control" id="differenciation_marketing" wire:model="differenciation_marketing" @if($isReadOnly) readonly @endif>
         </div>
 
     </div>
@@ -41,15 +41,15 @@
                     @foreach($table2Rows as $index => $row)
                         <tr>
                             <td class="border px-2 py-1">
-                                <input type="text" wire:model.live="table2Rows.{{ $index }}.item" class="form-control border w-full p-1">
+                                <input type="text" wire:model.live="table2Rows.{{ $index }}.item" class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
 
                             <td class="border px-2 py-1">
-                                <input type="number" wire:model.live="table2Rows.{{ $index }}.total_employee_1" min="0" step="0.01" class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="table2Rows.{{ $index }}.total_employee_1" min="0" step="0.01" class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
 
                             <td class="border px-2 py-1">
-                                <input type="number" wire:model.live="table2Rows.{{ $index }}.total_employee_2" min="0" step="0.01" class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="table2Rows.{{ $index }}.total_employee_2" min="0" step="0.01" class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
 
                         
@@ -71,7 +71,9 @@
                 </tbody>
             </table>
 
+            @if(!$isReadOnly)
             <button wire:click="addTable2Row" class="more-row">{{ __('messages.ajouter_lignes') }}</button>
+            @endif
         </div>
 
 
@@ -98,7 +100,7 @@
                             </td>
 
                             <td class="border px-2 py-1">
-                                <input type="text" wire:model="plan_affaires"  class="form-control border w-full p-1">
+                                <input type="text" wire:model="plan_affaires"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
                         </tr>
                         <tr>
@@ -107,7 +109,7 @@
                             </td>
 
                             <td class="border px-2 py-1">
-                                <input type="text" wire:model="obtention_financement"  class="form-control border w-full p-1">
+                                <input type="text" wire:model="obtention_financement"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
                         </tr>
                         <tr>
@@ -116,7 +118,7 @@
                             </td>
 
                             <td class="border px-2 py-1">
-                                <input type="text" wire:model="ouverture_proces"  class="form-control border w-full p-1">
+                                <input type="text" wire:model="ouverture_proces"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
                         </tr>
                         <tr>
@@ -125,7 +127,7 @@
                             </td>
 
                             <td class="border px-2 py-1">
-                                <input type="text" wire:model="lancement_recrutement"  class="form-control border w-full p-1">
+                                <input type="text" wire:model="lancement_recrutement"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
                         </tr>
                         <tr>
@@ -134,7 +136,7 @@
                             </td>
 
                             <td class="border px-2 py-1">
-                                <input type="text" wire:model="ouverture_definitive"  class="form-control border w-full p-1">
+                                <input type="text" wire:model="ouverture_definitive"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
                         </tr>
                         <tr>
@@ -143,7 +145,7 @@
                             </td>
 
                             <td class="border px-2 py-1">
-                                <input type="text" wire:model="duree"  class="form-control border w-full p-1">
+                                <input type="text" wire:model="duree"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
                         </tr>
                 </tbody>

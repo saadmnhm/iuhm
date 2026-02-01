@@ -4,15 +4,20 @@ namespace App\Livewire\Admin;
 
 use App\Models\Project;
 use App\Models\Candidat;
+use App\Models\AdminActivityLog;
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
 
 class ProjectDetail extends Component
 {
     public $projectId;
     public $project;
     public $showModal = false;
+    public $showStatusModal = false;
     public $registration;
     public $candidat;
+    public $newStatus;
+    public $reviewNotes;
 
     public function mount($id)
     {
@@ -31,10 +36,13 @@ class ProjectDetail extends Component
             'deliveries',
             'equipment',
             'rawMaterials',
-            'financials'
+            'financials',
+            'reviewer'
         ])->findOrFail($this->projectId);
 
         $this->candidat = $this->project->candidat;
+        $this->newStatus = $this->project->status;
+        $this->reviewNotes = $this->project->review_notes;
     }
 
     public function saveRegistration()
@@ -47,9 +55,23 @@ class ProjectDetail extends Component
             'registration.max' => 'Le numéro de matriculation ne peut pas dépasser 255 caractères.',
         ]);
 
+        $oldRegistration = $this->project->registration;
+        
         $this->project->update([
             'registration' => $this->registration
         ]);
+
+        // Log the activity
+        AdminActivityLog::log(
+            'registration_added',
+            'Added registration number: ' . $this->registration,
+            Project::class,
+            $this->project->id,
+            [
+                'old_registration' => $oldRegistration,
+                'new_registration' => $this->registration,
+            ]
+        );
 
         $this->showModal = false;
         $this->registration = '';
@@ -57,6 +79,51 @@ class ProjectDetail extends Component
         $this->candidat = $this->project->candidat;
 
         session()->flash('success', 'Matriculation ajoutée avec succès!');
+    }
+    
+    public function openStatusModal()
+    {
+        $this->showStatusModal = true;
+    }
+    
+    public function closeStatusModal()
+    {
+        $this->showStatusModal = false;
+    }
+    
+    public function updateStatus()
+    {
+        $this->validate([
+            'newStatus' => 'required|in:draft,submitted,in_review,approved,rejected',
+            'reviewNotes' => 'nullable|string|max:1000',
+        ]);
+
+        $oldStatus = $this->project->status;
+        
+        $this->project->update([
+            'status' => $this->newStatus,
+            'review_notes' => $this->reviewNotes,
+            'reviewed_by' => Auth::id(),
+            'reviewed_at' => now(),
+        ]);
+
+        // Log the activity
+        AdminActivityLog::log(
+            'project_status_changed',
+            "Changed project status from {$oldStatus} to {$this->newStatus}",
+            Project::class,
+            $this->project->id,
+            [
+                'old_status' => $oldStatus,
+                'new_status' => $this->newStatus,
+                'review_notes' => $this->reviewNotes,
+            ]
+        );
+
+        $this->showStatusModal = false;
+        $this->loadProject();
+
+        session()->flash('success', 'Project status updated successfully!');
     }
 
     public function render()

@@ -23,10 +23,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/projects/{id}/preview-pdf', [\App\Http\Controllers\Admin\ProjectExportController::class, 'previewPdf'])->name('projects.preview.pdf');
 
         Route::get('/users', \App\Livewire\Admin\UserManagement::class)->name('users.index');
+        Route::get('/candidats', \App\Livewire\Admin\CandidatManagement::class)->name('candidats.index');
         Route::get('/users/create', \App\Livewire\Admin\CreateUser::class)->name('users.create');
         Route::get('/users/{id}', \App\Livewire\Admin\ShowUser::class)->name('users.show');
         Route::get('/users/{id}/edit', \App\Livewire\Admin\EditUser::class)->name('users.edit');
         Route::get('/projects/{id}/add-registration', \App\Livewire\Admin\RegistrationId::class)->name('add.registration');
+        Route::get('/activity-logs', \App\Livewire\Admin\ActivityLogs::class)->name('activity.logs');
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     });
 });
@@ -42,10 +44,9 @@ Route::prefix('user')->name('user.')->group(function () {
 // Protected User Dashboard Routes
 Route::prefix('form')->name('form.')->middleware('candidat')->group(function () {
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
-    Route::get('/settings', \App\Livewire\Front\Dashboard\Settings::class)->name('settings');
     Route::get('/business-plan', PublicFormWizard::class)->name('business_plan');
+    Route::get('/settings', \App\Livewire\Front\Dashboard\Settings::class)->name('settings');
     Route::post('/logout', [FrontAuthController::class, 'logout'])->name('logout');
-    
 });
 
 Route::get('/lang/{locale}', function ($locale) {

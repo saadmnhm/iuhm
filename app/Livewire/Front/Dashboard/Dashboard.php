@@ -12,20 +12,17 @@ use Illuminate\Support\Facades\Auth;
 class Dashboard extends Component
 {
     public $candidat;
+    public $project;
     public $showCompleteProfileModal = false;
 
     public function mount()
     {
         $this->candidat = Auth::guard('candidat')->user();
         
-        $this->checkProfileCompletion();
-    }
-
-    public function checkProfileCompletion()
-    {
-        if(!$this->candidat->phone || !$this->candidat->address ) {
-            $this->showCompleteProfileModal = true;
-        }
+        // Load existing project if available
+        $this->project = Project::where('candidat_id', $this->candidat->id)
+            ->latest()
+            ->first();
     }
 
     public function goToSettings()

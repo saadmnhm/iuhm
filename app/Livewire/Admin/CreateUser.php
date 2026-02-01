@@ -35,12 +35,6 @@ class CreateUser extends Component
             return redirect()->route('admin.users.index');
         }
 
-        // Regular admins can only create users, not other admins
-        if (auth()->user()->isAdmin() && !auth()->user()->isSuperAdmin() && $this->role !== 'user') {
-            session()->flash('error', 'You can only create regular users.');
-            return;
-        }
-
         $this->validate();
 
         $user = User::create([

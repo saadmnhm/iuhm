@@ -5,24 +5,24 @@
 
     <div class="field-project-name mt-4">
         <label class=" disc mb-2" for="project-name">{{ __('messages.nom_de_projet') }}</label>
-        <input  class="form-control" id="project-name" wire:model="project_name" >
+        <input  class="form-control" id="project-name" wire:model="project_name" @if($isReadOnly) readonly @endif>
         @error('project_name') <span>{{ $message }}</span> @enderror
     </div> 
 
     <div class="field-project-description mt-4">
         <label class=" disc mb-2" for="project-description">{{ __('messages.description_du_projet') }}</label>
-        <textarea class="form-control" id="project-description" wire:model="description" ></textarea>
+        <textarea class="form-control" id="project-description" wire:model="description" @if($isReadOnly) readonly @endif></textarea>
         @error('description') <span>{{ $message }}</span> @enderror
     </div>
     <div class="field-legal-structure mt-4">
         <label class=" disc mb-2" for="legal-structure">{{ __('messages.juridique_projet') }}</label>
-        <input class="form-control" id="legal-structure" wire:model="legal_structure" >
+        <input class="form-control" id="legal-structure" wire:model="legal_structure" @if($isReadOnly) readonly @endif>
         @error('legal_structure') <span>{{ $message }}</span> @enderror
     </div>
     <div class="field-Resume-executif mt-4">
         <label class=" disc mb-2 " for="resume">{{ __('messages.resume_executif') }}</label>
         <p class="instructions">{{ __('messages.instruction1') }}</p>
-        <textarea class="form-control" id="resume" wire:model="resume_executif"  rows="9"></textarea>
+        <textarea class="form-control" id="resume" wire:model="resume_executif"  rows="9" @if($isReadOnly) readonly @endif></textarea>
         @error('resume_executif') <span>{{ $message }}</span> @enderror
     </div>
 

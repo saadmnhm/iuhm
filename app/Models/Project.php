@@ -61,6 +61,10 @@ class Project extends Model
         // Status & Tracking
         'status',
         'current_step',
+        'submitted_at',
+        'reviewed_by',
+        'review_notes',
+        'reviewed_at',
     ];
 
     protected $casts = [
@@ -72,6 +76,8 @@ class Project extends Model
         'autres_couts' => 'decimal:2',
         'total' => 'decimal:2',
         'current_step' => 'integer',
+        'submitted_at' => 'datetime',
+        'reviewed_at' => 'datetime',
     ];
 
     // Relationships
@@ -117,5 +123,31 @@ class Project extends Model
     public function financials()
     {
         return $this->hasOne(ProjectFinancial::class);
+    }
+
+    public function reviewer()
+    {
+        return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    public function activityLogs()
+    {
+        return $this->morphMany(AdminActivityLog::class, 'subject');
+    }
+
+    // Status checks
+    public function isDraft()
+    {
+        return $this->status === 'draft';
+    }
+
+    public function isSubmitted()
+    {
+        return in_array($this->status, ['submitted', 'in_review', 'approved', 'rejected']);
+    }
+
+    public function canBeEdited()
+    {
+        return $this->status === 'draft';
     }
 }

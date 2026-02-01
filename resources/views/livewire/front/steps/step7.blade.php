@@ -20,14 +20,14 @@
                         </td>
 
                         <td class="border px-2 py-3">
-                            <input type="text"   wire:model="table5Rows.{{ $index }}.equipement" class="form-control border p-1 w-full" >
+                            <input type="text"   wire:model="table5Rows.{{ $index }}.equipement" class="form-control border p-1 w-full" @if($isReadOnly) readonly @endif>
                         </td>
 
                         <td class="border px-2 py-3">
-                            <input type="text"   wire:model="table5Rows.{{ $index }}.reference" class=" form-control border p-1 w-full" >
+                            <input type="text"   wire:model="table5Rows.{{ $index }}.reference" class=" form-control border p-1 w-full" @if($isReadOnly) readonly @endif>
                         </td>
                         <td class="border px-2 py-3">
-                            <input type="number"   wire:model="table5Rows.{{ $index }}.prix_equipement" class="form-control border p-1 w-full" >
+                            <input type="number"   wire:model="table5Rows.{{ $index }}.prix_equipement" class="form-control border p-1 w-full" @if($isReadOnly) readonly @endif>
                         </td>
                     </tr>
                     
@@ -35,7 +35,9 @@
             </tbody>
         </table>
         <div class="mt-2">
+            @if(!$isReadOnly)
             <button wire:click.prevent="addTable5Row" class="more-row">{{ __('messages.ajouter_lignes') }}</button>
+            @endif
         </div>
     </div>
 </div>

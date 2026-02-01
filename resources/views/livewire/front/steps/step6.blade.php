@@ -19,15 +19,15 @@
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="achat_prevue_premiere_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="achat_prevue_premiere_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="achat_prevue_deuxieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="achat_prevue_deuxieme_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="achat_prevue_troisieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="achat_prevue_troisieme_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
                         </tr>
                         <tr>
@@ -36,15 +36,15 @@
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="frais_fonctionnement_premiere_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="frais_fonctionnement_premiere_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="frais_fonctionnement_deuxieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="frais_fonctionnement_deuxieme_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="frais_fonctionnement_troisieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="frais_fonctionnement_troisieme_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
                         </tr>
                         <tr>
@@ -53,15 +53,15 @@
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="charges_personnel_premiere_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="charges_personnel_premiere_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="charges_personnel_deuxieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="charges_personnel_deuxieme_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="charges_personnel_troisieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="charges_personnel_troisieme_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
                         </tr>
                         <tr>
@@ -70,15 +70,15 @@
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="dettes_premiere_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="dettes_premiere_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="dettes_deuxieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="dettes_deuxieme_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="dettes_troisieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="dettes_troisieme_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
                         </tr>
                         <tr>
@@ -87,15 +87,15 @@
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="etablissement_bancaire_premiere_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="etablissement_bancaire_premiere_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="etablissement_bancaire_deuxieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="etablissement_bancaire_deuxieme_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="etablissement_bancaire_troisieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="etablissement_bancaire_troisieme_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
                         </tr>
                         <tr>
@@ -104,15 +104,15 @@
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="fournisseurs_premiere_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="fournisseurs_premiere_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="fournisseurs_deuxieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="fournisseurs_deuxieme_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="fournisseurs_troisieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="fournisseurs_troisieme_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
                         </tr>
                         <tr>
@@ -121,15 +121,15 @@
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="autres_dettes_premiere_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="autres_dettes_premiere_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="autres_dettes_deuxieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="autres_dettes_deuxieme_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="autres_dettes_troisieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="autres_dettes_troisieme_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
                         </tr>
                         <tr>
@@ -138,15 +138,15 @@
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="autres_charges_premiere_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="autres_charges_premiere_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="autres_charges_deuxieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="autres_charges_deuxieme_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="autres_charges_troisieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="autres_charges_troisieme_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
                         </tr>                                                                        
                         
@@ -175,15 +175,15 @@
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model.live="revenus_premiere_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="revenus_premiere_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model.live="revenus_deuxieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="revenus_deuxieme_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model.live="revenus_troisieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="revenus_troisieme_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
                         </tr>
                         <tr>
@@ -192,15 +192,15 @@
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model.live="depenses_premiere_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="depenses_premiere_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model.live="depenses_deuxieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="depenses_deuxieme_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model.live="depenses_troisieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model.live="depenses_troisieme_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
                         </tr>
                         <tr>
@@ -209,15 +209,15 @@
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="resultat_premiere_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="resultat_premiere_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="resultat_deuxieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="resultat_deuxieme_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
 
                             <td class="border px-2 py-3">
-                                <input type="number" wire:model="resultat_troisieme_annee"  class="form-control border w-full p-1">
+                                <input type="number" wire:model="resultat_troisieme_annee"  class="form-control border w-full p-1" @if($isReadOnly) readonly @endif>
                             </td>
                         </tr>
                 </tbody>
@@ -227,11 +227,11 @@
     </div>
     <div class="field-generer_profits mt-5 mb-2">
         <label for="generer_profits" class="block disc mb-2 font-semibold">Quand le projet commencera-t-il à générer des profits ? (Analyse des événements de rupture)</label>
-        <textarea class="form-control" id="generer_profits" wire:model="generer_profits"  rows="9"></textarea>
+        <textarea class="form-control" id="generer_profits" wire:model="generer_profits"  rows="9" @if($isReadOnly) readonly @endif></textarea>
     </div>
     <div class="field-projet_durable mt-5 mb-2">
         <label for="projet_durable" class="block disc mb-2 font-semibold">Dans quelle mesure le projet est-il durable et stable ? (Analyse coûts-avantages)</label>
-        <textarea class="form-control" id="projet_durable" wire:model="projet_durable"  rows="9"></textarea>
+        <textarea class="form-control" id="projet_durable" wire:model="projet_durable"  rows="9" @if($isReadOnly) readonly @endif></textarea>
     </div>
 
 </div>

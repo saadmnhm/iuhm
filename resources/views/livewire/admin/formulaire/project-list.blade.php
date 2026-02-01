@@ -64,6 +64,7 @@
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($projects as $project)
+                    @php $candidat = $project->candidat ?? null; @endphp
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4">
                             <div class="font-medium text-gray-900">{{ $project->project_title }}</div>
@@ -71,23 +72,23 @@
                         </td>
                         <td class="px-6 py-4">
                             <div class="flex items-center">
-                                @if($project->profile_image)
-                                    <img class="w-10 h-10 rounded-full mr-4 object-contain" src="{{ asset('uploads/'.$project->profile_image) }}" alt="{{ $project->ceo_name }}">
+                                @if($candidat->profile_image)
+                                    <img class="w-10 h-10 rounded-full mr-4 object-contain" src="{{ asset('uploads/'.$candidat->profile_image) }}" alt="{{ $candidat->ceo_name }}">
                                 @else
                                 <div class="w-8 h-8 rounded-full bg-green-logo flex items-center justify-center text-white text-sm font-semibold mr-3">
-                                    {{ strtoupper(substr($project->ceo_name, 0, 1)) }}
+                                    {{ strtoupper(substr($candidat->ceo_name, 0, 1)) }}
                                 </div>
                                 @endif
 
                                 <div>
-                                    <div class="text-sm font-medium text-gray-900">{{ $project->ceo_name }}</div>
-                                    <div class="text-sm text-gray-500">{{ $project->email }}</div>
+                                    <div class="text-sm font-medium text-gray-900">{{ $candidat->nom }} {{ $candidat->prenom }}</div>
+                                    <div class="text-sm text-gray-500">{{ $candidat->email }}</div>
                                 </div>
                             </div>
                         </td>
                         <td class="px-6 py-4">
-                            <span class="px-3 py-1 text-xs font-medium rounded-full " style="{{ $project->address == 'Hay Mohamadi' ? 'background-color: rgba(11, 110, 44, 0.8); color: white;' : ($project->address == 'Ain Sbaa' ? 'background-color: rgba(45, 26, 110, 0.8); color: white;' : ($project->address == 'Roches Noires' ? 'background-color: rgba(133, 12, 12, 0.8); color: white;' : 'background-color: gray; color: white;')) }} width: 110px; text-align: center; display: inline-block;">
-                                {{ $project->address ?? 'N/A' }}
+                            <span class="px-3 py-1 text-xs font-medium rounded-full " style="{{ $candidat->address == 'Hay Mohamadi' ? 'background-color: rgba(11, 110, 44, 0.8); color: white;' : ($candidat->address == 'Ain Sbaa' ? 'background-color: rgba(45, 26, 110, 0.8); color: white;' : ($candidat->address == 'Roches Noires' ? 'background-color: rgba(133, 12, 12, 0.8); color: white;' : 'background-color: gray; color: white;')) }} width: 110px; text-align: center; display: inline-block;">
+                                {{ $candidat->address ?? 'N/A' }}
                             </span>
                         </td>
                         <td class="px-6 py-4 text-sm text-gray-500">

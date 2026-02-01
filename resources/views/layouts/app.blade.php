@@ -19,11 +19,11 @@
 <body>
 <div class="dashboard-container">
     <div class="dashboard-wrapper d-flex">
-        <livewire:components.aside />
+        <livewire:front.dashboard.aside />
         
         <div class="main-content">
-            <livewire:components.navbar :pageTitle="$pageTitle ?? 'Dashboard'" />
-            
+            <livewire:front.dashboard.navbar :pageTitle="$pageTitle ?? 'Dashboard'" />            
+           
             <div class="content-area">
                 {{ $slot }}
             </div>

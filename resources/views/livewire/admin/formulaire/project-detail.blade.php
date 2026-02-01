@@ -17,6 +17,15 @@
         </div>
     </div>
     <div class="flex gap-2">
+        <!-- Status Badge and Change Button -->
+        <div class="flex items-center gap-2">
+            <x-status-badge :status="$project->status" />
+            <button wire:click="openStatusModal" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition flex items-center gap-2">
+                <i class="fas fa-exchange-alt"></i>
+                Change Status
+            </button>
+        </div>
+        
         <!-- Export PDF Button -->
         <a href="{{ route('admin.projects.export.pdf', $project->id) }}" 
            class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition flex items-center gap-2">
@@ -775,6 +784,76 @@
                     </div>
                 </form>
             </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- Status Change Modal -->
+    @if($showStatusModal)
+    <div class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-900">Change Project Status</h3>
+                <button wire:click="closeStatusModal" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form wire:submit.prevent="updateStatus">
+                <div class="mb-4">
+                    <label for="newStatus" class="block text-sm font-medium text-gray-700 mb-2">
+                        Status <span class="text-red-500">*</span>
+                    </label>
+                    <select 
+                        id="newStatus" 
+                        wire:model="newStatus"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        required
+                    >
+                        <option value="draft">Draft</option>
+                        <option value="submitted">Submitted</option>
+                        <option value="in_review">In Review</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                    @error('newStatus')
+                        <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="mb-4">
+                    <label for="reviewNotes" class="block text-sm font-medium text-gray-700 mb-2">
+                        Review Notes (Optional)
+                    </label>
+                    <textarea 
+                        id="reviewNotes" 
+                        wire:model="reviewNotes"
+                        rows="4"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Add any notes about this status change..."
+                    ></textarea>
+                    @error('reviewNotes')
+                        <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="flex justify-end gap-3 mt-6">
+                    <button 
+                        type="button"
+                        wire:click="closeStatusModal"
+                        class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        type="submit"
+                        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition"
+                    >
+                        <i class="fas fa-save me-2"></i>
+                        Update Status
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
     @endif
