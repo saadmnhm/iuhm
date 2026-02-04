@@ -1,7 +1,7 @@
 <div>
 
-   <div class="field-Resume-executif mt-4 bmc-table ">
-        <table class="table-auto border-collapse border border-gray-300 w-full">
+   <div class="field-Resume-executif mt-4  ">
+        <table class="table-auto bmc-table border-collapse border border-gray-300 w-full">
                 <tr>
                     {{-- Partenariats clés --}}
                     <td rowspan="2" class="bmc-td" style="width:20%; height:300px;">
