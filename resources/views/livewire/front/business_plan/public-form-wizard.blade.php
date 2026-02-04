@@ -78,7 +78,7 @@
             </div>
         </div>
 
-        @include('livewire.front.steps.step'.$step)
+        @include('livewire.front.business_plan.step'.$step)
 
         @if(!$isReadOnly)
            

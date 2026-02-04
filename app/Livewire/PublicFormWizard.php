@@ -763,7 +763,7 @@ class PublicFormWizard extends Component
 
     public function render()
     {
-        return view('livewire.front.steps.public-form-wizard');
+        return view('livewire.front.business_plan.public-form-wizard');
     }
 
     public function save()
@@ -976,18 +976,18 @@ class PublicFormWizard extends Component
     private function calculateInvestmentTotal()
     {
         $this->total = 
-            ($this->couts_creation ?? 0) +
-            ($this->preparation_entreprise ?? 0) +
-            ($this->achat_machines ?? 0) +
-            ($this->achat_matieres_premieres ?? 0) +
-            ($this->autres_couts ?? 0);
+            (float) ($this->couts_creation ?? 0) +
+            (float) ($this->preparation_entreprise ?? 0) +
+            (float) ($this->achat_machines ?? 0) +
+            (float) ($this->achat_matieres_premieres ?? 0) +
+            (float) ($this->autres_couts ?? 0);
     }
 
     private function calculateResultatNet()
     {
-        $this->resultat_premiere_annee = ($this->revenus_premiere_annee ?? 0) - ($this->depenses_premiere_annee ?? 0);
-        $this->resultat_deuxieme_annee = ($this->revenus_deuxieme_annee ?? 0) - ($this->depenses_deuxieme_annee ?? 0);
-        $this->resultat_troisieme_annee = ($this->revenus_troisieme_annee ?? 0) - ($this->depenses_troisieme_annee ?? 0);
+        $this->resultat_premiere_annee = (float) ($this->revenus_premiere_annee ?? 0) - (float) ($this->depenses_premiere_annee ?? 0);
+        $this->resultat_deuxieme_annee = (float) ($this->revenus_deuxieme_annee ?? 0) - (float) ($this->depenses_deuxieme_annee ?? 0);
+        $this->resultat_troisieme_annee = (float) ($this->revenus_troisieme_annee ?? 0) - (float) ($this->depenses_troisieme_annee ?? 0);
     }
 
     public function updatedRevenusPremiereAnnee()
