@@ -23,7 +23,7 @@ return array(
     'App\\Livewire\\Admin\\UserManagement' => $baseDir . '/app/Livewire/Admin/UserManagement.php',
     'App\\Livewire\\Concerns\\HasValidationRules' => $baseDir . '/app/Livewire/Concerns/HasValidationRules.php',
     'App\\Livewire\\Concerns\\ManagesTableRows' => $baseDir . '/app/Livewire/Concerns/ManagesTableRows.php',
-    'App\\Livewire\\PublicFormWizard' => $baseDir . '/app/Livewire/PublicFormWizard.php',
+    'App\\Livewire\\BusinessPlan' => $baseDir . '/app/Livewire/BusinessPlan.php',
     'App\\Models\\Project' => $baseDir . '/app/Models/Project.php',
     'App\\Models\\ProjectDelivery' => $baseDir . '/app/Models/ProjectDelivery.php',
     'App\\Models\\ProjectEmployee' => $baseDir . '/app/Models/ProjectEmployee.php',

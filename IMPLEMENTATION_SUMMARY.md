@@ -72,7 +72,7 @@ Enhanced `ProjectList` component:
 
 ## Files Modified:
 
-1. **app/Livewire/PublicFormWizard.php**
+1. **app/Livewire/BusinessPlan.php**
    - Added `$projectId`, `$existingProject`, `$isReadOnly` properties
    - Added `mount()` logic to check for existing projects
    - Added `saveAsDraft()` method
@@ -173,7 +173,7 @@ php artisan view:clear
 
 ## API/Methods Available:
 
-### PublicFormWizard Component:
+### BusinessPlan Component:
 - `saveAsDraft()` - Save current progress as draft
 - `loadExistingProject($id, $readOnly)` - Load existing project
 - `submit()` - Final submission (locks the form)

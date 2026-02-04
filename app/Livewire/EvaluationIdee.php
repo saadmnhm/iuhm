@@ -7,19 +7,11 @@ use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Livewire\Concerns\ManagesTableRows;
 use App\Livewire\Concerns\HasValidationRules;
-use App\Models\Project;
-use App\Models\ProjectDelivery;
-use App\Models\ProjectEmployee;
-use App\Models\ProjectPresentation;
-use App\Models\ProjectProduct;
-use App\Models\ProjectEquipment;
-use App\Models\ProjectRawMaterial;
-use App\Models\ProjectFinancial;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 #[Layout('layouts.app')]
-class PublicFormWizard extends Component
+class EvaluationIdee extends Component
 {
     use ManagesTableRows, HasValidationRules, WithFileUploads;
     
@@ -30,32 +22,32 @@ class PublicFormWizard extends Component
 
     public $rows = [];
 
-    public function mount()
-    {
-        // Check if user already has a submitted project
-        $candidat = Auth::guard('candidat')->user();
-        $existingSubmittedProject = Project::where('candidat_id', $candidat->id)
-            ->whereIn('status', ['submitted', 'in_review', 'approved', 'rejected'])
-            ->first();
+    // public function mount()
+    // {
+    //     // Check if user already has a submitted project
+    //     $candidat = Auth::guard('candidat')->user();
+    //     $existingSubmittedProject = Project::where('candidat_id', $candidat->id)
+    //         ->whereIn('status', ['submitted', 'in_review', 'approved', 'rejected'])
+    //         ->first();
         
-        if ($existingSubmittedProject) {
-            // Load existing project for view only
-            $this->loadExistingProject($existingSubmittedProject->id, true);
-            return;
-        }
+    //     if ($existingSubmittedProject) {
+    //         // Load existing project for view only
+    //         $this->loadExistingProject($existingSubmittedProject->id, true);
+    //         return;
+    //     }
         
-        // Check for existing draft
-        $draft = Project::where('candidat_id', $candidat->id)
-            ->where('status', 'draft')
-            ->first();
+    //     // Check for existing draft
+    //     $draft = Project::where('candidat_id', $candidat->id)
+    //         ->where('status', 'draft')
+    //         ->first();
         
-        if ($draft) {
-            $this->loadExistingProject($draft->id);
-        }
+    //     if ($draft) {
+    //         $this->loadExistingProject($draft->id);
+    //     }
         
-        // Initialize tables if empty
-        $this->mountManagesTableRows();
-    }
+    //     // Initialize tables if empty
+    //     $this->mountManagesTableRows();
+    // }
         // Step 1 - Project Info
     public $candidat_id, $registration, $project_name, $description, $legal_structure, $resume_executif;
     
@@ -763,7 +755,7 @@ class PublicFormWizard extends Component
 
     public function render()
     {
-        return view('livewire.front.business_plan.public-form-wizard');
+        return view('livewire.front.evaluation_idee.public-form-wizard');
     }
 
     public function save()

@@ -9,6 +9,7 @@ use Livewire\WithPagination;
 
 class ProjectList extends Component
 {
+
     use WithPagination;
 
     public $search = '';
@@ -28,7 +29,10 @@ class ProjectList extends Component
 
     public function render()
     {
-        $query = Project::with(['candidat', 'reviewer'])->latest();
+        // Only show submitted projects and beyond (exclude drafts)
+        $query = Project::with(['candidat', 'reviewer'])
+            ->whereNotIn('status', ['draft'])
+            ->latest();
 
         if ($this->search) {
             $query->where(function($q) {
@@ -49,7 +53,7 @@ class ProjectList extends Component
         $projects = $query->paginate(15);
 
         $statistics = [
-            'total' => Project::count(),
+            'total' => Project::whereIn('status', ['submitted', 'in_review', 'approved', 'rejected'])->count(),
             'draft' => Project::where('status', 'draft')->count(),
             'submitted' => Project::where('status', 'submitted')->count(),
             'in_review' => Project::where('status', 'in_review')->count(),
@@ -71,6 +75,11 @@ class ProjectList extends Component
         ]);
 
         $project = Project::findOrFail($id);
+
+        if ($project->status === 'draft') {
+            return redirect()->back()->with('error', 'Cannot update registration for draft projects.');
+        }
+
         $project->update(['registration' => $request->registration]);
 
         return redirect()->back()->with('success', 'Project registration updated successfully!');

@@ -664,7 +664,7 @@ class ComposerStaticInit918410909780b7e482641a7cb8b586bd
         'App\\Livewire\\Admin\\UserManagement' => __DIR__ . '/../..' . '/app/Livewire/Admin/UserManagement.php',
         'App\\Livewire\\Concerns\\HasValidationRules' => __DIR__ . '/../..' . '/app/Livewire/Concerns/HasValidationRules.php',
         'App\\Livewire\\Concerns\\ManagesTableRows' => __DIR__ . '/../..' . '/app/Livewire/Concerns/ManagesTableRows.php',
-        'App\\Livewire\\PublicFormWizard' => __DIR__ . '/../..' . '/app/Livewire/PublicFormWizard.php',
+        'App\\Livewire\\BusinessPlan' => __DIR__ . '/../..' . '/app/Livewire/BusinessPlan.php',
         'App\\Models\\Project' => __DIR__ . '/../..' . '/app/Models/Project.php',
         'App\\Models\\ProjectDelivery' => __DIR__ . '/../..' . '/app/Models/ProjectDelivery.php',
         'App\\Models\\ProjectEmployee' => __DIR__ . '/../..' . '/app/Models/ProjectEmployee.php',

@@ -52,7 +52,7 @@ app/
 │   ├── Concerns/ (Shared traits)
 │   │   ├── ManagesTableRows.php
 │   │   └── HasValidationRules.php
-│   └── PublicFormWizard.php (Main form component)
+│   └── BusinessPlan.php (Main form component)
 └── Models/
     ├── User.php (Admin users)
     ├── Candidat.php (Candidates)
@@ -204,7 +204,7 @@ draft → submitted → in_review → approved/rejected
 
 ## 🔧 Key Components
 
-### PublicFormWizard.php (Main Form Component)
+### BusinessPlan.php (Main Form Component)
 **Properties:**
 - `$step`: Current step (1-8)
 - `$projectId`: ID of draft project

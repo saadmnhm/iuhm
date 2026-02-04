@@ -794,3 +794,124 @@ textarea{
         width: 280px;
     }
 }
+
+
+
+.checktf{
+    display: flex;
+    justify-content: center;
+    margin: 35px 0;
+    input{
+        margin-right: 40px;
+        width: 20px;
+
+    }
+    label{
+        margin-right: 10px;
+    }
+}
+
+input[type="radio"] {
+    accent-color: #648454; 
+}
+
+@media screen and (min-width:768px){
+    .header-form {
+        padding: 0 100px;
+    }
+    .function_envisage {
+        padding: 0px 40px;
+    }
+    .représente_travail {
+        padding: 0px 40px;
+    }
+}
+
+.secteur_envisage div{
+    display: flex;
+    width: 100%;
+    p{
+        width: 290px;
+    }
+    input{
+        margin-right: 40px;
+        width: 20px;
+        height: 20px;
+    }
+    label{
+        margin-right: 10px;
+    }
+}
+.function_envisage{
+      p{
+        width: 290px;
+    }
+    .row div{
+        display: flex;
+    }
+    input{
+        margin-right: 40px;
+        width: 20px;
+        height: 20px;
+    }
+    label{
+        margin-right: 10px;
+    }  
+}
+.disc_p {
+    display: list-item;
+    list-style-type: disc;
+    margin-left: 1em;
+}
+
+.représente_travail{
+    p{
+        width: 290px;
+    }
+    div{
+        display: flex;
+    }
+    input{
+        margin-right: 40px;
+        width: 20px;
+        height: 20px;
+    }
+    label{
+        margin-right: 10px;
+    }   
+}
+
+.complete-form p{
+    color: #2f5496;
+    font-weight: 500;
+}
+.choix_list{
+    list-style-type: disc;
+    
+    font-weight: 500;
+    color: #2f5496;
+    li{
+        margin-bottom: 10px;
+    }
+}
+
+.bmc-table {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.bmc-td {
+    border: 1px solid #000;
+    padding: 6px;
+    vertical-align: top;
+}
+
+.bmc-textarea {
+    width: 100%;
+    height: 80% !important;
+    resize: none;
+    border: 1px solid #999;
+    padding: 6px;
+    box-sizing: border-box;
+}

@@ -1,7 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Livewire\PublicFormWizard;
+use App\Livewire\BusinessPlan;
+use App\Livewire\EvaluationIdee;
+use App\Livewire\BilanCompetences;
+use App\Livewire\Bmc;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\FrontAuthController ;
 use App\Livewire\Front\Dashboard\Dashboard;
@@ -44,7 +47,10 @@ Route::prefix('user')->name('user.')->group(function () {
 // Protected User Dashboard Routes
 Route::prefix('form')->name('form.')->middleware('candidat')->group(function () {
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
-    Route::get('/business-plan', PublicFormWizard::class)->name('business_plan');
+    Route::get('/business-plan', BusinessPlan::class)->name('business_plan');
+    Route::get('/bilan-competences', BilanCompetences::class)->name('bilan_competences');
+    Route::get('/bmc', Bmc::class)->name('bmc');
+    Route::get('/evaluation-idee', EvaluationIdee::class)->name('evaluation_idee');
     Route::get('/settings', \App\Livewire\Front\Dashboard\Settings::class)->name('settings');
     Route::post('/logout', [FrontAuthController::class, 'logout'])->name('logout');
 });

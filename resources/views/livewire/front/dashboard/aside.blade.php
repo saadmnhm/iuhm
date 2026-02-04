@@ -17,7 +17,24 @@
                     <span>Business Plan</span>
                 </a>
             </li>
-            
+            <li class="nav-item">
+                <a href="{{ route('form.evaluation_idee') }}" class="nav-link {{ request()->routeIs('form.evaluation_idee') ? 'active' : '' }}">
+                    <i class="ri-bar-chart-box-line fs-5"></i>
+                    <span>Evaluation Idee</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('form.bilan_competences') }}" class="nav-link {{ request()->routeIs('form.bilan_competences') ? 'active' : '' }}">
+                    <i class="ri-bar-chart-box-line fs-5"></i>
+                    <span>Bilan Competences</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('form.bmc') }}" class="nav-link {{ request()->routeIs('form.bmc') ? 'active' : '' }}">
+                    <i class="ri-bar-chart-box-line fs-5"></i>
+                    <span>Business model canevas</span>
+                </a>
+            </li>            
         </ul>
     </nav>
         @if($showCompleteProfileModal)
