@@ -43,8 +43,32 @@ class Candidat extends Authenticatable
         ];
     }
 
-    public function project()
+    public function projects()
     {
-        return $this->belongsTo(Project::class);
+        return $this->hasMany(Project::class);
+    }
+
+    /**
+     * Get the latest project for this candidat
+     */
+    public function latestProject()
+    {
+        return $this->hasOne(Project::class)->latestOfMany();
+    }
+
+    /**
+     * Get projects by form type
+     */
+    public function projectsByType(string $formType)
+    {
+        return $this->projects()->where('form_type', $formType);
+    }
+
+    /**
+     * Support tickets
+     */
+    public function supportTickets()
+    {
+        return $this->hasMany(SupportTicket::class);
     }
 }

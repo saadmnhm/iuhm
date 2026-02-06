@@ -34,7 +34,23 @@
                     <i class="ri-bar-chart-box-line fs-5"></i>
                     <span>Business model canevas</span>
                 </a>
-            </li>            
+            </li>   
+            <li class="nav-item">
+                <a href="{{ route('form.etude_marche') }}" class="nav-link {{ request()->routeIs('form.etude_marche') ? 'active' : '' }}">
+                    <i class="ri-bar-chart-box-line fs-5"></i>
+                    <span>Etude De Marche</span>
+                </a>
+            </li>
+
+            <li class="nav-item mt-3">
+                <small class="nav-link text-muted text-uppercase fw-bold" style="font-size: 0.7rem; letter-spacing: 1px;">Assistance</small>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('form.support') }}" class="nav-link {{ request()->routeIs('form.support') ? 'active' : '' }}">
+                    <i class="ri-customer-service-2-line fs-5"></i>
+                    <span>Support</span>
+                </a>
+            </li>
         </ul>
     </nav>
         @if($showCompleteProfileModal)

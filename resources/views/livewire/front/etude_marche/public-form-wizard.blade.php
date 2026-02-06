@@ -4,31 +4,45 @@
             <div class="text-blue-700 px-4 py-3 rounded mb-4" role="alert">
                 <div class="flex items-center">
                     <i class="ri-information-fill mr-2"></i>
-                    <div>
-                        <p class="font-bold">Formulaire soumis - Mode lecture seule</p>
-                    </div>
+                    <div><p class="font-bold">Formulaire soumis - Mode lecture seule</p></div>
                 </div>
             </div>
         @endif
 
-        @if($recordId && !$isReadOnly)
+        @if($etudeId && !$isReadOnly)
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4" role="alert">
                 <div class="flex items-center">
                     <i class="ri-save-line mr-2"></i>
-                    <p class="text-sm">Mode brouillon - Votre progression est sauvegardée.</p>
+                    <p class="text-sm">Mode brouillon - Votre progression est sauvegardée automatiquement.</p>
                 </div>
             </div>
         @endif
 
         <div class="header-form">
-            <h1>Evaluation d'idée de projet</h1>
-            <p style="font-size: 1rem;">Evaluer <strong>une idée</strong> d'un <strong>projet</strong> c'est vérifier que toutes les conditions sont réunies pour entamer la
-                construction de votre <strong>projet</strong>. En d'autres termes, c'est s'assurer que vous avez les compétences
-                et une situation personnelle favorable pour exercer une activité précise sur un marché que vous connaissez.
-            </p>
+            <h1>Etude de marché</h1>
+            <p>(دراسة السوق)</p>
         </div>
 
-        @include('livewire.front.evaluation_idee.step1')
+        <div class="step-progress-container">
+            <div class="step-progress">
+                @for($i = 1; $i <= 4; $i++)
+                    <div class="step-item {{ $step >= $i ? 'active' : '' }} {{ $step == $i ? 'current' : '' }}">
+                        <div class="step-circle">
+                            @if($step > $i)
+                                <i class="ri-check-line"></i>
+                            @else
+                                <span>{{ $i }}</span>
+                            @endif
+                        </div>
+                        @if($i < 4)
+                            <div class="step-line"></div>
+                        @endif
+                    </div>
+                @endfor
+            </div>
+        </div>
+
+        @include('livewire.front.etude_marche.step'.$step)
 
         @if(!$isReadOnly)
             <div class="bg-yellow-100 border border-yellow-400 p-4 mb-4 rounded">
@@ -41,11 +55,28 @@
             </div>
         @endif
 
+        <p class="steps-indicateur mt-4">( {{ $step }} / 4 )</p>
+
         <div class="navigation-buttons mt-4 flex justify-center gap-4">
+            @if ($step > 1)
+                <button wire:click="back" class="navigation-btn btn-back">
+                    <i class="ri-arrow-left-circle-fill me-1 ms-1"></i>{{ __('messages.precedent') }}
+                </button>
+            @endif
+
             @if(!$isReadOnly)
                 <button wire:click="saveAsDraft" class="navigation-btn" style="background-color: #28a745;">
                     <i class="ri-save-line me-1 ms-1"></i>Save Draft
                 </button>
+            @endif
+
+            @if ($step < 4)
+                <button wire:click="next" class="navigation-btn btn-next">
+                    {{ __('messages.suivant') }} <i class="ri-arrow-right-circle-fill me-1 ms-1"></i>
+                </button>
+            @endif
+
+            @if ($step == 4 && !$isReadOnly)
                 <button wire:click="submit" class="navigation-btn btn-submit">
                     {{ __('messages.submitter') }} <i class="ri-send-plane-fill me-1 ms-1"></i>
                 </button>

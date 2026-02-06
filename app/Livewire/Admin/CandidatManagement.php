@@ -3,10 +3,12 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Candidat;
+use App\Models\AdminActivityLog;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class CandidatManagement extends Component
 {
@@ -18,11 +20,15 @@ class CandidatManagement extends Component
     public $showEditModal = false;
     public $showDeleteModal = false;
     public $showShowModal = false;
+    public $showPasswordModal = false;
+    public $generatedPassword = '';
     
     public $candidatId;
     public $nom;
     public $prenom;
     public $email;
+    public $phone;
+    public $address;
     public $password;
     public $selectedCandidat = null;
     
@@ -177,6 +183,54 @@ class CandidatManagement extends Component
         $this->showDeleteModal = false;
         session()->flash('success', 'Candidat deleted successfully!');
         $this->candidatId = null;
+    }
+
+    public function generateNewPassword($candidatId)
+    {
+        if (!Auth::user()->isSuperAdmin() && !Auth::user()->isAdmin()) {
+            session()->flash('error', 'Permission refusée.');
+            return;
+        }
+
+        $candidat = Candidat::findOrFail($candidatId);
+        $newPassword = Str::random(10);
+        
+        $candidat->update([
+            'password' => Hash::make($newPassword),
+        ]);
+
+        $this->generatedPassword = $newPassword;
+        $this->candidatId = $candidatId;
+        $this->selectedCandidat = $candidat;
+        $this->showPasswordModal = true;
+
+        AdminActivityLog::log(
+            'password_generated',
+            "Generated new password for candidat: {$candidat->nom} {$candidat->prenom}",
+            Candidat::class,
+            $candidat->id
+        );
+    }
+
+    public function toggleStatus($candidatId)
+    {
+        if (!Auth::user()->isSuperAdmin() && !Auth::user()->isAdmin()) {
+            session()->flash('error', 'Permission refusée.');
+            return;
+        }
+
+        $candidat = Candidat::findOrFail($candidatId);
+        $candidat->update(['is_active' => !$candidat->is_active]);
+
+        $status = $candidat->is_active ? 'activé' : 'désactivé';
+        AdminActivityLog::log(
+            'candidat_status_toggled',
+            "Candidat {$candidat->nom} {$candidat->prenom} {$status}",
+            Candidat::class,
+            $candidat->id
+        );
+
+        session()->flash('success', "Candidat {$status} avec succès!");
     }
 
     public function closeModals()

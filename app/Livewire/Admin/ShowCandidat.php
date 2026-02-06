@@ -23,20 +23,15 @@ class ShowCandidat extends Component
             return;
         }
 
-        if ($this->user->id === auth()->id()) {
-            session()->flash('error', 'You cannot disable your own account.');
-            return;
-        }
-
-        $this->user->update([
-            'is_active' => !$this->user->is_active
+        $this->candidat->update([
+            'is_active' => !$this->candidat->is_active
         ]);
 
-        session()->flash('success', 'User status updated successfully!');
+        session()->flash('success', 'Candidat status updated successfully!');
     }
 
     public function render()
     {
-        return view('livewire.admin.users.show-user');
+        return view('livewire.admin.candidat.show-candidat');
     }
 }

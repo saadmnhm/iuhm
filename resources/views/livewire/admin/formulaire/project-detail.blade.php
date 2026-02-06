@@ -14,6 +14,11 @@
         <div class="flex gap-4 mt-2 text-sm text-gray-500">
             <span>ID: #{{ $project->id }}</span>
             <span>{{ $project->created_at->format('d M Y') }}</span>
+            @if($project->form_type)
+            <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-{{ $project->form_type_badge_color }}-100 text-{{ $project->form_type_badge_color }}-800">
+                {{ $project->form_type_label }}
+            </span>
+            @endif
         </div>
     </div>
     <div class="flex gap-2">

@@ -12,176 +12,195 @@
                     <h1 class="display-4 fw-bold text-primary mb-2">
                         <i class="ri-dashboard-line me-2"></i>{{ $candidat->nom}} {{ $candidat->prenom}} 
                     </h1>
-                    <p class="text-muted">Welcome to your project management dashboard</p>
+                    <p class="text-muted">Bienvenue sur votre tableau de bord</p>
                 </div>
             </div>
 
             <!-- Statistics Cards -->
             <div class="row g-4 mb-4">
-                <!-- Total Projects -->
                 <div class="col-12 col-sm-6 col-lg-3">
                     <div class="card border-0 shadow-sm h-100 hover-lift">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
-                                    <p class="text-muted mb-2 small fw-semibold text-uppercase">Total Projects</p>
-                                    <h2 class="fw-bold mb-0 text-primary"></h2>
+                                    <p class="text-muted mb-2 small fw-semibold text-uppercase">Total Formulaires</p>
+                                    <h2 class="fw-bold mb-0 text-primary">{{ $stats['total'] }}</h2>
                                 </div>
                                 <div class="icon-box bg-primary bg-opacity-10 rounded-3 p-3">
                                     <i class="ri-folder-line fs-3 text-primary"></i>
                                 </div>
                             </div>
-                            <div class="mt-3 pt-3 border-top">
-                                <small class="text-success">
-                                    <i class="ri-arrow-up-line"></i> All submissions
-                                </small>
-                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Pending Projects -->
                 <div class="col-12 col-sm-6 col-lg-3">
                     <div class="card border-0 shadow-sm h-100 hover-lift">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
-                                    <p class="text-muted mb-2 small fw-semibold text-uppercase">Pending Review</p>
-                                    <h2 class="fw-bold mb-0 text-warning"></h2>
+                                    <p class="text-muted mb-2 small fw-semibold text-uppercase">Brouillons</p>
+                                    <h2 class="fw-bold mb-0 text-warning">{{ $stats['drafts'] }}</h2>
                                 </div>
                                 <div class="icon-box bg-warning bg-opacity-10 rounded-3 p-3">
-                                    <i class="ri-time-line fs-3 text-warning"></i>
+                                    <i class="ri-draft-line fs-3 text-warning"></i>
                                 </div>
-                            </div>
-                            <div class="mt-3 pt-3 border-top">
-                                <small class="text-muted">
-                                    <i class="ri-information-line"></i> Awaiting registration
-                                </small>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Completed Projects -->
                 <div class="col-12 col-sm-6 col-lg-3">
                     <div class="card border-0 shadow-sm h-100 hover-lift">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
-                                    <p class="text-muted mb-2 small fw-semibold text-uppercase">Completed</p>
-                                    <h2 class="fw-bold mb-0 text-success"></h2>
+                                    <p class="text-muted mb-2 small fw-semibold text-uppercase">Soumis</p>
+                                    <h2 class="fw-bold mb-0 text-info">{{ $stats['submitted'] }}</h2>
+                                </div>
+                                <div class="icon-box bg-info bg-opacity-10 rounded-3 p-3">
+                                    <i class="ri-send-plane-line fs-3 text-info"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="card border-0 shadow-sm h-100 hover-lift">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <p class="text-muted mb-2 small fw-semibold text-uppercase">Approuvés</p>
+                                    <h2 class="fw-bold mb-0 text-success">{{ $stats['approved'] }}</h2>
                                 </div>
                                 <div class="icon-box bg-success bg-opacity-10 rounded-3 p-3">
                                     <i class="ri-checkbox-circle-line fs-3 text-success"></i>
                                 </div>
-                            </div>
-                            <div class="mt-3 pt-3 border-top">
-                                <small class="text-success">
-                                    <i class="ri-check-line"></i> Registered projects
-                                </small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Success Rate -->
-                <div class="col-12 col-sm-6 col-lg-3">
-                    <div class="card border-0 shadow-sm h-100 hover-lift">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <p class="text-muted mb-2 small fw-semibold text-uppercase">Success Rate</p>
-                                    <h2 class="fw-bold mb-0 text-info">
-                                        
-                                    </h2>
-                                </div>
-                                <div class="icon-box bg-info bg-opacity-10 rounded-3 p-3">
-                                    <i class="ri-line-chart-line fs-3 text-info"></i>
-                                </div>
-                            </div>
-                            <div class="mt-3 pt-3 border-top">
-                                <small class="text-info">
-                                    <i class="ri-percent-line"></i> Completion rate
-                                </small>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="row g-4">
-                <!-- Recent Projects Table -->
-                <div class="col-12 col-lg-8">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-header bg-white border-bottom py-3">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="mb-0 fw-bold">
-                                    <i class="ri-file-list-3-line me-2 text-primary"></i>Recent Projects
-                                </h5>
-                                <a href="/" class="btn btn-sm btn-outline-primary">
-                                    View All <i class="ri-arrow-right-line ms-1"></i>
-                                </a>
+            <!-- Form Types Grid -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h5 class="fw-bold mb-3"><i class="ri-file-list-3-line me-2 text-primary"></i>Mes Formulaires</h5>
+                </div>
+            </div>
+            <div class="row g-4 mb-4">
+                @foreach($this->formTypes as $type => $info)
+                @php $project = $this->getProjectForType($type); @endphp
+                <div class="col-12 col-md-6 col-xl-4">
+                    <div class="card border-0 shadow-sm h-100 hover-lift">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="icon-box bg-{{ $info['color'] }} bg-opacity-10 rounded-3 p-3 me-3">
+                                    <i class="{{ $info['icon'] }} fs-3 text-{{ $info['color'] }}"></i>
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold mb-0">{{ $info['label'] }}</h6>
+                                    @if($project)
+                                        @if($project->status === 'draft')
+                                            <span class="badge bg-warning text-dark mt-1">Brouillon</span>
+                                        @elseif($project->status === 'submitted')
+                                            <span class="badge bg-info mt-1">Soumis</span>
+                                        @elseif($project->status === 'in_review')
+                                            <span class="badge bg-primary mt-1">En révision</span>
+                                        @elseif($project->status === 'approved')
+                                            <span class="badge bg-success mt-1">Approuvé</span>
+                                        @elseif($project->status === 'rejected')
+                                            <span class="badge bg-danger mt-1">Rejeté</span>
+                                        @endif
+                                    @else
+                                        <span class="badge bg-light text-muted mt-1">Non commencé</span>
+                                    @endif
+                                </div>
+                            </div>
+                            
+                            @if($project)
+                                <p class="text-muted small mb-3">
+                                    <i class="ri-time-line me-1"></i>
+                                    Dernière modification: {{ $project->updated_at->format('d/m/Y H:i') }}
+                                </p>
+                                @if($project->project_name)
+                                    <p class="small mb-3 text-truncate"><strong>Projet:</strong> {{ $project->project_name }}</p>
+                                @endif
+                            @else
+                                <p class="text-muted small mb-3">Vous n'avez pas encore commencé ce formulaire.</p>
+                            @endif
+
+                            <div class="d-grid">
+                                @if($project && $project->status === 'submitted')
+                                    <a href="{{ route($info['route']) }}" class="btn btn-outline-{{ $info['color'] }}">
+                                        <i class="ri-eye-line me-1"></i>Voir
+                                    </a>
+                                @elseif($project && $project->status === 'draft')
+                                    <a href="{{ route($info['route']) }}" class="btn btn-{{ $info['color'] }}">
+                                        <i class="ri-edit-line me-1"></i>Continuer
+                                    </a>
+                                @else
+                                    <a href="{{ route($info['route']) }}" class="btn btn-outline-{{ $info['color'] }}">
+                                        <i class="ri-add-circle-line me-1"></i>Commencer
+                                    </a>
+                                @endif
                             </div>
                         </div>
-
                     </div>
                 </div>
+                @endforeach
+            </div>
 
-                <!-- Quick Actions & Info -->
-                <div class="col-12 col-lg-4">
-                    <!-- Quick Actions -->
-                    <div class="card border-0 shadow-sm mb-4">
+            <!-- Quick Actions -->
+            <div class="row g-4">
+                <div class="col-12 col-lg-6">
+                    <div class="card border-0 shadow-sm">
                         <div class="card-header bg-white border-bottom py-3">
                             <h5 class="mb-0 fw-bold">
-                                <i class="ri-flashlight-line me-2 text-primary"></i>Quick Actions
+                                <i class="ri-flashlight-line me-2 text-primary"></i>Actions Rapides
                             </h5>
                         </div>
                         <div class="card-body">
                             <div class="d-grid gap-2">
-                                <a href="/" class="btn btn-primary btn-lg">
-                                    <i class="ri-add-circle-line me-2"></i>New Project
+                                <a href="{{ route('form.business_plan') }}" class="btn btn-primary">
+                                    <i class="ri-bar-chart-box-line me-2"></i>Nouveau Business Plan
                                 </a>
-                                <button class="btn btn-outline-secondary" wire:click="$refresh">
-                                    <i class="ri-refresh-line me-2"></i>Refresh Data
-                                </button>
+                                <a href="{{ route('form.support') }}" class="btn btn-outline-secondary">
+                                    <i class="ri-customer-service-2-line me-2"></i>Support
+                                </a>
+                                <a href="{{ route('form.settings') }}" class="btn btn-outline-secondary">
+                                    <i class="ri-settings-3-line me-2"></i>Paramètres du profil
+                                </a>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Project Distribution -->
+                <div class="col-12 col-lg-6">
                     <div class="card border-0 shadow-sm">
                         <div class="card-header bg-white border-bottom py-3">
                             <h5 class="mb-0 fw-bold">
-                                <i class="ri-pie-chart-line me-2 text-primary"></i>Project Status
+                                <i class="ri-information-line me-2 text-primary"></i>Informations
                             </h5>
                         </div>
                         <div class="card-body">
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="small fw-semibold">Completed</span>
-                                    <span class="small text-success fw-semibold"></span>
-                                </div>
-                                <div class="progress" style="height: 8px;">
-                                    <div class="progress-bar bg-success" >
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="small fw-semibold">Pending</span>
-                                    <span class="small text-warning fw-semibold"></span>
-                                </div>
-                                <div class="progress" style="height: 8px;">
-                                    <div class="progress-bar bg-warning" >
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mt-4 pt-3 border-top">
+                            <div class="mb-3 pb-3 border-bottom">
                                 <div class="d-flex justify-content-between">
-                                    <span class="small text-muted">Total Projects</span>
-                                    <span class="fw-bold"></span>
+                                    <span class="text-muted">Email</span>
+                                    <span class="fw-semibold">{{ $candidat->email }}</span>
+                                </div>
+                            </div>
+                            <div class="mb-3 pb-3 border-bottom">
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted">Inscrit le</span>
+                                    <span class="fw-semibold">{{ $candidat->created_at->format('d/m/Y') }}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-muted">Formulaires complétés</span>
+                                    <span class="fw-semibold">{{ $stats['submitted'] + $stats['approved'] }} / 5</span>
                                 </div>
                             </div>
                         </div>
@@ -189,6 +208,7 @@
                 </div>
             </div>
         </div>
+
         @if($showCompleteProfileModal)
             <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
                 <div class="modal-dialog modal-dialog-centered">
@@ -196,7 +216,7 @@
                         <div class="modal-header border-0">
                             <h5 class="modal-title fw-bold">
                                 <i class="ri-information-line text-warning me-2"></i>
-                                Complete Your Profile
+                                Complétez votre profil
                             </h5>
                         </div>
                         <div class="modal-body">
@@ -204,29 +224,27 @@
                                 <div class="mb-3">
                                     <i class="ri-user-settings-line" style="font-size: 4rem; color: #648454;"></i>
                                 </div>
-                                <h5 class="mb-3">Your profile is incomplete</h5>
+                                <h5 class="mb-3">Votre profil est incomplet</h5>
                                 <p class="text-muted mb-0">
-                                    Please complete your profile information to access all features. 
-                                    Add your phone number, address, city, and country to get started.
+                                    Veuillez compléter vos informations de profil pour accéder à toutes les fonctionnalités.
                                 </p>
                             </div>
                             
                             <div class="alert alert-info d-flex align-items-start">
                                 <i class="ri-lightbulb-line me-2 mt-1"></i>
                                 <div>
-                                    <strong>Why complete your profile?</strong>
+                                    <strong>Pourquoi compléter votre profil?</strong>
                                     <ul class="mb-0 mt-2 ps-3">
-                                        <li>Submit and manage projects</li>
-                                        <li>Receive important notifications</li>
-                                        <li>Better support and communication</li>
+                                        <li>Soumettre et gérer vos projets</li>
+                                        <li>Recevoir des notifications importantes</li>
+                                        <li>Meilleur support et communication</li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer border-0">
-                        
                             <button type="button" class="btn btn-primary" wire:click="goToSettings">
-                                <i class="ri-settings-3-line me-1"></i>Complete Profile Now
+                                <i class="ri-settings-3-line me-1"></i>Compléter le profil
                             </button>
                         </div>
                     </div>

@@ -130,12 +130,29 @@
 
                     <!-- Action Buttons -->
                     <div class="flex gap-2">
-                        <a href="{{ route('admin.users.show', $candidat->id) }}" 
+                        <a href="{{ route('admin.candidats.show', $candidat->id) }}" 
                            class="flex-1 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 text-center">
                             View
                         </a>
-                        @if(Auth::user()->isSuperAdmin())
-                        
+                        @if(Auth::user()->isSuperAdmin() || Auth::user()->isAdmin())
+                        <button wire:click="generateNewPassword({{ $candidat->id }})" 
+                                class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200"
+                                title="Generate new password">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                            </svg>
+                        </button>
+                        <button wire:click="toggleStatus({{ $candidat->id }})" 
+                                class="px-3 py-2 {{ ($candidat->is_active ?? true) ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700' }} text-white text-sm font-medium rounded-lg transition-colors duration-200"
+                                title="{{ ($candidat->is_active ?? true) ? 'Disable' : 'Enable' }} account">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                @if($candidat->is_active ?? true)
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                                @else
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                @endif
+                            </svg>
+                        </button>
                         @endif
                     </div>
                 </div>
@@ -157,4 +174,47 @@
             {{ $candidats->links() }}
         </div>
     </div>
+
+    <!-- Password Generated Modal -->
+    @if($showPasswordModal && $selectedCandidat)
+    <div class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center" wire:click.self="$set('showPasswordModal', false)">
+        <div class="bg-white rounded-xl shadow-xl max-w-md w-full mx-4 p-6">
+            <div class="text-center mb-4">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900">Nouveau mot de passe généré</h3>
+                <p class="text-sm text-gray-500 mt-1">Pour {{ $selectedCandidat->nom }} {{ $selectedCandidat->prenom }}</p>
+            </div>
+            
+            <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Nouveau mot de passe</label>
+                <div class="flex items-center gap-2">
+                    <code class="flex-1 bg-white border border-gray-300 rounded-lg px-4 py-2 text-lg font-mono text-center tracking-wider select-all">{{ $generatedPassword }}</code>
+                    <button onclick="navigator.clipboard.writeText('{{ $generatedPassword }}')" 
+                            class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition" title="Copier">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+                <div class="flex items-start gap-2">
+                    <svg class="w-5 h-5 text-yellow-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                    </svg>
+                    <p class="text-sm text-yellow-800">Notez ce mot de passe maintenant. Il ne sera plus affiché après fermeture.</p>
+                </div>
+            </div>
+            
+            <button wire:click="$set('showPasswordModal', false)" class="w-full px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition">
+                Fermer
+            </button>
+        </div>
+    </div>
+    @endif
 </div>

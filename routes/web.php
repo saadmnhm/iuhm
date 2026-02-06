@@ -27,11 +27,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::get('/users', \App\Livewire\Admin\UserManagement::class)->name('users.index');
         Route::get('/candidats', \App\Livewire\Admin\CandidatManagement::class)->name('candidats.index');
+        Route::get('/candidats/{id}', \App\Livewire\Admin\ShowCandidat::class)->name('candidats.show');
         Route::get('/users/create', \App\Livewire\Admin\CreateUser::class)->name('users.create');
         Route::get('/users/{id}', \App\Livewire\Admin\ShowUser::class)->name('users.show');
         Route::get('/users/{id}/edit', \App\Livewire\Admin\EditUser::class)->name('users.edit');
         Route::get('/projects/{id}/add-registration', \App\Livewire\Admin\RegistrationId::class)->name('add.registration');
         Route::get('/activity-logs', \App\Livewire\Admin\ActivityLogs::class)->name('activity.logs');
+        Route::get('/form-submissions', \App\Livewire\Admin\FormSubmissions::class)->name('form-submissions');
+        Route::get('/support-tickets', \App\Livewire\Admin\SupportTickets::class)->name('support.tickets');
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     });
 });
@@ -50,8 +53,10 @@ Route::prefix('form')->name('form.')->middleware('candidat')->group(function () 
     Route::get('/business-plan', BusinessPlan::class)->name('business_plan');
     Route::get('/bilan-competences', BilanCompetences::class)->name('bilan_competences');
     Route::get('/bmc', Bmc::class)->name('bmc');
+    Route::get('/etude-marche', \App\Livewire\EtudeMarche::class)->name('etude_marche');
     Route::get('/evaluation-idee', EvaluationIdee::class)->name('evaluation_idee');
     Route::get('/settings', \App\Livewire\Front\Dashboard\Settings::class)->name('settings');
+    Route::get('/support', \App\Livewire\Front\Dashboard\Support::class)->name('support');
     Route::post('/logout', [FrontAuthController::class, 'logout'])->name('logout');
 });
 

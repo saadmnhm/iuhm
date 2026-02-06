@@ -1,945 +1,165 @@
 <?php
 
 namespace App\Livewire;
+
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Computed;
 use Livewire\Component;
-use Livewire\WithFileUploads;
-use App\Livewire\Concerns\ManagesTableRows;
-use App\Livewire\Concerns\HasValidationRules;
-use Illuminate\Support\Facades\DB;
+use App\Models\Bmc as BmcModel;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 #[Layout('layouts.app')]
 class Bmc extends Component
 {
-    use ManagesTableRows, HasValidationRules, WithFileUploads;
-    
     public $step = 1;
-    public $projectId = null; // Track if editing existing draft
-    public $existingProject = null;
-    public $isReadOnly = false; // For viewing submitted forms
+    public $recordId = null;
+    public $isReadOnly = false;
 
-    public $rows = [];
+    // 9 BMC Canvas blocks
+    public $partenaires_cles = '';
+    public $activites_cles = '';
+    public $proposition_valeur = '';
+    public $relations_clients = '';
+    public $segments_clientele = '';
+    public $ressources_cles = '';
+    public $canaux = '';
+    public $structure_couts = '';
+    public $flux_revenus = '';
 
-    // public function mount()
-    // {
-    //     // Check if user already has a submitted project
-    //     $candidat = Auth::guard('candidat')->user();
-    //     $existingSubmittedProject = Project::where('candidat_id', $candidat->id)
-    //         ->whereIn('status', ['submitted', 'in_review', 'approved', 'rejected'])
-    //         ->first();
-        
-    //     if ($existingSubmittedProject) {
-    //         // Load existing project for view only
-    //         $this->loadExistingProject($existingSubmittedProject->id, true);
-    //         return;
-    //     }
-        
-    //     // Check for existing draft
-    //     $draft = Project::where('candidat_id', $candidat->id)
-    //         ->where('status', 'draft')
-    //         ->first();
-        
-    //     if ($draft) {
-    //         $this->loadExistingProject($draft->id);
-    //     }
-        
-    //     // Initialize tables if empty
-    //     $this->mountManagesTableRows();
-    // }
-        // Step 1 - Project Info
-    public $candidat_id, $registration, $project_name, $description, $legal_structure, $resume_executif;
-    
-    // Step 2 - Market Analysis
-    public $public_cible, $concurrent, $volume_produits_locaux, $volume_demande;
-    public $demande_offre, $motivations_achat, $raison_choix_client;
-    
-    // Step 3 - Marketing & Timeline
-    public $méthodes_marketing, $adaptation_methodes, $differenciation_marketing;
-    public $plan_affaires, $obtention_financement, $ouverture_proces;
-    public $lancement_recrutement, $ouverture_definitive, $duree;
-    
-    // Step 4 - Location & Distribution
-    public $lieu_projet, $adaptation_lieu, $benefices_from_projet, $valeur_projet;
-    
-    // Step 5 - Capacities & Investment
-    public $step_8_1, $step_8_2, $step_8_3, $step_8_4;
-    public $couts_creation, $preparation_entreprise, $achat_machines;
-    public $achat_matieres_premieres, $autres_couts, $total;
-    
-    // Step 5 - Revenue Projections (renamed to avoid conflicts with step 6)
-    public $ventes_premiere_annee, $ventes_deuxieme_annee, $ventes_troisieme_annee;
-    public $services_premiere_annee, $services_deuxieme_annee, $services_troisieme_annee;
-    public $aide_financiere_premiere_annee, $aide_financiere_deuxieme_annee, $aide_financiere_troisieme_annee;
-    public $revenus_financiers_premiere_annee, $revenus_financiers_deuxieme_annee, $revenus_financiers_troisieme_annee;
-    public $autres_revenus_premiere_annee, $autres_revenus_deuxieme_annee, $autres_revenus_troisieme_annee;
-    public $total_revenus_premiere_annee, $total_revenus_deuxieme_annee, $total_revenus_troisieme_annee;
-    
-    // Step 6 - Expected Expenses
-    public $achat_prevue_premiere_annee, $achat_prevue_deuxieme_annee, $achat_prevue_troisieme_annee;
-    public $frais_fonctionnement_premiere_annee, $frais_fonctionnement_deuxieme_annee, $frais_fonctionnement_troisieme_annee;
-    public $charges_personnel_premiere_annee, $charges_personnel_deuxieme_annee, $charges_personnel_troisieme_annee;
-    public $dettes_premiere_annee, $dettes_deuxieme_annee, $dettes_troisieme_annee;
-    public $etablissement_bancaire_premiere_annee, $etablissement_bancaire_deuxieme_annee, $etablissement_bancaire_troisieme_annee;
-    public $fournisseurs_premiere_annee, $fournisseurs_deuxieme_annee, $fournisseurs_troisieme_annee;
-    public $autres_dettes_premiere_annee, $autres_dettes_deuxieme_annee, $autres_dettes_troisieme_annee;
-    public $autres_charges_premiere_annee, $autres_charges_deuxieme_annee, $autres_charges_troisieme_annee;
-    public $total_frais_premiere_annee, $total_frais_deuxieme_annee, $total_frais_troisieme_annee;
-    
-    // Step 6 - Results
-    public $revenus_premiere_annee, $revenus_deuxieme_annee, $revenus_troisieme_annee;
-    public $depenses_premiere_annee, $depenses_deuxieme_annee, $depenses_troisieme_annee;
-    public $resultat_premiere_annee, $resultat_deuxieme_annee, $resultat_troisieme_annee;
-    public $generer_profits, $projet_durable;
-
-
-
-
-    protected function rules()
+    public function mount()
     {
-        return match ($this->step) {
-            1 => $this->step1Rules(),
-            2 => $this->step2Rules(),
-            3 => $this->step3Rules(),
-            4 => $this->step4Rules(),
-            5 => $this->step5Rules(),
-            6 => $this->step6Rules(),
-            7 => $this->step7Rules(),
-            8 => $this->step8Rules(),
-            default => [],
-        };
+        $candidat = Auth::guard('candidat')->user();
+        $existing = BmcModel::where('candidat_id', $candidat->id)
+            ->whereIn('status', ['submitted', 'in_review', 'approved', 'rejected'])->first();
+
+        if ($existing) {
+            $this->loadExisting($existing, true);
+            return;
+        }
+
+        $draft = BmcModel::where('candidat_id', $candidat->id)
+            ->where('status', 'draft')->first();
+        if ($draft) {
+            $this->loadExisting($draft);
+        }
     }
 
-    public function next()
+    protected function loadExisting($record, $readOnly = false)
     {
-        // $this->validate();
-        
-        // Auto-save draft when moving to next step
-        // if (!$this->isReadOnly) {
-        //     $this->saveAsDraft();
-        // }
-        
-        $this->step++;
-        $this->dispatch('scroll-to-top');
+        $this->recordId = $record->id;
+        $this->isReadOnly = $readOnly;
+        $this->partenaires_cles = $record->partenaires_cles ?? '';
+        $this->activites_cles = $record->activites_cles ?? '';
+        $this->proposition_valeur = $record->proposition_valeur ?? '';
+        $this->relations_clients = $record->relations_clients ?? '';
+        $this->segments_clientele = $record->segments_clientele ?? '';
+        $this->ressources_cles = $record->ressources_cles ?? '';
+        $this->canaux = $record->canaux ?? '';
+        $this->structure_couts = $record->structure_couts ?? '';
+        $this->flux_revenus = $record->flux_revenus ?? '';
     }
 
-    public function back()
+    protected function getFormData()
     {
-        $this->step--;
-        $this->dispatch('scroll-to-top');
+        return [
+            'partenaires_cles' => $this->partenaires_cles,
+            'activites_cles' => $this->activites_cles,
+            'proposition_valeur' => $this->proposition_valeur,
+            'relations_clients' => $this->relations_clients,
+            'segments_clientele' => $this->segments_clientele,
+            'ressources_cles' => $this->ressources_cles,
+            'canaux' => $this->canaux,
+            'structure_couts' => $this->structure_couts,
+            'flux_revenus' => $this->flux_revenus,
+        ];
     }
-    
-    // public function saveAsDraft()
-    // {
-    //     if ($this->isReadOnly) {
-    //         session()->flash('error', 'Cannot save a submitted project.');
-    //         return;
-    //     }
-        
-    //     try {
-    //         DB::beginTransaction();
 
-    //         $candidat_id = Auth::guard('candidat')->user()->id;
+    public function saveAsDraft()
+    {
+        if ($this->isReadOnly) {
+            session()->flash('error', 'Impossible de modifier un formulaire déjà soumis.');
+            return;
+        }
+        try {
+            DB::beginTransaction();
+            $data = $this->getFormData();
+            $data['candidat_id'] = Auth::guard('candidat')->user()->id;
+            $data['status'] = 'draft';
+            $data['current_step'] = 1;
 
-    //         $projectData = [
-    //             'candidat_id' => $candidat_id,
-    //             'registration' => $this->registration,
-    //             'project_name' => $this->project_name,
-    //             'description' => $this->description,
-    //             'legal_structure' => $this->legal_structure,
-    //             'resume_executif' => $this->resume_executif,
-    //             'public_cible' => $this->public_cible,
-    //             'concurrent' => $this->concurrent,
-    //             'volume_produits_locaux' => $this->volume_produits_locaux,
-    //             'volume_demande' => $this->volume_demande,
-    //             'demande_offre' => $this->demande_offre,
-    //             'motivations_achat' => $this->motivations_achat,
-    //             'raison_choix_client' => $this->raison_choix_client,
-    //             'méthodes_marketing' => $this->méthodes_marketing,
-    //             'adaptation_methodes' => $this->adaptation_methodes,
-    //             'differenciation_marketing' => $this->differenciation_marketing,
-    //             'plan_affaires' => $this->plan_affaires,
-    //             'obtention_financement' => $this->obtention_financement,
-    //             'ouverture_proces' => $this->ouverture_proces,
-    //             'lancement_recrutement' => $this->lancement_recrutement,
-    //             'ouverture_definitive' => $this->ouverture_definitive,
-    //             'duree' => $this->duree,
-    //             'lieu_projet' => $this->lieu_projet,
-    //             'adaptation_lieu' => $this->adaptation_lieu,
-    //             'benefices_from_projet' => $this->benefices_from_projet,
-    //             'valeur_projet' => $this->valeur_projet,
-    //             'step_8_1' => $this->step_8_1,
-    //             'step_8_2' => $this->step_8_2,
-    //             'step_8_3' => $this->step_8_3,
-    //             'step_8_4' => $this->step_8_4,
-    //             'couts_creation' => $this->couts_creation,
-    //             'preparation_entreprise' => $this->preparation_entreprise,
-    //             'achat_machines' => $this->achat_machines,
-    //             'achat_matieres_premieres' => $this->achat_matieres_premieres,
-    //             'autres_couts' => $this->autres_couts,
-    //             'total' => $this->total,
-    //             'generer_profits' => $this->generer_profits,
-    //             'projet_durable' => $this->projet_durable,
-    //             'status' => 'draft',
-    //             'current_step' => $this->step,
-    //         ];
+            if ($this->recordId) {
+                BmcModel::findOrFail($this->recordId)->update($data);
+            } else {
+                $record = BmcModel::create($data);
+                $this->recordId = $record->id;
+            }
+            DB::commit();
+            session()->flash('success', 'Brouillon sauvegardé avec succès!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            session()->flash('error', 'Erreur: ' . $e->getMessage());
+        }
+    }
 
-    //         if ($this->projectId) {
-    //             // Update existing draft
-    //             $project = Project::findOrFail($this->projectId);
-    //             $project->update($projectData);
-    //         } else {
-    //             // Create new draft
-    //             $project = Project::create($projectData);
-    //             $this->projectId = $project->id;
-    //         }
+    public function submit()
+    {
+        if ($this->isReadOnly) {
+            session()->flash('error', 'Formulaire déjà soumis.');
+            return;
+        }
 
-    //         // Save related data
-    //         $this->saveDraftTables($project);
+        $this->validate([
+            'proposition_valeur' => 'required|string',
+            'segments_clientele' => 'required|string',
+        ]);
 
-    //         DB::commit();
+        try {
+            DB::beginTransaction();
+            $candidat_id = Auth::guard('candidat')->user()->id;
 
-    //         session()->flash('success', 'Draft saved successfully!');
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         \Log::error('Draft save failed: ' . $e->getMessage());
-    //         session()->flash('error', 'Error saving draft: ' . $e->getMessage());
-    //     }
-    // }
-    
-    // protected function saveDraftTables($project)
-    // {
-    //     // Delete existing entries for this project
-    //     $project->products()->delete();
-    //     $project->employees()->delete();
-    //     $project->presentations()->delete();
-    //     $project->deliveries()->delete();
-    //     $project->equipment()->delete();
-    //     $project->rawMaterials()->delete();
-    //     $project->financials()->delete();
+            if (BmcModel::where('candidat_id', $candidat_id)
+                ->whereIn('status', ['submitted', 'in_review', 'approved', 'rejected'])->exists()) {
+                DB::rollBack();
+                session()->flash('error', 'Vous avez déjà soumis ce formulaire.');
+                return;
+            }
 
-    //     // Save table1Rows - Products
-    //     foreach ($this->table1Rows as $index => $row) {
-    //         if (!empty($row['product_name']) || !empty($row['description'])) {
-    //             $project->products()->create([
-    //                 'product_name' => $row['product_name'],
-    //                 'description' => $row['description'],
-    //                 'sort_order' => $index,
-    //             ]);
-    //         }
-    //     }
+            $data = $this->getFormData();
+            $data['candidat_id'] = $candidat_id;
+            $data['status'] = 'submitted';
+            $data['submitted_at'] = now();
 
-    //     // Save table2Rows - Employees
-    //     foreach ($this->table2Rows as $index => $row) {
-    //         if (!empty($row['item'])) {
-    //             $project->employees()->create([
-    //                 'item' => $row['item'],
-    //                 'total_employee_1' => $row['total_employee_1'] ?? 0,
-    //                 'total_employee_2' => $row['total_employee_2'] ?? 0,
-    //                 'sort_order' => $index,
-    //             ]);
-    //         }
-    //     }
+            if ($this->recordId) {
+                BmcModel::findOrFail($this->recordId)->update($data);
+            } else {
+                BmcModel::create($data);
+            }
+            DB::commit();
+            $this->isReadOnly = true;
+            session()->flash('success', 'Formulaire soumis avec succès!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            session()->flash('error', 'Erreur: ' . $e->getMessage());
+        }
+    }
 
-    //     // Save table3Rows - Presentations
-    //     foreach ($this->table3Rows as $index => $row) {
-    //         if (!empty($row['product_name_presentation'])) {
-    //             $project->presentations()->create([
-    //                 'product_name_presentation' => $row['product_name_presentation'],
-    //                 'presentation_methode' => $row['presentation_methode'],
-    //                 'sort_order' => $index,
-    //             ]);
-    //         }
-    //     }
-
-    //     // Save table4Rows - Deliveries
-    //     foreach ($this->table4Rows as $index => $row) {
-    //         if (!empty($row['product_name_livraison'])) {
-    //             $project->deliveries()->create([
-    //                 'product_name_livraison' => $row['product_name_livraison'],
-    //                 'livraison_methode' => $row['livraison_methode'],
-    //                 'sort_order' => $index,
-    //             ]);
-    //         }
-    //     }
-
-    //     // Save table5Rows - Equipment
-    //     foreach ($this->table5Rows as $index => $row) {
-    //         if (!empty($row['equipement'])) {
-    //             $project->equipment()->create([
-    //                 'equipement' => $row['equipement'],
-    //                 'reference' => $row['reference'],
-    //                 'prix_equipement' => $row['prix_equipement'] ?? 0,
-    //                 'sort_order' => $index,
-    //             ]);
-    //         }
-    //     }
-
-    //     // Save table6Rows - Raw Materials
-    //     foreach ($this->table6Rows as $index => $row) {
-    //         if (!empty($row['matiere_premiere'])) {
-    //             $project->rawMaterials()->create([
-    //                 'matiere_premiere' => $row['matiere_premiere'],
-    //                 'comment_procurer' => $row['comment_procurer'],
-    //                 'fournisseur_matiere' => $row['fournisseur_matiere'],
-    //                 'sort_order' => $index,
-    //             ]);
-    //         }
-    //     }
-
-    //     // Save Financial Data (only if exists)
-    //     if ($this->ventes_premiere_annee || $this->ventes_deuxieme_annee || $this->ventes_troisieme_annee) {
-    //         $project->financials()->updateOrCreate(
-    //             ['project_id' => $project->id],
-    //             [
-    //                 'ventes_premiere_annee' => $this->ventes_premiere_annee,
-    //                 'ventes_deuxieme_annee' => $this->ventes_deuxieme_annee,
-    //                 'ventes_troisieme_annee' => $this->ventes_troisieme_annee,
-    //                 'services_premiere_annee' => $this->services_premiere_annee,
-    //                 'services_deuxieme_annee' => $this->services_deuxieme_annee,
-    //                 'services_troisieme_annee' => $this->services_troisieme_annee,
-    //                 'aide_financiere_premiere_annee' => $this->aide_financiere_premiere_annee,
-    //                 'aide_financiere_deuxieme_annee' => $this->aide_financiere_deuxieme_annee,
-    //                 'aide_financiere_troisieme_annee' => $this->aide_financiere_troisieme_annee,
-    //                 'revenus_financiers_premiere_annee' => $this->revenus_financiers_premiere_annee,
-    //                 'revenus_financiers_deuxieme_annee' => $this->revenus_financiers_deuxieme_annee,
-    //                 'revenus_financiers_troisieme_annee' => $this->revenus_financiers_troisieme_annee,
-    //                 'autres_revenus_premiere_annee' => $this->autres_revenus_premiere_annee,
-    //                 'autres_revenus_deuxieme_annee' => $this->autres_revenus_deuxieme_annee,
-    //                 'autres_revenus_troisieme_annee' => $this->autres_revenus_troisieme_annee,
-    //                 'total_revenus_premiere_annee' => $this->total_revenus_premiere_annee,
-    //                 'total_revenus_deuxieme_annee' => $this->total_revenus_deuxieme_annee,
-    //                 'total_revenus_troisieme_annee' => $this->total_revenus_troisieme_annee,
-    //                 'achat_prevue_premiere_annee' => $this->achat_prevue_premiere_annee,
-    //                 'achat_prevue_deuxieme_annee' => $this->achat_prevue_deuxieme_annee,
-    //                 'achat_prevue_troisieme_annee' => $this->achat_prevue_troisieme_annee,
-    //                 'frais_fonctionnement_premiere_annee' => $this->frais_fonctionnement_premiere_annee,
-    //                 'frais_fonctionnement_deuxieme_annee' => $this->frais_fonctionnement_deuxieme_annee,
-    //                 'frais_fonctionnement_troisieme_annee' => $this->frais_fonctionnement_troisieme_annee,
-    //                 'charges_personnel_premiere_annee' => $this->charges_personnel_premiere_annee,
-    //                 'charges_personnel_deuxieme_annee' => $this->charges_personnel_deuxieme_annee,
-    //                 'charges_personnel_troisieme_annee' => $this->charges_personnel_troisieme_annee,
-    //                 'dettes_premiere_annee' => $this->dettes_premiere_annee,
-    //                 'dettes_deuxieme_annee' => $this->dettes_deuxieme_annee,
-    //                 'dettes_troisieme_annee' => $this->dettes_troisieme_annee,
-    //                 'etablissement_bancaire_premiere_annee' => $this->etablissement_bancaire_premiere_annee,
-    //                 'etablissement_bancaire_deuxieme_annee' => $this->etablissement_bancaire_deuxieme_annee,
-    //                 'etablissement_bancaire_troisieme_annee' => $this->etablissement_bancaire_troisieme_annee,
-    //                 'fournisseurs_premiere_annee' => $this->fournisseurs_premiere_annee,
-    //                 'fournisseurs_deuxieme_annee' => $this->fournisseurs_deuxieme_annee,
-    //                 'fournisseurs_troisieme_annee' => $this->fournisseurs_troisieme_annee,
-    //                 'autres_dettes_premiere_annee' => $this->autres_dettes_premiere_annee,
-    //                 'autres_dettes_deuxieme_annee' => $this->autres_dettes_deuxieme_annee,
-    //                 'autres_dettes_troisieme_annee' => $this->autres_dettes_troisieme_annee,
-    //                 'autres_charges_premiere_annee' => $this->autres_charges_premiere_annee,
-    //                 'autres_charges_deuxieme_annee' => $this->autres_charges_deuxieme_annee,
-    //                 'autres_charges_troisieme_annee' => $this->autres_charges_troisieme_annee,
-    //                 'total_frais_premiere_annee' => $this->total_frais_premiere_annee,
-    //                 'total_frais_deuxieme_annee' => $this->total_frais_deuxieme_annee,
-    //                 'total_frais_troisieme_annee' => $this->total_frais_troisieme_annee,
-    //                 'revenus_premiere_annee' => $this->revenus_premiere_annee,
-    //                 'revenus_deuxieme_annee' => $this->revenus_deuxieme_annee,
-    //                 'revenus_troisieme_annee' => $this->revenus_troisieme_annee,
-    //                 'depenses_premiere_annee' => $this->depenses_premiere_annee,
-    //                 'depenses_deuxieme_annee' => $this->depenses_deuxieme_annee,
-    //                 'depenses_troisieme_annee' => $this->depenses_troisieme_annee,
-    //                 'resultat_premiere_annee' => $this->resultat_premiere_annee,
-    //                 'resultat_deuxieme_annee' => $this->resultat_deuxieme_annee,
-    //                 'resultat_troisieme_annee' => $this->resultat_troisieme_annee,
-    //             ]
-    //         );
-    //     }
-    // }
-    
-    // protected function loadExistingProject($projectId, $readOnly = false)
-    // {
-    //     $project = Project::with(['products', 'employees', 'presentations', 'deliveries', 'equipment', 'rawMaterials', 'financials'])
-    //         ->findOrFail($projectId);
-        
-    //     $this->projectId = $project->id;
-    //     $this->existingProject = $project;
-    //     $this->isReadOnly = $readOnly;
-    //     $this->step = $project->current_step > 0 ? $project->current_step : 1;
-        
-    //     // Load basic fields
-    //     $this->registration = $project->registration;
-    //     $this->project_name = $project->project_name;
-    //     $this->description = $project->description;
-    //     $this->legal_structure = $project->legal_structure;
-    //     $this->resume_executif = $project->resume_executif;
-    //     $this->public_cible = $project->public_cible;
-    //     $this->concurrent = $project->concurrent;
-    //     $this->volume_produits_locaux = $project->volume_produits_locaux;
-    //     $this->volume_demande = $project->volume_demande;
-    //     $this->demande_offre = $project->demande_offre;
-    //     $this->motivations_achat = $project->motivations_achat;
-    //     $this->raison_choix_client = $project->raison_choix_client;
-    //     $this->méthodes_marketing = $project->méthodes_marketing;
-    //     $this->adaptation_methodes = $project->adaptation_methodes;
-    //     $this->differenciation_marketing = $project->differenciation_marketing;
-    //     $this->plan_affaires = $project->plan_affaires;
-    //     $this->obtention_financement = $project->obtention_financement;
-    //     $this->ouverture_proces = $project->ouverture_proces;
-    //     $this->lancement_recrutement = $project->lancement_recrutement;
-    //     $this->ouverture_definitive = $project->ouverture_definitive;
-    //     $this->duree = $project->duree;
-    //     $this->lieu_projet = $project->lieu_projet;
-    //     $this->adaptation_lieu = $project->adaptation_lieu;
-    //     $this->benefices_from_projet = $project->benefices_from_projet;
-    //     $this->valeur_projet = $project->valeur_projet;
-    //     $this->step_8_1 = $project->step_8_1;
-    //     $this->step_8_2 = $project->step_8_2;
-    //     $this->step_8_3 = $project->step_8_3;
-    //     $this->step_8_4 = $project->step_8_4;
-    //     $this->couts_creation = $project->couts_creation;
-    //     $this->preparation_entreprise = $project->preparation_entreprise;
-    //     $this->achat_machines = $project->achat_machines;
-    //     $this->achat_matieres_premieres = $project->achat_matieres_premieres;
-    //     $this->autres_couts = $project->autres_couts;
-    //     $this->total = $project->total;
-    //     $this->generer_profits = $project->generer_profits;
-    //     $this->projet_durable = $project->projet_durable;
-        
-    //     // Load tables
-    //     $this->table1Rows = $project->products->map(function($item) {
-    //         return ['product_name' => $item->product_name, 'description' => $item->description];
-    //     })->toArray() ?: [['product_name' => '', 'description' => '']];
-        
-    //     $this->table2Rows = $project->employees->map(function($item) {
-    //         return ['item' => $item->item, 'total_employee_1' => $item->total_employee_1, 'total_employee_2' => $item->total_employee_2];
-    //     })->toArray() ?: [['item' => '', 'total_employee_1' => 0, 'total_employee_2' => 0]];
-        
-    //     $this->table3Rows = $project->presentations->map(function($item) {
-    //         return ['product_name_presentation' => $item->product_name_presentation, 'presentation_methode' => $item->presentation_methode];
-    //     })->toArray() ?: [['product_name_presentation' => '', 'presentation_methode' => '']];
-        
-    //     $this->table4Rows = $project->deliveries->map(function($item) {
-    //         return ['product_name_livraison' => $item->product_name_livraison, 'livraison_methode' => $item->livraison_methode];
-    //     })->toArray() ?: [['product_name_livraison' => '', 'livraison_methode' => '']];
-        
-    //     $this->table5Rows = $project->equipment->map(function($item) {
-    //         return ['equipement' => $item->equipement, 'reference' => $item->reference, 'prix_equipement' => $item->prix_equipement];
-    //     })->toArray() ?: array_fill(0, 15, ['equipement' => '', 'reference' => '', 'prix_equipement' => 0]);
-        
-    //     $this->table6Rows = $project->rawMaterials->map(function($item) {
-    //         return ['matiere_premiere' => $item->matiere_premiere, 'comment_procurer' => $item->comment_procurer, 'fournisseur_matiere' => $item->fournisseur_matiere];
-    //     })->toArray() ?: array_fill(0, 15, ['matiere_premiere' => '', 'comment_procurer' => '', 'fournisseur_matiere' => '']);
-        
-    //     // Load financials
-    //     if ($project->financials) {
-    //         $f = $project->financials;
-    //         $this->ventes_premiere_annee = $f->ventes_premiere_annee;
-    //         $this->ventes_deuxieme_annee = $f->ventes_deuxieme_annee;
-    //         $this->ventes_troisieme_annee = $f->ventes_troisieme_annee;
-    //         $this->services_premiere_annee = $f->services_premiere_annee;
-    //         $this->services_deuxieme_annee = $f->services_deuxieme_annee;
-    //         $this->services_troisieme_annee = $f->services_troisieme_annee;
-    //         $this->aide_financiere_premiere_annee = $f->aide_financiere_premiere_annee;
-    //         $this->aide_financiere_deuxieme_annee = $f->aide_financiere_deuxieme_annee;
-    //         $this->aide_financiere_troisieme_annee = $f->aide_financiere_troisieme_annee;
-    //         $this->revenus_financiers_premiere_annee = $f->revenus_financiers_premiere_annee;
-    //         $this->revenus_financiers_deuxieme_annee = $f->revenus_financiers_deuxieme_annee;
-    //         $this->revenus_financiers_troisieme_annee = $f->revenus_financiers_troisieme_annee;
-    //         $this->autres_revenus_premiere_annee = $f->autres_revenus_premiere_annee;
-    //         $this->autres_revenus_deuxieme_annee = $f->autres_revenus_deuxieme_annee;
-    //         $this->autres_revenus_troisieme_annee = $f->autres_revenus_troisieme_annee;
-    //         $this->total_revenus_premiere_annee = $f->total_revenus_premiere_annee;
-    //         $this->total_revenus_deuxieme_annee = $f->total_revenus_deuxieme_annee;
-    //         $this->total_revenus_troisieme_annee = $f->total_revenus_troisieme_annee;
-    //         $this->achat_prevue_premiere_annee = $f->achat_prevue_premiere_annee;
-    //         $this->achat_prevue_deuxieme_annee = $f->achat_prevue_deuxieme_annee;
-    //         $this->achat_prevue_troisieme_annee = $f->achat_prevue_troisieme_annee;
-    //         $this->frais_fonctionnement_premiere_annee = $f->frais_fonctionnement_premiere_annee;
-    //         $this->frais_fonctionnement_deuxieme_annee = $f->frais_fonctionnement_deuxieme_annee;
-    //         $this->frais_fonctionnement_troisieme_annee = $f->frais_fonctionnement_troisieme_annee;
-    //         $this->charges_personnel_premiere_annee = $f->charges_personnel_premiere_annee;
-    //         $this->charges_personnel_deuxieme_annee = $f->charges_personnel_deuxieme_annee;
-    //         $this->charges_personnel_troisieme_annee = $f->charges_personnel_troisieme_annee;
-    //         $this->dettes_premiere_annee = $f->dettes_premiere_annee;
-    //         $this->dettes_deuxieme_annee = $f->dettes_deuxieme_annee;
-    //         $this->dettes_troisieme_annee = $f->dettes_troisieme_annee;
-    //         $this->etablissement_bancaire_premiere_annee = $f->etablissement_bancaire_premiere_annee;
-    //         $this->etablissement_bancaire_deuxieme_annee = $f->etablissement_bancaire_deuxieme_annee;
-    //         $this->etablissement_bancaire_troisieme_annee = $f->etablissement_bancaire_troisieme_annee;
-    //         $this->fournisseurs_premiere_annee = $f->fournisseurs_premiere_annee;
-    //         $this->fournisseurs_deuxieme_annee = $f->fournisseurs_deuxieme_annee;
-    //         $this->fournisseurs_troisieme_annee = $f->fournisseurs_troisieme_annee;
-    //         $this->autres_dettes_premiere_annee = $f->autres_dettes_premiere_annee;
-    //         $this->autres_dettes_deuxieme_annee = $f->autres_dettes_deuxieme_annee;
-    //         $this->autres_dettes_troisieme_annee = $f->autres_dettes_troisieme_annee;
-    //         $this->autres_charges_premiere_annee = $f->autres_charges_premiere_annee;
-    //         $this->autres_charges_deuxieme_annee = $f->autres_charges_deuxieme_annee;
-    //         $this->autres_charges_troisieme_annee = $f->autres_charges_troisieme_annee;
-    //         $this->total_frais_premiere_annee = $f->total_frais_premiere_annee;
-    //         $this->total_frais_deuxieme_annee = $f->total_frais_deuxieme_annee;
-    //         $this->total_frais_troisieme_annee = $f->total_frais_troisieme_annee;
-    //         $this->revenus_premiere_annee = $f->revenus_premiere_annee;
-    //         $this->revenus_deuxieme_annee = $f->revenus_deuxieme_annee;
-    //         $this->revenus_troisieme_annee = $f->revenus_troisieme_annee;
-    //         $this->depenses_premiere_annee = $f->depenses_premiere_annee;
-    //         $this->depenses_deuxieme_annee = $f->depenses_deuxieme_annee;
-    //         $this->depenses_troisieme_annee = $f->depenses_troisieme_annee;
-    //         $this->resultat_premiere_annee = $f->resultat_premiere_annee;
-    //         $this->resultat_deuxieme_annee = $f->resultat_deuxieme_annee;
-    //         $this->resultat_troisieme_annee = $f->resultat_troisieme_annee;
-    //     }
-    // }
-
-    // public function submit()
-    // {
-    //     if ($this->isReadOnly) {
-    //         session()->flash('error', 'This project has already been submitted and cannot be modified.');
-    //         return;
-    //     }
-        
-    //     \Log::info('Submit method called');
-        
-    //     $this->validate();
-
-    //     \Log::info('Validation passed');
-
-    //     try {
-    //         DB::beginTransaction();
-
-    //         \Log::info('Transaction started');
-
-    //         $candidat_id = Auth::guard('candidat')->user()->id;
-            
-    //         $projectData = [
-    //             'candidat_id' => $candidat_id,
-    //             'registration' => $this->registration,
-    //             'project_name' => $this->project_name,
-    //             'description' => $this->description,
-    //             'legal_structure' => $this->legal_structure,
-    //             'resume_executif' => $this->resume_executif,
-    //             'public_cible' => $this->public_cible,
-    //             'concurrent' => $this->concurrent,
-    //             'volume_produits_locaux' => $this->volume_produits_locaux,
-    //             'volume_demande' => $this->volume_demande,
-    //             'demande_offre' => $this->demande_offre,
-    //             'motivations_achat' => $this->motivations_achat,
-    //             'raison_choix_client' => $this->raison_choix_client,
-    //             'méthodes_marketing' => $this->méthodes_marketing,
-    //             'adaptation_methodes' => $this->adaptation_methodes,
-    //             'differenciation_marketing' => $this->differenciation_marketing,
-    //             'plan_affaires' => $this->plan_affaires,
-    //             'obtention_financement' => $this->obtention_financement,
-    //             'ouverture_proces' => $this->ouverture_proces,
-    //             'lancement_recrutement' => $this->lancement_recrutement,
-    //             'ouverture_definitive' => $this->ouverture_definitive,
-    //             'duree' => $this->duree,
-    //             'lieu_projet' => $this->lieu_projet,
-    //             'adaptation_lieu' => $this->adaptation_lieu,
-    //             'benefices_from_projet' => $this->benefices_from_projet,
-    //             'valeur_projet' => $this->valeur_projet,
-    //             'step_8_1' => $this->step_8_1,
-    //             'step_8_2' => $this->step_8_2,
-    //             'step_8_3' => $this->step_8_3,
-    //             'step_8_4' => $this->step_8_4,
-    //             'couts_creation' => $this->couts_creation,
-    //             'preparation_entreprise' => $this->preparation_entreprise,
-    //             'achat_machines' => $this->achat_machines,
-    //             'achat_matieres_premieres' => $this->achat_matieres_premieres,
-    //             'autres_couts' => $this->autres_couts,
-    //             'total' => $this->total,
-    //             'generer_profits' => $this->generer_profits,
-    //             'projet_durable' => $this->projet_durable,
-    //             'status' => 'submitted',
-    //             'current_step' => 8,
-    //             'submitted_at' => now(),
-    //         ];
-
-    //         if ($this->projectId) {
-    //             // Update existing draft and submit
-    //             $project = Project::findOrFail($this->projectId);
-    //             $project->update($projectData);
-    //         } else {
-    //             // Create new project and submit
-    //             $project = Project::create($projectData);
-    //         }
-
-    //         \Log::info('Project created/updated with ID: ' . $project->id);
-
-    //         // Save table1Rows - Products
-    //         foreach ($this->table1Rows as $index => $row) {
-    //             if (!empty($row['product_name']) || !empty($row['description'])) {
-    //                 $project->products()->create([
-    //                     'product_name' => $row['product_name'],
-    //                     'description' => $row['description'],
-    //                     'sort_order' => $index,
-    //                 ]);
-    //             }
-    //         }
-
-    //         // Save table2Rows - Employees
-    //         foreach ($this->table2Rows as $index => $row) {
-    //             if (!empty($row['item'])) {
-    //                 $project->employees()->create([
-    //                     'item' => $row['item'],
-    //                     'total_employee_1' => $row['total_employee_1'] ?? 0,
-    //                     'total_employee_2' => $row['total_employee_2'] ?? 0,
-    //                     'sort_order' => $index,
-    //                 ]);
-    //             }
-    //         }
-
-    //         // Save table3Rows - Presentations
-    //         foreach ($this->table3Rows as $index => $row) {
-    //             if (!empty($row['product_name_presentation'])) {
-    //                 $project->presentations()->create([
-    //                     'product_name_presentation' => $row['product_name_presentation'],
-    //                     'presentation_methode' => $row['presentation_methode'],
-    //                     'sort_order' => $index,
-    //                 ]);
-    //             }
-    //         }
-
-    //         // Save table4Rows - Deliveries
-    //         foreach ($this->table4Rows as $index => $row) {
-    //             if (!empty($row['product_name_livraison'])) {
-    //                 $project->deliveries()->create([
-    //                     'product_name_livraison' => $row['product_name_livraison'],
-    //                     'livraison_methode' => $row['livraison_methode'],
-    //                     'sort_order' => $index,
-    //                 ]);
-    //             }
-    //         }
-
-    //         // Save table5Rows - Equipment
-    //         foreach ($this->table5Rows as $index => $row) {
-    //             if (!empty($row['equipement'])) {
-    //                 $project->equipment()->create([
-    //                     'equipement' => $row['equipement'],
-    //                     'reference' => $row['reference'],
-    //                     'prix_equipement' => $row['prix_equipement'] ?? 0,
-    //                     'sort_order' => $index,
-    //                 ]);
-    //             }
-    //         }
-
-    //         // Save table6Rows - Raw Materials
-    //         foreach ($this->table6Rows as $index => $row) {
-    //             if (!empty($row['matiere_premiere'])) {
-    //                 $project->rawMaterials()->create([
-    //                     'matiere_premiere' => $row['matiere_premiere'],
-    //                     'comment_procurer' => $row['comment_procurer'],
-    //                     'fournisseur_matiere' => $row['fournisseur_matiere'],
-    //                     'sort_order' => $index,
-    //                 ]);
-    //             }
-    //         }
-
-    //         // Save Financial Data
-    //         $project->financials()->create([
-    //             'ventes_premiere_annee' => $this->ventes_premiere_annee,
-    //             'ventes_deuxieme_annee' => $this->ventes_deuxieme_annee,
-    //             'ventes_troisieme_annee' => $this->ventes_troisieme_annee,
-    //             'services_premiere_annee' => $this->services_premiere_annee,
-    //             'services_deuxieme_annee' => $this->services_deuxieme_annee,
-    //             'services_troisieme_annee' => $this->services_troisieme_annee,
-    //             'aide_financiere_premiere_annee' => $this->aide_financiere_premiere_annee,
-    //             'aide_financiere_deuxieme_annee' => $this->aide_financiere_deuxieme_annee,
-    //             'aide_financiere_troisieme_annee' => $this->aide_financiere_troisieme_annee,
-    //             'revenus_financiers_premiere_annee' => $this->revenus_financiers_premiere_annee,
-    //             'revenus_financiers_deuxieme_annee' => $this->revenus_financiers_deuxieme_annee,
-    //             'revenus_financiers_troisieme_annee' => $this->revenus_financiers_troisieme_annee,
-    //             'autres_revenus_premiere_annee' => $this->autres_revenus_premiere_annee,
-    //             'autres_revenus_deuxieme_annee' => $this->autres_revenus_deuxieme_annee,
-    //             'autres_revenus_troisieme_annee' => $this->autres_revenus_troisieme_annee,
-    //             'total_revenus_premiere_annee' => $this->total_revenus_premiere_annee,
-    //             'total_revenus_deuxieme_annee' => $this->total_revenus_deuxieme_annee,
-    //             'total_revenus_troisieme_annee' => $this->total_revenus_troisieme_annee,
-    //             'achat_prevue_premiere_annee' => $this->achat_prevue_premiere_annee,
-    //             'achat_prevue_deuxieme_annee' => $this->achat_prevue_deuxieme_annee,
-    //             'achat_prevue_troisieme_annee' => $this->achat_prevue_troisieme_annee,
-    //             'frais_fonctionnement_premiere_annee' => $this->frais_fonctionnement_premiere_annee,
-    //             'frais_fonctionnement_deuxieme_annee' => $this->frais_fonctionnement_deuxieme_annee,
-    //             'frais_fonctionnement_troisieme_annee' => $this->frais_fonctionnement_troisieme_annee,
-    //             'charges_personnel_premiere_annee' => $this->charges_personnel_premiere_annee,
-    //             'charges_personnel_deuxieme_annee' => $this->charges_personnel_deuxieme_annee,
-    //             'charges_personnel_troisieme_annee' => $this->charges_personnel_troisieme_annee,
-    //             'dettes_premiere_annee' => $this->dettes_premiere_annee,
-    //             'dettes_deuxieme_annee' => $this->dettes_deuxieme_annee,
-    //             'dettes_troisieme_annee' => $this->dettes_troisieme_annee,
-    //             'etablissement_bancaire_premiere_annee' => $this->etablissement_bancaire_premiere_annee,
-    //             'etablissement_bancaire_deuxieme_annee' => $this->etablissement_bancaire_deuxieme_annee,
-    //             'etablissement_bancaire_troisieme_annee' => $this->etablissement_bancaire_troisieme_annee,
-    //             'fournisseurs_premiere_annee' => $this->fournisseurs_premiere_annee,
-    //             'fournisseurs_deuxieme_annee' => $this->fournisseurs_deuxieme_annee,
-    //             'fournisseurs_troisieme_annee' => $this->fournisseurs_troisieme_annee,
-    //             'autres_dettes_premiere_annee' => $this->autres_dettes_premiere_annee,
-    //             'autres_dettes_deuxieme_annee' => $this->autres_dettes_deuxieme_annee,
-    //             'autres_dettes_troisieme_annee' => $this->autres_dettes_troisieme_annee,
-    //             'autres_charges_premiere_annee' => $this->autres_charges_premiere_annee,
-    //             'autres_charges_deuxieme_annee' => $this->autres_charges_deuxieme_annee,
-    //             'autres_charges_troisieme_annee' => $this->autres_charges_troisieme_annee,
-    //             'total_frais_premiere_annee' => $this->total_frais_premiere_annee,
-    //             'total_frais_deuxieme_annee' => $this->total_frais_deuxieme_annee,
-    //             'total_frais_troisieme_annee' => $this->total_frais_troisieme_annee,
-    //             'revenus_premiere_annee' => $this->revenus_premiere_annee,
-    //             'revenus_deuxieme_annee' => $this->revenus_deuxieme_annee,
-    //             'revenus_troisieme_annee' => $this->revenus_troisieme_annee,
-    //             'depenses_premiere_annee' => $this->depenses_premiere_annee,
-    //             'depenses_deuxieme_annee' => $this->depenses_deuxieme_annee,
-    //             'depenses_troisieme_annee' => $this->depenses_troisieme_annee,
-    //             'resultat_premiere_annee' => $this->resultat_premiere_annee,
-    //             'resultat_deuxieme_annee' => $this->resultat_deuxieme_annee,
-    //             'resultat_troisieme_annee' => $this->resultat_troisieme_annee,
-    //         ]);
-
-    //         DB::commit();
-
-    //         // Mark as read-only after submission
-    //         $this->isReadOnly = true;
-    //         $this->existingProject = $project;
-
-    //         session()->flash('success', 'Project submitted successfully! Your project is now under review.');
-
-
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         \Log::error('Project submission failed: ' . $e->getMessage());
-    //         \Log::error('Stack trace: ' . $e->getTraceAsString());
-    //         session()->flash('error', 'Error saving project: ' . $e->getMessage());
-    //     }
-    // }
-
-    // protected function clearFormData()
-    // {
-    //     // Clear all fields except tables
-    //     $this->project_name = null;
-    //     $this->description = null;
-    //     $this->registration = null;
-    //     $this->legal_structure = null;
-    //     $this->resume_executif = null;
-    //     $this->public_cible = null;
-    //     $this->concurrent = null;
-    //     $this->volume_produits_locaux = null;
-    //     $this->volume_demande = null;
-    //     $this->demande_offre = null;
-    //     $this->motivations_achat = null;
-    //     $this->raison_choix_client = null;
-    //     $this->méthodes_marketing = null;
-    //     $this->adaptation_methodes = null;
-    //     $this->differenciation_marketing = null;
-    //     $this->plan_affaires = null;
-    //     $this->obtention_financement = null;
-    //     $this->ouverture_proces = null;
-    //     $this->lancement_recrutement = null;
-    //     $this->ouverture_definitive = null;
-    //     $this->duree = null;
-    //     $this->lieu_projet = null;
-    //     $this->adaptation_lieu = null;
-    //     $this->benefices_from_projet = null;
-    //     $this->valeur_projet = null;
-    //     $this->step_8_1 = null;
-    //     $this->step_8_2 = null;
-    //     $this->step_8_3 = null;
-    //     $this->step_8_4 = null;
-    //     $this->couts_creation = null;
-    //     $this->preparation_entreprise = null;
-    //     $this->achat_machines = null;
-    //     $this->achat_matieres_premieres = null;
-    //     $this->autres_couts = null;
-    //     $this->total = null;
-        
-    //     // Reinitialize tables with empty structure
-    //     $this->table1Rows = [['product_name' => '', 'description' => '']];
-    //     $this->table2Rows = [['item' => '', 'total_employee_1' => 0, 'total_employee_2' => 0]];
-    //     $this->table3Rows = [['product_name_presentation' => '', 'presentation_methode' => '']];
-    //     $this->table4Rows = [['product_name_livraison' => '', 'livraison_methode' => '']];
-    //     $this->table5Rows = array_fill(0, 15, ['equipement' => '', 'reference' => '', 'prix_equipement' => 0]);
-    //     $this->table6Rows = array_fill(0, 15, ['matiere_premiere' => '', 'comment_procurer' => '', 'fournisseur_matiere' => '']);
-    // }
+    public function fillTestData()
+    {
+        if (!app()->environment('local')) return;
+        $this->partenaires_cles = 'Fournisseurs locaux de matières premières, coopératives artisanales, agences de transport, plateformes e-commerce';
+        $this->activites_cles = 'Production artisanale, contrôle qualité, marketing digital, gestion des commandes, service client';
+        $this->proposition_valeur = 'Produits artisanaux authentiques de haute qualité, personnalisables, à prix justes, soutenant l\'économie locale';
+        $this->relations_clients = 'Service personnalisé, suivi après-vente, programme de fidélité, newsletter mensuelle, SAV réactif';
+        $this->segments_clientele = 'Touristes (nationaux et internationaux), décorateurs d\'intérieur, boutiques de cadeaux, collectionneurs d\'art';
+        $this->ressources_cles = 'Artisans qualifiés, atelier de production, matières premières de qualité, plateforme en ligne, réseau de distribution';
+        $this->canaux = 'Boutique physique, site e-commerce, réseaux sociaux (Instagram, Facebook), marchés artisanaux, partenariats hôteliers';
+        $this->structure_couts = 'Matières premières (30%), main d\'œuvre (25%), loyer atelier (15%), marketing (10%), logistique (10%), autres (10%)';
+        $this->flux_revenus = 'Ventes directes (60%), commandes personnalisées (25%), ventes en gros aux boutiques (15%)';
+        session()->flash('success', 'Données de test BMC remplies!');
+    }
 
     public function render()
     {
         return view('livewire.front.bmc.public-form-wizard');
     }
-
-    // public function save()
-    // {
-    //     // Handle saving rows to DB
-    //     foreach ($this->rows as $row) {
-    //         // Example: User::create($row);
-    //     }
-    //     session()->flash('message', 'Rows saved successfully!');
-    // }
-
-    // public function fillTestData()
-    // {
-    //     // Only allow in development
-    //     if (!app()->environment('local')) {
-    //         return;
-    //     }
-
-        
-    //     // Step 1 - Project Info
-    //     $this->project_name = 'Mon Projet Test';
-    //     $this->description = 'Description du projet de test';
-    //     $this->legal_structure = 'SARL';
-    //     $this->resume_executif = 'Résumé exécutif du projet';
-        
-    //     // Step 2 - Market Analysis
-    //     $this->public_cible = 'Jeunes entrepreneurs';
-    //     $this->concurrent = 'Concurrent A, Concurrent B';
-    //     $this->volume_produits_locaux = 'Volume moyen';
-    //     $this->volume_demande = 'Forte demande';
-    //     $this->demande_offre = 'Équilibrée';
-    //     $this->motivations_achat = 'Qualité et prix';
-    //     $this->raison_choix_client = 'Meilleur rapport qualité-prix';
-        
-    //     // Step 3 - Marketing
-    //     $this->méthodes_marketing = 'Réseaux sociaux, publicité locale';
-    //     $this->adaptation_methodes = 'Adaptation selon le budget';
-    //     $this->differenciation_marketing = 'Prix compétitifs';
-    //     $this->plan_affaires = 'Janvier 2026';
-    //     $this->obtention_financement = 'Février 2026';
-    //     $this->ouverture_proces = 'Mars 2026';
-    //     $this->lancement_recrutement = 'Avril 2026';
-    //     $this->ouverture_definitive = 'Mai 2026';
-    //     $this->duree = '6 mois';
-        
-    //     // Step 4 - Location
-    //     $this->lieu_projet = 'Casablanca, Hay Mohamadi';
-    //     $this->adaptation_lieu = 'Oui, très adapté';
-    //     $this->benefices_from_projet = 'Revenus mensuels stables';
-    //     $this->valeur_projet = 'Bénéfices + expérience + réseau';
-        
-    //     // Step 5 - Capacities & Investment
-    //     $this->step_8_1 = 'Oui, compétences acquises';
-    //     $this->step_8_2 = 'Oui, matériel disponible';
-    //     $this->step_8_3 = 'Oui, 5 ans d\'expérience';
-    //     $this->step_8_4 = 'Oui, fonds disponibles';
-    //     $this->couts_creation = 10000;
-    //     $this->preparation_entreprise = 5000;
-    //     $this->achat_machines = 20000;
-    //     $this->achat_matieres_premieres = 8000;
-    //     $this->autres_couts = 3000;
-        
-    //     // Step 5 - Revenue Projections
-    //     $this->ventes_premiere_annee = 50000;
-    //     $this->ventes_deuxieme_annee = 75000;
-    //     $this->ventes_troisieme_annee = 100000;
-    //     $this->services_premiere_annee = 20000;
-    //     $this->services_deuxieme_annee = 30000;
-    //     $this->services_troisieme_annee = 40000;
-    //     $this->aide_financiere_premiere_annee = 10000;
-    //     $this->aide_financiere_deuxieme_annee = 5000;
-    //     $this->aide_financiere_troisieme_annee = 0;
-    //     $this->revenus_financiers_premiere_annee = 2000;
-    //     $this->revenus_financiers_deuxieme_annee = 3000;
-    //     $this->revenus_financiers_troisieme_annee = 4000;
-    //     $this->autres_revenus_premiere_annee = 1000;
-    //     $this->autres_revenus_deuxieme_annee = 2000;
-    //     $this->autres_revenus_troisieme_annee = 3000;
-    //     $this->total_revenus_premiere_annee = 83000;
-    //     $this->total_revenus_deuxieme_annee = 115000;
-    //     $this->total_revenus_troisieme_annee = 147000;
-        
-    //     // Step 6 - Expenses
-    //     $this->achat_prevue_premiere_annee = 30000;
-    //     $this->achat_prevue_deuxieme_annee = 40000;
-    //     $this->achat_prevue_troisieme_annee = 50000;
-    //     $this->frais_fonctionnement_premiere_annee = 12000;
-    //     $this->frais_fonctionnement_deuxieme_annee = 15000;
-    //     $this->frais_fonctionnement_troisieme_annee = 18000;
-    //     $this->charges_personnel_premiere_annee = 24000;
-    //     $this->charges_personnel_deuxieme_annee = 30000;
-    //     $this->charges_personnel_troisieme_annee = 36000;
-    //     $this->dettes_premiere_annee = 5000;
-    //     $this->dettes_deuxieme_annee = 3000;
-    //     $this->dettes_troisieme_annee = 1000;
-    //     $this->etablissement_bancaire_premiere_annee = 2000;
-    //     $this->etablissement_bancaire_deuxieme_annee = 2000;
-    //     $this->etablissement_bancaire_troisieme_annee = 2000;
-    //     $this->fournisseurs_premiere_annee = 8000;
-    //     $this->fournisseurs_deuxieme_annee = 10000;
-    //     $this->fournisseurs_troisieme_annee = 12000;
-    //     $this->autres_dettes_premiere_annee = 1000;
-    //     $this->autres_dettes_deuxieme_annee = 500;
-    //     $this->autres_dettes_troisieme_annee = 0;
-    //     $this->autres_charges_premiere_annee = 3000;
-    //     $this->autres_charges_deuxieme_annee = 4000;
-    //     $this->autres_charges_troisieme_annee = 5000;
-    //     $this->total_frais_premiere_annee = 85000;
-    //     $this->total_frais_deuxieme_annee = 104500;
-    //     $this->total_frais_troisieme_annee = 124000;
-        
-    //     // Step 6 - Results
-    //     $this->revenus_premiere_annee = 83000;
-    //     $this->revenus_deuxieme_annee = 115000;
-    //     $this->revenus_troisieme_annee = 147000;
-    //     $this->depenses_premiere_annee = 85000;
-    //     $this->depenses_deuxieme_annee = 104500;
-    //     $this->depenses_troisieme_annee = 124000;
-    //     $this->generer_profits = 'Le projet générera des profits à partir de la deuxième année';
-    //     $this->projet_durable = 'Le projet est durable grâce à la croissance constante';
-        
-    //     // Fill dynamic tables with test data
-    //     $this->table1Rows = [
-    //         ['product_name' => 'Produit A', 'description' => 'Description produit A'],
-    //         ['product_name' => 'Produit B', 'description' => 'Description produit B'],
-    //     ];
-        
-    //     $this->table2Rows = [
-    //         ['item' => 'Directeur', 'total_employee_1' => 5000, 'total_employee_2' => 6000],
-    //         ['item' => 'Employé', 'total_employee_1' => 3000, 'total_employee_2' => 3500],
-    //     ];
-        
-    //     $this->table3Rows = [
-    //         ['product_name_presentation' => 'Produit A', 'presentation_methode' => 'En magasin'],
-    //         ['product_name_presentation' => 'Produit B', 'presentation_methode' => 'En ligne'],
-    //     ];
-        
-    //     $this->table4Rows = [
-    //         ['product_name_livraison' => 'Produit A', 'livraison_methode' => 'Livraison à domicile'],
-    //         ['product_name_livraison' => 'Produit B', 'livraison_methode' => 'Retrait en magasin'],
-    //     ];
-        
-    //     $this->table5Rows = [
-    //         ['equipement' => 'Machine A', 'reference' => 'REF001', 'prix_equipement' => 15000],
-    //         ['equipement' => 'Machine B', 'reference' => 'REF002', 'prix_equipement' => 8000],
-    //     ];
-        
-    //     $this->table6Rows = [
-    //         ['matiere_premiere' => 'Matière A', 'comment_procurer' => 'Fournisseur local', 'fournisseur_matiere' => 'Fournisseur 1'],
-    //         ['matiere_premiere' => 'Matière B', 'comment_procurer' => 'Import', 'fournisseur_matiere' => 'Fournisseur 2'],
-    //     ];
-        
-    //     session()->flash('success', 'Test data filled successfully!');
-    // }
-
-    // public function goToStep($stepNumber)
-    // {
-    //     if (!app()->environment('local')) {
-    //         return;
-    //     }
-        
-    //     $this->step = $stepNumber;
-    // }
-
-    // public function testDatabaseSave()
-    // {
-    //     if (!app()->environment('local')) {
-    //         return;
-    //     }
-
-    //     try {
-    //         $project = Project::create([
-    //             'project_name' => 'Test Project',
-    //             'email' => 'test@test.com',
-    //             'phone' => '0612345678',
-    //             'status' => 'draft',
-    //         ]);
-
-    //         session()->flash('success', 'Test project created with ID: ' . $project->id);
-    //     } catch (\Exception $e) {
-    //         session()->flash('error', 'Test failed: ' . $e->getMessage());
-    //     }
-    // }
-
-
 }
-

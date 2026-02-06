@@ -14,6 +14,7 @@ class Project extends Model
         'user_id',
         // Step 0 - Personal Info
         'candidat_id',
+        'form_type',
         // Step 1 - Project Info
         'project_name',
         'description',
@@ -149,5 +150,49 @@ class Project extends Model
     public function canBeEdited()
     {
         return $this->status === 'draft';
+    }
+
+    /**
+     * Get human-readable form type label
+     */
+    public function getFormTypeLabelAttribute(): string
+    {
+        return match($this->form_type) {
+            'business_plan' => 'Business Plan',
+            'etude_marche' => 'Étude de Marché',
+            'evaluation_idee' => "Évaluation d'Idée",
+            'bmc' => 'Business Model Canvas',
+            'bilan_competence' => 'Bilan de Compétences',
+            default => ucfirst(str_replace('_', ' ', $this->form_type ?? 'business_plan')),
+        };
+    }
+
+    /**
+     * Get form type badge color
+     */
+    public function getFormTypeBadgeColorAttribute(): string
+    {
+        return match($this->form_type) {
+            'business_plan' => 'bg-blue-100 text-blue-800',
+            'etude_marche' => 'bg-green-100 text-green-800',
+            'evaluation_idee' => 'bg-purple-100 text-purple-800',
+            'bmc' => 'bg-yellow-100 text-yellow-800',
+            'bilan_competence' => 'bg-pink-100 text-pink-800',
+            default => 'bg-gray-100 text-gray-800',
+        };
+    }
+
+    /**
+     * Available form types
+     */
+    public static function formTypes(): array
+    {
+        return [
+            'business_plan' => 'Business Plan',
+            'etude_marche' => 'Étude de Marché',
+            'evaluation_idee' => "Évaluation d'Idée",
+            'bmc' => 'Business Model Canvas',
+            'bilan_competence' => 'Bilan de Compétences',
+        ];
     }
 }
