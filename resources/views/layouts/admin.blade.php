@@ -158,6 +158,18 @@
                 confirmButtonColor: '#6366f1',
             });
         });
+
+        // Handle Livewire token mismatch - reload page on session expiration
+        document.addEventListener('livewire:init', () => {
+            Livewire.hook('request', ({ fail }) => {
+                fail(({ status, preventDefault }) => {
+                    if (status === 419) { // CSRF token mismatch
+                        preventDefault();
+                        window.location.reload();
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>

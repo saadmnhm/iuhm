@@ -20,11 +20,7 @@ class BusinessPlanDelivery extends Model
 
     public function project()
     {
-        return $this->belongsTo(BusinessPlan::class, 'business_plan_id');
+        return $this->belongsTo(BusinessPlan::class);
     }
 
-    public function getProjectNameAttribute()
-    {
-        return $this->project?->produit_name;
-    }
 }

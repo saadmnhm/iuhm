@@ -35,5 +35,18 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 <script src="{{ asset('assets/site/js/scripts.js') }}?v=<?= time() ?>"></script>
+<script>
+    // Handle Livewire token mismatch - reload page on session expiration
+    document.addEventListener('livewire:init', () => {
+        Livewire.hook('request', ({ fail }) => {
+            fail(({ status, preventDefault }) => {
+                if (status === 419) { // CSRF token mismatch
+                    preventDefault();
+                    window.location.reload();
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>
