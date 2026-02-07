@@ -1,0 +1,393 @@
+<div>
+    <div class="parent-steps container">
+        {{-- Read-Only Banner --}}
+        @if($isReadOnly && $existingSubmission)
+            <div class="text-blue-700 px-4 py-3 rounded mb-4" role="alert">
+                <div class="flex items-center">
+                    <i class="ri-information-fill mr-2"></i>
+                    <div>
+                        <p class="font-bold">Formulaire soumis - Mode lecture seule</p>
+                        <p class="text-sm">
+                            Statut: <span class="px-2 py-0.5 rounded text-xs font-medium" style="background-color: {{ $form->color }}20; color: {{ $form->color }};">
+                                {{ $existingSubmission->status_label }}
+                            </span>
+                            | Soumis: {{ $existingSubmission->submitted_at?->format('Y-m-d H:i') }}
+                        </p>
+                        @if($existingSubmission->review_notes)
+                            <p class="text-sm mt-2"><strong>Notes admin:</strong> {{ $existingSubmission->review_notes }}</p>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        {{-- Draft Banner --}}
+        @if($submissionId && !$isReadOnly)
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4" role="alert">
+                <div class="flex items-center">
+                    <i class="ri-save-line mr-2"></i>
+                    <p class="text-sm">Mode brouillon - Votre progression est automatiquement sauvegardée.</p>
+                </div>
+            </div>
+        @endif
+
+        {{-- Form Header --}}
+        <div class="header-form" style="border-bottom: 3px solid {{ $form->color }};">
+            <div style="margin-bottom: 15px;">
+                <div style="width: 60px; height: 60px; border-radius: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 28px; margin: 0 auto; background-color: {{ $form->color }};">
+                    <i class="{{ $form->icon }}"></i>
+                </div>
+            </div>
+            <h1 style="color: {{ $form->color }};">{{ $form->title }}</h1>
+            @if($form->title_ar)
+                <p style="color: {{ $form->color }};">({{ $form->title_ar }})</p>
+            @endif
+            @if($form->introduction && $step == 1)
+                <p class="instructions mt-3">{{ $form->introduction }}</p>
+            @endif
+        </div>
+
+        {{-- Step Progress --}}
+        @if($form->has_steps && $totalSteps > 1)
+            <div class="step-progress-container">
+                <div class="step-progress">
+                    @for($i = 1; $i <= $totalSteps; $i++)
+                        <div class="step-item {{ $step >= $i ? 'active' : '' }} {{ $step == $i ? 'current' : '' }}">
+                            <div class="step-circle">
+                                @if($step > $i)
+                                    <i class="ri-check-line"></i>
+                                @else
+                                    <span>{{ $i }}</span>
+                                @endif
+                            </div>
+                            @if($i < $totalSteps)
+                                <div class="step-line"></div>
+                            @endif
+                        </div>
+                    @endfor
+                </div>
+            </div>
+        @endif
+
+        {{-- Step Content --}}
+        @if($currentStep)
+            <div class="mt-4">
+                <h3 class="step-title" style="color: {{ $form->color }};">{{ $currentStep->title }}</h3>
+                @if($currentStep->title_ar)
+                    <p class="text-center mb-2" style="font-weight: bold;">{{ $currentStep->title_ar }}</p>
+                @endif
+                @if($currentStep->description)
+                    <p class="instructions">{{ $currentStep->description }}</p>
+                @endif
+
+                {{-- Render Fields --}}
+                @foreach($currentStep->fields->sortBy('sort_order') as $field)
+                    <div class="mt-4 {{ $field->is_full_width ? '' : 'w-1/2 inline-block' }}">
+                        @if($field->type === 'heading')
+                            <h4 class="step-title mt-3" style="color: {{ $form->color }}; font-size: 1.2rem;">{{ $field->label }}</h4>
+                        @elseif($field->type === 'paragraph')
+                            <p class="instructions">{{ $field->label }}</p>
+                        @else
+                            <label class="disc mb-2" for="field_{{ $field->field_key }}">
+                                {{ $field->label }}
+                                @if($field->is_required)<span style="color: red;">*</span>@endif
+                            </label>
+
+                            @if($field->type === 'text')
+                                <input type="text" id="field_{{ $field->field_key }}"
+                                    wire:model="answers.{{ $field->field_key }}"
+                                    class="form-control"
+                                    placeholder="{{ $field->placeholder }}"
+                                    @if($isReadOnly) readonly @endif>
+
+                            @elseif($field->type === 'textarea')
+                                <textarea id="field_{{ $field->field_key }}"
+                                    wire:model="answers.{{ $field->field_key }}"
+                                    class="form-control"
+                                    placeholder="{{ $field->placeholder }}"
+                                    @if($isReadOnly) readonly @endif></textarea>
+
+                            @elseif($field->type === 'number')
+                                <input type="number" id="field_{{ $field->field_key }}"
+                                    wire:model="answers.{{ $field->field_key }}"
+                                    class="form-control border w-full p-1"
+                                    placeholder="{{ $field->placeholder }}"
+                                    @if($isReadOnly) readonly @endif>
+
+                            @elseif($field->type === 'email')
+                                <input type="email" id="field_{{ $field->field_key }}"
+                                    wire:model="answers.{{ $field->field_key }}"
+                                    class="form-control"
+                                    placeholder="{{ $field->placeholder }}"
+                                    @if($isReadOnly) readonly @endif>
+
+                            @elseif($field->type === 'date')
+                                <input type="date" id="field_{{ $field->field_key }}"
+                                    wire:model="answers.{{ $field->field_key }}"
+                                    class="form-control border w-full p-1"
+                                    @if($isReadOnly) readonly @endif>
+
+                            @elseif($field->type === 'select')
+                                <select id="field_{{ $field->field_key }}"
+                                    wire:model="answers.{{ $field->field_key }}"
+                                    class="form-control"
+                                    @if($isReadOnly) disabled @endif>
+                                    <option value="">{{ $field->placeholder ?: 'Sélectionner...' }}</option>
+                                    @foreach($field->options ?? [] as $opt)
+                                        <option value="{{ $opt }}">{{ $opt }}</option>
+                                    @endforeach
+                                </select>
+
+                            @elseif($field->type === 'radio')
+                                <div class="checktf" style="display: flex; flex-wrap: wrap; gap: 20px; margin-top: 5px;">
+                                    @foreach($field->options ?? [] as $opt)
+                                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                            <input type="radio"
+                                                wire:model="answers.{{ $field->field_key }}"
+                                                value="{{ $opt }}"
+                                                style="accent-color: {{ $form->color }};"
+                                                @if($isReadOnly) disabled @endif>
+                                            {{ $opt }}
+                                        </label>
+                                    @endforeach
+                                </div>
+
+                            @elseif($field->type === 'checkbox')
+                                <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 5px;">
+                                    @foreach($field->options ?? [] as $opt)
+                                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                            <input type="checkbox"
+                                                wire:model="answers.{{ $field->field_key }}"
+                                                value="{{ $opt }}"
+                                                style="accent-color: {{ $form->color }};"
+                                                @if($isReadOnly) disabled @endif>
+                                            {{ $opt }}
+                                        </label>
+                                    @endforeach
+                                </div>
+
+                            @elseif($field->type === 'file')
+                                <input type="file" id="field_{{ $field->field_key }}"
+                                    class="form-control"
+                                    @if($isReadOnly) disabled @endif>
+                            @endif
+
+                            @if($field->help_text)
+                                <p class="instructions" style="font-size: 13px; margin-top: 4px;">{{ $field->help_text }}</p>
+                            @endif
+
+                            @error('answers.' . $field->field_key)
+                                <span style="color: red; font-size: 13px;">{{ $message }}</span>
+                            @enderror
+                        @endif
+                    </div>
+                @endforeach
+
+                {{-- Render Tables --}}
+                @foreach($currentStep->tables->sortBy('sort_order') as $table)
+                    <div class="mt-4">
+                        <p class="disc mb-2" style="font-weight: 600;">{{ $table->title }}</p>
+
+                        @if($table->columns->isNotEmpty())
+                            <table class="table-auto border-collapse border border-gray-300 w-full">
+                                <thead>
+                                    <tr>
+                                        @if(!$table->has_dynamic_rows && $table->fixedRows->isNotEmpty())
+                                            <th class="title-table border px-4 py-2"></th>
+                                        @endif
+                                        @foreach($table->columns->sortBy('sort_order') as $col)
+                                            <th class="title-table border px-4 py-2" @if($col->width) style="width: {{ $col->width }};" @endif>
+                                                {{ $col->header }}
+                                            </th>
+                                        @endforeach
+                                        @if($table->has_dynamic_rows && !$isReadOnly)
+                                            <th class="border px-2 py-2" style="width: 50px;"></th>
+                                        @endif
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if(!$table->has_dynamic_rows && $table->fixedRows->isNotEmpty())
+                                        {{-- Fixed rows table --}}
+                                        @foreach($table->fixedRows->sortBy('sort_order') as $ri => $row)
+                                            <tr>
+                                                <td class="border px-4 py-2 title-table">{{ $row->label }}</td>
+                                                @foreach($table->columns->sortBy('sort_order') as $col)
+                                                    <td class="border px-2 py-1">
+                                                        @if($col->input_type === 'checkbox')
+                                                            <div style="text-align: center;">
+                                                                <input type="checkbox"
+                                                                    wire:model="tableData.{{ $table->table_key }}.{{ $ri }}.{{ $col->column_key }}"
+                                                                    style="accent-color: {{ $form->color }};"
+                                                                    @if($isReadOnly) disabled @endif>
+                                                            </div>
+                                                        @elseif($col->input_type === 'number')
+                                                            <input type="number"
+                                                                wire:model.live="tableData.{{ $table->table_key }}.{{ $ri }}.{{ $col->column_key }}"
+                                                                class="form-control border w-full p-1"
+                                                                @if($isReadOnly) readonly @endif>
+                                                        @elseif($col->input_type === 'select')
+                                                            <select wire:model="tableData.{{ $table->table_key }}.{{ $ri }}.{{ $col->column_key }}"
+                                                                class="form-control border w-full p-1"
+                                                                @if($isReadOnly) disabled @endif>
+                                                                <option value="">--</option>
+                                                                @foreach($col->options ?? [] as $opt)
+                                                                    <option value="{{ $opt }}">{{ $opt }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        @elseif($col->input_type === 'readonly')
+                                                            <input type="text" readonly
+                                                                class="form-control border w-full p-1 bg-gray-100"
+                                                                value="{{ $tableData[$table->table_key][$ri][$col->column_key] ?? '' }}">
+                                                        @else
+                                                            <input type="text"
+                                                                wire:model="tableData.{{ $table->table_key }}.{{ $ri }}.{{ $col->column_key }}"
+                                                                class="form-control border w-full p-1"
+                                                                @if($isReadOnly) readonly @endif>
+                                                        @endif
+                                                    </td>
+                                                @endforeach
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        {{-- Dynamic rows table --}}
+                                        @for($ri = 0; $ri < ($tableRowCounts[$table->table_key] ?? $table->min_rows); $ri++)
+                                            <tr>
+                                                @foreach($table->columns->sortBy('sort_order') as $col)
+                                                    <td class="border px-2 py-1">
+                                                        @if($col->input_type === 'checkbox')
+                                                            <div style="text-align: center;">
+                                                                <input type="checkbox"
+                                                                    wire:model="tableData.{{ $table->table_key }}.{{ $ri }}.{{ $col->column_key }}"
+                                                                    style="accent-color: {{ $form->color }};"
+                                                                    @if($isReadOnly) disabled @endif>
+                                                            </div>
+                                                        @elseif($col->input_type === 'number')
+                                                            <input type="number"
+                                                                wire:model.live="tableData.{{ $table->table_key }}.{{ $ri }}.{{ $col->column_key }}"
+                                                                class="form-control border w-full p-1"
+                                                                @if($isReadOnly) readonly @endif>
+                                                        @elseif($col->input_type === 'select')
+                                                            <select wire:model="tableData.{{ $table->table_key }}.{{ $ri }}.{{ $col->column_key }}"
+                                                                class="form-control border w-full p-1"
+                                                                @if($isReadOnly) disabled @endif>
+                                                                <option value="">--</option>
+                                                                @foreach($col->options ?? [] as $opt)
+                                                                    <option value="{{ $opt }}">{{ $opt }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        @else
+                                                            <input type="text"
+                                                                wire:model="tableData.{{ $table->table_key }}.{{ $ri }}.{{ $col->column_key }}"
+                                                                class="form-control border w-full p-1"
+                                                                @if($isReadOnly) readonly @endif>
+                                                        @endif
+                                                    </td>
+                                                @endforeach
+                                                @if($table->has_dynamic_rows && !$isReadOnly)
+                                                    <td class="border px-2 py-2">
+                                                        @if(($tableRowCounts[$table->table_key] ?? $table->min_rows) > $table->min_rows)
+                                                            <button wire:click="removeTableRow('{{ $table->table_key }}', {{ $ri }})"
+                                                                class="text-red-500" title="Supprimer">✕</button>
+                                                        @endif
+                                                    </td>
+                                                @endif
+                                            </tr>
+                                        @endfor
+                                    @endif
+
+                                    {{-- Total Row --}}
+                                    @if($table->has_total_row)
+                                        <tr class="bg-gray-100 font-bold">
+                                            @if(!$table->has_dynamic_rows && $table->fixedRows->isNotEmpty())
+                                                <td class="border px-3 py-2 text-right title-table">Total</td>
+                                            @endif
+                                            @foreach($table->columns->sortBy('sort_order') as $col)
+                                                <td class="border px-3 py-2">
+                                                    @if($col->is_totaled)
+                                                        {{ number_format($this->getTableTotal($table->table_key, $col->column_key), 2) }}
+                                                    @endif
+                                                </td>
+                                            @endforeach
+                                            @if($table->has_dynamic_rows && !$isReadOnly)
+                                                <td class="border px-2 py-2"></td>
+                                            @endif
+                                        </tr>
+                                    @endif
+                                </tbody>
+                            </table>
+
+                            @if($table->has_dynamic_rows && !$isReadOnly)
+                                <button wire:click="addTableRow('{{ $table->table_key }}')" class="more-row mt-2">
+                                    {{ __('messages.ajouter_lignes') }}
+                                </button>
+                            @endif
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+        @endif
+
+        {{-- Step Indicator --}}
+        @if($totalSteps > 1)
+            <p class="steps-indicateur mt-4">( {{ $step }} / {{ $totalSteps }} )</p>
+        @endif
+
+        {{-- Navigation Buttons --}}
+        <div class="navigation-buttons mt-4 flex justify-center gap-4">
+            @if($step > 1)
+                <button wire:click="back" class="navigation-btn btn-back">
+                    <i class="ri-arrow-left-circle-fill me-1 ms-1"></i> Précédent
+                </button>
+            @endif
+
+            @if($step < $totalSteps)
+                <button wire:click="next" class="navigation-btn btn-next" @if($isReadOnly && $step >= $totalSteps) disabled @endif>
+                    Suivant <i class="ri-arrow-right-circle-fill me-1 ms-1"></i>
+                </button>
+            @endif
+
+            @if(!$isReadOnly && $step < $totalSteps)
+                <button wire:click="saveAsDraft" class="navigation-btn" style="background-color: #28a745;">
+                    <i class="ri-save-line me-1 ms-1"></i> Sauvegarder
+                </button>
+            @endif
+
+            @if($step == $totalSteps && !$isReadOnly)
+                <button wire:click="submit" class="navigation-btn btn-submit">
+                    Soumettre <i class="ri-send-plane-fill me-1 ms-1"></i>
+                </button>
+            @endif
+        </div>
+
+        {{-- Flash Messages --}}
+        @if(session()->has('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 mt-4" role="alert">
+                <p>{{ session('success') }}</p>
+            </div>
+        @endif
+
+        @if(session()->has('error'))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 mt-4" role="alert">
+                <p>{{ session('error') }}</p>
+            </div>
+        @endif
+
+        {{-- Footer --}}
+        <div class="wizard-footer-content mt-5">
+            <div class="wizard-logo-footer">
+                <img src="{{ asset('assets/site/images/iuhm_logo.png') }}" alt="iuhm-logo-footer">
+                <img src="{{ asset('assets/site/images/indh_logo.png') }}" alt="indh-logo-footer">
+                <img src="{{ asset('assets/site/images/logo_zettat.png') }}" alt="zettat-logo-footer">
+            </div>
+            <p class="text-center mt-5">&copy; {{ date('Y') }} Tous droits réservés par <a href="https://www.iuhm.org" target="_blank" style="color: {{ $form->color }};">initiative urbaine hay mohammadi</a></p>
+        </div>
+
+        <script>
+            document.addEventListener('livewire:init', () => {
+                Livewire.on('scroll-to-top', () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            });
+        </script>
+    </div>
+</div>

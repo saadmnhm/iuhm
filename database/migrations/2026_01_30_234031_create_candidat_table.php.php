@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('candidat', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('project_id')->nullable()->constrained('projects')->onDelete('cascade');
+            // Removed candidat_id foreign key to avoid circular dependency with projects table
             $table->string('login')->unique();
             $table->string('password');
             $table->string('nom');

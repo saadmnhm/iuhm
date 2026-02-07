@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('project_financials', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('project_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('candidat_id')->constrained()->cascadeOnDelete();
             
             // Revenue Projections (Step 5 - Table 10)
             $table->decimal('ventes_premiere_annee', 12, 2)->nullable();
@@ -93,7 +93,7 @@ return new class extends Migration
             $table->timestamps();
             
             // Index
-            $table->index('project_id');
+            $table->index('candidat_id');
         });
     }
 

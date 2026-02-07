@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('project_deliveries', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('project_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('candidat_id')->constrained()->cascadeOnDelete();
             $table->string('product_name_livraison')->nullable();
             $table->text('livraison_methode')->nullable();
             $table->integer('sort_order')->default(0);
             $table->timestamps();
             
             // Indexes
-            $table->index('project_id');
+            $table->index('candidat_id');
             $table->index('sort_order');
         });
     }

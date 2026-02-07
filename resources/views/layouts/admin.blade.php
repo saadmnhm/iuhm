@@ -14,12 +14,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
-    <style>
-        [x-cloak] { display: none !important; }
-    </style>
 </head>
 <body class="bg-gray-50">
     <div class="flex min-h-screen">
@@ -29,8 +26,6 @@
                 <img src="{{asset('assets/admin/image/iuhm_logo.png')}}" alt="">
             </div>
 
-            
-            
             <nav class="p-4 space-y-2">
                 <a href="{{ route('admin.dashboard') }}" 
                    class="flex items-center gap-3 px-4 py-3 rounded-lg transition {{ request()->routeIs('admin.dashboard') ? 'bg-white/20' : 'hover:bg-white/10' }}">
@@ -39,36 +34,13 @@
                     </svg>
                     <span>Dashboard</span>
                 </a>
-                
-                <!-- <a href="{{ route('admin.projects') }}" 
-                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition {{ request()->routeIs('admin.projects*') ? 'bg-white/20' : 'hover:bg-white/10' }}">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    </svg>
-                    <span>Formulaire</span>
-                </a> -->
-                
-                <a href="{{ route('admin.form-submissions') }}" 
-                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition {{ request()->routeIs('admin.form-submissions') ? 'bg-white/20' : 'hover:bg-white/10' }}">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
-                    </svg>
-                    <span>Soumissions</span>
-                </a>
-                <a href="{{ route('admin.candidats.index') }}" 
-                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition {{ request()->routeIs('admin.candidats*') ? 'bg-white/20' : 'hover:bg-white/10' }}">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
-                    </svg>
-                    <span>Candidats</span>
-                </a>
 
-                <a href="{{ route('admin.users.index') }}" 
-                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition {{ request()->routeIs('admin.users*') ? 'bg-white/20' : 'hover:bg-white/10' }}">
+                <a href="{{ route('admin.projects_view') }}" 
+                   class="flex items-center gap-3 px-4 py-3 rounded-lg transition ">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
                     </svg>
-                    <span>Admin</span>
+                    <span>Project INDH</span>
                 </a>
 
                 <a href="{{ route('admin.support.tickets') }}" 
@@ -78,6 +50,36 @@
                     </svg>
                     <span>Support</span>
                 </a>
+                <div x-data="{ open: false }">
+                    <!-- Parent -->
+                    <button @click="open = !open" class="flex w-full items-center justify-between gap-3 px-4 py-3 rounded-lg transition hover:bg-gray-100">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3" />
+                            </svg>
+                            <span>Referential</span>
+                        </div>
+                        <!-- Arrow -->
+                        <svg :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" >
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <!-- Children -->
+                    <div x-show="open" x-collapse class="ml-3 mt-1 space-y-1">
+
+                        <a href="{{ route('admin.programe_zettat') }}" class="block px-4 py-2 rounded hover:bg-gray-100"><i class="ri-trello-fill mr-1"></i>Projet</a>
+
+                        <a href="{{ route('admin.users.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.users*') ? 'bg-gray-100 font-medium' : '' }}"><i class="ri-admin-line mr-1"></i>Gestion Admin</a>
+                        
+                        <a href="{{ route('admin.candidats.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.candidats*') ? 'bg-gray-100 font-medium' : '' }}"><i class="ri-user-community-line mr-1"></i>Gestion Candidat</a>
+                        
+                        <a href="{{ route('admin.formulaires.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.formulaires*') ? 'bg-gray-100 font-medium' : '' }}">
+                            <i class="ri-file-list-3-line mr-1"></i> Formulaires
+                        </a>
+
+                    </div>
+                </div>
             </nav>
         </aside>
 
@@ -150,20 +152,19 @@
     @livewireScripts
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        window.addEventListener('alert', event => {
-            Swal.fire({
-                title: event.detail.title || 'Success',
-                text: event.detail.message,
-                icon: event.detail.type || 'success',
-                confirmButtonColor: '#6366f1',
-            });
-        });
-
-        // Handle Livewire token mismatch - reload page on session expiration
         document.addEventListener('livewire:init', () => {
+            Livewire.on('alert', (data) => {
+                Swal.fire({
+                    title: data.title || 'Success',
+                    text: data.message,
+                    icon: data.type || 'success',
+                    confirmButtonColor: '#648454',
+                });
+            });
+
             Livewire.hook('request', ({ fail }) => {
                 fail(({ status, preventDefault }) => {
-                    if (status === 419) { // CSRF token mismatch
+                    if (status === 419) { 
                         preventDefault();
                         window.location.reload();
                     }

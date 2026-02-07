@@ -25,7 +25,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/projects/{id}/export-pdf', [\App\Http\Controllers\Admin\ProjectExportController::class, 'exportPdf'])->name('projects.export.pdf');
         Route::get('/projects/{id}/preview-pdf', [\App\Http\Controllers\Admin\ProjectExportController::class, 'previewPdf'])->name('projects.preview.pdf');
         Route::get('/candidat/{id}/submissions', \App\Livewire\Admin\CandidatSubmissions::class)->name('candidat.submissions');
-        Route::get('/form-submissions/{type}/{id}', \App\Livewire\Admin\FormSubmissionView::class)->name('form-submissions.view');
         
         // Form Detail Pages
         Route::get('/etude-marche/{id}', \App\Livewire\Admin\EtudeMarcheDetail::class)->name('etude-marche.show');
@@ -47,9 +46,25 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/users/{id}/edit', \App\Livewire\Admin\EditUser::class)->name('users.edit');
         Route::get('/projects/{id}/add-registration', \App\Livewire\Admin\RegistrationId::class)->name('add.registration');
         Route::get('/activity-logs', \App\Livewire\Admin\ActivityLogs::class)->name('activity.logs');
-        Route::get('/form-submissions', \App\Livewire\Admin\FormSubmissions::class)->name('form-submissions');
         Route::get('/support-tickets', \App\Livewire\Admin\SupportTickets::class)->name('support.tickets');
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+        
+        
+        Route::get  ('/programe_zettat', App\Livewire\Admin\Programe\ProgrameList::class)->name('programe_zettat');
+        Route::get('/programe_zettat/create', App\Livewire\Admin\Programe\ProgrameCreate::class)->name('programe_zettat.create');
+        Route::get('/programe_zettat/edit', App\Livewire\Admin\Programe\ProgrameEdit::class)->name('programe_zettat.edit');
+        
+        Route::get('/projects_view', App\Livewire\Admin\Project\ProjectView::class)->name('projects_view');
+        Route::get('/form-submissions/{type}/{id}', \App\Livewire\Admin\Project\FormSubmissionView::class)->name('form-submissions.view');
+        Route::get('/form-submissions', \App\Livewire\Admin\Project\FormSubmissions::class)->name('form-submissions');
+
+        // Dynamic Form Builder (Referential)
+        Route::get('/formulaires', \App\Livewire\Admin\Formulaire\FormulaireList::class)->name('formulaires.index');
+        Route::get('/formulaires/create', \App\Livewire\Admin\Formulaire\FormulaireBuilder::class)->name('formulaires.create');
+        Route::get('/formulaires/{id}/edit', \App\Livewire\Admin\Formulaire\FormulaireBuilder::class)->name('formulaires.edit');
+        Route::get('/formulaires/{formId}/submissions', \App\Livewire\Admin\Formulaire\FormulaireSubmissions::class)->name('formulaires.submissions');
+        Route::get('/formulaires/submissions/{id}', \App\Livewire\Admin\Formulaire\FormulaireSubmissionDetail::class)->name('formulaires.submission.detail');
+
     });
 });
 
@@ -71,6 +86,7 @@ Route::prefix('form')->name('form.')->middleware('candidat')->group(function () 
     Route::get('/evaluation-idee', EvaluationIdee::class)->name('evaluation_idee');
     Route::get('/settings', \App\Livewire\Front\Dashboard\Settings::class)->name('settings');
     Route::get('/support', \App\Livewire\Front\Dashboard\Support::class)->name('support');
+    Route::get('/f/{slug}', \App\Livewire\Front\DynamicFormWizard::class)->name('dynamic_form');
     Route::post('/logout', [FrontAuthController::class, 'logout'])->name('logout');
 });
 

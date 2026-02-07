@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Admin;
+namespace App\Livewire\Admin\Project;
 
 use App\Models\BusinessPlan;
 use App\Models\Candidat;
@@ -64,7 +64,7 @@ class FormSubmissions extends Component
 
         $formTypes = BusinessPlan::formTypes();
 
-        return view('livewire.admin.formulaire.form-submissions', [
+        return view('livewire.admin.project.form-submissions', [
             'projects' => $projects,
             'statistics' => $statistics,
             'formTypes' => $formTypes,

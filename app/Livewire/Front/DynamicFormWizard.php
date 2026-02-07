@@ -1,0 +1,357 @@
+<?php
+
+namespace App\Livewire\Front;
+
+use App\Models\DynamicForm;
+use App\Models\DynamicFormSubmission;
+use App\Models\DynamicFormAnswer;
+use App\Models\DynamicFormTableAnswer;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Livewire\Component;
+
+class DynamicFormWizard extends Component
+{
+    public string $slug;
+    public int $step = 1;
+    public ?int $submissionId = null;
+    public bool $isReadOnly = false;
+
+    // All field answers stored as key => value
+    public array $answers = [];
+
+    // All table data stored as table_key => [row_index => [column_key => value]]
+    public array $tableData = [];
+
+    // Track dynamic row counts per table
+    public array $tableRowCounts = [];
+
+    public ?DynamicFormSubmission $existingSubmission = null;
+
+    public function mount(string $slug)
+    {
+        $this->slug = $slug;
+        $candidatId = Auth::guard('candidat')->id();
+
+        $form = DynamicForm::where('slug', $slug)->where('is_active', true)
+            ->with(['steps.fields', 'steps.tables.columns', 'steps.tables.fixedRows'])
+            ->firstOrFail();
+
+        // Check for existing submitted form
+        $existing = DynamicFormSubmission::where('dynamic_form_id', $form->id)
+            ->where('candidat_id', $candidatId)
+            ->first();
+
+        if ($existing && $existing->isSubmitted()) {
+            $this->existingSubmission = $existing;
+            $this->submissionId = $existing->id;
+            $this->isReadOnly = true;
+            $this->step = 1;
+            $this->loadExistingData($form);
+        } elseif ($existing && $existing->isDraft()) {
+            $this->existingSubmission = $existing;
+            $this->submissionId = $existing->id;
+            $this->step = $existing->current_step;
+            $this->loadExistingData($form);
+        }
+
+        // Initialize default table row counts for dynamic tables
+        foreach ($form->steps as $formStep) {
+            foreach ($formStep->tables as $table) {
+                if ($table->has_dynamic_rows && !isset($this->tableRowCounts[$table->table_key])) {
+                    $this->tableRowCounts[$table->table_key] = $table->min_rows;
+                }
+                // Initialize fixed row table data
+                if (!$table->has_dynamic_rows && $table->fixedRows->isNotEmpty()) {
+                    foreach ($table->fixedRows as $ri => $row) {
+                        foreach ($table->columns as $col) {
+                            if (!isset($this->tableData[$table->table_key][$ri][$col->column_key])) {
+                                $this->tableData[$table->table_key][$ri][$col->column_key] = '';
+                            }
+                        }
+                    }
+                } elseif ($table->has_dynamic_rows) {
+                    $count = $this->tableRowCounts[$table->table_key] ?? $table->min_rows;
+                    for ($r = 0; $r < $count; $r++) {
+                        foreach ($table->columns as $col) {
+                            if (!isset($this->tableData[$table->table_key][$r][$col->column_key])) {
+                                $this->tableData[$table->table_key][$r][$col->column_key] = '';
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    protected function loadExistingData(DynamicForm $form)
+    {
+        $submission = DynamicFormSubmission::with(['answers', 'tableAnswers'])->find($this->submissionId);
+        if (!$submission) return;
+
+        // Load field answers
+        foreach ($submission->answers as $answer) {
+            $this->answers[$answer->field_key] = $answer->value;
+        }
+
+        // Load table answers
+        foreach ($submission->tableAnswers as $ta) {
+            $this->tableData[$ta->table_key][$ta->row_index][$ta->column_key] = $ta->value;
+        }
+
+        // Determine row counts for dynamic tables
+        foreach ($form->steps as $formStep) {
+            foreach ($formStep->tables as $table) {
+                if ($table->has_dynamic_rows) {
+                    $maxRow = 0;
+                    if (isset($this->tableData[$table->table_key])) {
+                        $maxRow = max(array_keys($this->tableData[$table->table_key])) + 1;
+                    }
+                    $this->tableRowCounts[$table->table_key] = max($maxRow, $table->min_rows);
+                }
+            }
+        }
+    }
+
+    public function addTableRow(string $tableKey)
+    {
+        if ($this->isReadOnly) return;
+
+        $form = $this->getForm();
+        foreach ($form->steps as $formStep) {
+            foreach ($formStep->tables as $table) {
+                if ($table->table_key === $tableKey) {
+                    $count = $this->tableRowCounts[$tableKey] ?? $table->min_rows;
+                    if ($count < $table->max_rows) {
+                        $newIndex = $count;
+                        foreach ($table->columns as $col) {
+                            $this->tableData[$tableKey][$newIndex][$col->column_key] = '';
+                        }
+                        $this->tableRowCounts[$tableKey] = $count + 1;
+                    }
+                    return;
+                }
+            }
+        }
+    }
+
+    public function removeTableRow(string $tableKey, int $rowIndex)
+    {
+        if ($this->isReadOnly) return;
+
+        $form = $this->getForm();
+        foreach ($form->steps as $formStep) {
+            foreach ($formStep->tables as $table) {
+                if ($table->table_key === $tableKey) {
+                    $count = $this->tableRowCounts[$tableKey] ?? $table->min_rows;
+                    if ($count > $table->min_rows) {
+                        unset($this->tableData[$tableKey][$rowIndex]);
+                        // Re-index
+                        $this->tableData[$tableKey] = array_values($this->tableData[$tableKey]);
+                        $this->tableRowCounts[$tableKey] = $count - 1;
+                    }
+                    return;
+                }
+            }
+        }
+    }
+
+    public function getTableTotal(string $tableKey, string $columnKey): float
+    {
+        $total = 0;
+        if (isset($this->tableData[$tableKey])) {
+            foreach ($this->tableData[$tableKey] as $row) {
+                $total += (float)($row[$columnKey] ?? 0);
+            }
+        }
+        return $total;
+    }
+
+    public function next()
+    {
+        if ($this->isReadOnly) {
+            $form = $this->getForm();
+            if ($this->step < $form->steps->count()) {
+                $this->step++;
+                $this->dispatch('scroll-to-top');
+            }
+            return;
+        }
+
+        $this->validateCurrentStep();
+        $this->saveAsDraft();
+
+        $form = $this->getForm();
+        if ($this->step < $form->steps->count()) {
+            $this->step++;
+            $this->dispatch('scroll-to-top');
+        }
+    }
+
+    public function back()
+    {
+        if ($this->step > 1) {
+            $this->step--;
+            $this->dispatch('scroll-to-top');
+        }
+    }
+
+    protected function validateCurrentStep()
+    {
+        $form = $this->getForm();
+        $currentStep = $form->steps->firstWhere('step_number', $this->step);
+        if (!$currentStep) return;
+
+        $rules = [];
+        foreach ($currentStep->fields as $field) {
+            if ($field->is_required && !in_array($field->type, ['heading', 'paragraph'])) {
+                $rules['answers.' . $field->field_key] = 'required';
+            }
+        }
+
+        if (!empty($rules)) {
+            $this->validate($rules, [
+                'required' => 'Ce champ est obligatoire.',
+            ]);
+        }
+    }
+
+    public function saveAsDraft()
+    {
+        if ($this->isReadOnly) return;
+
+        $form = $this->getForm();
+        $candidatId = Auth::guard('candidat')->id();
+
+        DB::beginTransaction();
+        try {
+            // Create or update submission
+            $submission = DynamicFormSubmission::updateOrCreate(
+                [
+                    'dynamic_form_id' => $form->id,
+                    'candidat_id' => $candidatId,
+                ],
+                [
+                    'current_step' => $this->step,
+                    'status' => 'draft',
+                ]
+            );
+
+            $this->submissionId = $submission->id;
+
+            // Save field answers
+            foreach ($this->answers as $key => $value) {
+                $fieldId = null;
+                foreach ($form->steps as $s) {
+                    foreach ($s->fields as $f) {
+                        if ($f->field_key === $key) {
+                            $fieldId = $f->id;
+                            break 2;
+                        }
+                    }
+                }
+
+                DynamicFormAnswer::updateOrCreate(
+                    [
+                        'dynamic_form_submission_id' => $submission->id,
+                        'field_key' => $key,
+                    ],
+                    [
+                        'dynamic_form_field_id' => $fieldId,
+                        'value' => $value,
+                    ]
+                );
+            }
+
+            // Save table answers
+            DynamicFormTableAnswer::where('dynamic_form_submission_id', $submission->id)->delete();
+            foreach ($this->tableData as $tableKey => $rows) {
+                $tableId = null;
+                foreach ($form->steps as $s) {
+                    foreach ($s->tables as $t) {
+                        if ($t->table_key === $tableKey) {
+                            $tableId = $t->id;
+                            break 2;
+                        }
+                    }
+                }
+
+                foreach ($rows as $rowIndex => $rowData) {
+                    foreach ($rowData as $colKey => $val) {
+                        if ($val !== '' && $val !== null) {
+                            DynamicFormTableAnswer::create([
+                                'dynamic_form_submission_id' => $submission->id,
+                                'dynamic_form_table_id' => $tableId,
+                                'table_key' => $tableKey,
+                                'row_index' => $rowIndex,
+                                'column_key' => $colKey,
+                                'value' => $val,
+                            ]);
+                        }
+                    }
+                }
+            }
+
+            DB::commit();
+            session()->flash('success', 'Brouillon sauvegardé avec succès.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            session()->flash('error', 'Erreur lors de la sauvegarde: ' . $e->getMessage());
+        }
+    }
+
+    public function submit()
+    {
+        if ($this->isReadOnly) return;
+
+        // Validate all steps
+        $form = $this->getForm();
+        $rules = [];
+        foreach ($form->steps as $formStep) {
+            foreach ($formStep->fields as $field) {
+                if ($field->is_required && !in_array($field->type, ['heading', 'paragraph'])) {
+                    $rules['answers.' . $field->field_key] = 'required';
+                }
+            }
+        }
+
+        if (!empty($rules)) {
+            $this->validate($rules, [
+                'required' => 'Ce champ est obligatoire.',
+            ]);
+        }
+
+        $this->saveAsDraft();
+
+        $submission = DynamicFormSubmission::find($this->submissionId);
+        if ($submission) {
+            $submission->update([
+                'status' => 'submitted',
+                'submitted_at' => now(),
+            ]);
+        }
+
+        $this->isReadOnly = true;
+        $this->existingSubmission = $submission->fresh();
+        session()->flash('success', 'Formulaire soumis avec succès!');
+    }
+
+    protected function getForm(): DynamicForm
+    {
+        return DynamicForm::where('slug', $this->slug)
+            ->with(['steps.fields', 'steps.tables.columns', 'steps.tables.fixedRows'])
+            ->firstOrFail();
+    }
+
+    public function render()
+    {
+        $form = $this->getForm();
+        $currentStep = $form->steps->firstWhere('step_number', $this->step);
+
+        return view('livewire.front.dynamic_form.wizard', [
+            'form' => $form,
+            'currentStep' => $currentStep,
+            'totalSteps' => $form->steps->count(),
+        ])->layout('layouts.app', ['title' => $form->title]);
+    }
+}

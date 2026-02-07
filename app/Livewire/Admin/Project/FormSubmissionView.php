@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Admin;
+namespace App\Livewire\Admin\Project;
 
 use Livewire\Component;
 use App\Services\FormSubmissionService;

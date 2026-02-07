@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('project_employees', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('project_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('candidat_id')->constrained()->cascadeOnDelete();
             $table->string('item')->nullable(); // Titre d'emploi
             $table->decimal('total_employee_1', 12, 2)->nullable(); // Première année
             $table->decimal('total_employee_2', 12, 2)->nullable(); // Deuxième année
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->timestamps();
             
             // Indexes
-            $table->index('project_id');
+            $table->index('candidat_id');
             $table->index('sort_order');
         });
     }

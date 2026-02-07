@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('candidat_id')->constrained()->onDelete('cascade');
+            // candidat_id will be added by a later migration (2026_01_31_143356_add_candidat_to_project_table.php)
             
             // Step 1 - Project Info
             $table->string('project_name')->nullable();
@@ -73,9 +73,7 @@ return new class extends Migration
             $table->softDeletes();
             
             // Indexes for performance
-            $table->index('user_id');
             $table->index('status');
-            $table->index('email');
             $table->index('created_at');
         });
     }
