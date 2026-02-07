@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Feb 07, 2026 at 02:44 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Host: shareddb-n.hosting.stackcp.net
+-- Generation Time: Feb 07, 2026 at 07:26 PM
+-- Server version: 10.6.18-MariaDB-log
+-- PHP Version: 8.3.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `iuhm`
+-- Database: `dev_iuhm_zettat-3130373f8f`
 --
 
 -- --------------------------------------------------------
@@ -123,7 +123,7 @@ CREATE TABLE `bilan_competences` (
 --
 
 INSERT INTO `bilan_competences` (`id`, `candidat_id`, `form_type`, `qualites_defauts`, `qualites_contribution`, `defauts_freins`, `loisirs`, `niveau_etude`, `diplomes_obtenus`, `annee_obtention`, `etablissement_obtention`, `competences_formation`, `besoin_formations`, `type_formations`, `environnement_professionnel`, `secteurs_activite`, `fonctions_envisagees`, `representation_travail`, `contraintes_acceptees`, `exigences`, `reflexions_personnelles`, `stage_societe`, `stage_lieu`, `stage_secteur`, `stage_duree`, `stage_responsabilites`, `stage_competences`, `stage_obstacles`, `stage_reflexions`, `stage_plu`, `stage_deplu`, `stage_appris`, `exp_societe`, `exp_lieu`, `exp_secteur`, `exp_duree`, `exp_responsabilites`, `exp_competences`, `exp_obstacles`, `exp_integration`, `exp_depart`, `exp_reflexions`, `status`, `current_step`, `submitted_at`, `reviewed_at`, `review_notes`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(4, 3, NULL, '[{\"qualite\":\"Pers\\u00e9v\\u00e9rant et d\\u00e9termin\\u00e9\",\"defaut\":\"Parfois trop perfectionniste\"},{\"qualite\":\"Bon communicateur\",\"defaut\":\"Manque de patience\"},{\"qualite\":\"Cr\\u00e9atif et innovant\",\"defaut\":\"Difficult\\u00e9 \\u00e0 d\\u00e9l\\u00e9guer\"}]', 'Ma persévérance me permet de surmonter les obstacles et ma créativité m\'aide à trouver des solutions innovantes', 'Mon perfectionnisme peut ralentir l\'avancement des projets et mon impatience peut créer des tensions', 'Lecture, sport (football), voyages, photographie, bénévolat associatif', 'Bac+3 Licence en Gestion des Entreprises', 'Baccalauréat Sciences Économiques, Licence en Gestion', '2023', 'Université Hassan II - Casablanca', '[{\"acquise\":\"Comptabilit\\u00e9 g\\u00e9n\\u00e9rale\",\"lacune\":\"Comptabilit\\u00e9 analytique avanc\\u00e9e\",\"a_developper\":\"Fiscalit\\u00e9 des entreprises\"},{\"acquise\":\"Marketing de base\",\"lacune\":\"Marketing digital\",\"a_developper\":\"SEO et publicit\\u00e9 en ligne\"}]', 'oui', 'Formation en marketing digital et en gestion de projet (PMP)', '{\"travail_bureau\":\"oui\",\"travail_exterieur\":\"non\",\"travail_equipe\":\"oui\",\"travail_independant\":\"oui\",\"horaires_fixes\":\"non\",\"horaires_flexibles\":\"oui\",\"deplacement_frequent\":\"oui\"}', '[\"Commerce\",\"Services\",\"Artisanat\",\"Technologie\",\"G\\u00e9nie civil et travaux public\",\"Textile et habillement\",\"Industrie alimentaire\"]', '[\"Direction g\\u00e9n\\u00e9rale\",\"Marketing et vente\",\"Gestion de projet\",\"Conseil\"]', '[\"\\u00c9panouissement personnel\",\"Ind\\u00e9pendance financi\\u00e8re\",\"Contribution sociale\",\"Cr\\u00e9ativit\\u00e9\",\"Le moyen de pr\\u00e9parer l\'avenir\",\"Un moyen de me valoriser\"]', '{\"deplacement\":\"oui\",\"horaires_variables\":\"oui\",\"travail_weekend\":\"non\",\"travail_nuit\":\"non\",\"port_charges\":\"non\",\"travail_exterieur_meteo\":\"non\",\"travail_repetitif\":\"non\",\"pression_resultats\":\"oui\"}', '[\"Autonomie\",\"Cr\\u00e9ativit\\u00e9\",\"Responsabilit\\u00e9\",\"Bon salaire\",\"\\u00c9volution de carri\\u00e8re\"]', 'Je souhaite créer ma propre entreprise dans le secteur artisanal pour valoriser le patrimoine local', 'Artisanat Moderne SARL', 'Casablanca, Zone Industrielle Ain Sebaa', 'Artisanat et production', '3 mois (Juin - Août 2022)', 'Suivi de production, gestion des stocks, relation fournisseurs', 'Gestion de stock, négociation fournisseurs, contrôle qualité', 'Ruptures de stock fréquentes, communication difficile avec certains fournisseurs', 'Ce stage m\'a confirmé mon intérêt pour l\'entrepreneuriat dans l\'artisanat', 'L\'ambiance de travail collaborative et la créativité des artisans', 'Le manque d\'organisation administrative et de digitalisation', 'J\'ai appris que je suis capable de gérer une équipe et que j\'aime résoudre des problèmes concrets', 'Maroc Artisan Express', 'Rabat, Médina', 'E-commerce artisanal', '6 mois (CDD)', 'Gestion de la boutique en ligne, service client, coordination des livraisons', 'E-commerce, service client, logistique, réseaux sociaux', 'Retards de livraison, gestion des retours clients', 'Formation initiale d\'une semaine, tutorat par le responsable', 'Fin de CDD, souhait de créer mon propre projet', 'Cette expérience m\'a donné une vision complète de la chaîne de valeur artisanale', 'submitted', 6, '2026-02-06 23:34:04', NULL, NULL, '2026-02-06 23:28:58', '2026-02-06 23:34:04', NULL);
+(4, 3, 'bilan_competence', '[{\"qualite\":\"Pers\\u00e9v\\u00e9rant et d\\u00e9termin\\u00e9\",\"defaut\":\"Parfois trop perfectionniste\"},{\"qualite\":\"Bon communicateur\",\"defaut\":\"Manque de patience\"},{\"qualite\":\"Cr\\u00e9atif et innovant\",\"defaut\":\"Difficult\\u00e9 \\u00e0 d\\u00e9l\\u00e9guer\"}]', 'Ma persévérance me permet de surmonter les obstacles et ma créativité m\'aide à trouver des solutions innovantes', 'Mon perfectionnisme peut ralentir l\'avancement des projets et mon impatience peut créer des tensions', 'Lecture, sport (football), voyages, photographie, bénévolat associatif', 'Bac+3 Licence en Gestion des Entreprises', 'Baccalauréat Sciences Économiques, Licence en Gestion', '2023', 'Université Hassan II - Casablanca', '[{\"acquise\":\"Comptabilit\\u00e9 g\\u00e9n\\u00e9rale\",\"lacune\":\"Comptabilit\\u00e9 analytique avanc\\u00e9e\",\"a_developper\":\"Fiscalit\\u00e9 des entreprises\"},{\"acquise\":\"Marketing de base\",\"lacune\":\"Marketing digital\",\"a_developper\":\"SEO et publicit\\u00e9 en ligne\"}]', 'oui', 'Formation en marketing digital et en gestion de projet (PMP)', '{\"travail_bureau\":\"oui\",\"travail_exterieur\":\"non\",\"travail_equipe\":\"oui\",\"travail_independant\":\"oui\",\"horaires_fixes\":\"non\",\"horaires_flexibles\":\"oui\",\"deplacement_frequent\":\"oui\"}', '[\"Commerce\",\"Services\",\"Artisanat\",\"Technologie\",\"G\\u00e9nie civil et travaux public\",\"Textile et habillement\",\"Industrie alimentaire\"]', '[\"Direction g\\u00e9n\\u00e9rale\",\"Marketing et vente\",\"Gestion de projet\",\"Conseil\"]', '[\"\\u00c9panouissement personnel\",\"Ind\\u00e9pendance financi\\u00e8re\",\"Contribution sociale\",\"Cr\\u00e9ativit\\u00e9\",\"Le moyen de pr\\u00e9parer l\'avenir\",\"Un moyen de me valoriser\"]', '{\"deplacement\":\"oui\",\"horaires_variables\":\"oui\",\"travail_weekend\":\"non\",\"travail_nuit\":\"non\",\"port_charges\":\"non\",\"travail_exterieur_meteo\":\"non\",\"travail_repetitif\":\"non\",\"pression_resultats\":\"oui\"}', '[\"Autonomie\",\"Cr\\u00e9ativit\\u00e9\",\"Responsabilit\\u00e9\",\"Bon salaire\",\"\\u00c9volution de carri\\u00e8re\"]', 'Je souhaite créer ma propre entreprise dans le secteur artisanal pour valoriser le patrimoine local', 'Artisanat Moderne SARL', 'Casablanca, Zone Industrielle Ain Sebaa', 'Artisanat et production', '3 mois (Juin - Août 2022)', 'Suivi de production, gestion des stocks, relation fournisseurs', 'Gestion de stock, négociation fournisseurs, contrôle qualité', 'Ruptures de stock fréquentes, communication difficile avec certains fournisseurs', 'Ce stage m\'a confirmé mon intérêt pour l\'entrepreneuriat dans l\'artisanat', 'L\'ambiance de travail collaborative et la créativité des artisans', 'Le manque d\'organisation administrative et de digitalisation', 'J\'ai appris que je suis capable de gérer une équipe et que j\'aime résoudre des problèmes concrets', 'Maroc Artisan Express', 'Rabat, Médina', 'E-commerce artisanal', '6 mois (CDD)', 'Gestion de la boutique en ligne, service client, coordination des livraisons', 'E-commerce, service client, logistique, réseaux sociaux', 'Retards de livraison, gestion des retours clients', 'Formation initiale d\'une semaine, tutorat par le responsable', 'Fin de CDD, souhait de créer mon propre projet', 'Cette expérience m\'a donné une vision complète de la chaîne de valeur artisanale', 'submitted', 6, '2026-02-06 23:34:04', NULL, NULL, '2026-02-06 23:28:58', '2026-02-06 23:34:04', NULL);
 
 -- --------------------------------------------------------
 
@@ -159,7 +159,7 @@ CREATE TABLE `bmcs` (
 --
 
 INSERT INTO `bmcs` (`id`, `candidat_id`, `form_type`, `partenaires_cles`, `activites_cles`, `proposition_valeur`, `relations_clients`, `segments_clientele`, `ressources_cles`, `canaux`, `structure_couts`, `flux_revenus`, `status`, `current_step`, `submitted_at`, `reviewed_at`, `review_notes`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(3, 3, NULL, 'Fournisseurs locaux de matières premières, coopératives artisanales, agences de transport, plateformes e-commerce', 'Production artisanale, contrôle qualité, marketing digital, gestion des commandes, service client', 'Produits artisanaux authentiques de haute qualité, personnalisables, à prix justes, soutenant l\'économie locale', 'Service personnalisé, suivi après-vente, programme de fidélité, newsletter mensuelle, SAV réactif', 'Touristes (nationaux et internationaux), décorateurs d\'intérieur, boutiques de cadeaux, collectionneurs d\'art', 'Artisans qualifiés, atelier de production, matières premières de qualité, plateforme en ligne, réseau de distribution', 'Boutique physique, site e-commerce, réseaux sociaux (Instagram, Facebook), marchés artisanaux, partenariats hôteliers', 'Matières premières (30%), main d\'œuvre (25%), loyer atelier (15%), marketing (10%), logistique (10%), autres (10%)', 'Ventes directes (60%), commandes personnalisées (25%), ventes en gros aux boutiques (15%)', 'submitted', 1, '2026-02-06 23:44:12', NULL, NULL, '2026-02-06 23:44:03', '2026-02-06 23:44:12', NULL);
+(3, 3, 'bmc', 'Fournisseurs locaux de matières premières, coopératives artisanales, agences de transport, plateformes e-commerce', 'Production artisanale, contrôle qualité, marketing digital, gestion des commandes, service client', 'Produits artisanaux authentiques de haute qualité, personnalisables, à prix justes, soutenant l\'économie locale', 'Service personnalisé, suivi après-vente, programme de fidélité, newsletter mensuelle, SAV réactif', 'Touristes (nationaux et internationaux), décorateurs d\'intérieur, boutiques de cadeaux, collectionneurs d\'art', 'Artisans qualifiés, atelier de production, matières premières de qualité, plateforme en ligne, réseau de distribution', 'Boutique physique, site e-commerce, réseaux sociaux (Instagram, Facebook), marchés artisanaux, partenariats hôteliers', 'Matières premières (30%), main d\'œuvre (25%), loyer atelier (15%), marketing (10%), logistique (10%), autres (10%)', 'Ventes directes (60%), commandes personnalisées (25%), ventes en gros aux boutiques (15%)', 'submitted', 1, '2026-02-06 23:44:12', NULL, NULL, '2026-02-06 23:44:03', '2026-02-06 23:44:12', NULL);
 
 -- --------------------------------------------------------
 
@@ -300,8 +300,186 @@ CREATE TABLE `candidat` (
 --
 
 INSERT INTO `candidat` (`id`, `login`, `password`, `nom`, `prenom`, `age`, `profile_image`, `gender`, `address`, `email`, `phone`, `date_naissance`, `cv_path`, `is_active`, `created_at`, `updated_at`, `deleted_at`, `last_ip_address`, `last_user_agent`, `last_browser`, `last_platform`, `last_device`, `last_login_at`, `login_count`) VALUES
-(3, 'saadmnhm@gmail.com', '$2y$12$pv1bcoVYUkVKeNKjCA0xguFn8eNtCcD7/Pcr/zslgqyt4dVv3F7cy', 'saad', 'saad', 24, 'profile-images/1770422496_698680e0a8a5a.jpg', 'homme', 'Ain Sbaa', 'saadmnhm@gmail.com', '0638640423', NULL, NULL, 1, '2026-02-06 23:00:17', '2026-02-06 23:24:19', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0),
+(3, 'saadmnhm@gmail.com', '$2y$12$pv1bcoVYUkVKeNKjCA0xguFn8eNtCcD7/Pcr/zslgqyt4dVv3F7cy', 'saad', 'saad', 24, 'profile-images/1770422496_698680e0a8a5a.jpg', 'homme', 'Ain Sbaa', 'saadmnhm@gmail.com', '0638640423', NULL, NULL, 1, '2026-02-06 23:00:17', '2026-02-07 13:54:20', NULL, '105.188.107.12', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'Chrome 144.0.0.0', 'Windows 10.0', 'Desktop', '2026-02-07 13:54:20', 1),
 (5, 'test@example.com', '$2y$12$TeC3vTqX9deWzziAMbZxkunTLRoqOFGD1c8tmJ5NQPXQtolQ.J0Xu', 'saad', 'saad', 33, 'profile-images/1770471814_69874186ab4ae.jpg', 'homme', 'Hay Mohamadi', 'test@example.com', '0612345678', NULL, NULL, 1, '2026-02-07 12:42:32', '2026-02-07 12:43:34', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'Chrome 144.0.0.0', 'Windows 10.0', 'Desktop', '2026-02-07 12:42:32', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `dynamic_forms`
+--
+
+CREATE TABLE `dynamic_forms` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `title_ar` varchar(255) DEFAULT NULL,
+  `introduction` text DEFAULT NULL,
+  `introduction_ar` text DEFAULT NULL,
+  `slug` varchar(255) NOT NULL,
+  `icon` varchar(255) NOT NULL DEFAULT 'ri-file-list-3-line',
+  `color` varchar(255) NOT NULL DEFAULT '#2f5496',
+  `bg_color` varchar(255) NOT NULL DEFAULT '#ffffff',
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `has_steps` tinyint(1) NOT NULL DEFAULT 1,
+  `sort_order` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `dynamic_form_answers`
+--
+
+CREATE TABLE `dynamic_form_answers` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `dynamic_form_submission_id` bigint(20) UNSIGNED NOT NULL,
+  `dynamic_form_field_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `field_key` varchar(255) NOT NULL,
+  `value` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `dynamic_form_fields`
+--
+
+CREATE TABLE `dynamic_form_fields` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `dynamic_form_step_id` bigint(20) UNSIGNED NOT NULL,
+  `label` varchar(255) NOT NULL,
+  `label_ar` varchar(255) DEFAULT NULL,
+  `field_key` varchar(255) NOT NULL,
+  `type` enum('text','textarea','number','email','date','select','radio','checkbox','file','table','heading','paragraph') NOT NULL DEFAULT 'text',
+  `placeholder` text DEFAULT NULL,
+  `help_text` text DEFAULT NULL,
+  `options` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`options`)),
+  `is_required` tinyint(1) NOT NULL DEFAULT 0,
+  `is_full_width` tinyint(1) NOT NULL DEFAULT 1,
+  `sort_order` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `dynamic_form_steps`
+--
+
+CREATE TABLE `dynamic_form_steps` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `dynamic_form_id` bigint(20) UNSIGNED NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `title_ar` varchar(255) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `step_number` int(11) NOT NULL,
+  `sort_order` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `dynamic_form_submissions`
+--
+
+CREATE TABLE `dynamic_form_submissions` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `dynamic_form_id` bigint(20) UNSIGNED NOT NULL,
+  `candidat_id` bigint(20) UNSIGNED NOT NULL,
+  `status` enum('draft','submitted','in_review','approved','rejected') NOT NULL DEFAULT 'draft',
+  `current_step` int(11) NOT NULL DEFAULT 1,
+  `submitted_at` timestamp NULL DEFAULT NULL,
+  `reviewed_at` timestamp NULL DEFAULT NULL,
+  `review_notes` text DEFAULT NULL,
+  `reviewed_by` bigint(20) UNSIGNED DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `dynamic_form_tables`
+--
+
+CREATE TABLE `dynamic_form_tables` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `dynamic_form_step_id` bigint(20) UNSIGNED NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `title_ar` varchar(255) DEFAULT NULL,
+  `table_key` varchar(255) NOT NULL,
+  `has_dynamic_rows` tinyint(1) NOT NULL DEFAULT 0,
+  `has_total_row` tinyint(1) NOT NULL DEFAULT 0,
+  `min_rows` int(11) NOT NULL DEFAULT 1,
+  `max_rows` int(11) NOT NULL DEFAULT 20,
+  `sort_order` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `dynamic_form_table_answers`
+--
+
+CREATE TABLE `dynamic_form_table_answers` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `dynamic_form_submission_id` bigint(20) UNSIGNED NOT NULL,
+  `dynamic_form_table_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `table_key` varchar(255) NOT NULL,
+  `row_index` int(11) NOT NULL,
+  `column_key` varchar(255) NOT NULL,
+  `value` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `dynamic_form_table_columns`
+--
+
+CREATE TABLE `dynamic_form_table_columns` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `dynamic_form_table_id` bigint(20) UNSIGNED NOT NULL,
+  `header` varchar(255) NOT NULL,
+  `header_ar` varchar(255) DEFAULT NULL,
+  `column_key` varchar(255) NOT NULL,
+  `input_type` enum('text','number','checkbox','select','readonly','label') NOT NULL DEFAULT 'text',
+  `options` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`options`)),
+  `is_totaled` tinyint(1) NOT NULL DEFAULT 0,
+  `width` varchar(255) DEFAULT NULL,
+  `sort_order` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `dynamic_form_table_rows`
+--
+
+CREATE TABLE `dynamic_form_table_rows` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `dynamic_form_table_id` bigint(20) UNSIGNED NOT NULL,
+  `label` varchar(255) NOT NULL,
+  `label_ar` varchar(255) DEFAULT NULL,
+  `sort_order` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -348,7 +526,7 @@ CREATE TABLE `etude_marches` (
 --
 
 INSERT INTO `etude_marches` (`id`, `candidat_id`, `form_type`, `produit_service`, `description_offre`, `benefices_clients`, `prix_marche`, `controle_prix`, `type_clients`, `caracteristiques_clientele`, `frequence_consommation`, `localisation_clients`, `exigences_principales`, `nombre_concurrents_directs`, `concurrents_indirects`, `taille_concurrents`, `informations_concurrents`, `communication_concurrents`, `nombre_fournisseurs`, `origine_fournisseurs`, `prix_fournisseurs`, `delais_livraison`, `stabilite_marche`, `status`, `current_step`, `submitted_at`, `reviewed_at`, `review_notes`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(5, 3, NULL, 'Produits artisanaux locaux - bijoux, poterie, textiles', 'Offre de produits artisanaux de haute qualité, fabriqués localement avec des matériaux durables', 'Qualité supérieure, produits uniques, soutien aux artisans locaux', 'Prix moyens: 50-500 DH selon le produit', 'Prix contrôlable basé sur les coûts de production', 'Particuliers, touristes, boutiques de décoration', 'Âge 25-55 ans, revenus moyens à élevés', 'Occasionnelle pour les particuliers, régulière pour les boutiques', 'Casablanca, Rabat, Marrakech, international', 'Qualité artisanale, authenticité, délais respectés', '15-20 ateliers artisanaux dans la région', 'Oui, produits industriels à bas prix', 'Petites structures (2-10 employés)', 'Concurrent A: CA 500K DH/an, 10 ans d\'expérience', 'Réseaux sociaux, foires artisanales', '8-10 fournisseurs de matières premières', 'Principalement nationaux (Fès, Marrakech)', 'Prix raisonnables et négociables', 'Délais fiables: 1-2 semaines', 'Marché stable avec variation saisonnière', 'submitted', 3, '2026-02-06 23:28:35', NULL, NULL, '2026-02-06 23:28:30', '2026-02-06 23:28:35', NULL);
+(5, 3, 'etude_marche', 'Produits artisanaux locaux - bijoux, poterie, textiles', 'Offre de produits artisanaux de haute qualité, fabriqués localement avec des matériaux durables', 'Qualité supérieure, produits uniques, soutien aux artisans locaux', 'Prix moyens: 50-500 DH selon le produit', 'Prix contrôlable basé sur les coûts de production', 'Particuliers, touristes, boutiques de décoration', 'Âge 25-55 ans, revenus moyens à élevés', 'Occasionnelle pour les particuliers, régulière pour les boutiques', 'Casablanca, Rabat, Marrakech, international', 'Qualité artisanale, authenticité, délais respectés', '15-20 ateliers artisanaux dans la région', 'Oui, produits industriels à bas prix', 'Petites structures (2-10 employés)', 'Concurrent A: CA 500K DH/an, 10 ans d\'expérience', 'Réseaux sociaux, foires artisanales', '8-10 fournisseurs de matières premières', 'Principalement nationaux (Fès, Marrakech)', 'Prix raisonnables et négociables', 'Délais fiables: 1-2 semaines', 'Marché stable avec variation saisonnière', 'submitted', 3, '2026-02-06 23:28:35', NULL, NULL, '2026-02-06 23:28:30', '2026-02-06 23:28:35', NULL);
 
 -- --------------------------------------------------------
 
@@ -385,7 +563,7 @@ CREATE TABLE `evaluation_idees` (
 --
 
 INSERT INTO `evaluation_idees` (`id`, `candidat_id`, `form_type`, `idee_projet`, `resume_idee`, `besoin_projet`, `produits_services`, `clients_identifies`, `idee_existe_marche`, `valeur_ajoutee`, `resultats_prevus`, `proches_comprennent`, `reactions_positives`, `status`, `current_step`, `submitted_at`, `reviewed_at`, `review_notes`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(4, 3, NULL, 'Application mobile de livraison de repas traditionnels', 'Une plateforme qui connecte les cuisiniers locaux avec les clients pour la livraison de plats maison traditionnels', 'Besoin de repas faits maison de qualité, accessibles rapidement pour les travailleurs et familles pressées', 'Plateforme mobile + service de livraison + programme de fidélité', 'Oui: employés de bureau (25-45 ans), familles urbaines, étudiants universitaires', 'Des services de livraison existent (Glovo, Jumia Food) mais aucun ne se spécialise dans les repas traditionnels faits maison', 'Authenticité des plats, soutien aux cuisiniers locaux, prix abordables, circuit court', '500 commandes/mois la première année, 50 cuisiniers partenaires, CA de 600K DH/an', 'oui', 'oui', 'submitted', 1, '2026-02-06 23:28:08', NULL, NULL, '2026-02-06 23:24:41', '2026-02-06 23:28:08', NULL);
+(4, 3, 'evaluation_idee', 'Application mobile de livraison de repas traditionnels', 'Une plateforme qui connecte les cuisiniers locaux avec les clients pour la livraison de plats maison traditionnels', 'Besoin de repas faits maison de qualité, accessibles rapidement pour les travailleurs et familles pressées', 'Plateforme mobile + service de livraison + programme de fidélité', 'Oui: employés de bureau (25-45 ans), familles urbaines, étudiants universitaires', 'Des services de livraison existent (Glovo, Jumia Food) mais aucun ne se spécialise dans les repas traditionnels faits maison', 'Authenticité des plats, soutien aux cuisiniers locaux, prix abordables, circuit court', '500 commandes/mois la première année, 50 cuisiniers partenaires, CA de 600K DH/an', 'oui', 'oui', 'submitted', 1, '2026-02-06 23:28:08', NULL, NULL, '2026-02-06 23:24:41', '2026-02-06 23:28:08', NULL);
 
 -- --------------------------------------------------------
 
@@ -482,7 +660,10 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (26, '2026_02_06_120000_add_form_type_to_form_tables', 8),
 (27, '2026_02_06_120001_populate_form_type_values', 9),
 (28, '2026_02_07_133403_add_tracking_info_to_users_table', 10),
-(29, '2026_02_07_133414_add_tracking_info_to_candidat_table', 11);
+(29, '2026_02_07_133414_add_tracking_info_to_candidat_table', 11),
+(30, '2026_02_06_205000_add_form_type_to_form_tables', 12),
+(31, '2026_02_06_210000_populate_form_type_values', 12),
+(32, '2026_02_07_000001_create_dynamic_forms_tables', 12);
 
 -- --------------------------------------------------------
 
@@ -738,7 +919,9 @@ CREATE TABLE `sessions` (
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
 ('3yHnpJchwxmIAoSZOuprjAiwA6zuNcWYBD5tZdpb', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiVURLcWJPdVlZdTZuVVRPYjFPbzBDMTE2V3JscDF5MG1KQ1ZXWDZZQyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9mb3JtL2Rhc2hib2FyZCI7czo1OiJyb3V0ZSI7czoxNDoiZm9ybS5kYXNoYm9hcmQiO31zOjU1OiJsb2dpbl9jYW5kaWRhdF81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjM7czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTt9', 1770426527),
+('7rBXcXJNwjg2O3b9xSDVFb73YqzHx9m8ZgAXL8iK', 5, '105.188.107.12', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoidDB2ZGZoRllJbzB1dm1zMlNROWtscUNrRGo4OEZIYXZ0ZDZqUDZ5YyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDA6Imh0dHBzOi8vZGV2Lml1aG0ub3JnL2FkbWluL3Byb2plY3RzX3ZpZXciO3M6NToicm91dGUiO3M6MTk6ImFkbWluLnByb2plY3RzX3ZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTo1O30=', 1770492174),
 ('crC6oaS67Ka9mg9ApfYmQ2DUVBv8asVxsS7N2NGy', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiS2Q0dzd6VHB5V3JJZjZvSlVwTXN3NnhLdXRydTIyQ3FMUm5FMUY0aiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzM6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9sb2dpbiI7czo1OiJyb3V0ZSI7czoxMToiYWRtaW4ubG9naW4iO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1770455060),
+('IDimSptuKA6AawfQzzGfvhzNzfZFtpuYDTCMsTjy', NULL, '105.188.107.12', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiY2pUODZwbTAySTJOaThtVWQ3djA4V0tpT2VMTVBDUVlRSFdQQjRQbyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzU6Imh0dHBzOi8vZGV2Lml1aG0ub3JnL2Zvcm0vZGFzaGJvYXJkIjtzOjU6InJvdXRlIjtzOjE0OiJmb3JtLmRhc2hib2FyZCI7fXM6NTU6ImxvZ2luX2NhbmRpZGF0XzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6Mzt9', 1770472460),
 ('VFGUAKR1NPyxMbHhHqk9wUlXmwsRDDlRyPTT1mIU', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiblpOVVpJbWhOZXFIdVlobUpsaVI2M3JadXM5MW1wOFR0Z0tCRENWeCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NzM6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC91cGxvYWRzL3Byb2ZpbGUtaW1hZ2VzLzE3NzA0NzE4MTRfNjk4NzQxODZhYjRhZS5qcGciO3M6NToicm91dGUiO3M6MTI6InVwbG9hZHMuc2hvdyI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTU6ImxvZ2luX2NhbmRpZGF0XzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6NTt9', 1770471818);
 
 -- --------------------------------------------------------
@@ -802,7 +985,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `role`, `is_active`, `remember_token`, `last_ip_address`, `last_user_agent`, `last_browser`, `last_platform`, `last_device`, `last_login_at`, `login_count`, `created_at`, `updated_at`) VALUES
 (1, 'saad', 'admin@admin.com', NULL, '$2y$12$acce67vErQVY/YXgFCmHq.Usnjr3HTakwzfcxTPZObjMXYigAb7My', 'super_admin', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2025-12-26 09:47:27', '2025-12-26 10:03:05'),
-(5, 'test', 'test@example.com', NULL, '$2y$12$pyK7ItmYF9yZBFFK9lyQu.MzS2OozYepLKCpGRbzsnUstJejcz/EG', 'super_admin', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2026-02-07 00:08:00', '2026-02-07 00:08:00');
+(5, 'test', 'test@example.com', NULL, '$2y$12$pyK7ItmYF9yZBFFK9lyQu.MzS2OozYepLKCpGRbzsnUstJejcz/EG', 'super_admin', 1, NULL, '105.188.107.12', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'Chrome 144.0.0.0', 'Windows 10.0', 'Desktop', '2026-02-07 19:18:26', 1, '2026-02-07 00:08:00', '2026-02-07 19:18:26');
 
 --
 -- Indexes for dumped tables
@@ -862,6 +1045,73 @@ ALTER TABLE `candidat`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `candidat_login_unique` (`login`),
   ADD UNIQUE KEY `candidat_email_unique` (`email`);
+
+--
+-- Indexes for table `dynamic_forms`
+--
+ALTER TABLE `dynamic_forms`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `dynamic_forms_slug_unique` (`slug`);
+
+--
+-- Indexes for table `dynamic_form_answers`
+--
+ALTER TABLE `dynamic_form_answers`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `dynamic_form_answers_dynamic_form_field_id_foreign` (`dynamic_form_field_id`),
+  ADD KEY `dfa_submission_field_idx` (`dynamic_form_submission_id`,`field_key`);
+
+--
+-- Indexes for table `dynamic_form_fields`
+--
+ALTER TABLE `dynamic_form_fields`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `dynamic_form_fields_dynamic_form_step_id_foreign` (`dynamic_form_step_id`);
+
+--
+-- Indexes for table `dynamic_form_steps`
+--
+ALTER TABLE `dynamic_form_steps`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `dynamic_form_steps_dynamic_form_id_step_number_unique` (`dynamic_form_id`,`step_number`);
+
+--
+-- Indexes for table `dynamic_form_submissions`
+--
+ALTER TABLE `dynamic_form_submissions`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `dynamic_form_submissions_dynamic_form_id_candidat_id_unique` (`dynamic_form_id`,`candidat_id`),
+  ADD KEY `dynamic_form_submissions_candidat_id_foreign` (`candidat_id`),
+  ADD KEY `dynamic_form_submissions_reviewed_by_foreign` (`reviewed_by`);
+
+--
+-- Indexes for table `dynamic_form_tables`
+--
+ALTER TABLE `dynamic_form_tables`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `dynamic_form_tables_dynamic_form_step_id_foreign` (`dynamic_form_step_id`);
+
+--
+-- Indexes for table `dynamic_form_table_answers`
+--
+ALTER TABLE `dynamic_form_table_answers`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `dynamic_form_table_answers_dynamic_form_table_id_foreign` (`dynamic_form_table_id`),
+  ADD KEY `dfta_submission_table_row_idx` (`dynamic_form_submission_id`,`table_key`,`row_index`);
+
+--
+-- Indexes for table `dynamic_form_table_columns`
+--
+ALTER TABLE `dynamic_form_table_columns`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `dynamic_form_table_columns_dynamic_form_table_id_foreign` (`dynamic_form_table_id`);
+
+--
+-- Indexes for table `dynamic_form_table_rows`
+--
+ALTER TABLE `dynamic_form_table_rows`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `dynamic_form_table_rows_dynamic_form_table_id_foreign` (`dynamic_form_table_id`);
 
 --
 -- Indexes for table `etude_marches`
@@ -1024,6 +1274,60 @@ ALTER TABLE `candidat`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
+-- AUTO_INCREMENT for table `dynamic_forms`
+--
+ALTER TABLE `dynamic_forms`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `dynamic_form_answers`
+--
+ALTER TABLE `dynamic_form_answers`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `dynamic_form_fields`
+--
+ALTER TABLE `dynamic_form_fields`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `dynamic_form_steps`
+--
+ALTER TABLE `dynamic_form_steps`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `dynamic_form_submissions`
+--
+ALTER TABLE `dynamic_form_submissions`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `dynamic_form_tables`
+--
+ALTER TABLE `dynamic_form_tables`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `dynamic_form_table_answers`
+--
+ALTER TABLE `dynamic_form_table_answers`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `dynamic_form_table_columns`
+--
+ALTER TABLE `dynamic_form_table_columns`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `dynamic_form_table_rows`
+--
+ALTER TABLE `dynamic_form_table_rows`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `etude_marches`
 --
 ALTER TABLE `etude_marches`
@@ -1051,7 +1355,7 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `project_deliveries`
@@ -1135,6 +1439,58 @@ ALTER TABLE `bmcs`
 ALTER TABLE `business_plans`
   ADD CONSTRAINT `projects_candidat_id_foreign` FOREIGN KEY (`candidat_id`) REFERENCES `candidat` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `projects_reviewed_by_foreign` FOREIGN KEY (`reviewed_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `dynamic_form_answers`
+--
+ALTER TABLE `dynamic_form_answers`
+  ADD CONSTRAINT `dynamic_form_answers_dynamic_form_field_id_foreign` FOREIGN KEY (`dynamic_form_field_id`) REFERENCES `dynamic_form_fields` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `dynamic_form_answers_dynamic_form_submission_id_foreign` FOREIGN KEY (`dynamic_form_submission_id`) REFERENCES `dynamic_form_submissions` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `dynamic_form_fields`
+--
+ALTER TABLE `dynamic_form_fields`
+  ADD CONSTRAINT `dynamic_form_fields_dynamic_form_step_id_foreign` FOREIGN KEY (`dynamic_form_step_id`) REFERENCES `dynamic_form_steps` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `dynamic_form_steps`
+--
+ALTER TABLE `dynamic_form_steps`
+  ADD CONSTRAINT `dynamic_form_steps_dynamic_form_id_foreign` FOREIGN KEY (`dynamic_form_id`) REFERENCES `dynamic_forms` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `dynamic_form_submissions`
+--
+ALTER TABLE `dynamic_form_submissions`
+  ADD CONSTRAINT `dynamic_form_submissions_candidat_id_foreign` FOREIGN KEY (`candidat_id`) REFERENCES `candidat` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `dynamic_form_submissions_dynamic_form_id_foreign` FOREIGN KEY (`dynamic_form_id`) REFERENCES `dynamic_forms` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `dynamic_form_submissions_reviewed_by_foreign` FOREIGN KEY (`reviewed_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `dynamic_form_tables`
+--
+ALTER TABLE `dynamic_form_tables`
+  ADD CONSTRAINT `dynamic_form_tables_dynamic_form_step_id_foreign` FOREIGN KEY (`dynamic_form_step_id`) REFERENCES `dynamic_form_steps` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `dynamic_form_table_answers`
+--
+ALTER TABLE `dynamic_form_table_answers`
+  ADD CONSTRAINT `dynamic_form_table_answers_dynamic_form_submission_id_foreign` FOREIGN KEY (`dynamic_form_submission_id`) REFERENCES `dynamic_form_submissions` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `dynamic_form_table_answers_dynamic_form_table_id_foreign` FOREIGN KEY (`dynamic_form_table_id`) REFERENCES `dynamic_form_tables` (`id`) ON DELETE SET NULL;
+
+--
+-- Constraints for table `dynamic_form_table_columns`
+--
+ALTER TABLE `dynamic_form_table_columns`
+  ADD CONSTRAINT `dynamic_form_table_columns_dynamic_form_table_id_foreign` FOREIGN KEY (`dynamic_form_table_id`) REFERENCES `dynamic_form_tables` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `dynamic_form_table_rows`
+--
+ALTER TABLE `dynamic_form_table_rows`
+  ADD CONSTRAINT `dynamic_form_table_rows_dynamic_form_table_id_foreign` FOREIGN KEY (`dynamic_form_table_id`) REFERENCES `dynamic_form_tables` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `etude_marches`
