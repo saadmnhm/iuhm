@@ -181,7 +181,7 @@
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead class="bg-gray-50">
-                    <tr>
+                    <tr> 
                         <th class="px-4 py-3 text-left font-medium text-gray-600">#</th>
                         <th class="px-4 py-3 text-left font-medium text-gray-600">Candidat</th>
                         <th class="px-4 py-3 text-left font-medium text-gray-600">Projet</th>
