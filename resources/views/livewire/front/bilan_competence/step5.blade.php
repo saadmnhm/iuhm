@@ -55,8 +55,8 @@
             @endphp
             @foreach($exigencesList as $exigence)
             <div>
+                <input type="checkbox" wire:model="exigences" value="{{ $exigence }}" @if($isReadOnly) disabled @endif>
                 <label>
-                    <input type="checkbox" wire:model="exigences" value="{{ $exigence }}" @if($isReadOnly) disabled @endif>
                     <span class="disc_p">{{ $exigence }}</span>
                 </label>
             </div>

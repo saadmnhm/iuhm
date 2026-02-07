@@ -98,22 +98,28 @@
             <table class="w-full">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Form Type</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted By</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Adresse</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @forelse($statistics['recent_projects'] as $project)
-                    @php $candidat = $project->candidat ?? null; @endphp
+                    @php 
+                        $candidat = $project->candidat ?? null;
+                        $formType = $project->form_type ?? $project->getFormType();
+                    @endphp
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="font-medium text-gray-900">{{ $project->project_title }}</div>
-                            <div class="text-sm text-gray-500">#{{ $project->id }}</div>
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $project->form_type_badge_color }}">
+                                {{ $project->form_type_label }}
+                            </span>
                         </td>
+                        
                         <td class="px-6 py-4 whitespace-nowrap">
+                            @if($candidat)
                             <div class="flex items-center">
                                 @if($candidat->profile_image)
                                     <img class="w-10 h-10 rounded-full mr-4 object-contain" src="{{ asset('uploads/'.$candidat->profile_image) }}" alt="{{ $candidat->nom }} {{ $candidat->prenom }}">
@@ -128,17 +134,28 @@
                                     <div class="text-sm text-gray-500">{{ $candidat->email }}</div>
                                 </div>
                             </div>
+                            @else
+                            <span class="text-sm text-gray-400">N/A</span>
+                            @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-3 py-1 text-xs font-medium rounded-full " style="{{ $candidat->address == 'Hay Mohamadi' ? 'background-color: rgba(11, 110, 44, 0.8); color: white;' : ($candidat->address == 'Ain Sbaa' ? 'background-color: rgba(45, 26, 110, 0.8); color: white;' : ($candidat->address == 'Roches Noires' ? 'background-color: rgba(133, 12, 12, 0.8); color: white;' : 'background-color: gray; color: white;')) }} width: 110px; text-align: center; display: inline-block;">
-                                {{ $candidat->address ?? 'N/A' }}
-                            </span>
+                            @if($project->status === 'draft')
+                                <span class="px-3 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">Brouillon</span>
+                            @elseif($project->status === 'submitted')
+                                <span class="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">Soumis</span>
+                            @elseif($project->status === 'in_review')
+                                <span class="px-3 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">En révision</span>
+                            @elseif($project->status === 'approved')
+                                <span class="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Approuvé</span>
+                            @elseif($project->status === 'rejected')
+                                <span class="px-3 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">Rejeté</span>
+                            @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             {{ $project->created_at->format('M d, Y') }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm">
-                            <a href="{{ route('admin.projects.show', $project->id) }}" class="text-indigo-600 hover:text-indigo-900 svg-view-detail">
+                            <a href="{{ route('admin.form-submissions.view', ['type' => $formType, 'id' => $project->id]) }}" class="text-indigo-600 hover:text-indigo-900 svg-view-detail">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#648454">
                                     <path d="M12.0003 3C17.3924 3 21.8784 6.87976 22.8189 12C21.8784 17.1202 17.3924 21 12.0003 21C6.60812 21 2.12215 17.1202 1.18164 12C2.12215 6.87976 6.60812 3 12.0003 3ZM12.0003 19C16.2359 19 19.8603 16.052 20.7777 12C19.8603 7.94803 16.2359 5 12.0003 5C7.7646 5 4.14022 7.94803 3.22278 12C4.14022 16.052 7.7646 19 12.0003 19ZM12.0003 16.5C9.51498 16.5 7.50026 14.4853 7.50026 12C7.50026 9.51472 9.51498 7.5 12.0003 7.5C14.4855 7.5 16.5003 9.51472 16.5003 12C16.5003 14.4853 14.4855 16.5 12.0003 16.5ZM12.0003 14.5C13.381 14.5 14.5003 13.3807 14.5003 12C14.5003 10.6193 13.381 9.5 12.0003 9.5C10.6196 9.5 9.50026 10.6193 9.50026 12C9.50026 13.3807 10.6196 14.5 12.0003 14.5Z"></path>
                                 </svg>
@@ -147,7 +164,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                        <td colspan="6" class="px-6 py-12 text-center text-gray-500">
                             No projects found
                         </td>
                     </tr>

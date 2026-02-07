@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Project;
+use App\Models\BusinessPlan;
 use Livewire\Component;
 use App\Models\Candidat;
 use Livewire\WithPagination;
@@ -30,7 +30,7 @@ class ProjectList extends Component
     public function render()
     {
         // Only show submitted projects and beyond (exclude drafts)
-        $query = Project::with(['candidat', 'reviewer'])
+        $query = BusinessPlan::with(['candidat', 'reviewer'])
             ->whereNotIn('status', ['draft'])
             ->latest();
 
@@ -53,12 +53,12 @@ class ProjectList extends Component
         $projects = $query->paginate(15);
 
         $statistics = [
-            'total' => Project::whereIn('status', ['submitted', 'in_review', 'approved', 'rejected'])->count(),
-            'draft' => Project::where('status', 'draft')->count(),
-            'submitted' => Project::where('status', 'submitted')->count(),
-            'in_review' => Project::where('status', 'in_review')->count(),
-            'approved' => Project::where('status', 'approved')->count(),
-            'rejected' => Project::where('status', 'rejected')->count(),
+            'total' => BusinessPlan::whereIn('status', ['submitted', 'in_review', 'approved', 'rejected'])->count(),
+            'draft' => BusinessPlan::where('status', 'draft')->count(),
+            'submitted' => BusinessPlan::where('status', 'submitted')->count(),
+            'in_review' => BusinessPlan::where('status', 'in_review')->count(),
+            'approved' => BusinessPlan::where('status', 'approved')->count(),
+            'rejected' => BusinessPlan::where('status', 'rejected')->count(),
             'male' => Candidat::where('gender', 'homme')->count(),
             'female' => Candidat::where('gender', 'femme')->count(),
         ];
@@ -74,7 +74,7 @@ class ProjectList extends Component
             'registration' => 'required|string|max:255'
         ]);
 
-        $project = Project::findOrFail($id);
+        $project = BusinessPlan::findOrFail($id);
 
         if ($project->status === 'draft') {
             return redirect()->back()->with('error', 'Cannot update registration for draft projects.');

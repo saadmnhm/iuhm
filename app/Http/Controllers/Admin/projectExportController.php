@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Project;
+use App\Models\BusinessPlan;
 use App\Models\Candidat;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -11,7 +11,7 @@ class ProjectExportController extends Controller
 {
     public function previewPdf($id)
     {
-        $project = Project::with([
+        $project = BusinessPlan::with([
             'user',
             'products',
             'candidat',
@@ -30,7 +30,7 @@ class ProjectExportController extends Controller
     
     public function exportPdf($id)
     {
-        $project = Project::with([
+        $project = BusinessPlan::with([
             'user',
             'products',
             'employees',

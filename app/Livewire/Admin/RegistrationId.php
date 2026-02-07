@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Project;
+use App\Models\BusinessPlan;
 use Livewire\Component;
 
 class RegistrationId extends Component
@@ -13,7 +13,7 @@ class RegistrationId extends Component
     public function mount($id)
     {
         $this->projectId = $id;
-        $project = Project::findOrFail($id);
+        $project = BusinessPlan::findOrFail($id);
         $this->registration = $project->registration;
     }
 
@@ -23,7 +23,7 @@ class RegistrationId extends Component
             'registration' => 'required|string|max:255',
         ]);
 
-        $project = Project::findOrFail($this->projectId);
+        $project = BusinessPlan::findOrFail($this->projectId);
         $project->registration = $this->registration;
         $project->save();
 

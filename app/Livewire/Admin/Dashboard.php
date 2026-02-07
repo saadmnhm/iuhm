@@ -2,34 +2,36 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Project;
 use App\Models\User;
 use App\Models\Candidat;
+use App\Services\FormSubmissionService;
 use Livewire\Component;
 
 class Dashboard extends Component
 {
     public function render()
     {
+        $formService = app(FormSubmissionService::class);
+        $allSubmissions = $formService->getAllSubmissions();
+        
         $statistics = [
-            'total_projects' => Project::count(),
+            'total_projects' => $allSubmissions->count(),
             'total_users' => User::count(),
             'total_candidats' => Candidat::count(),
             'male_count' => Candidat::where('gender', 'homme')->count(),
             'female_count' => Candidat::where('gender', 'femme')->count(),
-            'recent_projects' => Project::with('user')->latest()->take(10)->get(),
+            'recent_projects' => $formService->getRecentSubmissions(10),
             'as' => Candidat::where('address', 'Ain Sbaa')->count(),
             'hm' => Candidat::where('address', 'Hay Mohamadi')->count(),
             'rn' => Candidat::where('address', 'Roches noires')->count(),
         ];
 
-        $monthlyData = Project::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
-            ->whereYear('created_at', date('Y'))
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get()
-            ->pluck('count', 'month')
-            ->toArray();
+        // Get monthly data for all forms
+        $monthlyData = [];
+        foreach ($allSubmissions as $submission) {
+            $month = $submission->created_at->month;
+            $monthlyData[$month] = ($monthlyData[$month] ?? 0) + 1;
+        }
 
         $chartData = [];
         for ($i = 1; $i <= 12; $i++) {
@@ -41,4 +43,5 @@ class Dashboard extends Component
             'chartData' => $chartData,
         ])->layout('layouts.admin', ['header' => 'Dashboard']);
     }
+    
 }

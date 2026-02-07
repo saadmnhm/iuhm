@@ -5,7 +5,7 @@ namespace App\Livewire\Front\Dashboard;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Project;
+use App\Models\BusinessPlan;
 
 class Aside extends Component
 {
@@ -20,7 +20,7 @@ class Aside extends Component
         
         // Load candidate projects for dropdown
         if ($this->candidat) {
-            $this->projects = Project::where('candidat_id', $this->candidat->id)
+            $this->projects = BusinessPlan::where('candidat_id', $this->candidat->id)
                 ->orderBy('created_at', 'desc')
                 ->get();
         }
@@ -33,7 +33,7 @@ class Aside extends Component
             return;
         }
         
-        if (!$this->candidat->phone || !$this->candidat->address) {
+        if (!$this->candidat->phone || !$this->candidat->address || !$this->candidat->age) {
             $this->showCompleteProfileModal = true;
         }
     }

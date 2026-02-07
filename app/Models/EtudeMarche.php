@@ -5,13 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Traits\HasFormSubmission;
 
 class EtudeMarche extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, HasFormSubmission;
 
     protected $fillable = [
         'candidat_id',
+        'form_type',
         // Step 1
         'produit_service',
         'description_offre',
@@ -48,33 +50,4 @@ class EtudeMarche extends Model
         'submitted_at' => 'datetime',
         'reviewed_at' => 'datetime',
     ];
-
-    public function candidat()
-    {
-        return $this->belongsTo(Candidat::class);
-    }
-
-    public function getStatusBadgeColorAttribute(): string
-    {
-        return match($this->status) {
-            'draft' => 'gray',
-            'submitted' => 'blue',
-            'in_review' => 'yellow',
-            'approved' => 'green',
-            'rejected' => 'red',
-            default => 'gray',
-        };
-    }
-
-    public function getStatusLabelAttribute(): string
-    {
-        return match($this->status) {
-            'draft' => 'Brouillon',
-            'submitted' => 'Soumis',
-            'in_review' => 'En révision',
-            'approved' => 'Approuvé',
-            'rejected' => 'Rejeté',
-            default => ucfirst($this->status),
-        };
-    }
 }

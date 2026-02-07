@@ -51,22 +51,6 @@
                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
                 </div>
 
-                <!-- Role -->
-                @if(Auth::user()->isSuperAdmin())
-                <div>
-                    <label for="role" class="block text-sm font-medium text-gray-700 mb-2">
-                        Role <span class="text-red-500">*</span>
-                    </label>
-                    <select wire:model="role" id="role" 
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
-                        <option value="user">User</option>
-                        <option value="admin">Admin</option>
-                        <option value="super_admin">Super Admin</option>
-                    </select>
-                    @error('role') <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span> @enderror
-                </div>
-                @endif
-
                 <!-- Status -->
                 <div>
                     <label class="flex items-center space-x-3 cursor-pointer">

@@ -4,7 +4,7 @@ namespace App\Livewire\Front\Dashboard;
 
 use Livewire\Component;
 use Livewire\Attributes\Layout;
-use App\Models\Project;
+use App\Services\FormSubmissionService;
 use App\Models\Candidat;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,15 +14,20 @@ class Dashboard extends Component
     public $candidat;
     public $projects = [];
     public $showCompleteProfileModal = false;
+    protected $formSubmissionService;
+
+    public function boot(FormSubmissionService $formSubmissionService)
+    {
+        $this->formSubmissionService = $formSubmissionService;
+    }
 
     public function mount()
     {
         $this->candidat = Auth::guard('candidat')->user();
         
-        // Load all projects for this candidat
-        $this->projects = Project::where('candidat_id', $this->candidat->id)
-            ->latest()
-            ->get();
+        // Get all form submissions for this candidat
+        $this->projects = app(FormSubmissionService::class)
+            ->getCandidatSubmissions($this->candidat->id);
     }
 
     public function goToSettings()
@@ -68,7 +73,11 @@ class Dashboard extends Component
 
     public function getProjectForType($formType)
     {
-        return $this->projects->where('form_type', $formType)->first();
+        return $this->projects->first(function($project) use ($formType) {
+            // Get form_type from the model if not set as attribute
+            $projectFormType = $project->form_type ?? $project->getFormType();
+            return $projectFormType === $formType;
+        });
     }
 
     public function render()
@@ -76,7 +85,7 @@ class Dashboard extends Component
         $stats = [
             'total' => $this->projects->count(),
             'drafts' => $this->projects->where('status', 'draft')->count(),
-            'submitted' => $this->projects->where('status', 'submitted')->count(),
+            'submitted' => $this->projects->whereIn('status', ['submitted', 'in_review'])->count(),
             'approved' => $this->projects->where('status', 'approved')->count(),
         ];
 

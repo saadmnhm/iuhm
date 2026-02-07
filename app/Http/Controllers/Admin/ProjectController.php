@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Project;
+use App\Models\BusinessPlan;
 use App\Models\Candidat;
 use Illuminate\Http\Request;
 
@@ -11,7 +11,7 @@ class ProjectController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Project::with('candidat')->latest();
+        $query = BusinessPlan::with('candidat')->latest();
 
         // Filter by status
         if ($request->filled('status') && $request->status !== 'all') {
@@ -33,10 +33,10 @@ class ProjectController extends Controller
         $projects = $query->paginate(15);
 
         $statistics = [
-            'total' => Project::count(),
-            'pending' => Project::where('status', 'pending')->count(),
-            'approved' => Project::where('status', 'approved')->count(),
-            'rejected' => Project::where('status', 'rejected')->count(),
+            'total' => BusinessPlan::count(),
+            'pending' => BusinessPlan::where('status', 'pending')->count(),
+            'approved' => BusinessPlan::where('status', 'approved')->count(),
+            'rejected' => BusinessPlan::where('status', 'rejected')->count(),
         ];
 
         return view('admin.projects.index', compact('projects', 'statistics'));
@@ -44,7 +44,7 @@ class ProjectController extends Controller
 
     public function show($id)
     {
-        $project = Project::with([
+        $project = BusinessPlan::with([
             'user',
             'products',
             'candidat',
@@ -67,7 +67,7 @@ class ProjectController extends Controller
             'status' => 'required|in:pending,approved,rejected'
         ]);
 
-        $project = Project::findOrFail($id);
+        $project = BusinessPlan::findOrFail($id);
         $project->update(['status' => $request->status]);
 
         return redirect()->back()->with('success', 'Project status updated successfully!');
@@ -75,7 +75,7 @@ class ProjectController extends Controller
 
     public function destroy($id)
     {
-        $project = Project::findOrFail($id);
+        $project = BusinessPlan::findOrFail($id);
         $project->delete();
 
         return redirect()->route('admin.projects.index')->with('success', 'Project deleted successfully!');

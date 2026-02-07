@@ -14,8 +14,8 @@
                 @endphp
                 @foreach($fonctions as $fonction)
                 <div class="col-6">
+                    <input type="checkbox" wire:model="fonctions_envisagees" value="{{ $fonction }}" @if($isReadOnly) disabled @endif>
                     <label>
-                        <input type="checkbox" wire:model="fonctions_envisagees" value="{{ $fonction }}" @if($isReadOnly) disabled @endif>
                         <span class="disc_p">{{ $fonction }}</span>
                     </label>
                 </div>
@@ -39,8 +39,8 @@
             @endphp
             @foreach($representations as $item)
             <div>
+                <input type="checkbox" wire:model="representation_travail" value="{{ $item }}" @if($isReadOnly) disabled @endif>
                 <label>
-                    <input type="checkbox" wire:model="representation_travail" value="{{ $item }}" @if($isReadOnly) disabled @endif>
                     <span class="disc_p">{{ $item }}</span>
                 </label>
             </div>

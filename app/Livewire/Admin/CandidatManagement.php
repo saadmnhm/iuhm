@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use Propaganistas\LaravelPhone\PhoneNumber;
 use App\Models\Candidat;
 use App\Models\AdminActivityLog;
 use Livewire\Component;
@@ -275,4 +276,5 @@ class CandidatManagement extends Component
             // 'statistics' => $statistics,
         ])->layout('layouts.admin', ['header' => 'Candidat Management']);
     }
+
 }

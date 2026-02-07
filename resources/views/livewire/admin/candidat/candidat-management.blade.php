@@ -97,21 +97,21 @@
                     <!-- User Avatar and Info -->
                     <div class="flex items-center mb-4 pb-4 border-b border-gray-100">
                         <div class="w-14 h-14 rounded-full bg-green-logo flex items-center justify-center text-white text-xl font-semibold mr-4">
-                            {{ strtoupper(substr($candidat->name, 0, 1)) }}
+                            @if($candidat->profile_image)
+                            <img src="{{ asset('uploads/' . $candidat->profile_image) }}" alt="Profile" class="w-full h-full rounded-full object-cover">
+                        @else
+                            <i class="ri-user-line"></i>
+                        @endif
                         </div>
                         <div class="flex-1 min-w-0">
-                            <div class="text-base font-semibold text-gray-900 truncate">{{ $candidat->name }}</div>
+                            <div class="text-base font-semibold text-gray-900 truncate">{{ $candidat->nom }} {{ $candidat->prenom }}</div>
                             <div class="text-sm text-gray-500 truncate">{{ $candidat->email }}</div>
                         </div>
                     </div>
 
-                    <!-- Role Badge -->
                     <div class="mb-4">
-                        <span class="px-3 py-1 text-xs font-medium rounded-full 
-                            {{ $candidat->role === 'super_admin' ? 'bg-purple-100 text-purple-800' : '' }}
-                            {{ $candidat->role === 'admin' ? 'bg-green-100 text-green-800' : '' }}
-                            {{ $candidat->role === 'user' ? 'bg-gray-100 text-gray-800' : '' }}">
-                            {{ ucfirst(str_replace('_', ' ', $candidat->role)) }}
+                        <span class="px-3 py-1 text-xs font-medium rounded-full ">
+                            
                         </span>
                         @if(!($candidat->is_active ?? true))
                         <span class="px-3 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800 ml-2">
@@ -135,13 +135,13 @@
                             View
                         </a>
                         @if(Auth::user()->isSuperAdmin() || Auth::user()->isAdmin())
-                        <button wire:click="generateNewPassword({{ $candidat->id }})" 
+                        <!-- <button wire:click="generateNewPassword({{ $candidat->id }})" 
                                 class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200"
                                 title="Generate new password">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
                             </svg>
-                        </button>
+                        </button> -->
                         <button wire:click="toggleStatus({{ $candidat->id }})" 
                                 class="px-3 py-2 {{ ($candidat->is_active ?? true) ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700' }} text-white text-sm font-medium rounded-lg transition-colors duration-200"
                                 title="{{ ($candidat->is_active ?? true) ? 'Disable' : 'Enable' }} account">

@@ -5,15 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Traits\HasFormSubmission;
 
 class BilanCompetence extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, HasFormSubmission;
 
     protected $table = 'bilan_competences';
 
     protected $fillable = [
         'candidat_id',
+        'form_type',
         // Step 1
         'qualites_defauts', 'qualites_contribution', 'defauts_freins', 'loisirs',
         // Step 2
@@ -49,9 +51,4 @@ class BilanCompetence extends Model
         'submitted_at' => 'datetime',
         'reviewed_at' => 'datetime',
     ];
-
-    public function candidat()
-    {
-        return $this->belongsTo(Candidat::class);
-    }
 }

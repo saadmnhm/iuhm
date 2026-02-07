@@ -91,64 +91,64 @@
             </div>
             <div class="row g-4 mb-4">
                 @foreach($this->formTypes as $type => $info)
-                @php $project = $this->getProjectForType($type); @endphp
-                <div class="col-12 col-md-6 col-xl-4">
-                    <div class="card border-0 shadow-sm h-100 hover-lift">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="icon-box bg-{{ $info['color'] }} bg-opacity-10 rounded-3 p-3 me-3">
-                                    <i class="{{ $info['icon'] }} fs-3 text-{{ $info['color'] }}"></i>
-                                </div>
-                                <div>
-                                    <h6 class="fw-bold mb-0">{{ $info['label'] }}</h6>
-                                    @if($project)
-                                        @if($project->status === 'draft')
-                                            <span class="badge bg-warning text-dark mt-1">Brouillon</span>
-                                        @elseif($project->status === 'submitted')
-                                            <span class="badge bg-info mt-1">Soumis</span>
-                                        @elseif($project->status === 'in_review')
-                                            <span class="badge bg-primary mt-1">En révision</span>
-                                        @elseif($project->status === 'approved')
-                                            <span class="badge bg-success mt-1">Approuvé</span>
-                                        @elseif($project->status === 'rejected')
-                                            <span class="badge bg-danger mt-1">Rejeté</span>
+                @php $status_form = $this->getProjectForType($type); @endphp
+                    <div class="col-12 col-md-6 col-xl-4">
+                        <div class="card border-0 shadow-sm h-100 hover-lift">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="icon-box bg-{{ $info['color'] }} bg-opacity-10 rounded-3 p-3 me-3">
+                                        <i class="{{ $info['icon'] }} fs-3 text-{{ $info['color'] }}"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-bold mb-0">{{ $info['label'] }}</h6>
+                                        @if($status_form)
+                                            @if($status_form->status === 'draft')
+                                                <span class="badge bg-warning text-dark mt-1">Brouillon</span>
+                                            @elseif($status_form->status === 'submitted')
+                                                <span class="badge bg-info mt-1">Soumis</span>
+                                            @elseif($status_form->status === 'in_review')
+                                                <span class="badge bg-primary mt-1">En révision</span>
+                                            @elseif($status_form->status === 'approved')
+                                                <span class="badge bg-success mt-1">Approuvé</span>
+                                            @elseif($status_form->status === 'rejected')
+                                                <span class="badge bg-danger mt-1">Rejeté</span>
+                                            @endif
+                                        @else
+                                            <span class="badge bg-light text-muted mt-1">Non commencé</span>
                                         @endif
+                                    </div>
+                                </div>
+                                
+                                @if($status_form)
+                                    <p class="text-muted small mb-3">
+                                        <i class="ri-time-line me-1"></i>
+                                        Dernière modification: {{ $status_form->updated_at->format('d/m/Y H:i') }}
+                                    </p>
+                                    @if($status_form->project_name)
+                                        <p class="small mb-3 text-truncate"><strong>Projet:</strong> {{ $status_form->project_name }}</p>
+                                    @endif
+                                @else
+                                    <p class="text-muted small mb-3">Vous n'avez pas encore commencé ce formulaire.</p>
+                                @endif
+
+                                <div class="d-grid">
+                                    @if($status_form && $status_form->status === 'submitted')
+                                        <a href="{{ route($info['route']) }}" class="btn btn-outline-{{ $info['color'] }}">
+                                            <i class="ri-eye-line me-1"></i>Voir
+                                        </a>
+                                    @elseif($status_form && $status_form->status === 'draft')
+                                        <a href="{{ route($info['route']) }}" class="btn btn-{{ $info['color'] }}">
+                                            <i class="ri-edit-line me-1"></i>Continuer
+                                        </a>
                                     @else
-                                        <span class="badge bg-light text-muted mt-1">Non commencé</span>
+                                        <a href="{{ route($info['route']) }}" class="btn btn-outline-{{ $info['color'] }}">
+                                            <i class="ri-add-circle-line me-1"></i>Commencer
+                                        </a>
                                     @endif
                                 </div>
                             </div>
-                            
-                            @if($project)
-                                <p class="text-muted small mb-3">
-                                    <i class="ri-time-line me-1"></i>
-                                    Dernière modification: {{ $project->updated_at->format('d/m/Y H:i') }}
-                                </p>
-                                @if($project->project_name)
-                                    <p class="small mb-3 text-truncate"><strong>Projet:</strong> {{ $project->project_name }}</p>
-                                @endif
-                            @else
-                                <p class="text-muted small mb-3">Vous n'avez pas encore commencé ce formulaire.</p>
-                            @endif
-
-                            <div class="d-grid">
-                                @if($project && $project->status === 'submitted')
-                                    <a href="{{ route($info['route']) }}" class="btn btn-outline-{{ $info['color'] }}">
-                                        <i class="ri-eye-line me-1"></i>Voir
-                                    </a>
-                                @elseif($project && $project->status === 'draft')
-                                    <a href="{{ route($info['route']) }}" class="btn btn-{{ $info['color'] }}">
-                                        <i class="ri-edit-line me-1"></i>Continuer
-                                    </a>
-                                @else
-                                    <a href="{{ route($info['route']) }}" class="btn btn-outline-{{ $info['color'] }}">
-                                        <i class="ri-add-circle-line me-1"></i>Commencer
-                                    </a>
-                                @endif
-                            </div>
                         </div>
                     </div>
-                </div>
                 @endforeach
             </div>
 
@@ -163,9 +163,6 @@
                         </div>
                         <div class="card-body">
                             <div class="d-grid gap-2">
-                                <a href="{{ route('form.business_plan') }}" class="btn btn-primary">
-                                    <i class="ri-bar-chart-box-line me-2"></i>Nouveau Business Plan
-                                </a>
                                 <a href="{{ route('form.support') }}" class="btn btn-outline-secondary">
                                     <i class="ri-customer-service-2-line me-2"></i>Support
                                 </a>

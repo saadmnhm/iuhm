@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Project;
+use App\Models\BusinessPlan;
 use App\Models\Candidat;
 use App\Models\SupportTicket;
 use Livewire\Component;
@@ -24,7 +24,7 @@ class FormSubmissions extends Component
 
     public function render()
     {
-        $query = Project::with(['candidat'])
+        $query = BusinessPlan::with(['candidat'])
             ->latest();
 
         if ($this->search) {
@@ -50,19 +50,19 @@ class FormSubmissions extends Component
         $projects = $query->paginate(15);
 
         $statistics = [
-            'total' => Project::count(),
-            'draft' => Project::where('status', 'draft')->count(),
-            'submitted' => Project::where('status', 'submitted')->count(),
-            'approved' => Project::where('status', 'approved')->count(),
-            'rejected' => Project::where('status', 'rejected')->count(),
-            'business_plan' => Project::where('form_type', 'business_plan')->whereNotIn('status', ['draft'])->count(),
-            'etude_marche' => Project::where('form_type', 'etude_marche')->whereNotIn('status', ['draft'])->count(),
-            'evaluation_idee' => Project::where('form_type', 'evaluation_idee')->whereNotIn('status', ['draft'])->count(),
-            'bmc' => Project::where('form_type', 'bmc')->whereNotIn('status', ['draft'])->count(),
-            'bilan_competence' => Project::where('form_type', 'bilan_competence')->whereNotIn('status', ['draft'])->count(),
+            'total' => BusinessPlan::count(),
+            'draft' => BusinessPlan::where('status', 'draft')->count(),
+            'submitted' => BusinessPlan::where('status', 'submitted')->count(),
+            'approved' => BusinessPlan::where('status', 'approved')->count(),
+            'rejected' => BusinessPlan::where('status', 'rejected')->count(),
+            'business_plan' => BusinessPlan::where('form_type', 'business_plan')->whereNotIn('status', ['draft'])->count(),
+            'etude_marche' => BusinessPlan::where('form_type', 'etude_marche')->whereNotIn('status', ['draft'])->count(),
+            'evaluation_idee' => BusinessPlan::where('form_type', 'evaluation_idee')->whereNotIn('status', ['draft'])->count(),
+            'bmc' => BusinessPlan::where('form_type', 'bmc')->whereNotIn('status', ['draft'])->count(),
+            'bilan_competence' => BusinessPlan::where('form_type', 'bilan_competence')->whereNotIn('status', ['draft'])->count(),
         ];
 
-        $formTypes = Project::formTypes();
+        $formTypes = BusinessPlan::formTypes();
 
         return view('livewire.admin.formulaire.form-submissions', [
             'projects' => $projects,

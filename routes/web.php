@@ -24,6 +24,20 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/projects/{id}', \App\Livewire\Admin\ProjectDetail::class)->name('projects.show');
         Route::get('/projects/{id}/export-pdf', [\App\Http\Controllers\Admin\ProjectExportController::class, 'exportPdf'])->name('projects.export.pdf');
         Route::get('/projects/{id}/preview-pdf', [\App\Http\Controllers\Admin\ProjectExportController::class, 'previewPdf'])->name('projects.preview.pdf');
+        Route::get('/candidat/{id}/submissions', \App\Livewire\Admin\CandidatSubmissions::class)->name('candidat.submissions');
+        Route::get('/form-submissions/{type}/{id}', \App\Livewire\Admin\FormSubmissionView::class)->name('form-submissions.view');
+        
+        // Form Detail Pages
+        Route::get('/etude-marche/{id}', \App\Livewire\Admin\EtudeMarcheDetail::class)->name('etude-marche.show');
+        Route::get('/evaluation-idee/{id}', \App\Livewire\Admin\EvaluationIdeeDetail::class)->name('evaluation-idee.show');
+        Route::get('/bmc/{id}', \App\Livewire\Admin\BmcDetail::class)->name('bmc.show');
+        Route::get('/bilan-competence/{id}', \App\Livewire\Admin\BilanCompetenceDetail::class)->name('bilan-competence.show');
+        
+        // Form PDF Exports
+        Route::get('/etude-marche/{id}/export-pdf', [\App\Http\Controllers\FormExportController::class, 'exportEtudeMarche'])->name('etude-marche.export-pdf');
+        Route::get('/evaluation-idee/{id}/export-pdf', [\App\Http\Controllers\FormExportController::class, 'exportEvaluationIdee'])->name('evaluation-idee.export-pdf');
+        Route::get('/bmc/{id}/export-pdf', [\App\Http\Controllers\FormExportController::class, 'exportBmc'])->name('bmc.export-pdf');
+        Route::get('/bilan-competence/{id}/export-pdf', [\App\Http\Controllers\FormExportController::class, 'exportBilanCompetence'])->name('bilan-competence.export-pdf');
 
         Route::get('/users', \App\Livewire\Admin\UserManagement::class)->name('users.index');
         Route::get('/candidats', \App\Livewire\Admin\CandidatManagement::class)->name('candidats.index');

@@ -1,0 +1,173 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class BusinessPlanFinancial extends Model
+{
+    use HasFactory;
+
+    protected $table = 'project_financials';
+
+    protected $fillable = [
+        'business_plan_id',
+        // Revenue Projections
+        'ventes_premiere_annee',
+        'ventes_deuxieme_annee',
+        'ventes_troisieme_annee',
+        'services_premiere_annee',
+        'services_deuxieme_annee',
+        'services_troisieme_annee',
+        'aide_financiere_premiere_annee',
+        'aide_financiere_deuxieme_annee',
+        'aide_financiere_troisieme_annee',
+        'revenus_financiers_premiere_annee',
+        'revenus_financiers_deuxieme_annee',
+        'revenus_financiers_troisieme_annee',
+        'autres_revenus_premiere_annee',
+        'autres_revenus_deuxieme_annee',
+        'autres_revenus_troisieme_annee',
+        'total_revenus_premiere_annee',
+        'total_revenus_deuxieme_annee',
+        'total_revenus_troisieme_annee',
+        // Expected Expenses
+        'achat_prevue_premiere_annee',
+        'achat_prevue_deuxieme_annee',
+        'achat_prevue_troisieme_annee',
+        'frais_fonctionnement_premiere_annee',
+        'frais_fonctionnement_deuxieme_annee',
+        'frais_fonctionnement_troisieme_annee',
+        'charges_personnel_premiere_annee',
+        'charges_personnel_deuxieme_annee',
+        'charges_personnel_troisieme_annee',
+        'dettes_premiere_annee',
+        'dettes_deuxieme_annee',
+        'dettes_troisieme_annee',
+        'etablissement_bancaire_premiere_annee',
+        'etablissement_bancaire_deuxieme_annee',
+        'etablissement_bancaire_troisieme_annee',
+        'fournisseurs_premiere_annee',
+        'fournisseurs_deuxieme_annee',
+        'fournisseurs_troisieme_annee',
+        'autres_dettes_premiere_annee',
+        'autres_dettes_deuxieme_annee',
+        'autres_dettes_troisieme_annee',
+        'autres_charges_premiere_annee',
+        'autres_charges_deuxieme_annee',
+        'autres_charges_troisieme_annee',
+        'total_frais_premiere_annee',
+        'total_frais_deuxieme_annee',
+        'total_frais_troisieme_annee',
+        // Results
+        'revenus_premiere_annee',
+        'revenus_deuxieme_annee',
+        'revenus_troisieme_annee',
+        'depenses_premiere_annee',
+        'depenses_deuxieme_annee',
+        'depenses_troisieme_annee',
+        'resultat_premiere_annee',
+        'resultat_deuxieme_annee',
+        'resultat_troisieme_annee',
+    ];
+
+    protected $casts = [
+        'ventes_premiere_annee' => 'decimal:2',
+        'ventes_deuxieme_annee' => 'decimal:2',
+        'ventes_troisieme_annee' => 'decimal:2',
+        'services_premiere_annee' => 'decimal:2',
+        'services_deuxieme_annee' => 'decimal:2',
+        'services_troisieme_annee' => 'decimal:2',
+        'aide_financiere_premiere_annee' => 'decimal:2',
+        'aide_financiere_deuxieme_annee' => 'decimal:2',
+        'aide_financiere_troisieme_annee' => 'decimal:2',
+        'revenus_financiers_premiere_annee' => 'decimal:2',
+        'revenus_financiers_deuxieme_annee' => 'decimal:2',
+        'revenus_financiers_troisieme_annee' => 'decimal:2',
+        'autres_revenus_premiere_annee' => 'decimal:2',
+        'autres_revenus_deuxieme_annee' => 'decimal:2',
+        'autres_revenus_troisieme_annee' => 'decimal:2',
+        'total_revenus_premiere_annee' => 'decimal:2',
+        'total_revenus_deuxieme_annee' => 'decimal:2',
+        'total_revenus_troisieme_annee' => 'decimal:2',
+        'achat_prevue_premiere_annee' => 'decimal:2',
+        'achat_prevue_deuxieme_annee' => 'decimal:2',
+        'achat_prevue_troisieme_annee' => 'decimal:2',
+        'frais_fonctionnement_premiere_annee' => 'decimal:2',
+        'frais_fonctionnement_deuxieme_annee' => 'decimal:2',
+        'frais_fonctionnement_troisieme_annee' => 'decimal:2',
+        'charges_personnel_premiere_annee' => 'decimal:2',
+        'charges_personnel_deuxieme_annee' => 'decimal:2',
+        'charges_personnel_troisieme_annee' => 'decimal:2',
+        'dettes_premiere_annee' => 'decimal:2',
+        'dettes_deuxieme_annee' => 'decimal:2',
+        'dettes_troisieme_annee' => 'decimal:2',
+        'etablissement_bancaire_premiere_annee' => 'decimal:2',
+        'etablissement_bancaire_deuxieme_annee' => 'decimal:2',
+        'etablissement_bancaire_troisieme_annee' => 'decimal:2',
+        'fournisseurs_premiere_annee' => 'decimal:2',
+        'fournisseurs_deuxieme_annee' => 'decimal:2',
+        'fournisseurs_troisieme_annee' => 'decimal:2',
+        'autres_dettes_premiere_annee' => 'decimal:2',
+        'autres_dettes_deuxieme_annee' => 'decimal:2',
+        'autres_dettes_troisieme_annee' => 'decimal:2',
+        'autres_charges_premiere_annee' => 'decimal:2',
+        'autres_charges_deuxieme_annee' => 'decimal:2',
+        'autres_charges_troisieme_annee' => 'decimal:2',
+        'total_frais_premiere_annee' => 'decimal:2',
+        'total_frais_deuxieme_annee' => 'decimal:2',
+        'total_frais_troisieme_annee' => 'decimal:2',
+        'revenus_premiere_annee' => 'decimal:2',
+        'revenus_deuxieme_annee' => 'decimal:2',
+        'revenus_troisieme_annee' => 'decimal:2',
+        'depenses_premiere_annee' => 'decimal:2',
+        'depenses_deuxieme_annee' => 'decimal:2',
+        'depenses_troisieme_annee' => 'decimal:2',
+        'resultat_premiere_annee' => 'decimal:2',
+        'resultat_deuxieme_annee' => 'decimal:2',
+        'resultat_troisieme_annee' => 'decimal:2',
+    ];
+
+    public function project()
+    {
+        return $this->belongsTo(BusinessPlan::class);
+    }
+    public function getTotalPrevusPremiereAnneeAttribute()
+    {
+        return $this->achat_prevue_premiere_annee + $this->frais_fonctionnement_premiere_annee + $this->charges_personnel_premiere_annee +
+               $this->dettes_premiere_annee + $this->etablissement_bancaire_premiere_annee + $this->fournisseurs_premiere_annee +
+               $this->autres_dettes_premiere_annee + $this->autres_charges_premiere_annee;
+    }
+    public function getTotalPrevusDeuxiemeAnneeAttribute()
+    {
+        return $this->achat_prevue_deuxieme_annee + $this->frais_fonctionnement_deuxieme_annee + $this->charges_personnel_deuxieme_annee +
+               $this->dettes_deuxieme_annee + $this->etablissement_bancaire_deuxieme_annee + $this->fournisseurs_deuxieme_annee +
+               $this->autres_dettes_deuxieme_annee + $this->autres_charges_deuxieme_annee;
+    }
+    public function getTotalPrevusTroisiemeAnneeAttribute()
+    {
+        return $this->achat_prevue_troisieme_annee + $this->frais_fonctionnement_troisieme_annee + $this->charges_personnel_troisieme_annee +
+               $this->dettes_troisieme_annee + $this->etablissement_bancaire_troisieme_annee + $this->fournisseurs_troisieme_annee +
+               $this->autres_dettes_troisieme_annee + $this->autres_charges_troisieme_annee;
+    }
+    public function getTotalInvestissementsPremiereAnneeAttribute()
+    {
+        return $this->ventes_premiere_annee + $this->services_premiere_annee + $this->aide_financiere_premiere_annee +
+               $this->revenus_financiers_premiere_annee + $this->autres_revenus_premiere_annee;
+    }
+    public function getTotalInvestissementsDeuxiemeAnneeAttribute()
+    {
+        return $this->ventes_deuxieme_annee + $this->services_deuxieme_annee + $this->aide_financiere_deuxieme_annee +
+               $this->revenus_financiers_deuxieme_annee + $this->autres_revenus_deuxieme_annee;
+    }
+    public function getTotalInvestissementsTroisiemeAnneeAttribute()
+    {
+        return $this->ventes_troisieme_annee + $this->services_troisieme_annee + $this->aide_financiere_troisieme_annee +
+               $this->revenus_financiers_troisieme_annee + $this->autres_revenus_troisieme_annee;
+    }
+
+
+
+
+}

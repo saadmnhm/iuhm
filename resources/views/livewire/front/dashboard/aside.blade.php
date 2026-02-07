@@ -12,33 +12,33 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ route('form.business_plan') }}" class="nav-link {{ request()->routeIs('form.business_plan') ? 'active' : '' }}">
-                    <i class="ri-bar-chart-box-line fs-5"></i>
-                    <span>Business Plan</span>
-                </a>
-            </li>
-            <li class="nav-item">
                 <a href="{{ route('form.evaluation_idee') }}" class="nav-link {{ request()->routeIs('form.evaluation_idee') ? 'active' : '' }}">
-                    <i class="ri-bar-chart-box-line fs-5"></i>
+                    <i class="ri-lightbulb-line fs-5"></i>
                     <span>Evaluation Idee</span>
+                </a>
+            </li>  
+            <li class="nav-item">
+                <a href="{{ route('form.etude_marche') }}" class="nav-link {{ request()->routeIs('form.etude_marche') ? 'active' : '' }}">
+                    <i class="ri-search-eye-line fs-5"></i>
+                    <span>Etude De Marche</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="{{ route('form.bilan_competences') }}" class="nav-link {{ request()->routeIs('form.bilan_competences') ? 'active' : '' }}">
-                    <i class="ri-bar-chart-box-line fs-5"></i>
+                    <i class="ri-user-star-line fs-5"></i>
                     <span>Bilan Competences</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="{{ route('form.bmc') }}" class="nav-link {{ request()->routeIs('form.bmc') ? 'active' : '' }}">
-                    <i class="ri-bar-chart-box-line fs-5"></i>
+                    <i class="ri-layout-grid-line fs-5"></i>
                     <span>Business model canevas</span>
                 </a>
-            </li>   
+            </li> 
             <li class="nav-item">
-                <a href="{{ route('form.etude_marche') }}" class="nav-link {{ request()->routeIs('form.etude_marche') ? 'active' : '' }}">
+                <a href="{{ route('form.business_plan') }}" class="nav-link {{ request()->routeIs('form.business_plan') ? 'active' : '' }}">
                     <i class="ri-bar-chart-box-line fs-5"></i>
-                    <span>Etude De Marche</span>
+                    <span>Business Plan</span>
                 </a>
             </li>
 

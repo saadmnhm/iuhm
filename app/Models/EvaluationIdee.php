@@ -5,15 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Traits\HasFormSubmission;
 
 class EvaluationIdee extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, HasFormSubmission;
 
     protected $table = 'evaluation_idees';
 
     protected $fillable = [
         'candidat_id',
+        'form_type',
         'idee_projet',
         'resume_idee',
         'besoin_projet',
@@ -35,9 +37,4 @@ class EvaluationIdee extends Model
         'submitted_at' => 'datetime',
         'reviewed_at' => 'datetime',
     ];
-
-    public function candidat()
-    {
-        return $this->belongsTo(Candidat::class);
-    }
 }

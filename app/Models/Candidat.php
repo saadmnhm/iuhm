@@ -13,7 +13,7 @@ class Candidat extends Authenticatable
     protected $table = 'candidat';
 
     protected $fillable = [
-        'project_id',
+        'business_plan_id',
         'login',
         'password',
         'nom',
@@ -45,7 +45,32 @@ class Candidat extends Authenticatable
 
     public function projects()
     {
-        return $this->hasMany(Project::class);
+        return $this->hasMany(BusinessPlan::class);
+    }
+
+    public function businessPlans()
+    {
+        return $this->hasMany(BusinessPlan::class);
+    }
+
+    public function etudeMarches()
+    {
+        return $this->hasMany(EtudeMarche::class);
+    }
+
+    public function evaluationIdees()
+    {
+        return $this->hasMany(EvaluationIdee::class);
+    }
+
+    public function bmcs()
+    {
+        return $this->hasMany(Bmc::class);
+    }
+
+    public function bilanCompetences()
+    {
+        return $this->hasMany(BilanCompetence::class);
     }
 
     /**
@@ -53,7 +78,7 @@ class Candidat extends Authenticatable
      */
     public function latestProject()
     {
-        return $this->hasOne(Project::class)->latestOfMany();
+        return $this->hasOne(BusinessPlan::class)->latestOfMany();
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Concerns;
 
-use App\Models\Project;
+use App\Models\BusinessPlan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -73,7 +73,7 @@ trait HandlesFormPersistence
         $formType = $this->getFormType();
 
         // Check if user already has a submitted project for this form type
-        $existingSubmitted = Project::where('candidat_id', $candidat->id)
+        $existingSubmitted = BusinessPlan::where('candidat_id', $candidat->id)
             ->where('form_type', $formType)
             ->whereIn('status', ['submitted', 'in_review', 'approved', 'rejected'])
             ->first();
@@ -84,7 +84,7 @@ trait HandlesFormPersistence
         }
         
         // Check for existing draft for this form type
-        $draft = Project::where('candidat_id', $candidat->id)
+        $draft = BusinessPlan::where('candidat_id', $candidat->id)
             ->where('form_type', $formType)
             ->where('status', 'draft')
             ->first();
@@ -164,10 +164,10 @@ trait HandlesFormPersistence
             $projectData['current_step'] = $this->step;
 
             if ($this->projectId) {
-                $project = Project::findOrFail($this->projectId);
+                $project = BusinessPlan::findOrFail($this->projectId);
                 $project->update($projectData);
             } else {
-                $project = Project::create($projectData);
+                $project = BusinessPlan::create($projectData);
                 $this->projectId = $project->id;
             }
 
@@ -260,7 +260,7 @@ trait HandlesFormPersistence
 
         if ($this->ventes_premiere_annee || $this->ventes_deuxieme_annee || $this->ventes_troisieme_annee) {
             $project->financials()->updateOrCreate(
-                ['project_id' => $project->id],
+                ['business_plan_id' => $project->id],
                 $this->getFinancialData()
             );
         }
@@ -334,7 +334,7 @@ trait HandlesFormPersistence
      */
     protected function loadExistingProject($projectId, $readOnly = false)
     {
-        $project = Project::with(['products', 'employees', 'presentations', 'deliveries', 'equipment', 'rawMaterials', 'financials'])
+        $project = BusinessPlan::with(['products', 'employees', 'presentations', 'deliveries', 'equipment', 'rawMaterials', 'financials'])
             ->findOrFail($projectId);
         
         $this->projectId = $project->id;
@@ -482,7 +482,7 @@ trait HandlesFormPersistence
             $candidat_id = Auth::guard('candidat')->user()->id;
             
             // Double-check: prevent duplicate submissions
-            $alreadySubmitted = Project::where('candidat_id', $candidat_id)
+            $alreadySubmitted = BusinessPlan::where('candidat_id', $candidat_id)
                 ->where('form_type', $this->getFormType())
                 ->whereIn('status', ['submitted', 'in_review', 'approved', 'rejected'])
                 ->exists();
@@ -501,10 +501,10 @@ trait HandlesFormPersistence
             $projectData['submitted_at'] = now();
 
             if ($this->projectId) {
-                $project = Project::findOrFail($this->projectId);
+                $project = BusinessPlan::findOrFail($this->projectId);
                 $project->update($projectData);
             } else {
-                $project = Project::create($projectData);
+                $project = BusinessPlan::create($projectData);
             }
 
             $this->saveDraftTables($project);
@@ -645,72 +645,153 @@ trait HandlesFormPersistence
     /**
      * Fill form with test data for development
      */
-    public function fillTestData()
+ public function fillTestData()
     {
+        // Only allow in development
         if (!app()->environment('local')) {
             return;
         }
 
-        $this->registration = 'TEST-' . rand(1000, 9999);
-        $this->project_name = 'Test Project ' . rand(100, 999);
-        $this->description = 'This is a test project description with sample data for development purposes.';
+        // Step 0 - Personal Info
+        $this->age = 25;
+        $this->gender = 'homme';
+        $this->address_house = 'Hay Mohamadi';
+        $this->email = 'test@example.com';
+        $this->phone = '0612345678';
+        
+        // Step 1 - Project Info
+        $this->project_name = 'Mon Projet Test';
+        $this->ceo_name = 'Ahmed Hassan';
+        $this->description = 'Description du projet de test';
         $this->legal_structure = 'SARL';
-        $this->resume_executif = 'Test executive summary for development testing.';
+        $this->resume_executif = 'Résumé exécutif du projet';
         
-        $this->public_cible = 'Target audience test data';
-        $this->concurrent = 'Competitor analysis test data';
-        $this->volume_produits_locaux = '1000';
-        $this->volume_demande = '2000';
-        $this->demande_offre = 'Supply/demand test data';
-        $this->motivations_achat = 'Purchase motivation test data';
-        $this->raison_choix_client = 'Client choice reason test data';
+        // Step 2 - Market Analysis
+        $this->public_cible = 'Jeunes entrepreneurs';
+        $this->concurrent = 'Concurrent A, Concurrent B';
+        $this->volume_produits_locaux = 'Volume moyen';
+        $this->volume_demande = 'Forte demande';
+        $this->demande_offre = 'Équilibrée';
+        $this->motivations_achat = 'Qualité et prix';
+        $this->raison_choix_client = 'Meilleur rapport qualité-prix';
         
-        $this->méthodes_marketing = 'Marketing methods test data';
-        $this->adaptation_methodes = 'Method adaptation test data';
-        $this->differenciation_marketing = 'Marketing differentiation test data';
-        $this->plan_affaires = 'Business plan timeline test';
-        $this->obtention_financement = 'Financing timeline test';
-        $this->ouverture_proces = 'Process opening timeline test';
-        $this->lancement_recrutement = 'Recruitment timeline test';
-        $this->ouverture_definitive = 'Final opening timeline test';
-        $this->duree = '12 months';
+        // Step 3 - Marketing
+        $this->méthodes_marketing = 'Réseaux sociaux, publicité locale';
+        $this->adaptation_methodes = 'Adaptation selon le budget';
+        $this->differenciation_marketing = 'Prix compétitifs';
+        $this->plan_affaires = 'Janvier 2026';
+        $this->obtention_financement = 'Février 2026';
+        $this->ouverture_proces = 'Mars 2026';
+        $this->lancement_recrutement = 'Avril 2026';
+        $this->ouverture_definitive = 'Mai 2026';
+        $this->duree = '6 mois';
         
-        $this->lieu_projet = 'Project location test';
-        $this->adaptation_lieu = 'Location adaptation test';
-        $this->benefices_from_projet = 'Project benefits test';
-        $this->valeur_projet = '500000';
+        // Step 4 - Location
+        $this->lieu_projet = 'Casablanca, Hay Mohamadi';
+        $this->adaptation_lieu = 'Oui, très adapté';
+        $this->benefices_from_projet = 'Revenus mensuels stables';
+        $this->valeur_projet = 'Bénéfices + expérience + réseau';
         
-        $this->step_8_1 = 'Capacity 1 test';
-        $this->step_8_2 = 'Capacity 2 test';
-        $this->step_8_3 = 'Capacity 3 test';
-        $this->step_8_4 = 'Capacity 4 test';
+        // Step 5 - Capacities & Investment
+        $this->step_8_1 = 'Oui, compétences acquises';
+        $this->step_8_2 = 'Oui, matériel disponible';
+        $this->step_8_3 = 'Oui, 5 ans d\'expérience';
+        $this->step_8_4 = 'Oui, fonds disponibles';
+        $this->couts_creation = 10000;
+        $this->preparation_entreprise = 5000;
+        $this->achat_machines = 20000;
+        $this->achat_matieres_premieres = 8000;
+        $this->autres_couts = 3000;
         
-        $this->couts_creation = 50000;
-        $this->preparation_entreprise = 30000;
-        $this->achat_machines = 100000;
-        $this->achat_matieres_premieres = 20000;
-        $this->autres_couts = 10000;
-        $this->calculateInvestmentTotal();
+        // Step 5 - Revenue Projections
+        $this->ventes_premiere_annee = 50000;
+        $this->ventes_deuxieme_annee = 75000;
+        $this->ventes_troisieme_annee = 100000;
+        $this->services_premiere_annee = 20000;
+        $this->services_deuxieme_annee = 30000;
+        $this->services_troisieme_annee = 40000;
+        $this->aide_financiere_premiere_annee = 10000;
+        $this->aide_financiere_deuxieme_annee = 5000;
+        $this->aide_financiere_troisieme_annee = 0;
+        $this->revenus_financiers_premiere_annee = 2000;
+        $this->revenus_financiers_deuxieme_annee = 3000;
+        $this->revenus_financiers_troisieme_annee = 4000;
+        $this->autres_revenus_premiere_annee = 1000;
+        $this->autres_revenus_deuxieme_annee = 2000;
+        $this->autres_revenus_troisieme_annee = 3000;
+        $this->total_revenus_premiere_annee = 83000;
+        $this->total_revenus_deuxieme_annee = 115000;
+        $this->total_revenus_troisieme_annee = 147000;
         
-        $this->ventes_premiere_annee = 200000;
-        $this->ventes_deuxieme_annee = 250000;
-        $this->ventes_troisieme_annee = 300000;
-        $this->services_premiere_annee = 50000;
-        $this->services_deuxieme_annee = 60000;
-        $this->services_troisieme_annee = 70000;
+        // Step 6 - Expenses
+        $this->achat_prevue_premiere_annee = 30000;
+        $this->achat_prevue_deuxieme_annee = 40000;
+        $this->achat_prevue_troisieme_annee = 50000;
+        $this->frais_fonctionnement_premiere_annee = 12000;
+        $this->frais_fonctionnement_deuxieme_annee = 15000;
+        $this->frais_fonctionnement_troisieme_annee = 18000;
+        $this->charges_personnel_premiere_annee = 24000;
+        $this->charges_personnel_deuxieme_annee = 30000;
+        $this->charges_personnel_troisieme_annee = 36000;
+        $this->dettes_premiere_annee = 5000;
+        $this->dettes_deuxieme_annee = 3000;
+        $this->dettes_troisieme_annee = 1000;
+        $this->etablissement_bancaire_premiere_annee = 2000;
+        $this->etablissement_bancaire_deuxieme_annee = 2000;
+        $this->etablissement_bancaire_troisieme_annee = 2000;
+        $this->fournisseurs_premiere_annee = 8000;
+        $this->fournisseurs_deuxieme_annee = 10000;
+        $this->fournisseurs_troisieme_annee = 12000;
+        $this->autres_dettes_premiere_annee = 1000;
+        $this->autres_dettes_deuxieme_annee = 500;
+        $this->autres_dettes_troisieme_annee = 0;
+        $this->autres_charges_premiere_annee = 3000;
+        $this->autres_charges_deuxieme_annee = 4000;
+        $this->autres_charges_troisieme_annee = 5000;
+        $this->total_frais_premiere_annee = 85000;
+        $this->total_frais_deuxieme_annee = 104500;
+        $this->total_frais_troisieme_annee = 124000;
         
-        $this->achat_prevue_premiere_annee = 80000;
-        $this->achat_prevue_deuxieme_annee = 90000;
-        $this->achat_prevue_troisieme_annee = 100000;
-        $this->frais_fonctionnement_premiere_annee = 40000;
-        $this->frais_fonctionnement_deuxieme_annee = 45000;
-        $this->frais_fonctionnement_troisieme_annee = 50000;
-        $this->charges_personnel_premiere_annee = 60000;
-        $this->charges_personnel_deuxieme_annee = 65000;
-        $this->charges_personnel_troisieme_annee = 70000;
+        // Step 6 - Results
+        $this->revenus_premiere_annee = 83000;
+        $this->revenus_deuxieme_annee = 115000;
+        $this->revenus_troisieme_annee = 147000;
+        $this->depenses_premiere_annee = 85000;
+        $this->depenses_deuxieme_annee = 104500;
+        $this->depenses_troisieme_annee = 124000;
+        $this->generer_profits = 'Le projet générera des profits à partir de la deuxième année';
+        $this->projet_durable = 'Le projet est durable grâce à la croissance constante';
         
-        $this->generer_profits = 'Yes';
-        $this->projet_durable = 'Yes';
+        // Fill dynamic tables with test data
+        $this->table1Rows = [
+            ['product_name' => 'Produit A', 'description' => 'Description produit A'],
+            ['product_name' => 'Produit B', 'description' => 'Description produit B'],
+        ];
+        
+        $this->table2Rows = [
+            ['item' => 'Directeur', 'total_employee_1' => 5000, 'total_employee_2' => 6000],
+            ['item' => 'Employé', 'total_employee_1' => 3000, 'total_employee_2' => 3500],
+        ];
+        
+        $this->table3Rows = [
+            ['product_name_presentation' => 'Produit A', 'presentation_methode' => 'En magasin'],
+            ['product_name_presentation' => 'Produit B', 'presentation_methode' => 'En ligne'],
+        ];
+        
+        $this->table4Rows = [
+            ['product_name_livraison' => 'Produit A', 'livraison_methode' => 'Livraison à domicile'],
+            ['product_name_livraison' => 'Produit B', 'livraison_methode' => 'Retrait en magasin'],
+        ];
+        
+        $this->table5Rows = [
+            ['equipement' => 'Machine A', 'reference' => 'REF001', 'prix_equipement' => 15000],
+            ['equipement' => 'Machine B', 'reference' => 'REF002', 'prix_equipement' => 8000],
+        ];
+        
+        $this->table6Rows = [
+            ['matiere_premiere' => 'Matière A', 'comment_procurer' => 'Fournisseur local', 'fournisseur_matiere' => 'Fournisseur 1'],
+            ['matiere_premiere' => 'Matière B', 'comment_procurer' => 'Import', 'fournisseur_matiere' => 'Fournisseur 2'],
+        ];
         
         session()->flash('success', 'Test data filled successfully!');
     }

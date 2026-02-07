@@ -76,7 +76,6 @@
                 <tr>
                     <th class="px-4 py-3 text-left font-medium text-gray-600">#</th>
                     <th class="px-4 py-3 text-left font-medium text-gray-600">Candidat</th>
-                    <th class="px-4 py-3 text-left font-medium text-gray-600">Formulaire</th>
                     <th class="px-4 py-3 text-left font-medium text-gray-600">Projet</th>
                     <th class="px-4 py-3 text-left font-medium text-gray-600">Statut</th>
                     <th class="px-4 py-3 text-left font-medium text-gray-600">Date</th>
@@ -98,11 +97,7 @@
                             </div>
                         </div>
                     </td>
-                    <td class="px-4 py-3">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $project->form_type_badge_color }}">
-                            {{ $project->form_type_label }}
-                        </span>
-                    </td>
+                   
                     <td class="px-4 py-3 text-gray-700">{{ Str::limit($project->project_name ?? 'Sans titre', 30) }}</td>
                     <td class="px-4 py-3">
                         @php
@@ -127,7 +122,7 @@
                     </td>
                     <td class="px-4 py-3 text-gray-500 text-xs">{{ $project->created_at->format('d/m/Y H:i') }}</td>
                     <td class="px-4 py-3 text-center">
-                        <a href="{{ route('admin.projects.show', $project->id) }}" 
+                        <a href="{{ route('admin.candidat.submissions', $project->candidat->id) }}" 
                            class="inline-flex items-center px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 transition text-xs font-medium">
                             <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
