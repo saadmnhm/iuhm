@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Jenssegers\Agent\Agent;
 
 class AdminActivityLog extends Model
 {
@@ -43,10 +44,20 @@ class AdminActivityLog extends Model
     }
 
     /**
-     * Log an admin activity
+     * Log an admin activity with enhanced tracking
      */
     public static function log($action, $description, $subjectType = null, $subjectId = null, $properties = [])
     {
+        $agent = new Agent();
+        $agent->setUserAgent(request()->userAgent());
+        
+        // Enhance properties with browser and device info
+        $properties = array_merge($properties, [
+            'browser' => $agent->browser() . ' ' . $agent->version($agent->browser()),
+            'platform' => $agent->platform() . ' ' . $agent->version($agent->platform()),
+            'device' => static::getDeviceType($agent),
+        ]);
+
         return static::create([
             'user_id' => auth()->id(),
             'action' => $action,
@@ -57,5 +68,22 @@ class AdminActivityLog extends Model
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
         ]);
+    }
+
+    /**
+     * Get device type from agent
+     */
+    protected static function getDeviceType($agent): string
+    {
+        if ($agent->isDesktop()) {
+            return 'Desktop';
+        } elseif ($agent->isMobile()) {
+            return 'Mobile - ' . $agent->device();
+        } elseif ($agent->isTablet()) {
+            return 'Tablet - ' . $agent->device();
+        } elseif ($agent->isRobot()) {
+            return 'Robot - ' . $agent->robot();
+        }
+        return 'Unknown';
     }
 }

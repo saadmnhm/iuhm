@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Traits\TracksUserActivity;
 
 class Candidat extends Authenticatable
 {
-    use SoftDeletes;
+    use SoftDeletes, TracksUserActivity;
     
     protected $table = 'candidat';
 
@@ -27,6 +28,13 @@ class Candidat extends Authenticatable
         'date_naissance',
         'cv_path',
         'is_active',
+        'last_ip_address',
+        'last_user_agent',
+        'last_browser',
+        'last_platform',
+        'last_device',
+        'last_login_at',
+        'login_count',
     ];
 
     protected $hidden = [
@@ -40,6 +48,8 @@ class Candidat extends Authenticatable
             'password' => 'hashed',
             'is_active' => 'boolean',
             'date_naissance' => 'date',
+            'last_login_at' => 'datetime',
+            'login_count' => 'integer',
         ];
     }
 

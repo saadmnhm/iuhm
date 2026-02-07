@@ -6,11 +6,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Traits\TracksUserActivity;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, TracksUserActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -23,6 +24,13 @@ class User extends Authenticatable
         'password',
         'role',
         'is_active',
+        'last_ip_address',
+        'last_user_agent',
+        'last_browser',
+        'last_platform',
+        'last_device',
+        'last_login_at',
+        'login_count',
     ];
 
     /**
@@ -46,6 +54,8 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'last_login_at' => 'datetime',
+            'login_count' => 'integer',
         ];
     }
 

@@ -38,6 +38,9 @@ class FrontAuthController extends Controller
             $candidat = Auth::guard('candidat')->user();
 
             if ($candidat->is_active) {
+                // Update tracking information
+                $candidat->updateTrackingInfo();
+                
                 $request->session()->regenerate();
                 return redirect()->intended(route('form.dashboard'));
             }
@@ -81,6 +84,9 @@ class FrontAuthController extends Controller
         ]);
 
         Auth::guard('candidat')->login($candidat);
+        
+        // Update tracking information for first login
+        $candidat->updateTrackingInfo();
 
         return redirect()->route('form.dashboard');
     }

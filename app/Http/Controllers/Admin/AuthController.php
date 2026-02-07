@@ -35,6 +35,9 @@ class AuthController extends Controller
             }
 
             if ($user->isAdmin()) {
+                // Update tracking information
+                $user->updateTrackingInfo();
+                
                 $request->session()->regenerate();
                 return redirect()->intended(route('admin.dashboard'));
             }
