@@ -18,7 +18,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50" x-data="{ addressModalOpen: false }" @close-address-modal.window="addressModalOpen = false">
     <div class="flex min-h-screen">
         <!-- Sidebar -->
         <aside class="aside-admin w-64 ">
@@ -42,6 +42,15 @@
                     </svg>
                     <span>Project INDH</span>
                 </a>
+                @foreach($programe_list ?? [] as $list)
+                    <a href="{{ route('admin.projects_view') }}" 
+                    class="flex items-center gap-3 px-4 py-3 rounded-lg transition ">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
+                        <span>{{ $list->project_name }}</span>
+                    </a>
+                @endforeach
 
                 <a href="{{ route('admin.support.tickets') }}" 
                    class="flex items-center gap-3 px-4 py-3 rounded-lg transition {{ request()->routeIs('admin.support*') ? 'bg-white/20' : 'hover:bg-white/10' }}">
@@ -74,6 +83,9 @@
                         
                         <a href="{{ route('admin.candidats.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.candidats*') ? 'bg-gray-100 font-medium' : '' }}"><i class="ri-user-community-line mr-1"></i>Gestion Candidat</a>
                         
+                        <a href="#"  @click="addressModalOpen = true" class="block px-4 py-2 rounded hover:bg-gray-100 "><i class="ri-user-community-line mr-1"></i>Add Address</a>
+
+
                         <a href="{{ route('admin.formulaires.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.formulaires*') ? 'bg-gray-100 font-medium' : '' }}">
                             <i class="ri-file-list-3-line mr-1"></i> Formulaires
                         </a>
@@ -149,8 +161,114 @@
         </div>
     </div>
 
+<div x-cloak>
+    <!-- Overlay -->
+    <div
+        x-show="addressModalOpen"
+        class="fixed inset-0 bg-black/50 z-40"
+        @click="addressModalOpen = false">
+    </div>
+
+    <!-- Modal -->
+    <div
+        x-show="addressModalOpen"
+        class="fixed inset-0 z-50 flex items-center justify-center px-4"
+        x-transition>
+
+        <div class="bg-white w-full max-w-lg rounded-xl shadow-lg overflow-hidden">
+
+            <!-- Header -->
+            <div class="flex items-center justify-between px-6 py-4 border-b">
+                <h2 class="text-lg font-semibold text-gray-800">
+                    Add Address
+                </h2>
+                <button
+                    @click="addressModalOpen = false"
+                    class="text-gray-400 hover:text-gray-600">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Form Body -->
+            <form action="{{ route('admin.address.create') }}" method="POST" class="p-6 space-y-4">
+                @csrf
+                
+                <!-- Address Line -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Address Line *
+                    </label>
+                    <input
+                        type="text"
+                        name="address_line1"
+                        class="mt-1 w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Street, building, apartment"
+                        required>
+                </div>
+
+                <!-- City & State -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            City *
+                        </label>
+                        <input
+                            type="text"
+                            name="city"
+                            class="mt-1 w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                            required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            State / Region
+                        </label>
+                        <input
+                            type="text"
+                            name="state"
+                            class="mt-1 w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Optional">
+                    </div>
+                </div>
+
+                <!-- Postal Code -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Postal Code
+                    </label>
+                    <input
+                        type="text"
+                        name="postal_code"
+                        class="mt-1 w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Optional">
+                </div>
+
+                <!-- Footer -->
+                <div class="flex justify-end gap-3 pt-4 border-t">
+                    <button
+                        type="button"
+                        @click="addressModalOpen = false"
+                        class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100">
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        Save Address
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+
     @livewireScripts
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
         document.addEventListener('livewire:init', () => {
             Livewire.on('alert', (data) => {
@@ -171,6 +289,19 @@
                 });
             });
         });
+
+        // Show success message if exists
+        @if(session('success'))
+            Swal.fire({
+                title: 'Success',
+                text: '{{ session('success') }}',
+                icon: 'success',
+                confirmButtonColor: '#648454',
+            }).then(() => {
+                // Close modal after success
+                window.dispatchEvent(new CustomEvent('close-address-modal'));
+            });
+        @endif
     </script>
 </body>
 </html>

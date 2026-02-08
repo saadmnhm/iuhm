@@ -62,65 +62,35 @@
                     <th class="px-6 py-4 text-right">Actions</th>
                 </tr>
             </thead>
+            @foreach($projects as $project)
 
-            <tbody>
-                <!-- Row -->
-                <tr class="border-t hover:bg-gray-50">
-                    <td class="px-6 py-4 text-gray-500">1</td>
-                    <td class="px-6 py-4 font-medium text-gray-800">
-                        Student Management System
-                    </td>
-                    <td class="px-6 py-4 text-gray-700">
-                        Ahmed El Amrani
-                    </td>
-                    <td class="px-6 py-4 text-gray-600">
-                        12 Jan 2026
-                    </td>
-                    <td class="px-6 py-4 text-right space-x-3">
-                       
-                        <button class="text-green-600 hover:text-green-800" title="Edit" onclick="window.location.href='{{ route('admin.programe_zettat.edit') }}'">
-                            ✏️
-                        </button>
-                        <button class="text-red-600 hover:text-red-800" title="Delete">
-                            🗑
-                        </button>
-                    </td>
-                </tr>
+                <tbody>
+                    <!-- Row -->
+                    <tr class="border-t hover:bg-gray-50">
+                        <td class="px-6 py-4 text-gray-500">{{$project->id}}</td>
+                        <td class="px-6 py-4 font-medium text-gray-800">
+                            {{$project->project_name}}
+                        </td>
+                        <td class="px-6 py-4 text-gray-700">
+                            {{$project->user->name ?? ''}}
+                        </td>
+                        <td class="px-6 py-4 text-gray-600">
+                            {{ $project->created_at->format('d M Y') }}
+                        </td>
+                        <td class="px-6 py-4 text-right space-x-3">
+                        
+                            <button class="text-green-600 hover:text-green-800" title="Edit" onclick="window.location.href='{{ route('admin.programe_zettat.edit') }}'">
+                                ✏️
+                            </button>
+                            <button class="text-red-600 hover:text-red-800" title="Delete">
+                                🗑
+                            </button>
+                        </td>
+                    </tr>
 
-                <tr class="border-t hover:bg-gray-50">
-                    <td class="px-6 py-4 text-gray-500">2</td>
-                    <td class="px-6 py-4 font-medium text-gray-800">
-                        E-Learning Platform
-                    </td>
-                    <td class="px-6 py-4 text-gray-700">
-                        Sara Benali
-                    </td>
-                    <td class="px-6 py-4 text-gray-600">
-                        05 Feb 2026
-                    </td>
-                    <td class="px-6 py-4 text-right space-x-3">
-                        <button class="text-green-600 hover:text-green-800">✏️</button>
-                        <button class="text-red-600 hover:text-red-800">🗑</button>
-                    </td>
-                </tr>
-
-                <tr class="border-t hover:bg-gray-50">
-                    <td class="px-6 py-4 text-gray-500">3</td>
-                    <td class="px-6 py-4 font-medium text-gray-800">
-                        HR Management Tool
-                    </td>
-                    <td class="px-6 py-4 text-gray-700">
-                        Youssef Ait Ali
-                    </td>
-                    <td class="px-6 py-4 text-gray-600">
-                        20 Feb 2026
-                    </td>
-                    <td class="px-6 py-4 text-right space-x-3">
-                        <button class="text-green-600 hover:text-green-800">✏️</button>
-                        <button class="text-red-600 hover:text-red-800">🗑</button>
-                    </td>
-                </tr>
-            </tbody>
+                   
+                </tbody>
+            @endforeach
         </table>
     </div>
 

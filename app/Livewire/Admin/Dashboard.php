@@ -5,6 +5,7 @@ namespace App\Livewire\Admin;
 use App\Models\User;
 use App\Models\Candidat;
 use App\Services\FormSubmissionService;
+use App\Models\ProgrameList;
 use Livewire\Component;
 
 class Dashboard extends Component
@@ -26,6 +27,7 @@ class Dashboard extends Component
             'rn' => Candidat::where('address', 'Roches noires')->count(),
         ];
 
+        $programe_list = ProgrameList::all();
         // Get monthly data for all forms
         $monthlyData = [];
         foreach ($allSubmissions as $submission) {
@@ -41,6 +43,7 @@ class Dashboard extends Component
         return view('livewire.admin.dashboard', [
             'statistics' => $statistics,
             'chartData' => $chartData,
+            'programe_list' => $programe_list,
         ])->layout('layouts.admin', ['header' => 'Dashboard']);
     }
     

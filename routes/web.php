@@ -20,6 +20,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     
     Route::middleware('admin')->group(function () {
         Route::get('/dashboard', \App\Livewire\Admin\Dashboard::class)->name('dashboard');
+        Route::post('/address/create', [\App\Http\Controllers\Admin\DashboardController::class, 'createAddress'])->name('address.create');
         Route::get('/projects', \App\Livewire\Admin\ProjectList::class)->name('projects');
         Route::get('/projects/{id}', \App\Livewire\Admin\ProjectDetail::class)->name('projects.show');
         Route::get('/projects/{id}/export-pdf', [\App\Http\Controllers\Admin\ProjectExportController::class, 'exportPdf'])->name('projects.export.pdf');

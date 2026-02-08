@@ -11,16 +11,16 @@ class Aside extends Component
 {
     public $showCompleteProfileModal = false;
     public $candidat;
-    public $projects = [];
+    public $business_plan = [];
 
     public function mount()
     {
         $this->candidat = Auth::guard('candidat')->user();
         $this->checkProfileCompletion();
         
-        // Load candidate projects for dropdown
+        // Load candidate business plans for dropdown
         if ($this->candidat) {
-            $this->projects = BusinessPlan::where('candidat_id', $this->candidat->id)
+            $this->business_plan = BusinessPlan::where('candidat_id', $this->candidat->id)
                 ->orderBy('created_at', 'desc')
                 ->get();
         }
