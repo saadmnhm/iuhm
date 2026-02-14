@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.3
+-- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: shareddb-n.hosting.stackcp.net
--- Generation Time: Feb 07, 2026 at 07:26 PM
--- Server version: 10.6.18-MariaDB-log
--- PHP Version: 8.3.30
+-- Hôte : 127.0.0.1
+-- Généré le : ven. 13 fév. 2026 à 23:43
+-- Version du serveur : 10.4.32-MariaDB
+-- Version de PHP : 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,39 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `dev_iuhm_zettat-3130373f8f`
+-- Base de données : `iuhm`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `admin_activity_logs`
+-- Structure de la table `addresses`
+--
+
+CREATE TABLE `addresses` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `address_line1` varchar(255) NOT NULL,
+  `city` varchar(255) NOT NULL,
+  `state` varchar(255) DEFAULT NULL,
+  `postal_code` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `addresses`
+--
+
+INSERT INTO `addresses` (`id`, `address_line1`, `city`, `state`, `postal_code`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 'test', 'city', NULL, NULL, '2026-02-08 21:29:40', '2026-02-08 21:29:40', NULL),
+(2, 'test2', 'city2', NULL, NULL, '2026-02-08 21:45:49', '2026-02-08 21:45:49', NULL),
+(3, 'test3', 'city3', NULL, NULL, '2026-02-08 21:45:59', '2026-02-08 21:45:59', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `admin_activity_logs`
 --
 
 CREATE TABLE `admin_activity_logs` (
@@ -42,7 +68,7 @@ CREATE TABLE `admin_activity_logs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `admin_activity_logs`
+-- Déchargement des données de la table `admin_activity_logs`
 --
 
 INSERT INTO `admin_activity_logs` (`id`, `user_id`, `action`, `subject_type`, `subject_id`, `description`, `properties`, `ip_address`, `user_agent`, `created_at`, `updated_at`) VALUES
@@ -62,7 +88,7 @@ INSERT INTO `admin_activity_logs` (`id`, `user_id`, `action`, `subject_type`, `s
 -- --------------------------------------------------------
 
 --
--- Table structure for table `bilan_competences`
+-- Structure de la table `bilan_competences`
 --
 
 CREATE TABLE `bilan_competences` (
@@ -119,7 +145,7 @@ CREATE TABLE `bilan_competences` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `bilan_competences`
+-- Déchargement des données de la table `bilan_competences`
 --
 
 INSERT INTO `bilan_competences` (`id`, `candidat_id`, `form_type`, `qualites_defauts`, `qualites_contribution`, `defauts_freins`, `loisirs`, `niveau_etude`, `diplomes_obtenus`, `annee_obtention`, `etablissement_obtention`, `competences_formation`, `besoin_formations`, `type_formations`, `environnement_professionnel`, `secteurs_activite`, `fonctions_envisagees`, `representation_travail`, `contraintes_acceptees`, `exigences`, `reflexions_personnelles`, `stage_societe`, `stage_lieu`, `stage_secteur`, `stage_duree`, `stage_responsabilites`, `stage_competences`, `stage_obstacles`, `stage_reflexions`, `stage_plu`, `stage_deplu`, `stage_appris`, `exp_societe`, `exp_lieu`, `exp_secteur`, `exp_duree`, `exp_responsabilites`, `exp_competences`, `exp_obstacles`, `exp_integration`, `exp_depart`, `exp_reflexions`, `status`, `current_step`, `submitted_at`, `reviewed_at`, `review_notes`, `created_at`, `updated_at`, `deleted_at`) VALUES
@@ -128,7 +154,7 @@ INSERT INTO `bilan_competences` (`id`, `candidat_id`, `form_type`, `qualites_def
 -- --------------------------------------------------------
 
 --
--- Table structure for table `bmcs`
+-- Structure de la table `bmcs`
 --
 
 CREATE TABLE `bmcs` (
@@ -155,7 +181,7 @@ CREATE TABLE `bmcs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `bmcs`
+-- Déchargement des données de la table `bmcs`
 --
 
 INSERT INTO `bmcs` (`id`, `candidat_id`, `form_type`, `partenaires_cles`, `activites_cles`, `proposition_valeur`, `relations_clients`, `segments_clientele`, `ressources_cles`, `canaux`, `structure_couts`, `flux_revenus`, `status`, `current_step`, `submitted_at`, `reviewed_at`, `review_notes`, `created_at`, `updated_at`, `deleted_at`) VALUES
@@ -164,7 +190,7 @@ INSERT INTO `bmcs` (`id`, `candidat_id`, `form_type`, `partenaires_cles`, `activ
 -- --------------------------------------------------------
 
 --
--- Table structure for table `business_plans`
+-- Structure de la table `business_plans`
 --
 
 CREATE TABLE `business_plans` (
@@ -220,7 +246,7 @@ CREATE TABLE `business_plans` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `business_plans`
+-- Déchargement des données de la table `business_plans`
 --
 
 INSERT INTO `business_plans` (`id`, `candidat_id`, `form_type`, `project_name`, `description`, `registration`, `legal_structure`, `resume_executif`, `public_cible`, `concurrent`, `volume_produits_locaux`, `volume_demande`, `demande_offre`, `motivations_achat`, `raison_choix_client`, `méthodes_marketing`, `adaptation_methodes`, `differenciation_marketing`, `plan_affaires`, `obtention_financement`, `ouverture_proces`, `lancement_recrutement`, `ouverture_definitive`, `duree`, `lieu_projet`, `adaptation_lieu`, `benefices_from_projet`, `valeur_projet`, `step_8_1`, `step_8_2`, `step_8_3`, `step_8_4`, `couts_creation`, `preparation_entreprise`, `achat_machines`, `achat_matieres_premieres`, `autres_couts`, `total`, `generer_profits`, `projet_durable`, `status`, `current_step`, `submitted_at`, `created_at`, `updated_at`, `deleted_at`, `reviewed_by`, `review_notes`, `reviewed_at`) VALUES
@@ -229,7 +255,7 @@ INSERT INTO `business_plans` (`id`, `candidat_id`, `form_type`, `project_name`, 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `cache`
+-- Structure de la table `cache`
 --
 
 CREATE TABLE `cache` (
@@ -238,22 +264,10 @@ CREATE TABLE `cache` (
   `expiration` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `cache`
---
-
-INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
-('association-initiative-urbaine-cache-356a192b7913b04c54574d18c28d46e6395428ab', 'i:1;', 1770422538),
-('association-initiative-urbaine-cache-356a192b7913b04c54574d18c28d46e6395428ab:timer', 'i:1770422538;', 1770422538),
-('association-initiative-urbaine-cache-5c785c036466adea360111aa28563bfd556b5fba', 'i:1;', 1770426224),
-('association-initiative-urbaine-cache-5c785c036466adea360111aa28563bfd556b5fba:timer', 'i:1770426224;', 1770426224),
-('laravel-cache-5c785c036466adea360111aa28563bfd556b5fba', 'i:1;', 1770471863),
-('laravel-cache-5c785c036466adea360111aa28563bfd556b5fba:timer', 'i:1770471863;', 1770471863);
-
 -- --------------------------------------------------------
 
 --
--- Table structure for table `cache_locks`
+-- Structure de la table `cache_locks`
 --
 
 CREATE TABLE `cache_locks` (
@@ -265,7 +279,7 @@ CREATE TABLE `cache_locks` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `candidat`
+-- Structure de la table `candidat`
 --
 
 CREATE TABLE `candidat` (
@@ -296,17 +310,17 @@ CREATE TABLE `candidat` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `candidat`
+-- Déchargement des données de la table `candidat`
 --
 
 INSERT INTO `candidat` (`id`, `login`, `password`, `nom`, `prenom`, `age`, `profile_image`, `gender`, `address`, `email`, `phone`, `date_naissance`, `cv_path`, `is_active`, `created_at`, `updated_at`, `deleted_at`, `last_ip_address`, `last_user_agent`, `last_browser`, `last_platform`, `last_device`, `last_login_at`, `login_count`) VALUES
-(3, 'saadmnhm@gmail.com', '$2y$12$pv1bcoVYUkVKeNKjCA0xguFn8eNtCcD7/Pcr/zslgqyt4dVv3F7cy', 'saad', 'saad', 24, 'profile-images/1770422496_698680e0a8a5a.jpg', 'homme', 'Ain Sbaa', 'saadmnhm@gmail.com', '0638640423', NULL, NULL, 1, '2026-02-06 23:00:17', '2026-02-07 13:54:20', NULL, '105.188.107.12', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'Chrome 144.0.0.0', 'Windows 10.0', 'Desktop', '2026-02-07 13:54:20', 1),
+(3, 'saadmnhm@gmail.com', '$2y$12$pv1bcoVYUkVKeNKjCA0xguFn8eNtCcD7/Pcr/zslgqyt4dVv3F7cy', 'saad', 'saad', 24, 'profile-images/1770422496_698680e0a8a5a.jpg', 'homme', 'Ain Sbaa', 'saadmnhm@gmail.com', '0638640423', NULL, NULL, 1, '2026-02-06 23:00:17', '2026-02-08 19:49:33', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'Chrome 144.0.0.0', 'Windows 10.0', 'Desktop', '2026-02-08 19:49:33', 3),
 (5, 'test@example.com', '$2y$12$TeC3vTqX9deWzziAMbZxkunTLRoqOFGD1c8tmJ5NQPXQtolQ.J0Xu', 'saad', 'saad', 33, 'profile-images/1770471814_69874186ab4ae.jpg', 'homme', 'Hay Mohamadi', 'test@example.com', '0612345678', NULL, NULL, 1, '2026-02-07 12:42:32', '2026-02-07 12:43:34', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'Chrome 144.0.0.0', 'Windows 10.0', 'Desktop', '2026-02-07 12:42:32', 1);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `dynamic_forms`
+-- Structure de la table `dynamic_forms`
 --
 
 CREATE TABLE `dynamic_forms` (
@@ -330,7 +344,7 @@ CREATE TABLE `dynamic_forms` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `dynamic_form_answers`
+-- Structure de la table `dynamic_form_answers`
 --
 
 CREATE TABLE `dynamic_form_answers` (
@@ -346,7 +360,7 @@ CREATE TABLE `dynamic_form_answers` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `dynamic_form_fields`
+-- Structure de la table `dynamic_form_fields`
 --
 
 CREATE TABLE `dynamic_form_fields` (
@@ -369,7 +383,7 @@ CREATE TABLE `dynamic_form_fields` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `dynamic_form_steps`
+-- Structure de la table `dynamic_form_steps`
 --
 
 CREATE TABLE `dynamic_form_steps` (
@@ -387,7 +401,7 @@ CREATE TABLE `dynamic_form_steps` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `dynamic_form_submissions`
+-- Structure de la table `dynamic_form_submissions`
 --
 
 CREATE TABLE `dynamic_form_submissions` (
@@ -408,7 +422,7 @@ CREATE TABLE `dynamic_form_submissions` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `dynamic_form_tables`
+-- Structure de la table `dynamic_form_tables`
 --
 
 CREATE TABLE `dynamic_form_tables` (
@@ -429,7 +443,7 @@ CREATE TABLE `dynamic_form_tables` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `dynamic_form_table_answers`
+-- Structure de la table `dynamic_form_table_answers`
 --
 
 CREATE TABLE `dynamic_form_table_answers` (
@@ -447,7 +461,7 @@ CREATE TABLE `dynamic_form_table_answers` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `dynamic_form_table_columns`
+-- Structure de la table `dynamic_form_table_columns`
 --
 
 CREATE TABLE `dynamic_form_table_columns` (
@@ -468,7 +482,7 @@ CREATE TABLE `dynamic_form_table_columns` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `dynamic_form_table_rows`
+-- Structure de la table `dynamic_form_table_rows`
 --
 
 CREATE TABLE `dynamic_form_table_rows` (
@@ -484,7 +498,7 @@ CREATE TABLE `dynamic_form_table_rows` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `etude_marches`
+-- Structure de la table `etude_marches`
 --
 
 CREATE TABLE `etude_marches` (
@@ -522,7 +536,7 @@ CREATE TABLE `etude_marches` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `etude_marches`
+-- Déchargement des données de la table `etude_marches`
 --
 
 INSERT INTO `etude_marches` (`id`, `candidat_id`, `form_type`, `produit_service`, `description_offre`, `benefices_clients`, `prix_marche`, `controle_prix`, `type_clients`, `caracteristiques_clientele`, `frequence_consommation`, `localisation_clients`, `exigences_principales`, `nombre_concurrents_directs`, `concurrents_indirects`, `taille_concurrents`, `informations_concurrents`, `communication_concurrents`, `nombre_fournisseurs`, `origine_fournisseurs`, `prix_fournisseurs`, `delais_livraison`, `stabilite_marche`, `status`, `current_step`, `submitted_at`, `reviewed_at`, `review_notes`, `created_at`, `updated_at`, `deleted_at`) VALUES
@@ -531,7 +545,7 @@ INSERT INTO `etude_marches` (`id`, `candidat_id`, `form_type`, `produit_service`
 -- --------------------------------------------------------
 
 --
--- Table structure for table `evaluation_idees`
+-- Structure de la table `evaluation_idees`
 --
 
 CREATE TABLE `evaluation_idees` (
@@ -559,7 +573,7 @@ CREATE TABLE `evaluation_idees` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `evaluation_idees`
+-- Déchargement des données de la table `evaluation_idees`
 --
 
 INSERT INTO `evaluation_idees` (`id`, `candidat_id`, `form_type`, `idee_projet`, `resume_idee`, `besoin_projet`, `produits_services`, `clients_identifies`, `idee_existe_marche`, `valeur_ajoutee`, `resultats_prevus`, `proches_comprennent`, `reactions_positives`, `status`, `current_step`, `submitted_at`, `reviewed_at`, `review_notes`, `created_at`, `updated_at`, `deleted_at`) VALUES
@@ -568,7 +582,7 @@ INSERT INTO `evaluation_idees` (`id`, `candidat_id`, `form_type`, `idee_projet`,
 -- --------------------------------------------------------
 
 --
--- Table structure for table `failed_jobs`
+-- Structure de la table `failed_jobs`
 --
 
 CREATE TABLE `failed_jobs` (
@@ -584,7 +598,7 @@ CREATE TABLE `failed_jobs` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `jobs`
+-- Structure de la table `jobs`
 --
 
 CREATE TABLE `jobs` (
@@ -600,7 +614,7 @@ CREATE TABLE `jobs` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `job_batches`
+-- Structure de la table `job_batches`
 --
 
 CREATE TABLE `job_batches` (
@@ -619,7 +633,7 @@ CREATE TABLE `job_batches` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `migrations`
+-- Structure de la table `migrations`
 --
 
 CREATE TABLE `migrations` (
@@ -629,7 +643,7 @@ CREATE TABLE `migrations` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `migrations`
+-- Déchargement des données de la table `migrations`
 --
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
@@ -663,12 +677,16 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (29, '2026_02_07_133414_add_tracking_info_to_candidat_table', 11),
 (30, '2026_02_06_205000_add_form_type_to_form_tables', 12),
 (31, '2026_02_06_210000_populate_form_type_values', 12),
-(32, '2026_02_07_000001_create_dynamic_forms_tables', 12);
+(32, '2026_02_07_000001_create_dynamic_forms_tables', 12),
+(33, '2026_02_08_212936_create_addresses_table', 13),
+(36, '2026_02_08_214406_create_programe_list_table', 14),
+(37, '2026_02_08_220000_update_programe_list_for_multiple_addresses', 15),
+(38, '2026_02_08_231925_add_created_by_to_programe_list_table', 16);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `password_reset_tokens`
+-- Structure de la table `password_reset_tokens`
 --
 
 CREATE TABLE `password_reset_tokens` (
@@ -680,7 +698,43 @@ CREATE TABLE `password_reset_tokens` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `project_deliveries`
+-- Structure de la table `programe_list`
+--
+
+CREATE TABLE `programe_list` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `project_name` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `slug` varchar(255) NOT NULL,
+  `icon` varchar(255) DEFAULT NULL,
+  `color` varchar(7) DEFAULT NULL,
+  `bg_color` varchar(7) DEFAULT NULL,
+  `min_age` int(11) DEFAULT NULL,
+  `max_age` int(11) DEFAULT NULL,
+  `allowed_address_id` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`allowed_address_id`)),
+  `sort_order` int(11) NOT NULL DEFAULT 0,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `form_attached_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `created_by` bigint(20) UNSIGNED DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `programe_list`
+--
+
+INSERT INTO `programe_list` (`id`, `project_name`, `description`, `slug`, `icon`, `color`, `bg_color`, `min_age`, `max_age`, `allowed_address_id`, `sort_order`, `is_active`, `created_at`, `updated_at`, `deleted_at`, `form_attached_id`, `created_by`) VALUES
+(1, 'rrrrrrrrrrrrrr', 'rrrrrrrrrrrrrrr', 'rrrrrrrrrrrrrr', 'ri-file-list-3-linr', '#2f5496', '#ffffff', 4, 55, '[\"3\",\"2\"]', 0, 1, '2026-02-08 22:11:52', '2026-02-08 22:11:52', NULL, NULL, NULL),
+(2, 'ZZZZZ', 'ZZZZZZZZZZZZZZZZ', 'zzzzz', 'ri-file-list-3-line', '#2f5496', '#ffffff', 33, 33, '[\"2\"]', 0, 1, '2026-02-08 22:30:15', '2026-02-08 22:30:15', NULL, NULL, NULL),
+(3, 'ZZZZ', 'ZZZZZZZZZZZZZZZZZZZZZ', 'zzzz', 'ri-file-list-3-line', '#2f5496', '#ffffff', 33, 55, '[\"1\"]', 0, 1, '2026-02-08 22:32:04', '2026-02-08 22:32:04', NULL, NULL, 1),
+(4, 'eeeeeee rrrrr sssssss', 'zzzzzzzz', 'eeeeeee-rrrrr-sssssss', 'ri-file-list-3-line', '#2f5496', '#ffffff', 5, 24, '[\"1\",\"2\"]', 0, 1, '2026-02-08 22:51:38', '2026-02-08 22:51:38', NULL, NULL, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `project_deliveries`
 --
 
 CREATE TABLE `project_deliveries` (
@@ -694,7 +748,7 @@ CREATE TABLE `project_deliveries` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `project_deliveries`
+-- Déchargement des données de la table `project_deliveries`
 --
 
 INSERT INTO `project_deliveries` (`id`, `business_plan_id`, `product_name_livraison`, `livraison_methode`, `sort_order`, `created_at`, `updated_at`) VALUES
@@ -704,7 +758,7 @@ INSERT INTO `project_deliveries` (`id`, `business_plan_id`, `product_name_livrai
 -- --------------------------------------------------------
 
 --
--- Table structure for table `project_employees`
+-- Structure de la table `project_employees`
 --
 
 CREATE TABLE `project_employees` (
@@ -719,7 +773,7 @@ CREATE TABLE `project_employees` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `project_employees`
+-- Déchargement des données de la table `project_employees`
 --
 
 INSERT INTO `project_employees` (`id`, `business_plan_id`, `item`, `total_employee_1`, `total_employee_2`, `sort_order`, `created_at`, `updated_at`) VALUES
@@ -729,7 +783,7 @@ INSERT INTO `project_employees` (`id`, `business_plan_id`, `item`, `total_employ
 -- --------------------------------------------------------
 
 --
--- Table structure for table `project_equipment`
+-- Structure de la table `project_equipment`
 --
 
 CREATE TABLE `project_equipment` (
@@ -744,7 +798,7 @@ CREATE TABLE `project_equipment` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `project_equipment`
+-- Déchargement des données de la table `project_equipment`
 --
 
 INSERT INTO `project_equipment` (`id`, `business_plan_id`, `equipement`, `reference`, `prix_equipement`, `sort_order`, `created_at`, `updated_at`) VALUES
@@ -754,7 +808,7 @@ INSERT INTO `project_equipment` (`id`, `business_plan_id`, `equipement`, `refere
 -- --------------------------------------------------------
 
 --
--- Table structure for table `project_financials`
+-- Structure de la table `project_financials`
 --
 
 CREATE TABLE `project_financials` (
@@ -819,7 +873,7 @@ CREATE TABLE `project_financials` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `project_financials`
+-- Déchargement des données de la table `project_financials`
 --
 
 INSERT INTO `project_financials` (`id`, `business_plan_id`, `ventes_premiere_annee`, `ventes_deuxieme_annee`, `ventes_troisieme_annee`, `services_premiere_annee`, `services_deuxieme_annee`, `services_troisieme_annee`, `aide_financiere_premiere_annee`, `aide_financiere_deuxieme_annee`, `aide_financiere_troisieme_annee`, `revenus_financiers_premiere_annee`, `revenus_financiers_deuxieme_annee`, `revenus_financiers_troisieme_annee`, `autres_revenus_premiere_annee`, `autres_revenus_deuxieme_annee`, `autres_revenus_troisieme_annee`, `total_revenus_premiere_annee`, `total_revenus_deuxieme_annee`, `total_revenus_troisieme_annee`, `achat_prevue_premiere_annee`, `achat_prevue_deuxieme_annee`, `achat_prevue_troisieme_annee`, `frais_fonctionnement_premiere_annee`, `frais_fonctionnement_deuxieme_annee`, `frais_fonctionnement_troisieme_annee`, `charges_personnel_premiere_annee`, `charges_personnel_deuxieme_annee`, `charges_personnel_troisieme_annee`, `dettes_premiere_annee`, `dettes_deuxieme_annee`, `dettes_troisieme_annee`, `etablissement_bancaire_premiere_annee`, `etablissement_bancaire_deuxieme_annee`, `etablissement_bancaire_troisieme_annee`, `fournisseurs_premiere_annee`, `fournisseurs_deuxieme_annee`, `fournisseurs_troisieme_annee`, `autres_dettes_premiere_annee`, `autres_dettes_deuxieme_annee`, `autres_dettes_troisieme_annee`, `autres_charges_premiere_annee`, `autres_charges_deuxieme_annee`, `autres_charges_troisieme_annee`, `total_frais_premiere_annee`, `total_frais_deuxieme_annee`, `total_frais_troisieme_annee`, `revenus_premiere_annee`, `revenus_deuxieme_annee`, `revenus_troisieme_annee`, `depenses_premiere_annee`, `depenses_deuxieme_annee`, `depenses_troisieme_annee`, `resultat_premiere_annee`, `resultat_deuxieme_annee`, `resultat_troisieme_annee`, `created_at`, `updated_at`) VALUES
@@ -828,7 +882,7 @@ INSERT INTO `project_financials` (`id`, `business_plan_id`, `ventes_premiere_ann
 -- --------------------------------------------------------
 
 --
--- Table structure for table `project_presentations`
+-- Structure de la table `project_presentations`
 --
 
 CREATE TABLE `project_presentations` (
@@ -842,7 +896,7 @@ CREATE TABLE `project_presentations` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `project_presentations`
+-- Déchargement des données de la table `project_presentations`
 --
 
 INSERT INTO `project_presentations` (`id`, `business_plan_id`, `product_name_presentation`, `presentation_methode`, `sort_order`, `created_at`, `updated_at`) VALUES
@@ -852,7 +906,7 @@ INSERT INTO `project_presentations` (`id`, `business_plan_id`, `product_name_pre
 -- --------------------------------------------------------
 
 --
--- Table structure for table `project_products`
+-- Structure de la table `project_products`
 --
 
 CREATE TABLE `project_products` (
@@ -866,7 +920,7 @@ CREATE TABLE `project_products` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `project_products`
+-- Déchargement des données de la table `project_products`
 --
 
 INSERT INTO `project_products` (`id`, `business_plan_id`, `product_name`, `description`, `sort_order`, `created_at`, `updated_at`) VALUES
@@ -876,7 +930,7 @@ INSERT INTO `project_products` (`id`, `business_plan_id`, `product_name`, `descr
 -- --------------------------------------------------------
 
 --
--- Table structure for table `project_raw_materials`
+-- Structure de la table `project_raw_materials`
 --
 
 CREATE TABLE `project_raw_materials` (
@@ -891,7 +945,7 @@ CREATE TABLE `project_raw_materials` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `project_raw_materials`
+-- Déchargement des données de la table `project_raw_materials`
 --
 
 INSERT INTO `project_raw_materials` (`id`, `business_plan_id`, `matiere_premiere`, `comment_procurer`, `fournisseur_matiere`, `sort_order`, `created_at`, `updated_at`) VALUES
@@ -901,7 +955,7 @@ INSERT INTO `project_raw_materials` (`id`, `business_plan_id`, `matiere_premiere
 -- --------------------------------------------------------
 
 --
--- Table structure for table `sessions`
+-- Structure de la table `sessions`
 --
 
 CREATE TABLE `sessions` (
@@ -914,20 +968,22 @@ CREATE TABLE `sessions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `sessions`
+-- Déchargement des données de la table `sessions`
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
 ('3yHnpJchwxmIAoSZOuprjAiwA6zuNcWYBD5tZdpb', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiVURLcWJPdVlZdTZuVVRPYjFPbzBDMTE2V3JscDF5MG1KQ1ZXWDZZQyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9mb3JtL2Rhc2hib2FyZCI7czo1OiJyb3V0ZSI7czoxNDoiZm9ybS5kYXNoYm9hcmQiO31zOjU1OiJsb2dpbl9jYW5kaWRhdF81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjM7czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MTt9', 1770426527),
 ('7rBXcXJNwjg2O3b9xSDVFb73YqzHx9m8ZgAXL8iK', 5, '105.188.107.12', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoidDB2ZGZoRllJbzB1dm1zMlNROWtscUNrRGo4OEZIYXZ0ZDZqUDZ5YyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDA6Imh0dHBzOi8vZGV2Lml1aG0ub3JnL2FkbWluL3Byb2plY3RzX3ZpZXciO3M6NToicm91dGUiO3M6MTk6ImFkbWluLnByb2plY3RzX3ZpZXciO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aTo1O30=', 1770492174),
 ('crC6oaS67Ka9mg9ApfYmQ2DUVBv8asVxsS7N2NGy', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiS2Q0dzd6VHB5V3JJZjZvSlVwTXN3NnhLdXRydTIyQ3FMUm5FMUY0aiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzM6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9sb2dpbiI7czo1OiJyb3V0ZSI7czoxMToiYWRtaW4ubG9naW4iO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1770455060),
+('es5kNmpGR9bkxWZYSOejqoQK0sEXfFMnsdBtZqYK', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoieGphVm5JakJWa1dLc2xTTDJLbGo5Y283SUJscFNDWk1JZEROQ2VKcCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzY6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9mb3JtL2Rhc2hib2FyZCI7czo1OiJyb3V0ZSI7czoxNDoiZm9ybS5kYXNoYm9hcmQiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX1zOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO3M6NTU6ImxvZ2luX2NhbmRpZGF0XzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6Mzt9', 1770595110),
 ('IDimSptuKA6AawfQzzGfvhzNzfZFtpuYDTCMsTjy', NULL, '105.188.107.12', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiY2pUODZwbTAySTJOaThtVWQ3djA4V0tpT2VMTVBDUVlRSFdQQjRQbyI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzU6Imh0dHBzOi8vZGV2Lml1aG0ub3JnL2Zvcm0vZGFzaGJvYXJkIjtzOjU6InJvdXRlIjtzOjE0OiJmb3JtLmRhc2hib2FyZCI7fXM6NTU6ImxvZ2luX2NhbmRpZGF0XzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6Mzt9', 1770472460),
+('N0XRnUC0aaeQbSgGqSf5NGAQZqHzJRbp9PQFlT4b', 1, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'YTo1OntzOjY6Il90b2tlbiI7czo0MDoiTFNnam9xZVFFUzk2TzBRcEhTc1pxRzJrdnBBcTZCc0tmbzk3WkJ2MSI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mzc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9kYXNoYm9hcmQiO3M6NToicm91dGUiO3M6MTU6ImFkbWluLmRhc2hib2FyZCI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTU6ImxvZ2luX2NhbmRpZGF0XzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6MztzOjUwOiJsb2dpbl93ZWJfNTliYTM2YWRkYzJiMmY5NDAxNTgwZjAxNGM3ZjU4ZWE0ZTMwOTg5ZCI7aToxO30=', 1770562238),
 ('VFGUAKR1NPyxMbHhHqk9wUlXmwsRDDlRyPTT1mIU', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiblpOVVpJbWhOZXFIdVlobUpsaVI2M3JadXM5MW1wOFR0Z0tCRENWeCI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NzM6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC91cGxvYWRzL3Byb2ZpbGUtaW1hZ2VzLzE3NzA0NzE4MTRfNjk4NzQxODZhYjRhZS5qcGciO3M6NToicm91dGUiO3M6MTI6InVwbG9hZHMuc2hvdyI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fXM6NTU6ImxvZ2luX2NhbmRpZGF0XzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6NTt9', 1770471818);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `support_tickets`
+-- Structure de la table `support_tickets`
 --
 
 CREATE TABLE `support_tickets` (
@@ -947,7 +1003,7 @@ CREATE TABLE `support_tickets` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `support_tickets`
+-- Déchargement des données de la table `support_tickets`
 --
 
 INSERT INTO `support_tickets` (`id`, `candidat_id`, `assigned_to`, `subject`, `message`, `admin_response`, `status`, `priority`, `category`, `responded_at`, `created_at`, `updated_at`, `deleted_at`) VALUES
@@ -956,7 +1012,7 @@ INSERT INTO `support_tickets` (`id`, `candidat_id`, `assigned_to`, `subject`, `m
 -- --------------------------------------------------------
 
 --
--- Table structure for table `users`
+-- Structure de la table `users`
 --
 
 CREATE TABLE `users` (
@@ -980,19 +1036,25 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `users`
+-- Déchargement des données de la table `users`
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `role`, `is_active`, `remember_token`, `last_ip_address`, `last_user_agent`, `last_browser`, `last_platform`, `last_device`, `last_login_at`, `login_count`, `created_at`, `updated_at`) VALUES
-(1, 'saad', 'admin@admin.com', NULL, '$2y$12$acce67vErQVY/YXgFCmHq.Usnjr3HTakwzfcxTPZObjMXYigAb7My', 'super_admin', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2025-12-26 09:47:27', '2025-12-26 10:03:05'),
+(1, 'saad', 'admin@admin.com', NULL, '$2y$12$acce67vErQVY/YXgFCmHq.Usnjr3HTakwzfcxTPZObjMXYigAb7My', 'super_admin', 1, NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'Chrome 144.0.0.0', 'Windows 10.0', 'Desktop', '2026-02-08 19:41:20', 2, '2025-12-26 09:47:27', '2026-02-08 19:41:20'),
 (5, 'test', 'test@example.com', NULL, '$2y$12$pyK7ItmYF9yZBFFK9lyQu.MzS2OozYepLKCpGRbzsnUstJejcz/EG', 'super_admin', 1, NULL, '105.188.107.12', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36', 'Chrome 144.0.0.0', 'Windows 10.0', 'Desktop', '2026-02-07 19:18:26', 1, '2026-02-07 00:08:00', '2026-02-07 19:18:26');
 
 --
--- Indexes for dumped tables
+-- Index pour les tables déchargées
 --
 
 --
--- Indexes for table `admin_activity_logs`
+-- Index pour la table `addresses`
+--
+ALTER TABLE `addresses`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Index pour la table `admin_activity_logs`
 --
 ALTER TABLE `admin_activity_logs`
   ADD PRIMARY KEY (`id`),
@@ -1002,21 +1064,21 @@ ALTER TABLE `admin_activity_logs`
   ADD KEY `admin_activity_logs_created_at_index` (`created_at`);
 
 --
--- Indexes for table `bilan_competences`
+-- Index pour la table `bilan_competences`
 --
 ALTER TABLE `bilan_competences`
   ADD PRIMARY KEY (`id`),
   ADD KEY `bilan_competences_candidat_id_foreign` (`candidat_id`);
 
 --
--- Indexes for table `bmcs`
+-- Index pour la table `bmcs`
 --
 ALTER TABLE `bmcs`
   ADD PRIMARY KEY (`id`),
   ADD KEY `bmcs_candidat_id_foreign` (`candidat_id`);
 
 --
--- Indexes for table `business_plans`
+-- Index pour la table `business_plans`
 --
 ALTER TABLE `business_plans`
   ADD PRIMARY KEY (`id`),
@@ -1027,19 +1089,19 @@ ALTER TABLE `business_plans`
   ADD KEY `projects_candidat_form_type_index` (`candidat_id`,`form_type`);
 
 --
--- Indexes for table `cache`
+-- Index pour la table `cache`
 --
 ALTER TABLE `cache`
   ADD PRIMARY KEY (`key`);
 
 --
--- Indexes for table `cache_locks`
+-- Index pour la table `cache_locks`
 --
 ALTER TABLE `cache_locks`
   ADD PRIMARY KEY (`key`);
 
 --
--- Indexes for table `candidat`
+-- Index pour la table `candidat`
 --
 ALTER TABLE `candidat`
   ADD PRIMARY KEY (`id`),
@@ -1047,14 +1109,14 @@ ALTER TABLE `candidat`
   ADD UNIQUE KEY `candidat_email_unique` (`email`);
 
 --
--- Indexes for table `dynamic_forms`
+-- Index pour la table `dynamic_forms`
 --
 ALTER TABLE `dynamic_forms`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `dynamic_forms_slug_unique` (`slug`);
 
 --
--- Indexes for table `dynamic_form_answers`
+-- Index pour la table `dynamic_form_answers`
 --
 ALTER TABLE `dynamic_form_answers`
   ADD PRIMARY KEY (`id`),
@@ -1062,21 +1124,21 @@ ALTER TABLE `dynamic_form_answers`
   ADD KEY `dfa_submission_field_idx` (`dynamic_form_submission_id`,`field_key`);
 
 --
--- Indexes for table `dynamic_form_fields`
+-- Index pour la table `dynamic_form_fields`
 --
 ALTER TABLE `dynamic_form_fields`
   ADD PRIMARY KEY (`id`),
   ADD KEY `dynamic_form_fields_dynamic_form_step_id_foreign` (`dynamic_form_step_id`);
 
 --
--- Indexes for table `dynamic_form_steps`
+-- Index pour la table `dynamic_form_steps`
 --
 ALTER TABLE `dynamic_form_steps`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `dynamic_form_steps_dynamic_form_id_step_number_unique` (`dynamic_form_id`,`step_number`);
 
 --
--- Indexes for table `dynamic_form_submissions`
+-- Index pour la table `dynamic_form_submissions`
 --
 ALTER TABLE `dynamic_form_submissions`
   ADD PRIMARY KEY (`id`),
@@ -1085,14 +1147,14 @@ ALTER TABLE `dynamic_form_submissions`
   ADD KEY `dynamic_form_submissions_reviewed_by_foreign` (`reviewed_by`);
 
 --
--- Indexes for table `dynamic_form_tables`
+-- Index pour la table `dynamic_form_tables`
 --
 ALTER TABLE `dynamic_form_tables`
   ADD PRIMARY KEY (`id`),
   ADD KEY `dynamic_form_tables_dynamic_form_step_id_foreign` (`dynamic_form_step_id`);
 
 --
--- Indexes for table `dynamic_form_table_answers`
+-- Index pour la table `dynamic_form_table_answers`
 --
 ALTER TABLE `dynamic_form_table_answers`
   ADD PRIMARY KEY (`id`),
@@ -1100,67 +1162,76 @@ ALTER TABLE `dynamic_form_table_answers`
   ADD KEY `dfta_submission_table_row_idx` (`dynamic_form_submission_id`,`table_key`,`row_index`);
 
 --
--- Indexes for table `dynamic_form_table_columns`
+-- Index pour la table `dynamic_form_table_columns`
 --
 ALTER TABLE `dynamic_form_table_columns`
   ADD PRIMARY KEY (`id`),
   ADD KEY `dynamic_form_table_columns_dynamic_form_table_id_foreign` (`dynamic_form_table_id`);
 
 --
--- Indexes for table `dynamic_form_table_rows`
+-- Index pour la table `dynamic_form_table_rows`
 --
 ALTER TABLE `dynamic_form_table_rows`
   ADD PRIMARY KEY (`id`),
   ADD KEY `dynamic_form_table_rows_dynamic_form_table_id_foreign` (`dynamic_form_table_id`);
 
 --
--- Indexes for table `etude_marches`
+-- Index pour la table `etude_marches`
 --
 ALTER TABLE `etude_marches`
   ADD PRIMARY KEY (`id`),
   ADD KEY `etude_marches_candidat_id_status_index` (`candidat_id`,`status`);
 
 --
--- Indexes for table `evaluation_idees`
+-- Index pour la table `evaluation_idees`
 --
 ALTER TABLE `evaluation_idees`
   ADD PRIMARY KEY (`id`),
   ADD KEY `evaluation_idees_candidat_id_foreign` (`candidat_id`);
 
 --
--- Indexes for table `failed_jobs`
+-- Index pour la table `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`);
 
 --
--- Indexes for table `jobs`
+-- Index pour la table `jobs`
 --
 ALTER TABLE `jobs`
   ADD PRIMARY KEY (`id`),
   ADD KEY `jobs_queue_index` (`queue`);
 
 --
--- Indexes for table `job_batches`
+-- Index pour la table `job_batches`
 --
 ALTER TABLE `job_batches`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `migrations`
+-- Index pour la table `migrations`
 --
 ALTER TABLE `migrations`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `password_reset_tokens`
+-- Index pour la table `password_reset_tokens`
 --
 ALTER TABLE `password_reset_tokens`
   ADD PRIMARY KEY (`email`);
 
 --
--- Indexes for table `project_deliveries`
+-- Index pour la table `programe_list`
+--
+ALTER TABLE `programe_list`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `programe_list_slug_unique` (`slug`),
+  ADD KEY `programe_list_form_attached_id_foreign` (`form_attached_id`),
+  ADD KEY `programe_list_created_by_foreign` (`created_by`);
+
+--
+-- Index pour la table `project_deliveries`
 --
 ALTER TABLE `project_deliveries`
   ADD PRIMARY KEY (`id`),
@@ -1168,7 +1239,7 @@ ALTER TABLE `project_deliveries`
   ADD KEY `project_deliveries_sort_order_index` (`sort_order`);
 
 --
--- Indexes for table `project_employees`
+-- Index pour la table `project_employees`
 --
 ALTER TABLE `project_employees`
   ADD PRIMARY KEY (`id`),
@@ -1176,7 +1247,7 @@ ALTER TABLE `project_employees`
   ADD KEY `project_employees_sort_order_index` (`sort_order`);
 
 --
--- Indexes for table `project_equipment`
+-- Index pour la table `project_equipment`
 --
 ALTER TABLE `project_equipment`
   ADD PRIMARY KEY (`id`),
@@ -1184,14 +1255,14 @@ ALTER TABLE `project_equipment`
   ADD KEY `project_equipment_sort_order_index` (`sort_order`);
 
 --
--- Indexes for table `project_financials`
+-- Index pour la table `project_financials`
 --
 ALTER TABLE `project_financials`
   ADD PRIMARY KEY (`id`),
   ADD KEY `project_financials_project_id_index` (`business_plan_id`);
 
 --
--- Indexes for table `project_presentations`
+-- Index pour la table `project_presentations`
 --
 ALTER TABLE `project_presentations`
   ADD PRIMARY KEY (`id`),
@@ -1199,7 +1270,7 @@ ALTER TABLE `project_presentations`
   ADD KEY `project_presentations_sort_order_index` (`sort_order`);
 
 --
--- Indexes for table `project_products`
+-- Index pour la table `project_products`
 --
 ALTER TABLE `project_products`
   ADD PRIMARY KEY (`id`),
@@ -1207,7 +1278,7 @@ ALTER TABLE `project_products`
   ADD KEY `project_products_sort_order_index` (`sort_order`);
 
 --
--- Indexes for table `project_raw_materials`
+-- Index pour la table `project_raw_materials`
 --
 ALTER TABLE `project_raw_materials`
   ADD PRIMARY KEY (`id`),
@@ -1215,7 +1286,7 @@ ALTER TABLE `project_raw_materials`
   ADD KEY `project_raw_materials_sort_order_index` (`sort_order`);
 
 --
--- Indexes for table `sessions`
+-- Index pour la table `sessions`
 --
 ALTER TABLE `sessions`
   ADD PRIMARY KEY (`id`),
@@ -1223,7 +1294,7 @@ ALTER TABLE `sessions`
   ADD KEY `sessions_last_activity_index` (`last_activity`);
 
 --
--- Indexes for table `support_tickets`
+-- Index pour la table `support_tickets`
 --
 ALTER TABLE `support_tickets`
   ADD PRIMARY KEY (`id`),
@@ -1233,234 +1304,246 @@ ALTER TABLE `support_tickets`
   ADD KEY `support_tickets_candidat_id_index` (`candidat_id`);
 
 --
--- Indexes for table `users`
+-- Index pour la table `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `users_email_unique` (`email`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT pour les tables déchargées
 --
 
 --
--- AUTO_INCREMENT for table `admin_activity_logs`
+-- AUTO_INCREMENT pour la table `addresses`
+--
+ALTER TABLE `addresses`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT pour la table `admin_activity_logs`
 --
 ALTER TABLE `admin_activity_logs`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- AUTO_INCREMENT for table `bilan_competences`
+-- AUTO_INCREMENT pour la table `bilan_competences`
 --
 ALTER TABLE `bilan_competences`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT for table `bmcs`
+-- AUTO_INCREMENT pour la table `bmcs`
 --
 ALTER TABLE `bmcs`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT for table `business_plans`
+-- AUTO_INCREMENT pour la table `business_plans`
 --
 ALTER TABLE `business_plans`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
--- AUTO_INCREMENT for table `candidat`
+-- AUTO_INCREMENT pour la table `candidat`
 --
 ALTER TABLE `candidat`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT for table `dynamic_forms`
+-- AUTO_INCREMENT pour la table `dynamic_forms`
 --
 ALTER TABLE `dynamic_forms`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `dynamic_form_answers`
+-- AUTO_INCREMENT pour la table `dynamic_form_answers`
 --
 ALTER TABLE `dynamic_form_answers`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `dynamic_form_fields`
+-- AUTO_INCREMENT pour la table `dynamic_form_fields`
 --
 ALTER TABLE `dynamic_form_fields`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `dynamic_form_steps`
+-- AUTO_INCREMENT pour la table `dynamic_form_steps`
 --
 ALTER TABLE `dynamic_form_steps`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `dynamic_form_submissions`
+-- AUTO_INCREMENT pour la table `dynamic_form_submissions`
 --
 ALTER TABLE `dynamic_form_submissions`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `dynamic_form_tables`
+-- AUTO_INCREMENT pour la table `dynamic_form_tables`
 --
 ALTER TABLE `dynamic_form_tables`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `dynamic_form_table_answers`
+-- AUTO_INCREMENT pour la table `dynamic_form_table_answers`
 --
 ALTER TABLE `dynamic_form_table_answers`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `dynamic_form_table_columns`
+-- AUTO_INCREMENT pour la table `dynamic_form_table_columns`
 --
 ALTER TABLE `dynamic_form_table_columns`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `dynamic_form_table_rows`
+-- AUTO_INCREMENT pour la table `dynamic_form_table_rows`
 --
 ALTER TABLE `dynamic_form_table_rows`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `etude_marches`
+-- AUTO_INCREMENT pour la table `etude_marches`
 --
 ALTER TABLE `etude_marches`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT for table `evaluation_idees`
+-- AUTO_INCREMENT pour la table `evaluation_idees`
 --
 ALTER TABLE `evaluation_idees`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT for table `failed_jobs`
+-- AUTO_INCREMENT pour la table `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `jobs`
+-- AUTO_INCREMENT pour la table `jobs`
 --
 ALTER TABLE `jobs`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `migrations`
+-- AUTO_INCREMENT pour la table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
--- AUTO_INCREMENT for table `project_deliveries`
+-- AUTO_INCREMENT pour la table `programe_list`
+--
+ALTER TABLE `programe_list`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT pour la table `project_deliveries`
 --
 ALTER TABLE `project_deliveries`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
 
 --
--- AUTO_INCREMENT for table `project_employees`
+-- AUTO_INCREMENT pour la table `project_employees`
 --
 ALTER TABLE `project_employees`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
 
 --
--- AUTO_INCREMENT for table `project_equipment`
+-- AUTO_INCREMENT pour la table `project_equipment`
 --
 ALTER TABLE `project_equipment`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
 
 --
--- AUTO_INCREMENT for table `project_financials`
+-- AUTO_INCREMENT pour la table `project_financials`
 --
 ALTER TABLE `project_financials`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
--- AUTO_INCREMENT for table `project_presentations`
+-- AUTO_INCREMENT pour la table `project_presentations`
 --
 ALTER TABLE `project_presentations`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
 
 --
--- AUTO_INCREMENT for table `project_products`
+-- AUTO_INCREMENT pour la table `project_products`
 --
 ALTER TABLE `project_products`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
 
 --
--- AUTO_INCREMENT for table `project_raw_materials`
+-- AUTO_INCREMENT pour la table `project_raw_materials`
 --
 ALTER TABLE `project_raw_materials`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
 
 --
--- AUTO_INCREMENT for table `support_tickets`
+-- AUTO_INCREMENT pour la table `support_tickets`
 --
 ALTER TABLE `support_tickets`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `users`
+-- AUTO_INCREMENT pour la table `users`
 --
 ALTER TABLE `users`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- Constraints for dumped tables
+-- Contraintes pour les tables déchargées
 --
 
 --
--- Constraints for table `admin_activity_logs`
+-- Contraintes pour la table `admin_activity_logs`
 --
 ALTER TABLE `admin_activity_logs`
   ADD CONSTRAINT `admin_activity_logs_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `bilan_competences`
+-- Contraintes pour la table `bilan_competences`
 --
 ALTER TABLE `bilan_competences`
   ADD CONSTRAINT `bilan_competences_candidat_id_foreign` FOREIGN KEY (`candidat_id`) REFERENCES `candidat` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `bmcs`
+-- Contraintes pour la table `bmcs`
 --
 ALTER TABLE `bmcs`
   ADD CONSTRAINT `bmcs_candidat_id_foreign` FOREIGN KEY (`candidat_id`) REFERENCES `candidat` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `business_plans`
+-- Contraintes pour la table `business_plans`
 --
 ALTER TABLE `business_plans`
   ADD CONSTRAINT `projects_candidat_id_foreign` FOREIGN KEY (`candidat_id`) REFERENCES `candidat` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `projects_reviewed_by_foreign` FOREIGN KEY (`reviewed_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
--- Constraints for table `dynamic_form_answers`
+-- Contraintes pour la table `dynamic_form_answers`
 --
 ALTER TABLE `dynamic_form_answers`
   ADD CONSTRAINT `dynamic_form_answers_dynamic_form_field_id_foreign` FOREIGN KEY (`dynamic_form_field_id`) REFERENCES `dynamic_form_fields` (`id`) ON DELETE SET NULL,
   ADD CONSTRAINT `dynamic_form_answers_dynamic_form_submission_id_foreign` FOREIGN KEY (`dynamic_form_submission_id`) REFERENCES `dynamic_form_submissions` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `dynamic_form_fields`
+-- Contraintes pour la table `dynamic_form_fields`
 --
 ALTER TABLE `dynamic_form_fields`
   ADD CONSTRAINT `dynamic_form_fields_dynamic_form_step_id_foreign` FOREIGN KEY (`dynamic_form_step_id`) REFERENCES `dynamic_form_steps` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `dynamic_form_steps`
+-- Contraintes pour la table `dynamic_form_steps`
 --
 ALTER TABLE `dynamic_form_steps`
   ADD CONSTRAINT `dynamic_form_steps_dynamic_form_id_foreign` FOREIGN KEY (`dynamic_form_id`) REFERENCES `dynamic_forms` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `dynamic_form_submissions`
+-- Contraintes pour la table `dynamic_form_submissions`
 --
 ALTER TABLE `dynamic_form_submissions`
   ADD CONSTRAINT `dynamic_form_submissions_candidat_id_foreign` FOREIGN KEY (`candidat_id`) REFERENCES `candidat` (`id`) ON DELETE CASCADE,
@@ -1468,86 +1551,93 @@ ALTER TABLE `dynamic_form_submissions`
   ADD CONSTRAINT `dynamic_form_submissions_reviewed_by_foreign` FOREIGN KEY (`reviewed_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
--- Constraints for table `dynamic_form_tables`
+-- Contraintes pour la table `dynamic_form_tables`
 --
 ALTER TABLE `dynamic_form_tables`
   ADD CONSTRAINT `dynamic_form_tables_dynamic_form_step_id_foreign` FOREIGN KEY (`dynamic_form_step_id`) REFERENCES `dynamic_form_steps` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `dynamic_form_table_answers`
+-- Contraintes pour la table `dynamic_form_table_answers`
 --
 ALTER TABLE `dynamic_form_table_answers`
   ADD CONSTRAINT `dynamic_form_table_answers_dynamic_form_submission_id_foreign` FOREIGN KEY (`dynamic_form_submission_id`) REFERENCES `dynamic_form_submissions` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `dynamic_form_table_answers_dynamic_form_table_id_foreign` FOREIGN KEY (`dynamic_form_table_id`) REFERENCES `dynamic_form_tables` (`id`) ON DELETE SET NULL;
 
 --
--- Constraints for table `dynamic_form_table_columns`
+-- Contraintes pour la table `dynamic_form_table_columns`
 --
 ALTER TABLE `dynamic_form_table_columns`
   ADD CONSTRAINT `dynamic_form_table_columns_dynamic_form_table_id_foreign` FOREIGN KEY (`dynamic_form_table_id`) REFERENCES `dynamic_form_tables` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `dynamic_form_table_rows`
+-- Contraintes pour la table `dynamic_form_table_rows`
 --
 ALTER TABLE `dynamic_form_table_rows`
   ADD CONSTRAINT `dynamic_form_table_rows_dynamic_form_table_id_foreign` FOREIGN KEY (`dynamic_form_table_id`) REFERENCES `dynamic_form_tables` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `etude_marches`
+-- Contraintes pour la table `etude_marches`
 --
 ALTER TABLE `etude_marches`
   ADD CONSTRAINT `etude_marches_candidat_id_foreign` FOREIGN KEY (`candidat_id`) REFERENCES `candidat` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `evaluation_idees`
+-- Contraintes pour la table `evaluation_idees`
 --
 ALTER TABLE `evaluation_idees`
   ADD CONSTRAINT `evaluation_idees_candidat_id_foreign` FOREIGN KEY (`candidat_id`) REFERENCES `candidat` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `project_deliveries`
+-- Contraintes pour la table `programe_list`
+--
+ALTER TABLE `programe_list`
+  ADD CONSTRAINT `programe_list_created_by_foreign` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `programe_list_form_attached_id_foreign` FOREIGN KEY (`form_attached_id`) REFERENCES `dynamic_forms` (`id`) ON DELETE SET NULL;
+
+--
+-- Contraintes pour la table `project_deliveries`
 --
 ALTER TABLE `project_deliveries`
   ADD CONSTRAINT `project_deliveries_project_id_foreign` FOREIGN KEY (`business_plan_id`) REFERENCES `business_plans` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `project_employees`
+-- Contraintes pour la table `project_employees`
 --
 ALTER TABLE `project_employees`
   ADD CONSTRAINT `project_employees_project_id_foreign` FOREIGN KEY (`business_plan_id`) REFERENCES `business_plans` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `project_equipment`
+-- Contraintes pour la table `project_equipment`
 --
 ALTER TABLE `project_equipment`
   ADD CONSTRAINT `project_equipment_project_id_foreign` FOREIGN KEY (`business_plan_id`) REFERENCES `business_plans` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `project_financials`
+-- Contraintes pour la table `project_financials`
 --
 ALTER TABLE `project_financials`
   ADD CONSTRAINT `project_financials_project_id_foreign` FOREIGN KEY (`business_plan_id`) REFERENCES `business_plans` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `project_presentations`
+-- Contraintes pour la table `project_presentations`
 --
 ALTER TABLE `project_presentations`
   ADD CONSTRAINT `project_presentations_project_id_foreign` FOREIGN KEY (`business_plan_id`) REFERENCES `business_plans` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `project_products`
+-- Contraintes pour la table `project_products`
 --
 ALTER TABLE `project_products`
   ADD CONSTRAINT `project_products_project_id_foreign` FOREIGN KEY (`business_plan_id`) REFERENCES `business_plans` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `project_raw_materials`
+-- Contraintes pour la table `project_raw_materials`
 --
 ALTER TABLE `project_raw_materials`
   ADD CONSTRAINT `project_raw_materials_project_id_foreign` FOREIGN KEY (`business_plan_id`) REFERENCES `business_plans` (`id`) ON DELETE CASCADE;
 
 --
--- Constraints for table `support_tickets`
+-- Contraintes pour la table `support_tickets`
 --
 ALTER TABLE `support_tickets`
   ADD CONSTRAINT `support_tickets_assigned_to_foreign` FOREIGN KEY (`assigned_to`) REFERENCES `users` (`id`) ON DELETE SET NULL,

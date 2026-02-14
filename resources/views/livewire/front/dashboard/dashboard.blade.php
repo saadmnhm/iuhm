@@ -90,58 +90,43 @@
                 </div>
             </div>
             <div class="row g-4 mb-4">
-                @foreach($this->formTypes as $type => $info)
-                @php $status_form = $this->getProjectForType($type); @endphp
+                @foreach($programe_list as $prog_list)
                     <div class="col-12 col-md-6 col-xl-4">
                         <div class="card border-0 shadow-sm h-100 hover-lift">
                             <div class="card-body">
                                 <div class="d-flex align-items-center mb-3">
-                                    <div class="icon-box bg-{{ $info['color'] }} bg-opacity-10 rounded-3 p-3 me-3">
-                                        <i class="{{ $info['icon'] }} fs-3 text-{{ $info['color'] }}"></i>
+                                    <div class="icon-box bg-{{ $prog_list->color }} bg-opacity-10 rounded-3 p-3 me-3">
+                                        <i class="{{ $prog_list->icon }} fs-3 text-{{ $prog_list->color }}"></i>
                                     </div>
                                     <div>
-                                        <h6 class="fw-bold mb-0">{{ $info['label'] }}</h6>
-                                        @if($status_form)
-                                            @if($status_form->status === 'draft')
-                                                <span class="badge bg-warning text-dark mt-1">Brouillon</span>
-                                            @elseif($status_form->status === 'submitted')
-                                                <span class="badge bg-info mt-1">Soumis</span>
-                                            @elseif($status_form->status === 'in_review')
-                                                <span class="badge bg-primary mt-1">En révision</span>
-                                            @elseif($status_form->status === 'approved')
-                                                <span class="badge bg-success mt-1">Approuvé</span>
-                                            @elseif($status_form->status === 'rejected')
-                                                <span class="badge bg-danger mt-1">Rejeté</span>
-                                            @endif
-                                        @else
-                                            <span class="badge bg-light text-muted mt-1">Non commencé</span>
-                                        @endif
+                                        <h6 class="fw-bold mb-0">{{ $prog_list->project_name }}</h6>
+                                    
                                     </div>
                                 </div>
                                 
-                                @if($status_form)
+                                @if($prog_list)
                                     <p class="text-muted small mb-3">
                                         <i class="ri-time-line me-1"></i>
-                                        Dernière modification: {{ $status_form->updated_at->format('d/m/Y H:i') }}
+                                        Dernière modification: {{ $prog_list->updated_at->format('d/m/Y H:i') }}
                                     </p>
-                                    @if($status_form->project_name)
-                                        <p class="small mb-3 text-truncate"><strong>Projet:</strong> {{ $status_form->project_name }}</p>
+                                    @if($prog_list->project_name)
+                                        <p class="small mb-3 text-truncate"><strong>Projet:</strong> {{ $prog_list->project_name }}</p>
                                     @endif
                                 @else
                                     <p class="text-muted small mb-3">Vous n'avez pas encore commencé ce formulaire.</p>
                                 @endif
 
                                 <div class="d-grid">
-                                    @if($status_form && $status_form->status === 'submitted')
-                                        <a href="{{ route($info['route']) }}" class="btn btn-outline-{{ $info['color'] }}">
+                                    @if($prog_list && $prog_list->status === 'submitted')
+                                        <a href="" class="btn btn-outline">
                                             <i class="ri-eye-line me-1"></i>Voir
                                         </a>
-                                    @elseif($status_form && $status_form->status === 'draft')
-                                        <a href="{{ route($info['route']) }}" class="btn btn-{{ $info['color'] }}">
+                                    @elseif($prog_list && $prog_list->status === 'draft')
+                                        <a href="" class="btn btn">
                                             <i class="ri-edit-line me-1"></i>Continuer
                                         </a>
                                     @else
-                                        <a href="{{ route($info['route']) }}" class="btn btn-outline-{{ $info['color'] }}">
+                                        <a href="" class="btn btn-outline">
                                             <i class="ri-add-circle-line me-1"></i>Commencer
                                         </a>
                                     @endif

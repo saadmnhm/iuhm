@@ -6,6 +6,7 @@ use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Services\FormSubmissionService;
 use App\Models\Candidat;
+use App\Models\ProgrameList;
 use Illuminate\Support\Facades\Auth;
 
 #[Layout('layouts.app')]
@@ -88,9 +89,11 @@ class Dashboard extends Component
             'submitted' => $this->projects->whereIn('status', ['submitted', 'in_review'])->count(),
             'approved' => $this->projects->where('status', 'approved')->count(),
         ];
+        $programe_list = ProgrameList::all();
 
         return view('livewire.front.dashboard.dashboard', [
             'stats' => $stats,
+            'programe_list' => $programe_list,
         ]);
     }
 }
