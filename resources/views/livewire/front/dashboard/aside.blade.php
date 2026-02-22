@@ -12,9 +12,8 @@
                 </a>
             </li>
             <div x-data="{ open: false }">
-                @foreach($programe_list ?? [] as $list)
-                    <button @click="open = !open" class="flex w-full items-center justify-between gap-3 px-4 py-3 rounded-lg transition hover:bg-gray-100">
-                        <div class="flex items-center gap-3">
+                <button @click="open = !open" class="flex w-full items-center justify-between gap-3 px-4 py-3 rounded-lg transition hover:bg-gray-100">
+                    <div class="flex items-center gap-3">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3" />
@@ -26,15 +25,16 @@
                             </svg>
                         </div>
                     </button>
-                    <div x-show="open" x-collapse class="ml-3 mt-1 space-y-1">
-                        <li class="nav-item">
-                            <a href="{{ route('form.project.detail', $list->id) }}" class="nav-link {{ request()->routeIs('form.project.detail') && request()->route('id') == $list->id ? 'active' : '' }}">
-                                <i class="ri-folder-open-line fs-5"></i>
-                                <span>{{ $list->project_name }}</span>
-                            </a>
-                        </li>
-                    </div>
-                @endforeach 
+                    @foreach($programe_list ?? [] as $list)
+                        <div x-show="open" x-collapse class="ml-3 mt-1 space-y-1">
+                            <li class="nav-item">
+                                <a href="{{ route('form.project.detail', $list->id) }}" class="nav-link {{ request()->routeIs('form.project.detail') && request()->route('id') == $list->id ? 'active' : '' }}">
+                                    <i class="ri-folder-open-line fs-5"></i>
+                                    <span>{{ $list->project_name }}</span>
+                                </a>
+                            </li>
+                        </div>
+                    @endforeach 
             </div>
             
             @if(false)  

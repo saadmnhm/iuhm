@@ -70,15 +70,21 @@ class ProjectSubmissions extends Component
                 ->where('dynamic_form_id', $formulaire->id)
                 ->whereIn('status', ['submitted', 'in_review', 'approved'])
                 ->count();
+
+            
             
             $submissionsByFormulaire[] = [
                 'id' => $formulaire->id,
                 'title' => $formulaire->title,
+                'icon' => $formulaire->icon ,
+                'color' => $formulaire->color,
                 'total' => $count,
                 'completed' => $completed,
+                'is_active' => $formulaire->pivot->status === 'active',
                 'draft' => $count - $completed,
                 'order' => $formulaire->pivot->order,
             ];
+
         }
         
         // Recent submissions (last 7 days)

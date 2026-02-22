@@ -3,9 +3,9 @@
     <!-- Page Header -->
     <div class="mb-8 flex items-center justify-end ">
         <span class="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800 me-3">Active</span>
-        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+        <a href="{{ route('admin.programe_zettat.edit', $project->id) }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
             Edit Project
-        </button>
+        </a>
     </div>
 
     <!-- Statistic Cards -->
@@ -81,92 +81,34 @@
     <div class="mb-10 ">
         <h2 class="text-lg font-medium text-gray-800 mb-4">Form Fields</h2>
         <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-            <!--[if BLOCK]><![endif]-->
+
+            @foreach($statistics['by_formulaire'] as $formulaire)
             <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-xs text-gray-500 uppercase">Business Plan</p>
-                        <p class="text-2xl font-bold mt-1
-                        text-green-600
-                        ">
-                            ✓
-                        </p>
+                        <p class="text-xs text-gray-500 uppercase">{{ $formulaire['title'] }}</p>
+                        @if($formulaire['is_active'])
+                            <p class="text-2xl font-bold mt-1
+                            text-green-600
+                            ">
+                                ✓
+                            </p>
+                        @else
+                            <p class="text-2xl font-bold mt-1
+                            text-red-600
+                            ">
+                                ✗
+                            </p>
+                        @endif
                     </div>
                     <div class="w-12 h-12 rounded-lg flex items-center justify-center
-                    bg-blue-100 text-blue-600
+                    " style="color: {{ $formulaire['color'] ?? '#6366f1' }}; background-color: {{ $formulaire['color'] ?? '#6366f1' }}30;
                     ">
-                        <i class="ri-bar-chart-box-line text-2xl"></i>
+                        <i class="{{ $formulaire['icon'] ?? 'ri-file-list-3-line' }} text-2xl"></i>
                     </div>
                 </div>
             </div>
-            <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs text-gray-500 uppercase">Étude de Marché</p>
-                        <p class="text-2xl font-bold mt-1
-                        text-green-600
-                        ">
-                            ✓
-                        </p>
-                    </div>
-                    <div class="w-12 h-12 rounded-lg flex items-center justify-center
-                    bg-green-100 text-green-600
-                    ">
-                        <i class="ri-search-eye-line text-2xl"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs text-gray-500 uppercase">Évaluation d'Idée</p>
-                        <p class="text-2xl font-bold mt-1
-                        text-green-600
-                        ">
-                            ✓
-                        </p>
-                    </div>
-                    <div class="w-12 h-12 rounded-lg flex items-center justify-center
-                    bg-purple-100 text-purple-600
-                    ">
-                        <i class="ri-lightbulb-line text-2xl"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs text-gray-500 uppercase">Business Model Canvas</p>
-                        <p class="text-2xl font-bold mt-1
-                        text-green-600
-                        ">
-                            ✓
-                        </p>
-                    </div>
-                    <div class="w-12 h-12 rounded-lg flex items-center justify-center
-                    bg-yellow-100 text-yellow-600
-                    ">
-                        <i class="ri-layout-grid-line text-2xl"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs text-gray-500 uppercase">Bilan de Compétences</p>
-                        <p class="text-2xl font-bold mt-1
-                        text-green-600
-                        ">
-                            ✓
-                        </p>
-                    </div>
-                    <div class="w-12 h-12 rounded-lg flex items-center justify-center
-                    bg-pink-100 text-pink-600
-                    ">
-                        <i class="ri-user-star-line text-2xl"></i>
-                    </div>
-                </div>
-            </div>
+            @endforeach
             <!--[if ENDBLOCK]><![endif]-->
         </div>
     </div>

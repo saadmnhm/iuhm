@@ -9,7 +9,7 @@
             <div>
                 <h2 class="text-2xl font-bold text-gray-800">{{ $submission->form->title }}</h2>
                 <p class="text-gray-500 text-sm mt-1">
-                    Soumission de {{ $submission->candidat->first_name }} {{ $submission->candidat->last_name }}
+                    Soumission de {{ $submission->candidat->nom }} {{ $submission->candidat->prenom }}
                 </p>
             </div>
         </div>
@@ -29,14 +29,8 @@
                 <div class="space-y-3 text-sm">
                     <div>
                         <span class="text-gray-500">Nom:</span>
-                        <p class="font-medium text-gray-800">{{ $submission->candidat->first_name }} {{ $submission->candidat->last_name }}</p>
+                        <p class="font-medium text-gray-800">{{ $submission->candidat->nom }} {{ $submission->candidat->prenom }}</p>
                     </div>
-                    @if($submission->candidat->cin)
-                        <div>
-                            <span class="text-gray-500">CIN:</span>
-                            <p class="font-medium text-gray-800">{{ $submission->candidat->cin }}</p>
-                        </div>
-                    @endif
                     @if($submission->candidat->email)
                         <div>
                             <span class="text-gray-500">Email:</span>
