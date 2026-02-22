@@ -93,6 +93,7 @@
                 @foreach($programe_list as $prog_list)
                     <div class="col-12 col-md-6 col-xl-4">
                         <div class="card border-0 shadow-sm h-100 hover-lift">
+                            @if ($candidat->age >= $prog_list->min_age && $candidat->age <= $prog_list->max_age || in_array($candidat->adresse, explode(',', $prog_list->allowed_address_id)))
                             <div class="card-body">
                                 <div class="d-flex align-items-center mb-3">
                                     <div class="icon-box bg-{{ $prog_list->color }} bg-opacity-10 rounded-3 p-3 me-3">
@@ -126,9 +127,106 @@
                                             <i class="ri-edit-line me-1"></i>Continuer
                                         </a>
                                     @else
-                                        <a href="" class="btn btn-outline">
+                                        <a href="{{ route('form.project.detail', $prog_list->id) }}" class="btn btn-outline">
                                             <i class="ri-add-circle-line me-1"></i>Commencer
                                         </a>
+                                    @endif
+                                </div>
+                            </div>
+                            @else
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="icon-box bg-secondary bg-opacity-10 rounded-3 p-3 me-3">
+                                            <i class="{{ $prog_list->icon }} fs-3 text-secondary"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="fw-bold mb-0">{{ $prog_list->project_name }}</h6>
+                                            <span class="badge bg-secondary bg-opacity-10 text-secondary mt-1">Inéligible</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            <!-- Dynamic Form Submissions (Drafts & Submitted) -->
+            @if(count($dynamicSubmissions) > 0)
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h5 class="fw-bold mb-3"><i class="ri-draft-line me-2 text-warning"></i>Mes Soumissions de Formulaires</h5>
+                </div>
+            </div>
+            <div class="row g-4 mb-4">
+                @foreach($dynamicSubmissions as $index => $sub)
+                    <div class="col-12 col-md-6 col-xl-4">
+                        <div class="card border-0 shadow-sm h-100 hover-lift" style="border-left: 4px solid {{ $sub['form_color'] }} !important;">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="rounded-3 p-3 me-3 d-flex align-items-center justify-content-center" 
+                                         style="width: 48px; height: 48px; background-color: {{ $sub['form_color'] }}15;">
+                                        <i class="{{ $sub['form_icon'] }} fs-4" style="color: {{ $sub['form_color'] }};"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="fw-bold mb-0">{{ $sub['form_title'] }}</h6>
+                                        @if($sub['form_title_ar'])
+                                            <small class="text-muted" dir="rtl">{{ $sub['form_title_ar'] }}</small>
+                                        @endif
+                                    </div>
+                                    <span class="badge rounded-pill 
+                                        @if($sub['status'] === 'draft') bg-warning text-dark
+                                        @elseif($sub['status'] === 'submitted') bg-info text-white
+                                        @elseif($sub['status'] === 'in_review') bg-primary text-white
+                                        @elseif($sub['status'] === 'approved') bg-success text-white
+                                        @elseif($sub['status'] === 'rejected') bg-danger text-white
+                                        @else bg-secondary text-white
+                                        @endif">
+                                        {{ $sub['status_label'] }}
+                                    </span>
+                                </div>
+
+                                @if($sub['programe_name'])
+                                    <p class="small mb-2">
+                                        <i class="ri-folder-line me-1 text-primary"></i>
+                                        <strong>Projet:</strong> {{ $sub['programe_name'] }}
+                                    </p>
+                                @endif
+
+                                @if($sub['status'] === 'draft' && $sub['total_steps'] > 0)
+                                    <div class="mb-2">
+                                        <div class="d-flex justify-content-between small text-muted mb-1">
+                                            <span>Progression</span>
+                                            <span>Étape {{ $sub['current_step'] }} / {{ $sub['total_steps'] }}</span>
+                                        </div>
+                                        <div class="progress" style="height: 6px;">
+                                            <div class="progress-bar bg-warning" role="progressbar" 
+                                                 style="width: {{ ($sub['current_step'] / $sub['total_steps']) * 100 }}%"></div>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                <p class="text-muted small mb-3">
+                                    <i class="ri-time-line me-1"></i>
+                                    Dernière modification: {{ $sub['updated_at'] }}
+                                </p>
+
+                                @if($sub['submitted_at'])
+                                    <p class="text-muted small mb-3">
+                                        <i class="ri-send-plane-line me-1"></i>
+                                        Soumis le: {{ $sub['submitted_at'] }}
+                                    </p>
+                                @endif
+
+                                <div class="d-grid">
+                                    @if($sub['status'] === 'draft')
+                                        <button wire:click="resumeForm({{ $index }})" class="btn btn-warning btn-sm">
+                                            <i class="ri-edit-line me-1"></i>Continuer le brouillon
+                                        </button>
+                                    @else
+                                        <button wire:click="resumeForm({{ $index }})" class="btn btn-outline-primary btn-sm">
+                                            <i class="ri-eye-line me-1"></i>Voir
+                                        </button>
                                     @endif
                                 </div>
                             </div>
@@ -136,6 +234,7 @@
                     </div>
                 @endforeach
             </div>
+            @endif
 
             <!-- Quick Actions -->
             <div class="row g-4">

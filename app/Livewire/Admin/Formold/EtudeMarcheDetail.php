@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Admin;
+namespace App\Livewire\Admin\Formold;
 
 use Livewire\Component;
 use App\Models\EtudeMarche;

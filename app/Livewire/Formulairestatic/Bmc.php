@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Formulairestatic;
 
 use Livewire\Attributes\Layout;
 use Livewire\Component;

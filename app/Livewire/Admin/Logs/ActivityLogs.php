@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Admin;
+namespace App\Livewire\Admin\Logs;
 
 use App\Models\AdminActivityLog;
 use Livewire\Component;

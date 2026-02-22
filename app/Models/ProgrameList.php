@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
 class ProgrameList extends Model
@@ -49,6 +50,19 @@ class ProgrameList extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+    
+    public function candidat()
+    {
+        return $this->hasMany(Candidat::class);
+    }
+
+    public function formulaires(): BelongsToMany
+    {
+        return $this->belongsToMany(DynamicForm::class, 'programe_formulaire', 'programe_id', 'formulaire_id')
+                    ->withPivot('order', 'status', 'is_required')
+                    ->withTimestamps()
+                    ->orderByPivot('order');
     }
 
 

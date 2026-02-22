@@ -26,16 +26,6 @@ class ProgrameCreate extends Component
     public $is_active = true;
     public $created_by = null;
 
-    public function testLivewire()
-    {
-        \Log::info('TEST: Livewire is working!');
-        $this->dispatch('alert', [
-            'type' => 'success',
-            'title' => 'Success',
-            'message' => 'Livewire is working!'
-        ]);
-    }
-
     protected function rules()
     {
         return [
@@ -98,7 +88,6 @@ class ProgrameCreate extends Component
             
             \Log::info('Validation passed');
 
-            // Auto-generate slug from project name
             $this->slug = Str::slug($this->project_name);
 
             $data = [
@@ -155,7 +144,6 @@ class ProgrameCreate extends Component
 
     public function render()
     {
-        // Fetch all addresses from database
         $addresses = Address::all();
         
         return view('livewire.admin.programe.create_project', [

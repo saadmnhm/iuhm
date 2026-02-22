@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Admin;
+namespace App\Livewire\Admin\Support;
 
 use App\Models\SupportTicket;
 use App\Models\AdminActivityLog;

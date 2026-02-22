@@ -78,13 +78,15 @@
                             {{ $project->created_at->format('d M Y') }}
                         </td>
                         <td class="px-6 py-4 text-right space-x-3">
-                        
-                            <button class="text-green-600 hover:text-green-800" title="Edit" onclick="window.location.href='{{ route('admin.programe_zettat.edit') }}'">
+                            <a class="text-blue-600 hover:text-blue-800" title="View Submissions" href="{{ route('admin.project.submissions', $project->id) }}">
+                                <i class="ri-file-list-3-line"></i>
+                            </a>
+                            <a class="text-green-600 hover:text-green-800" title="Edit" href="{{ route('admin.programe_zettat.edit', $project->id) }}">
                                 ✏️
-                            </button>
-                            <button class="text-red-600 hover:text-red-800" title="Delete">
+                            </a>
+                            <a class="text-red-600 hover:text-red-800" title="Delete">
                                 🗑
-                            </button>
+                            </a>
                         </td>
                     </tr>
 

@@ -12,7 +12,7 @@ class DynamicFormSubmission extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'dynamic_form_id', 'candidat_id', 'status', 'current_step',
+        'dynamic_form_id', 'candidat_id', 'user_id', 'programe_id', 'status', 'current_step',
         'submitted_at', 'reviewed_at', 'review_notes', 'reviewed_by',
     ];
 
@@ -29,6 +29,16 @@ class DynamicFormSubmission extends Model
     public function candidat(): BelongsTo
     {
         return $this->belongsTo(Candidat::class);
+    }
+    
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+    
+    public function programe(): BelongsTo
+    {
+        return $this->belongsTo(ProgrameList::class, 'programe_id');
     }
 
     public function reviewer(): BelongsTo

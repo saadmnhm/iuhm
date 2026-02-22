@@ -1,19 +1,187 @@
 <?php
-
 namespace App\Livewire\Admin\Programe;
 
 use App\Models\BusinessPlan;
 use Livewire\Component;
+use App\Models\Address; 
+use App\Models\ProgrameList;
+use App\Models\DynamicForm;
 use App\Models\Candidat;
 use Livewire\WithPagination;
 
 class ProgrameEdit extends Component{
 
+    public $programeId;
+    public $project_name;
+    public $status = 'Active';
+    public $description;
+    public $min_age;
+    public $max_age;
+    public $allowed_address_id = [];
+    
+    // Formulaire management
+    public $showFormulaireModal = false;
+    public $availableFormulaires = [];
+    public $attachedFormulaires = [];
+    public $selectedFormulaire = null;
+    public $formulaireOrder = 1;
+    public $formulaireStatus = 'active';
+    public $formulaireRequired = true;
+    
+    public function mount($id)
+    {
+        $this->programeId = $id;
+        $programe = ProgrameList::findOrFail($id);
+        
+        $this->project_name = $programe->project_name;
+        $this->status = $programe->status ?? 'Active';
+        $this->description = $programe->description;
+        $this->min_age = $programe->min_age;
+        $this->max_age = $programe->max_age;
+        
+        $this->allowed_address_id = $programe->allowed_address_id 
+            ? (is_array($programe->allowed_address_id) 
+                ? $programe->allowed_address_id 
+                : json_decode($programe->allowed_address_id, true)) 
+            : [];
+            
+        $this->loadFormulaires();
+    }
+    
+    public function loadFormulaires()
+    {
+        $programe = ProgrameList::findOrFail($this->programeId);
+        $this->attachedFormulaires = $programe->formulaires()->get()->map(function($form) {
+            return [
+                'id' => $form->id,
+                'title' => $form->title,
+                'title_ar' => $form->title_ar,
+                'order' => $form->pivot->order,
+                'status' => $form->pivot->status,
+                'is_required' => $form->pivot->is_required,
+                'has_introduction' => $form->has_introduction,
+            ];
+        })->toArray();
+        
+        // Get all available formulaires that are not yet attached
+        $attachedIds = collect($this->attachedFormulaires)->pluck('id')->toArray();
+        $this->availableFormulaires = DynamicForm::whereNotIn('id', $attachedIds)
+            ->where('is_active', true)
+            ->get()
+            ->map(function($form) {
+                return [
+                    'id' => $form->id,
+                    'title' => $form->title,
+                    'title_ar' => $form->title_ar,
+                ];
+            })->toArray();
+    }
+    
+    public function openFormulaireModal()
+    {
+        $this->loadFormulaires();
+        $this->showFormulaireModal = true;
+        $this->selectedFormulaire = null;
+        $this->formulaireOrder = count($this->attachedFormulaires) + 1;
+        $this->formulaireStatus = 'active';
+        $this->formulaireRequired = true;
+    }
+    
+    public function closeFormulaireModal()
+    {
+        $this->showFormulaireModal = false;
+        $this->selectedFormulaire = null;
+    }
+    
+    public function attachFormulaire()
+    {
+        $this->validate([
+            'selectedFormulaire' => 'required|exists:dynamic_forms,id',
+            'formulaireOrder' => 'required|integer|min:1',
+            'formulaireStatus' => 'required|in:active,inactive,draft',
+        ]);
+        
+        $programe = ProgrameList::findOrFail($this->programeId);
+        
+        // Check if already attached
+        if ($programe->formulaires()->where('formulaire_id', $this->selectedFormulaire)->exists()) {
+            session()->flash('error', 'Ce formulaire est déjà attaché à ce projet.');
+            return;
+        }
+        
+        $programe->formulaires()->attach($this->selectedFormulaire, [
+            'order' => $this->formulaireOrder,
+            'status' => $this->formulaireStatus,
+            'is_required' => $this->formulaireRequired,
+        ]);
+        
+        $this->loadFormulaires();
+        $this->closeFormulaireModal();
+        session()->flash('message', 'Formulaire attaché avec succès!');
+    }
+    
+    public function detachFormulaire($formulaireId)
+    {
+        $programe = ProgrameList::findOrFail($this->programeId);
+        $programe->formulaires()->detach($formulaireId);
+        $this->loadFormulaires();
+        session()->flash('message', 'Formulaire détaché avec succès!');
+    }
+    
+    public function updateFormulaireOrder($formulaireId, $newOrder)
+    {
+        $programe = ProgrameList::findOrFail($this->programeId);
+        $programe->formulaires()->updateExistingPivot($formulaireId, ['order' => $newOrder]);
+        $this->loadFormulaires();
+    }
+    
+    public function updateFormulaireStatus($formulaireId, $newStatus)
+    {
+        $programe = ProgrameList::findOrFail($this->programeId);
+        $programe->formulaires()->updateExistingPivot($formulaireId, ['status' => $newStatus]);
+        $this->loadFormulaires();
+    }
+    
+    public function toggleFormulaireRequired($formulaireId)
+    {
+        $programe = ProgrameList::findOrFail($this->programeId);
+        $formulaire = collect($this->attachedFormulaires)->firstWhere('id', $formulaireId);
+        $newRequired = !$formulaire['is_required'];
+        $programe->formulaires()->updateExistingPivot($formulaireId, ['is_required' => $newRequired]);
+        $this->loadFormulaires();
+    }
+
+    public function save()
+    {
+        $this->validate([
+            'project_name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'min_age' => 'required|integer|min:0',
+            'max_age' => 'required|integer|min:0|gte:min_age',
+            'allowed_address_id' => 'nullable|array',
+        ]);
+
+        $programe = ProgrameList::findOrFail($this->programeId);
+        
+        $programe->update([
+            'project_name' => $this->project_name,
+            'status' => $this->status,
+            'description' => $this->description,
+            'min_age' => $this->min_age,
+            'max_age' => $this->max_age,
+            // FIX: Ensure it's saved as JSON
+            'allowed_address_id' => json_encode($this->allowed_address_id),
+        ]);
+
+        session()->flash('message', 'Programme mis à jour avec succès!');
+        
+        return redirect()->route('admin.programe_zettat');
+    }
 
     public function render()
     {
-
-        return view('livewire.admin.programe.edit_project', [
-        ])->layout('layouts.admin', ['header' => 'Edit Project']);
+        $addresses = Address::all();
+        return view('livewire.admin.programe.edit_project', compact('addresses'))
+            ->layout('layouts.admin', ['header' => 'Edit Project', 'adresses' => $addresses]);
     }
 }

@@ -7,13 +7,13 @@ use App\Models\Candidat;
 use App\Models\ProgrameList as Project_list;
 use Livewire\WithPagination;
 
-class ProgrameList extends Component
+class ProgrameForm extends Component
 {
     use WithPagination;
 
     public function render()
     {
-        return view('livewire.admin.programe.project_list', [
+        return view('livewire.front.programe.project_form', [
             'projects' => Project_list::with('user')->paginate(10), 
         ])->layout('layouts.admin', ['header' => 'Projects Management']);
     }

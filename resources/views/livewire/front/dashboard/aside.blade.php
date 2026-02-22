@@ -11,65 +11,84 @@
                     <span>Home</span>
                 </a>
             </li>
-            
-            @foreach($programe_list ?? [] as $list)
-                <li class="nav-item">
-                    <a href="{{ route('form.etude_marche') }}" class="nav-link {{ request()->routeIs('form.etude_marche') ? 'active' : '' }}">
-                        <i class="ri-search-eye-line fs-5"></i>
-                        <span>{{ $list->project_name }}</span>
-                    </a>
-                </li>
-            @endforeach 
-
             <div x-data="{ open: false }">
-                <!-- Parent -->
-                <button @click="open = !open" class="flex w-full items-center justify-between gap-3 px-4 py-3 rounded-lg transition hover:bg-gray-100">
-                    <div class="flex items-center gap-3">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3" />
-                        </svg>
-                        <span>Formulaires</span>
-                        <!-- Arrow -->
-                        <svg :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" >
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
+                @foreach($programe_list ?? [] as $list)
+                    <button @click="open = !open" class="flex w-full items-center justify-between gap-3 px-4 py-3 rounded-lg transition hover:bg-gray-100">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3" />
+                            </svg>
+                            <span>Projets</span>
+                            <!-- Arrow -->
+                            <svg :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" >
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </button>
+                    <div x-show="open" x-collapse class="ml-3 mt-1 space-y-1">
+                        <li class="nav-item">
+                            <a href="{{ route('form.project.detail', $list->id) }}" class="nav-link {{ request()->routeIs('form.project.detail') && request()->route('id') == $list->id ? 'active' : '' }}">
+                                <i class="ri-folder-open-line fs-5"></i>
+                                <span>{{ $list->project_name }}</span>
+                            </a>
+                        </li>
                     </div>
-                </button>
-                <!-- Children -->
-                <div x-show="open" x-collapse class="ml-3 mt-1 space-y-1">
-                    <li class="nav-item">
-                        <a href="{{ route('form.etude_marche') }}" class="nav-link {{ request()->routeIs('form.etude_marche') ? 'active' : '' }}">
-                            <i class="ri-search-eye-line fs-5"></i>
-                            <span>Etude De Marche</span>
-                        </a>
-                    </li>                
-                    <li class="nav-item">
-                        <a href="{{ route('form.evaluation_idee') }}" class="nav-link {{ request()->routeIs('form.evaluation_idee') ? 'active' : '' }}">
-                            <i class="ri-lightbulb-line fs-5"></i>
-                            <span>Evaluation Idee</span>
-                        </a>
-                    </li> 
-                    <li class="nav-item">
-                        <a href="{{ route('form.bilan_competences') }}" class="nav-link {{ request()->routeIs('form.bilan_competences') ? 'active' : '' }}">
-                            <i class="ri-user-star-line fs-5"></i>
-                            <span>Bilan Competences</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ route('form.bmc') }}" class="nav-link {{ request()->routeIs('form.bmc') ? 'active' : '' }}">
-                            <i class="ri-layout-grid-line fs-5"></i>
-                            <span>Business model canevas</span>
-                        </a>
-                    </li> 
-                    <li class="nav-item">
-                        <a href="{{ route('form.business_plan') }}" class="nav-link {{ request()->routeIs('form.business_plan') ? 'active' : '' }}">
-                            <i class="ri-bar-chart-box-line fs-5"></i>
-                            <span>Business Plan</span>
-                        </a>
-                    </li>
-                </div>
+                @endforeach 
             </div>
+            
+            @if(false)  
+
+                <div x-data="{ open: false }">
+                    <!-- Parent -->
+                    <button @click="open = !open" class="flex w-full items-center justify-between gap-3 px-4 py-3 rounded-lg transition hover:bg-gray-100">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3" />
+                            </svg>
+                            <span>Formulaires</span>
+                            <!-- Arrow -->
+                            <svg :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" >
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
+                    </button>
+                    <!-- Children -->
+                    <div x-show="open" x-collapse class="ml-3 mt-1 space-y-1">
+                        <li class="nav-item">
+                            <a href="{{ route('form.etude_marche') }}" class="nav-link {{ request()->routeIs('form.etude_marche') ? 'active' : '' }}">
+                                <i class="ri-search-eye-line fs-5"></i>
+                                <span>Etude De Marche</span>
+                            </a>
+                        </li>                
+                        <li class="nav-item">
+                            <a href="{{ route('form.evaluation_idee') }}" class="nav-link {{ request()->routeIs('form.evaluation_idee') ? 'active' : '' }}">
+                                <i class="ri-lightbulb-line fs-5"></i>
+                                <span>Evaluation Idee</span>
+                            </a>
+                        </li> 
+                        <li class="nav-item">
+                            <a href="{{ route('form.bilan_competences') }}" class="nav-link {{ request()->routeIs('form.bilan_competences') ? 'active' : '' }}">
+                                <i class="ri-user-star-line fs-5"></i>
+                                <span>Bilan Competences</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('form.bmc') }}" class="nav-link {{ request()->routeIs('form.bmc') ? 'active' : '' }}">
+                                <i class="ri-layout-grid-line fs-5"></i>
+                                <span>Business model canevas</span>
+                            </a>
+                        </li> 
+                        <li class="nav-item">
+                            <a href="{{ route('form.business_plan') }}" class="nav-link {{ request()->routeIs('form.business_plan') ? 'active' : '' }}">
+                                <i class="ri-bar-chart-box-line fs-5"></i>
+                                <span>Business Plan</span>
+                            </a>
+                        </li>
+                    </div>
+                </div>
+            @endif
 
 
             <li class="nav-item mt-3">

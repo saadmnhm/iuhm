@@ -68,7 +68,118 @@
         @endforeach
     </div>
 
-    <!-- Forms Grid -->
+    <!-- Dynamic Form Submissions Section -->
+    @if($dynamicSubs->count() > 0)
+    <div class="mb-8">
+        <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <i class="ri-file-list-3-line text-indigo-600"></i>
+            Formulaires Dynamiques
+            <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-sm font-semibold">{{ $dynamicSubs->count() }}</span>
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+            @foreach($dynamicSubs as $sub)
+            <div class="bg-white rounded-xl shadow-sm border-2 overflow-hidden hover:shadow-lg transition-all"
+                 style="border-color: {{ $sub->form->color ?? '#6366f1' }}30;">
+                
+                <!-- Card Header -->
+                <div class="p-5" style="background: linear-gradient(135deg, {{ $sub->form->color ?? '#6366f1' }}10 0%, transparent 100%);">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl shadow-md"
+                             style="background-color: {{ $sub->form->color ?? '#6366f1' }};">
+                            <i class="{{ $sub->form->icon ?? 'ri-file-list-3-line' }}"></i>
+                        </div>
+                        
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold
+                            @if($sub->status == 'draft') bg-yellow-100 text-yellow-800
+                            @elseif($sub->status == 'submitted') bg-blue-100 text-blue-800
+                            @elseif($sub->status == 'in_review') bg-purple-100 text-purple-800
+                            @elseif($sub->status == 'approved') bg-green-100 text-green-800
+                            @elseif($sub->status == 'rejected') bg-red-100 text-red-800
+                            @else bg-gray-100 text-gray-600
+                            @endif">
+                            {{ $sub->status_label }}
+                        </span>
+                    </div>
+                    
+                    <h3 class="text-lg font-bold text-gray-900">{{ $sub->form->title ?? 'Formulaire' }}</h3>
+                    @if($sub->form->title_ar ?? false)
+                        <p class="text-sm text-gray-600" dir="rtl">{{ $sub->form->title_ar }}</p>
+                    @endif
+                </div>
+
+                <!-- Card Body -->
+                <div class="p-5 pt-2">
+                    <div class="space-y-2 mb-4">
+                        @if($sub->programe)
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500"><i class="ri-folder-line mr-1"></i> Projet:</span>
+                            <span class="font-medium text-gray-900">{{ $sub->programe->project_name }}</span>
+                        </div>
+                        @endif
+
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">ID:</span>
+                            <span class="font-medium text-gray-900">#{{ $sub->id }}</span>
+                        </div>
+
+                        @if($sub->status === 'draft')
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">Progression:</span>
+                            <span class="font-medium text-gray-900">Étape {{ $sub->current_step }} / {{ $sub->form->steps()->count() }}</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2 mt-1">
+                            @php $totalSteps = $sub->form->steps()->count(); @endphp
+                            <div class="bg-yellow-500 h-2 rounded-full" style="width: {{ $totalSteps > 0 ? ($sub->current_step / $totalSteps) * 100 : 0 }}%"></div>
+                        </div>
+                        @endif
+
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">Créé le:</span>
+                            <span class="font-medium text-gray-900">{{ $sub->created_at->format('d/m/Y H:i') }}</span>
+                        </div>
+
+                        @if($sub->submitted_at)
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">Soumis le:</span>
+                            <span class="font-medium text-gray-900">{{ $sub->submitted_at->format('d/m/Y H:i') }}</span>
+                        </div>
+                        @endif
+
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">Réponses:</span>
+                            <span class="font-medium text-gray-900">{{ $sub->answers()->count() }} champs remplis</span>
+                        </div>
+                    </div>
+
+                    <!-- Action Button -->
+                    <div class="mt-4">
+                        <a href="{{ route('admin.formulaires.submission.detail', $sub->id) }}" 
+                           class="block w-full text-center px-4 py-3 text-white font-semibold rounded-lg transition hover:opacity-90"
+                           style="background-color: {{ $sub->form->color ?? '#6366f1' }};">
+                            <i class="ri-eye-line mr-2"></i> Voir les détails
+                        </a>
+                    </div>
+                </div>
+
+                @if($sub->review_notes)
+                <div class="px-5 py-3 bg-yellow-50 border-t border-yellow-100">
+                    <p class="text-xs font-semibold text-yellow-800 mb-1">
+                        <i class="ri-file-text-line"></i> Notes de révision
+                    </p>
+                    <p class="text-xs text-yellow-700">{{ Str::limit($sub->review_notes, 80) }}</p>
+                </div>
+                @endif
+            </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
+
+    <!-- Legacy Forms Grid -->
+    <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+        <i class="ri-apps-line text-indigo-600"></i>
+        Formulaires Standards
+    </h2>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @foreach($formStatus as $type => $data)
         <div class="bg-white rounded-xl shadow-sm border-2 
@@ -123,8 +234,6 @@
                             <span class="font-medium text-gray-900">#{{ $submission->id }}</span>
                         </div>
                         
-
-                        
                         <div class="flex justify-between text-sm">
                             <span class="text-gray-500">Créé le:</span>
                             <span class="font-medium text-gray-900">{{ $submission->created_at->format('d/m/Y') }}</span>
@@ -136,8 +245,6 @@
                             <span class="font-medium text-gray-900">{{ $submission->submitted_at->format('d/m/Y') }}</span>
                         </div>
                         @endif
-                        
-                        
                     </div>
 
                     <!-- Action Button -->

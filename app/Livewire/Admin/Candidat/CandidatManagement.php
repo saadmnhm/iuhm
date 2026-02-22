@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Admin;
+namespace App\Livewire\Admin\Candidat;
 
 use Propaganistas\LaravelPhone\PhoneNumber;
 use App\Models\Candidat;

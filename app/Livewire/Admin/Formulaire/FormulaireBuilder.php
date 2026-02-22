@@ -25,6 +25,14 @@ class FormulaireBuilder extends Component
     public string $bg_color = '#ffffff';
     public bool $is_active = true;
     public bool $has_steps = true;
+    
+    // Introduction page
+    public bool $has_introduction = false;
+    public string $introduction_title = '';
+    public string $introduction_title_ar = '';
+    public string $introduction_content = '';
+    public string $introduction_content_ar = '';
+    public bool $showIntroductionModal = false;
 
     // Builder state
     public string $activeTab = 'settings'; // settings, steps, preview
@@ -136,6 +144,13 @@ class FormulaireBuilder extends Component
         $this->bg_color = $form->bg_color;
         $this->is_active = $form->is_active;
         $this->has_steps = $form->has_steps;
+        
+        // Load introduction page data
+        $this->has_introduction = $form->has_introduction ?? false;
+        $this->introduction_title = $form->introduction_title ?? '';
+        $this->introduction_title_ar = $form->introduction_title_ar ?? '';
+        $this->introduction_content = $form->introduction_content ?? '';
+        $this->introduction_content_ar = $form->introduction_content_ar ?? '';
 
         if ($form->steps->isNotEmpty() && !$this->activeStepId) {
             $this->activeStepId = $form->steps->first()->id;
@@ -165,6 +180,11 @@ class FormulaireBuilder extends Component
             'bg_color' => $this->bg_color,
             'is_active' => $this->is_active,
             'has_steps' => $this->has_steps,
+            'has_introduction' => $this->has_introduction,
+            'introduction_title' => $this->introduction_title ?: null,
+            'introduction_title_ar' => $this->introduction_title_ar ?: null,
+            'introduction_content' => $this->introduction_content ?: null,
+            'introduction_content_ar' => $this->introduction_content_ar ?: null,
         ];
 
         if ($this->formId) {
@@ -187,6 +207,63 @@ class FormulaireBuilder extends Component
             
             // Redirect to edit page
             return redirect()->route('admin.formulaires.edit', $this->formId);
+        }
+    }
+    
+    // ============ INTRODUCTION PAGE ============
+    
+    public function openIntroductionModal()
+    {
+        $this->showIntroductionModal = true;
+    }
+    
+    public function closeIntroductionModal()
+    {
+        $this->showIntroductionModal = false;
+    }
+    
+    public function saveIntroductionPage()
+    {
+        $this->validate([
+            'introduction_title' => 'required|string|max:500',
+            'introduction_content' => 'required|string',
+        ]);
+        
+        if ($this->formId) {
+            DynamicForm::findOrFail($this->formId)->update([
+                'has_introduction' => true,
+                'introduction_title' => $this->introduction_title,
+                'introduction_title_ar' => $this->introduction_title_ar ?: null,
+                'introduction_content' => $this->introduction_content,
+                'introduction_content_ar' => $this->introduction_content_ar ?: null,
+            ]);
+            
+            $this->has_introduction = true;
+            $this->closeIntroductionModal();
+            $this->dispatch('alert', type: 'success', title: 'Sauvegardé', message: 'Page d\'introduction créée avec succès!');
+        } else {
+            $this->dispatch('alert', type: 'error', title: 'Erreur', message: 'Veuillez d\'abord sauvegarder le formulaire.');
+        }
+    }
+    
+    public function deleteIntroductionPage()
+    {
+        if ($this->formId) {
+            DynamicForm::findOrFail($this->formId)->update([
+                'has_introduction' => false,
+                'introduction_title' => null,
+                'introduction_title_ar' => null,
+                'introduction_content' => null,
+                'introduction_content_ar' => null,
+            ]);
+            
+            $this->has_introduction = false;
+            $this->introduction_title = '';
+            $this->introduction_title_ar = '';
+            $this->introduction_content = '';
+            $this->introduction_content_ar = '';
+            
+            $this->dispatch('alert', type: 'success', title: 'Supprimé', message: 'Page d\'introduction supprimée.');
         }
     }
 

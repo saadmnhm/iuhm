@@ -191,6 +191,61 @@
     {{-- ==================== STEPS & QUESTIONS TAB ==================== --}}
     <div x-show="activeTab === 'steps'" x-transition>
         @if($formId)
+        
+        <!-- Introduction Page Section -->
+        <div class="mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl shadow-sm border border-blue-100 p-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <i class="ri-book-open-line text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">Page d'Introduction</h3>
+                        <p class="text-sm text-gray-600">
+                            @if($has_introduction)
+                                Introduction page is active - it will be shown before the first step
+                            @else
+                                Add an introduction page to display before the form steps
+                            @endif
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    @if($has_introduction)
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            <i class="ri-check-line mr-1"></i> Active
+                        </span>
+                        <button wire:click="openIntroductionModal"
+                            class="px-4 py-2 text-sm text-blue-600 hover:bg-blue-100 rounded-lg transition">
+                            <i class="ri-edit-line"></i> Edit
+                        </button>
+                        <button wire:click="deleteIntroductionPage"
+                            wire:confirm="Are you sure you want to delete the introduction page?"
+                            class="px-4 py-2 text-sm text-red-600 hover:bg-red-100 rounded-lg transition">
+                            <i class="ri-delete-bin-line"></i> Delete
+                        </button>
+                    @else
+                        <button wire:click="openIntroductionModal"
+                            class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                            <i class="ri-add-line"></i> Create Introduction Page
+                        </button>
+                    @endif
+                </div>
+            </div>
+            
+            @if($has_introduction && $introduction_title)
+                <div class="mt-4 p-4 bg-white rounded-lg border border-blue-200">
+                    <h4 class="font-medium text-gray-800">{{ $introduction_title }}</h4>
+                    @if($introduction_title_ar)
+                        <p class="text-sm text-gray-500 mt-1" dir="rtl">{{ $introduction_title_ar }}</p>
+                    @endif
+                    <div class="mt-2 text-sm text-gray-600 line-clamp-3">
+                        {!! nl2br(e(Str::limit($introduction_content, 200))) !!}
+                    </div>
+                </div>
+            @endif
+        </div>
+        
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
             {{-- Steps Sidebar --}}
             <div class="lg:col-span-1">
@@ -1090,6 +1145,127 @@
             </div>
         </div>
     @endif
-</div>
 
+    {{-- ==================== INTRODUCTION PAGE MODAL ==================== --}}
+    @if($showIntroductionModal)
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" 
+             wire:click.self="closeIntroductionModal"
+             x-data x-transition>
+            <div class="bg-white rounded-2xl shadow-xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto">
+                <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                        <i class="ri-book-open-line text-blue-600"></i>
+                        {{ $has_introduction ? 'Modifier' : 'Créer' }} la Page d'Introduction
+                    </h3>
+                    <button wire:click="closeIntroductionModal" 
+                            class="p-2 text-gray-400 hover:text-gray-600 rounded-lg transition">
+                        <i class="ri-close-line text-lg"></i>
+                    </button>
+                </div>
 
+                <div class="p-6 space-y-6">
+                    <!-- Info Banner -->
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div class="flex gap-3">
+                            <i class="ri-information-line text-blue-600 text-xl"></i>
+                            <div class="flex-1">
+                                <h4 class="font-medium text-blue-900 mb-1">About Introduction Pages</h4>
+                                <p class="text-sm text-blue-700">
+                                    The introduction page will be displayed first when users open this formulaire, 
+                                    before they see the form steps. Use it to explain the purpose, provide instructions, 
+                                    or list requirements.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Title Fields -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Title <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" 
+                                   wire:model="introduction_title"
+                                   placeholder="e.g., Welcome to the Business Plan Form"
+                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none text-sm">
+                            @error('introduction_title') 
+                                <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> 
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Title (Arabic)
+                            </label>
+                            <input type="text" 
+                                   wire:model="introduction_title_ar"
+                                   dir="rtl"
+                                   placeholder="العنوان بالعربية"
+                                   class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none text-sm">
+                        </div>
+                    </div>
+
+                    <!-- Content Fields -->
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Content <span class="text-red-500">*</span>
+                            </label>
+                            <textarea wire:model="introduction_content"
+                                      rows="12"
+                                      placeholder="Enter the introduction content here. You can include:&#10;• Instructions for filling the form&#10;• Required documents list&#10;• Eligibility criteria&#10;• Important notes&#10;&#10;Use line breaks for better formatting."
+                                      class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none text-sm font-mono"></textarea>
+                            @error('introduction_content') 
+                                <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> 
+                            @enderror
+                            <p class="text-xs text-gray-500 mt-2">
+                                <i class="ri-lightbulb-line"></i> 
+                                Tip: Use bullet points (•) and numbered lists for better readability
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Content (Arabic)
+                            </label>
+                            <textarea wire:model="introduction_content_ar"
+                                      rows="12"
+                                      dir="rtl"
+                                      placeholder="أدخل محتوى المقدمة هنا"
+                                      class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none text-sm"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Preview -->
+                    @if($introduction_title || $introduction_content)
+                        <div class="border-t pt-6">
+                            <h4 class="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                                <i class="ri-eye-line"></i> Preview
+                            </h4>
+                            <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                                @if($introduction_title)
+                                    <h2 class="text-2xl font-bold text-gray-900 mb-4">{{ $introduction_title }}</h2>
+                                @endif
+                                @if($introduction_content)
+                                    <div class="prose prose-sm max-w-none text-gray-700 whitespace-pre-wrap">{{ $introduction_content }}</div>
+                                @endif
+                            </div>
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-end gap-3 sticky bottom-0 bg-white">
+                    <button wire:click="closeIntroductionModal"
+                            class="px-5 py-2.5 text-sm text-gray-600 hover:bg-gray-50 rounded-lg transition">
+                        Cancel
+                    </button>
+                    <button wire:click="saveIntroductionPage"
+                            class="px-6 py-2.5 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition flex items-center gap-2">
+                        <i class="ri-save-line"></i>
+                        {{ $has_introduction ? 'Update' : 'Create' }} Introduction Page
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif

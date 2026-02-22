@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Admin;
+namespace App\Livewire\Admin\Project;
 
 use App\Models\BusinessPlan;
 use App\Models\Candidat;

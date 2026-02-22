@@ -43,4 +43,11 @@ class DashboardController extends Controller
 
         return redirect()->back()->with('success', 'Address added successfully!');
     }
+    public function DeleteAddess($id)
+    {
+        $address = Address::findOrFail($id);
+        $address->delete();
+
+        return redirect()->back()->with('success', 'Address deleted successfully!');
+    }
 }

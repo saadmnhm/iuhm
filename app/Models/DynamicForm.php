@@ -15,11 +15,14 @@ class DynamicForm extends Model
         'title', 'title_ar', 'introduction', 'introduction_ar',
         'slug', 'icon', 'color', 'bg_color',
         'is_active', 'has_steps', 'sort_order',
+        'has_introduction', 'introduction_title', 'introduction_title_ar',
+        'introduction_content', 'introduction_content_ar',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
         'has_steps' => 'boolean',
+        'has_introduction' => 'boolean',
     ];
 
     protected static function booted(): void

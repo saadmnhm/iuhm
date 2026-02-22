@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use App\Models\ProgrameList;
+use App\Models\Address;     
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,8 +25,9 @@ class AppServiceProvider extends ServiceProvider
         // Set locale from session or default to 'ar'
         $locale = session('locale', 'fr');
         app()->setLocale($locale);
-                View::composer('*', function ($view) {
+        View::composer('*', function ($view) {
             $view->with('programe_list', ProgrameList::all());
+            $view->with('addresses', Address::paginate(10));
         });
     }
 }

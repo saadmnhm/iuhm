@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Livewire\Admin;
+namespace App\Livewire\Admin\Candidat;
 
 use Livewire\Component;
 use App\Models\Candidat;
+use App\Models\DynamicFormSubmission;
 use App\Services\FormSubmissionService;
 
 class CandidatSubmissions extends Component
@@ -11,14 +12,22 @@ class CandidatSubmissions extends Component
     public $candidat;
     public $candidatId;
     public $submissions = [];
+    public $dynamicSubmissions = [];
 
     public function mount($id)
     {
         $this->candidatId = $id;
         $this->candidat = Candidat::findOrFail($id);
         
+        // Legacy form submissions
         $formService = app(FormSubmissionService::class);
         $this->submissions = $formService->getCandidatSubmissions($this->candidatId);
+        
+        // Dynamic form submissions
+        $this->dynamicSubmissions = DynamicFormSubmission::with(['form', 'programe'])
+            ->where('candidat_id', $this->candidatId)
+            ->orderByDesc('updated_at')
+            ->get();
     }
 
     public function getFormStatusProperty()
@@ -77,6 +86,7 @@ class CandidatSubmissions extends Component
     {
         return view('livewire.admin.candidat-submissions', [
             'formStatus' => $this->formStatus,
+            'dynamicSubs' => $this->dynamicSubmissions,
         ])->layout('layouts.admin', ['header' => 'Soumissions de ' . $this->candidat->nom . ' ' . $this->candidat->prenom]);
     }
 }
