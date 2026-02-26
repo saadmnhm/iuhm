@@ -40,9 +40,14 @@
     document.addEventListener('livewire:init', () => {
         Livewire.hook('request', ({ fail }) => {
             fail(({ status, preventDefault }) => {
-                if (status === 419) { // CSRF token mismatch
+                if (status === 419) { // CSRF token mismatch / session expired
                     preventDefault();
-                    window.location.reload();
+                    // Show a brief notification before reloading
+                    const toast = document.createElement('div');
+                    toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#f57c00;color:#fff;padding:14px 28px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.2);';
+                    toast.textContent = 'Session expirée. Actualisation en cours…';
+                    document.body.appendChild(toast);
+                    setTimeout(() => window.location.reload(), 1500);
                 }
             });
         });

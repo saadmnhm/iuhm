@@ -1,4 +1,4 @@
-<div class="p-8 bg-gray-50 min-h-screen">
+<div x-data="deleteModal()" x-cloak class="p-8 bg-gray-50 min-h-screen">
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <!-- Total Projects -->
         <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition">
@@ -84,9 +84,10 @@
                             <a class="text-green-600 hover:text-green-800" title="Edit" href="{{ route('admin.programe_zettat.edit', $project->id) }}">
                                 ✏️
                             </a>
-                            <a class="text-red-600 hover:text-red-800" title="Delete">
+                            <button type="button" class="text-red-600 hover:text-red-800" title="Delete"
+                                @click.prevent="open({{ $project->id }}, '{{ addslashes($project->project_name) }}')">
                                 🗑
-                            </a>
+                            </button>
                         </td>
                     </tr>
 
@@ -96,4 +97,40 @@
         </table>
     </div>
 
+    <!-- Delete Confirmation Modal (Alpine + Tailwind) -->
+    <div x-show="show" x-transition.opacity class="fixed inset-0 z-40 flex items-center justify-center bg-black/40">
+        <div @click.away="show = false" x-show="show" x-transition class="bg-white rounded-lg shadow-lg max-w-lg w-full mx-4">
+            <div class="px-6 py-4 border-b">
+                <h3 class="text-lg font-semibold">Confirmer la suppression</h3>
+            </div>
+            <div class="p-6">
+                <p class="text-sm text-gray-600" x-text="modalText">Voulez-vous vraiment supprimer cet élément ? Cette action est irréversible.</p>
+            </div>
+            <div class="px-6 py-4 border-t flex justify-end gap-3">
+                <button @click.prevent="show = false" type="button" class="px-4 py-2 rounded bg-gray-200 text-gray-700">Annuler</button>
+                <button @click="$wire.delete(deleteId); show = false" type="button" class="px-4 py-2 rounded bg-red-600 text-white">Supprimer</button>
+            </div>
+        </div>
+    </div>
+
 </div>
+
+<script>
+    function deleteModal() {
+        return {
+            show: false,
+            deleteId: null,
+            deleteName: '',
+            get modalText() {
+                return this.deleteName ? `Voulez-vous vraiment supprimer "${this.deleteName}" ? Cette action est irréversible.` : 'Voulez-vous vraiment supprimer cet élément ? Cette action est irréversible.';
+            },
+            open(id, name) {
+                this.deleteId = id;
+                // ensure single quotes don't break attribute
+                this.deleteName = name;
+                this.show = true;
+            }
+        }
+    }
+</script>
+<!-- end file -->

@@ -179,9 +179,18 @@
 
             Livewire.hook('request', ({ fail }) => {
                 fail(({ status, preventDefault }) => {
-                    if (status === 419) { 
+                    if (status === 419) { // CSRF token mismatch / session expired
                         preventDefault();
-                        window.location.reload();
+                        Swal.fire({
+                            title: 'Session Expirée',
+                            text: 'Votre session a expiré. La page va être actualisée.',
+                            icon: 'warning',
+                            confirmButtonColor: '#648454',
+                            confirmButtonText: 'Actualiser',
+                            allowOutsideClick: false,
+                            timer: 5000,
+                            timerProgressBar: true,
+                        }).then(() => window.location.reload());
                     }
                 });
             });
