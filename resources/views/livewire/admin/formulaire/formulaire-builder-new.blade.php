@@ -60,7 +60,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Titre du formulaire <span class="text-red-500">*</span></label>
-                            <input type="text" wire:model.live="title"
+                            <input type="text" wire:model.live.debounce.500ms="title"
                                 class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-sm"
                                 placeholder="Ex: Business Plan">
                             @error('title') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
@@ -74,10 +74,8 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Slug (URL) <span class="text-red-500">*</span></label>
-                            <input type="text" wire:model="slug"
-                                class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-sm font-mono"
-                                placeholder="business-plan">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Slug (URL)</label>
+                            <div class="w-full px-4 py-2.5 rounded-lg border border-gray-100 bg-gray-50 text-sm font-mono text-gray-600 min-h-[42px]">{{ $slug ?: '—' }}</div>
                             @error('slug') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                         </div>
 
@@ -807,7 +805,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Libellé <span class="text-red-500">*</span></label>
-                            <input type="text" wire:model.live="fieldForm.label"
+                            <input type="text" wire:model.live.debounce.500ms="fieldForm.label"
                                 class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 outline-none text-sm"
                                 placeholder="Ex: Quel est votre nom ?">
                         </div>
@@ -820,10 +818,8 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Clé du champ <span class="text-red-500">*</span></label>
-                            <input type="text" wire:model="fieldForm.field_key"
-                                class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 outline-none text-sm font-mono"
-                                placeholder="nom_complet">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Clé du champ</label>
+                            <div class="w-full px-4 py-2.5 rounded-lg border border-gray-100 bg-gray-50 text-sm font-mono text-gray-600 min-h-[42px]">{{ $fieldForm['field_key'] ?: '—' }}</div>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Type <span class="text-red-500">*</span></label>
@@ -933,7 +929,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Titre <span class="text-red-500">*</span></label>
-                            <input type="text" wire:model.live="tableForm.title"
+                            <input type="text" wire:model.live.debounce.500ms="tableForm.title"
                                 class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 outline-none text-sm">
                         </div>
                         <div>
@@ -944,9 +940,8 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Clé du tableau <span class="text-red-500">*</span></label>
-                        <input type="text" wire:model="tableForm.table_key"
-                            class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 outline-none text-sm font-mono">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Clé du tableau</label>
+                        <div class="w-full px-4 py-2.5 rounded-lg border border-gray-100 bg-gray-50 text-sm font-mono text-gray-600 min-h-[42px]">{{ $tableForm['table_key'] ?: '—' }}</div>
                     </div>
 
                     <div class="space-y-3">
@@ -1014,7 +1009,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">En-tête <span class="text-red-500">*</span></label>
-                            <input type="text" wire:model.live="columnForm.header"
+                            <input type="text" wire:model.live.debounce.500ms="columnForm.header"
                                 class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 outline-none text-sm">
                         </div>
                         <div>
@@ -1026,9 +1021,8 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Clé <span class="text-red-500">*</span></label>
-                            <input type="text" wire:model="columnForm.column_key"
-                                class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 outline-none text-sm font-mono">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Clé</label>
+                            <div class="w-full px-4 py-2.5 rounded-lg border border-gray-100 bg-gray-50 text-sm font-mono text-gray-600 min-h-[42px]">{{ $columnForm['column_key'] ?: '—' }}</div>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Type d'entrée <span class="text-red-500">*</span></label>
