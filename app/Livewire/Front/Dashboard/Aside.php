@@ -18,12 +18,7 @@ class Aside extends Component
         $this->candidat = Auth::guard('candidat')->user();
         $this->checkProfileCompletion();
         
-        // Load candidate business plans for dropdown
-        if ($this->candidat) {
-            $this->business_plan = BusinessPlan::where('candidat_id', $this->candidat->id)
-                ->orderBy('created_at', 'desc')
-                ->get();
-        }
+       
     }
 
     public function checkProfileCompletion()
