@@ -80,14 +80,11 @@
                     <!-- Actions -->
                     <div class="flex items-center justify-between border-t border-gray-100 pt-3">
                         <div class="flex items-center gap-2">
-                            <a href="{{ route('admin.formulaires.edit', $form->id) }}"
-                                class="px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition flex items-center gap-1">
-                                <i class="ri-edit-line"></i> Modifier
-                            </a>
-                            <a href="{{ route('admin.formulaires.submissions', $form->id) }}"
+
+                            <!-- <a href="{{ route('admin.formulaires.submission.detail', $form->id) }}"
                                 class="px-3 py-1.5 text-sm text-purple-600 hover:bg-purple-50 rounded-lg transition flex items-center gap-1">
                                 <i class="ri-eye-line"></i> Soumissions
-                            </a>
+                            </a> -->
                         </div>
 
                         <div class="flex items-center gap-1 relative" x-data="{ open: false }">
@@ -101,6 +98,10 @@
                                     <i class="{{ $form->is_active ? 'ri-toggle-fill text-green-500' : 'ri-toggle-line text-gray-400' }}"></i>
                                     {{ $form->is_active ? 'Désactiver' : 'Activer' }}
                                 </button>
+                                <a href="{{ route('admin.formulaires.edit', $form->id) }}"
+                                    class="px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition flex items-center gap-1">
+                                    <i class="ri-edit-line"></i> Modifier
+                                </a>
                                 <button wire:click="duplicateForm({{ $form->id }})"
                                     class="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                                     <i class="ri-file-copy-line text-blue-500"></i> Dupliquer

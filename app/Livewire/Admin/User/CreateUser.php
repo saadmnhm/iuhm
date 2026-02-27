@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\User;
 
+use App\Models\Role;
 use App\Models\User;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
@@ -23,7 +24,7 @@ class CreateUser extends Component
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
-            'role' => 'required|in:user,admin,super_admin',
+            'role' => ['required', 'string', 'in:' . implode(',', Role::pluck('name')->toArray())],
             'is_active' => 'boolean',
         ];
     }

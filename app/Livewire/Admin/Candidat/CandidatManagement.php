@@ -25,6 +25,7 @@ class CandidatManagement extends Component
     public $generatedPassword = '';
     
     public $candidatId;
+    public $matricule;
     public $nom;
     public $prenom;
     public $email;
@@ -38,9 +39,10 @@ class CandidatManagement extends Component
     protected function rules()
     {
         $rules = [
+            'matricule' => 'nullable|string|max:50|unique:candidat,matricule,' . ($this->candidatId ?? 'NULL'),
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
-            'email' => 'required|email|unique:candidats,email,' . ($this->candidatId ?? 'NULL'),
+            'email' => 'required|email|unique:candidat,email,' . ($this->candidatId ?? 'NULL'),
             'address' => 'nullable|string|max:500',
             'phone' => 'nullable|string|max:20',
         ];
@@ -90,6 +92,7 @@ class CandidatManagement extends Component
 
         $candidat = Candidat::findOrFail($candidatId);
         $this->candidatId = $candidat->id;
+        $this->matricule = $candidat->matricule;
         $this->nom = $candidat->nom;
         $this->prenom = $candidat->prenom;
         $this->email = $candidat->email;
@@ -127,16 +130,24 @@ class CandidatManagement extends Component
 
         $this->validate();
 
-        Candidat::create([
+        $candidat = Candidat::create([
+            'matricule' => $this->matricule ?: null,
             'nom' => $this->nom,
             'prenom' => $this->prenom,
             'email' => $this->email,
             'password' => Hash::make($this->password),
         ]);
 
+        AdminActivityLog::log(
+            'candidat_created',
+            "Created candidat: {$candidat->nom} {$candidat->prenom} ({$candidat->email})",
+            Candidat::class,
+            $candidat->id
+        );
+
         $this->showCreateModal = false;
         session()->flash('success', 'Candidat created successfully!');
-        $this->reset(['nom', 'prenom', 'email', 'password', 'candidatId']);
+        $this->reset(['matricule', 'nom', 'prenom', 'email', 'password', 'candidatId']);
     }
 
     public function updateCandidat()
@@ -151,6 +162,7 @@ class CandidatManagement extends Component
         $candidat = Candidat::findOrFail($this->candidatId);
 
         $data = [
+            'matricule' => $this->matricule ?: null,
             'nom' => $this->nom,
             'prenom' => $this->prenom,
             'email' => $this->email,
@@ -161,6 +173,13 @@ class CandidatManagement extends Component
         }
 
         $candidat->update($data);
+
+        AdminActivityLog::log(
+            'candidat_updated',
+            "Updated candidat: {$candidat->nom} {$candidat->prenom} ({$candidat->email})",
+            Candidat::class,
+            $candidat->id
+        );
 
         $this->showEditModal = false;
         session()->flash('success', 'Candidat updated successfully!');
@@ -179,7 +198,15 @@ class CandidatManagement extends Component
             return;
         }
 
-        Candidat::findOrFail($this->candidatId)->delete();
+        $candidat = Candidat::findOrFail($this->candidatId);
+        $candidat->delete();
+
+        AdminActivityLog::log(
+            'candidat_deleted',
+            "Deleted candidat: {$candidat->nom} {$candidat->prenom} ({$candidat->email})",
+            Candidat::class,
+            $candidat->id
+        );
 
         $this->showDeleteModal = false;
         session()->flash('success', 'Candidat deleted successfully!');
@@ -264,16 +291,17 @@ class CandidatManagement extends Component
 
         $candidats = $query->latest()->paginate(10);
 
-        // $statistics = [
-        //     'total_candidats' => Candidat::count(),
-        //     'admins' => Candidat::where('role', 'admin')->count(),
-        //     'super_admins' => Candidat::where('role', 'super_admin')->count(),
-        //     'regular_candidats' => Candidat::where('role', 'user')->count(),
-        // ];
+        $statistics = [
+            'total' => Candidat::count(),
+            'active' => Candidat::where('is_active', true)->count(),
+            'inactive' => Candidat::where('is_active', false)->count(),
+            'new_this_month' => Candidat::whereMonth('created_at', now()->month)
+                                        ->whereYear('created_at', now()->year)->count(),
+        ];
 
         return view('livewire.admin.candidat.candidat-management', [
             'candidats' => $candidats,
-            // 'statistics' => $statistics,
+            'statistics' => $statistics,
         ])->layout('layouts.admin', ['header' => 'Candidat Management']);
     }
 

@@ -1,12 +1,15 @@
-<div class="p-8 bg-gray-50 min-h-screen bg-white rounded-xl shadow-sm p-8 ">
+<div class="bg-gray-50 min-h-screen p-8">
 
     <!-- Page Header -->
-    <div class="mb-8 flex items-center justify-end ">
-        <span class="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800 me-3">Active</span>
-        <a href="{{ route('admin.programe_zettat.edit', $project->id) }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-            Edit Project
-        </a>
-    </div>
+     <div class="bg-white rounded-xl shadow-sm p-3 mb-6 border border-gray-100">
+
+        <div class=" flex items-center justify-end ">
+            <span class="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800 me-3">Active</span>
+            <a href="{{ route('admin.programe.edit', $project->id) }}" class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-700 transition">
+                Edit Project
+            </a>
+        </div>
+     </div>
 
     <!-- Statistic Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -31,8 +34,8 @@
         <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition">
             <div class="flex justify-between items-start">
                 <div>
-                    <p class="text-gray-500 text-sm font-medium">Total Male</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2">2</p>
+                    <p class="text-gray-500 text-sm font-medium">Unique Users</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ $statistics['unique_users'] }}</p>
                 </div>
                 <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                     <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -43,34 +46,30 @@
                 </div>
             </div>
         </div>
-        <!-- Total Users -->
+        <!-- Completed -->
         <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition">
             <div class="flex justify-between items-start">
                 <div>
-                    <p class="text-gray-500 text-sm font-medium">Total Female</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2">2</p>
+                    <p class="text-gray-500 text-sm font-medium">Completed</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ $statistics['completed'] }}</p>
                 </div>
-                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
-                        </path>
+                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                 </div>
             </div>
         </div>
-        <!-- Total Users -->
+        <!-- Completion Rate -->
         <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition">
             <div class="flex justify-between items-start">
                 <div>
-                    <p class="text-gray-500 text-sm font-medium">Average Age</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2">2</p>
+                    <p class="text-gray-500 text-sm font-medium">Completion Rate</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ $statistics['completion_rate'] }}%</p>
                 </div>
-                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
-                        </path>
+                <div class="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                     </svg>
                 </div>
             </div>
@@ -79,7 +78,7 @@
 
     <!-- Form Fields Card -->
     <div class="mb-10 ">
-        <h2 class="text-lg font-medium text-gray-800 mb-4">Form Fields</h2>
+        <h2 class="text-lg font-medium text-gray-800 mb-4">Formulaire Attaché</h2>
         <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
 
             @foreach($statistics['by_formulaire'] as $formulaire)
@@ -118,16 +117,16 @@
         <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
             <h3 class="text-lg font-semibold text-gray-900">Recent Project Submissions</h3>
 
-            <a href="{{ route('admin.form-submissions') }}" class="text-indigo-600 hover:text-indigo-900">Voir tout<i class="ri-arrow-right-long-fill"></i></a>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead class="bg-gray-50">
                     <tr> 
                         <th class="px-4 py-3 text-left font-medium text-gray-600">#</th>
-                        <th class="px-4 py-3 text-left font-medium text-gray-600">Candidat</th>
+                        <th class="px-4 py-3 text-left font-medium text-gray-600 ">Candidat</th>
                         <th class="px-4 py-3 text-left font-medium text-gray-600">Projet</th>
                         <th class="px-4 py-3 text-left font-medium text-gray-600">Statut</th>
+                        <th class="px-4 py-3 text-left font-medium text-gray-600 ">Responsable</th>
                         <th class="px-4 py-3 text-left font-medium text-gray-600">Date</th>
                         <th class="px-4 py-3 text-center font-medium text-gray-600">Actions</th>
                     </tr>
@@ -136,39 +135,57 @@
                     <!--[if BLOCK]><![endif]-->
                     @forelse($userSubmissions as $userSub)
                     <tr class="hover:bg-gray-50 transition">
-                        <td class="px-4 py-3 text-gray-500">{{ $userSub['user']->id ?? 'N/A' }}</td>
-                        <td class="px-4 py-3">
+                        <td class="px-4 py-3 text-gray-500">{{ $userSub->user->id ?? 'N/A' }}</td>
+                        <td class="px-4 py-3 text-center">
                             <div class="flex items-center gap-3">
                                 <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-semibold text-xs">
-                                    @if($userSub['is_candidat'])
-                                            {{ substr($userSub['user']->nom ?? '', 0, 1) }}{{ substr($userSub['user']->prenom ?? '', 0, 1) }}
+                                    @if($userSub->is_candidat)
+                                            {{ substr($userSub->user->nom ?? '', 0, 1) }}{{ substr($userSub->user->prenom ?? '', 0, 1) }}
                                     @else
-                                            {{ substr($userSub['user']->name ?? '', 0, 1) }}
+                                            {{ substr($userSub->user->name ?? '', 0, 1) }}
                                     @endif
                                 </div>
                                 <div>
                                     <div class="font-medium text-gray-800">
-                                        @if($userSub['is_candidat'])
-                                            {{ $userSub['user']->nom }} {{ $userSub['user']->prenom }}
+                                        @if($userSub->is_candidat)
+                                            {{ $userSub->user->nom }} {{ $userSub->user->prenom }}
                                         @else
-                                            {{ $userSub['user']->name }}
+                                            {{ $userSub->user->name }}
                                         @endif
                                     </div>
-                                    <div class="text-xs text-gray-400">{{ $userSub['user']->email ?? 'N/A' }}</div>
+                                    <div class="text-xs text-gray-400">{{ $userSub->user->email ?? 'N/A' }}</div>
                                 </div>
                             </div>
                         </td>
 
-                        <td class="px-4 py-3 text-gray-700">{{ $userSub['project']->title ?? 'N/A' }}</td>
+                        <td class="px-4 py-3 text-gray-700">{{ $project->project_name ?? 'N/A' }}</td>
                         <td class="px-4 py-3">
                             <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
-                                Soumis
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                {{ $userSub->completed > 0 ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
+                                {{ $userSub->completed > 0 ? 'Soumis' : 'Brouillon' }}
                             </span>
                         </td>
-                        <td class="px-4 py-3 text-gray-500 text-xs">07/02/2026 00:18</td>
+                        <td class="px-4 py-3">
+                            @if($userSub->is_candidat && $userSub->user->reviewer)
+                            @php
+                                $rBadge = match($userSub->user->review_status) {
+                                    'approved'  => 'bg-green-100 text-green-800',
+                                    'rejected'  => 'bg-red-100 text-red-800',
+                                    'in_review' => 'bg-purple-100 text-purple-800',
+                                    default     => 'bg-gray-100 text-gray-700',
+                                };
+                            @endphp
+                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium {{ $rBadge }}">
+                                <i class="ri-user-star-line"></i> {{ $userSub->user->reviewer->name }}
+                            </span>
+                            @else
+                            <span class="text-gray-300 text-xs">—</span>
+                            @endif
+                        </td>
+                        <td class="px-4 py-3 text-gray-500 text-xs">{{ $userSub->last_activity ? \Carbon\Carbon::parse($userSub->last_activity)->format('d/m/Y H:i') : 'N/A' }}</td>
                         <td class="px-4 py-3 text-center">
-                            <a href="{{ route('admin.candidat.submissions', $userSub['person_id']) }}"
+                            <a href="{{ route('admin.candidat.submissions', $userSub->person_id) }}"
                                 class="inline-flex items-center px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 transition text-xs font-medium">
                                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -193,6 +210,13 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Pagination -->
+        @if($userSubmissions->hasPages())
+        <div class="px-6 py-4 border-t border-gray-100">
+            {{ $userSubmissions->links() }}
+        </div>
+        @endif
     </div>
 
 </div>

@@ -83,20 +83,20 @@ class Dashboard extends Component
 
         if ($sub['programe_id']) {
             // Project-based formulaire
-            return redirect()->route('form.project.formulaire', [
+            return redirect()->route('user.project.formulaire', [
                 'projectId' => $sub['programe_id'],
                 'formulaireSlug' => $sub['form_slug'],
                 'order' => $sub['order'],
             ]);
         } else {
             // Standalone dynamic form
-            return redirect()->route('form.dynamic_form', $sub['form_slug']);
+            return redirect()->route('user.dynamic_form', $sub['form_slug']);
         }
     }
 
     public function goToSettings()
     {
-        return redirect()->route('form.settings');
+        return redirect()->route('user.settings');
     }
 
     public function getFormTypesProperty()
@@ -106,31 +106,31 @@ class Dashboard extends Component
                 'label' => 'Business Plan',
                 'icon' => 'ri-bar-chart-box-line',
                 'color' => 'primary',
-                'route' => 'form.business_plan',
+                'route' => 'user.business_plan',
             ],
             'etude_marche' => [
                 'label' => 'Étude de Marché',
                 'icon' => 'ri-search-eye-line',
                 'color' => 'info',
-                'route' => 'form.etude_marche',
+                'route' => 'user.etude_marche',
             ],
             'evaluation_idee' => [
                 'label' => 'Évaluation d\'Idée',
                 'icon' => 'ri-lightbulb-line',
                 'color' => 'warning',
-                'route' => 'form.evaluation_idee',
+                'route' => 'user.evaluation_idee',
             ],
             'bmc' => [
                 'label' => 'Business Model Canvas',
                 'icon' => 'ri-layout-grid-line',
                 'color' => 'success',
-                'route' => 'form.bmc',
+                'route' => 'user.bmc',
             ],
             'bilan_competence' => [
                 'label' => 'Bilan de Compétences',
                 'icon' => 'ri-user-star-line',
                 'color' => 'secondary',
-                'route' => 'form.bilan_competences',
+                'route' => 'user.bilan_competences',
             ],
         ];
     }

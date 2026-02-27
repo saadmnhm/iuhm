@@ -20,7 +20,6 @@ class SupportTickets extends Component
     public $showResponseModal = false;
     public $selectedTicketId = null;
     public $adminResponse = '';
-    public $newStatus = '';
     
     protected $paginationTheme = 'tailwind';
 
@@ -40,29 +39,48 @@ class SupportTickets extends Component
     {
         $this->validate([
             'adminResponse' => 'required|string|min:5',
-            'newStatus' => 'required|in:open,in_progress,resolved,closed',
         ]);
 
         $ticket = SupportTicket::findOrFail($this->selectedTicketId);
+        // Auto-advance status: open → in_progress, others stay unless already resolved/closed
+        $newStatus = $ticket->status === 'open' ? 'in_progress' : $ticket->status;
+
         $ticket->update([
             'admin_response' => $this->adminResponse,
-            'status' => $this->newStatus,
+            'status' => $newStatus,
             'assigned_to' => Auth::id(),
             'responded_at' => now(),
         ]);
 
         AdminActivityLog::log(
             'support_ticket_responded',
-            "Responded to support ticket #{$ticket->id}",
+            "Responded to support ticket #{$ticket->id}: status → {$newStatus}",
             SupportTicket::class,
             $ticket->id,
-            ['status' => $this->newStatus]
+            ['status' => $newStatus, 'response_length' => strlen($this->adminResponse)]
         );
 
         $this->showResponseModal = false;
         $this->selectedTicketId = null;
         $this->adminResponse = '';
         session()->flash('success', 'Réponse envoyée avec succès!');
+    }
+
+    public function changeStatus($ticketId, $status)
+    {
+        $allowed = ['open', 'in_progress', 'resolved', 'closed'];
+        if (!in_array($status, $allowed)) return;
+
+        $ticket = SupportTicket::findOrFail($ticketId);
+        $ticket->update(['status' => $status]);
+
+        AdminActivityLog::log(
+            'support_ticket_status_changed',
+            "Ticket #{$ticket->id} status changed to {$status}",
+            SupportTicket::class,
+            $ticket->id,
+            ['old_status' => $ticket->getOriginal('status'), 'new_status' => $status]
+        );
     }
 
     public function closeModal()

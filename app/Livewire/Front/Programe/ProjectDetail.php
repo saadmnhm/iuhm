@@ -12,7 +12,6 @@ class ProjectDetail extends Component
     public $projectId;
     public $project;
     public $formulaires = [];
-    public $userSubmissions = [];
     public $currentFormulaireIndex = null;
     
     public function mount($id)
@@ -90,7 +89,7 @@ class ProjectDetail extends Component
                 }
             }
             
-            return redirect()->route('form.project.formulaire', [
+            return redirect()->route('user.project.formulaire', [
                 'projectId' => $this->projectId,
                 'formulaireSlug' => $formulaire['slug'],
                 'order' => $formulaire['order']

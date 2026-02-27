@@ -73,16 +73,34 @@
     <!-- Users Cards -->
     <div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
-            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-                <h3 class="text-lg font-semibold text-gray-900">All Users</h3>
+            <div class="px-6 py-4 border-b border-gray-100 flex flex-wrap items-center gap-3">
+                <h3 class="text-lg font-semibold text-gray-900 mr-auto">All Users</h3>
+
+                {{-- Search --}}
+                <div class="relative">
+                    <i class="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                    <input type="text" wire:model.live="search" placeholder="Rechercher..."
+                           class="pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 outline-none w-52">
+                </div>
+
+                {{-- Role filter --}}
+                <select wire:model.live="roleFilter" class="border border-gray-300 rounded-lg text-sm py-2 px-3">
+                    <option value="all">Tous les rôles</option>
+                    @foreach($allRoles as $r)
+                    <option value="{{ $r->name }}">{{ $r->label }}</option>
+                    @endforeach
+                </select>
+
+                @if(Auth::user()->isSuperAdmin())
+                <a href="{{ route('admin.roles.index') }}"
+                   class=" px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 text-center">
+                    <i class="ri-shield-user-line"></i> Gérer les Rôles
+                </a>
+                @endif
+
                 @if(Auth::user()->isSuperAdmin() || Auth::user()->isAdmin())
-                <a href="{{ route('admin.users.create') }}" class="px-4 py-2 bg-green-logo text-white rounded-lg transition">
-                    <span class="flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                        </svg>
-                        Create User
-                    </span>
+                <a href="{{ route('admin.users.create') }}" class="flex items-center gap-2 px-4 py-2 bg-green-logo text-white text-sm font-semibold rounded-lg transition">
+                    <i class="ri-user-add-line"></i> Créer un utilisateur
                 </a>
                 @endif
             </div>
@@ -107,11 +125,12 @@
 
                     <!-- Role Badge -->
                     <div class="mb-4">
-                        <span class="px-3 py-1 text-xs font-medium rounded-full 
-                            {{ $user->role === 'super_admin' ? 'bg-purple-100 text-purple-800' : '' }}
-                            {{ $user->role === 'admin' ? 'bg-green-100 text-green-800' : '' }}
-                            {{ $user->role === 'user' ? 'bg-gray-100 text-gray-800' : '' }}">
-                            {{ ucfirst(str_replace('_', ' ', $user->role)) }}
+                        @php
+                            $roleModel = $allRoles->firstWhere('name', $user->role);
+                            $cls = \App\Models\Role::colorClasses($roleModel?->color ?? 'gray');
+                        @endphp
+                        <span class="px-3 py-1 text-xs font-medium rounded-full {{ $cls['badge'] }}">
+                            {{ $roleModel?->label ?? ucfirst(str_replace('_', ' ', $user->role)) }}
                         </span>
                         @if(!($user->is_active ?? true))
                         <span class="px-3 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800 ml-2">

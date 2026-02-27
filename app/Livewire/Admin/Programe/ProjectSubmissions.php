@@ -125,17 +125,6 @@ class ProjectSubmissions extends Component
     {
         $this->resetPage();
     }
-    
-    public function viewSubmission($submissionId)
-    {
-        // Navigate to candidat submissions page if candidat, otherwise just show flash
-        $submission = DynamicFormSubmission::find($submissionId);
-        if ($submission && $submission->candidat_id) {
-            return redirect()->route('admin.candidat.submissions', $submission->candidat_id);
-        }
-        session()->flash('info', 'Submission details viewed.');
-    }
-    
     public function deleteSubmission($submissionId)
     {
         $submission = DynamicFormSubmission::findOrFail($submissionId);
@@ -195,7 +184,7 @@ class ProjectSubmissions extends Component
                 $person = null;
                 $personId = null;
                 if ($sub->candidat_id) {
-                    $person = \App\Models\Candidat::find($sub->candidat_id);
+                    $person = \App\Models\Candidat::with('reviewer')->find($sub->candidat_id);
                     $personId = $sub->candidat_id;
                 } elseif ($sub->user_id) {
                     $person = \App\Models\User::find($sub->user_id);
@@ -204,31 +193,30 @@ class ProjectSubmissions extends Component
                 
                 if (!$person) continue;
                 
-                $grouped[$key] = [
-                    'user' => $person,
-                    'person_id' => $personId,
-                    'is_candidat' => (bool) $sub->candidat_id,
-                    'total' => 0,
-                    'completed' => 0,
-                    'draft' => 0,
-                    'last_activity' => $sub->updated_at,
+                $grouped[$key] = (object) [
+                    'user'         => $person,
+                    'person_id'    => $personId,
+                    'is_candidat'  => (bool) $sub->candidat_id,
+                    'total'        => 0,
+                    'completed'    => 0,
+                    'draft'        => 0,
+                    'last_activity'=> $sub->updated_at,
                 ];
             }
             
-            $grouped[$key]['total']++;
+            $grouped[$key]->total++;
             if (in_array($sub->status, ['submitted', 'in_review', 'approved'])) {
-                $grouped[$key]['completed']++;
+                $grouped[$key]->completed++;
             } else {
-                $grouped[$key]['draft']++;
+                $grouped[$key]->draft++;
             }
-            if ($sub->updated_at > $grouped[$key]['last_activity']) {
-                $grouped[$key]['last_activity'] = $sub->updated_at;
+            if ($sub->updated_at > $grouped[$key]->last_activity) {
+                $grouped[$key]->last_activity = $sub->updated_at;
             }
         }
         
         $userSubmissionsCollection = collect(array_values($grouped))->sortByDesc('last_activity');
         
-        // Paginate manually
         $currentPage = \Illuminate\Pagination\Paginator::resolveCurrentPage();
         $perPage = 15;
         $paginatedSubmissions = new \Illuminate\Pagination\LengthAwarePaginator(
@@ -239,7 +227,7 @@ class ProjectSubmissions extends Component
             ['path' => \Illuminate\Pagination\Paginator::resolveCurrentPath()]
         );
         
-        return view('livewire.admin.programe.project-submissions', [
+        return view('livewire.admin.programe.submissions.index-submissions', [
             'userSubmissions' => $paginatedSubmissions,
         ])->layout('layouts.admin', ['header' => $this->project->project_name]);
     }

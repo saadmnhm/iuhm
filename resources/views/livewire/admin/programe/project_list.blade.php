@@ -5,7 +5,7 @@
             <div class="flex justify-between items-start">
                 <div>
                     <p class="text-gray-500 text-sm font-medium">Total Projects</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2">3</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ $totalProjects }}</p>
                 </div>
                 <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                     <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -15,12 +15,12 @@
             </div>
         </div>
 
-        <!-- Total Users -->
+        <!-- Page count -->
         <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition">
             <div class="flex justify-between items-start">
                 <div>
-                    <p class="text-gray-500 text-sm font-medium">Total active</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2">2</p>
+                    <p class="text-gray-500 text-sm font-medium">Cette page</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ $projects->count() }}</p>
                 </div>
                 <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                     <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -40,7 +40,7 @@
             </p>
         </div>
 
-        <a href="{{ route('admin.programe_zettat.create') }}" class="px-4 py-2 bg-green-logo text-white rounded-lg transition">
+        <a href="{{ route('admin.programe.create') }}" class="px-4 py-2 bg-green-logo text-white rounded-lg transition">
             <span class="flex items-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
@@ -50,52 +50,81 @@
         </a>
     </div>
 
-    <!-- Projects Table -->
-    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-        <table class="w-full text-sm">
-            <thead class="bg-gray-100 text-gray-600 uppercase text-xs tracking-wide">
-                <tr>
-                    <th class="px-6 py-4 text-left">#</th>
-                    <th class="px-6 py-4 text-left">Project</th>
-                    <th class="px-6 py-4 text-left">Created By</th>
-                    <th class="px-6 py-4 text-left">Created At</th>
-                    <th class="px-6 py-4 text-right">Actions</th>
-                </tr>
-            </thead>
-            @foreach($projects as $project)
+    <!-- Projects Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+        @forelse($projects as $project)
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-200 flex flex-col overflow-hidden group">
+            {{-- Card header strip --}}
+            <div class="h-2 bg-gradient-to-r from-green-500 to-emerald-400"></div>
+            <div class="p-6 flex-1 flex flex-col">
+                {{-- Title row --}}
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center gap-3 flex-1 min-w-0">
+                        <div class="w-12 h-12 rounded-xl bg-green-50 border border-green-100 flex items-center justify-center flex-shrink-0">
+                            <i class="ri-folder-line text-2xl text-green-600"></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-base font-bold text-gray-900 truncate group-hover:text-green-700 transition">
+                                {{ $project->project_name }}
+                            </h3>
+                            <p class="text-xs text-gray-400 mt-0.5">ID #{{ $project->id }}</p>
+                        </div>
+                    </div>
+                </div>
 
-                <tbody>
-                    <!-- Row -->
-                    <tr class="border-t hover:bg-gray-50">
-                        <td class="px-6 py-4 text-gray-500">{{$project->id}}</td>
-                        <td class="px-6 py-4 font-medium text-gray-800">
-                            {{$project->project_name}}
-                        </td>
-                        <td class="px-6 py-4 text-gray-700">
-                            {{$project->user->name ?? ''}}
-                        </td>
-                        <td class="px-6 py-4 text-gray-600">
-                            {{ $project->created_at->format('d M Y') }}
-                        </td>
-                        <td class="px-6 py-4 text-right space-x-3">
-                            <a class="text-blue-600 hover:text-blue-800" title="View Submissions" href="{{ route('admin.project.submissions', $project->id) }}">
-                                <i class="ri-file-list-3-line"></i>
-                            </a>
-                            <a class="text-green-600 hover:text-green-800" title="Edit" href="{{ route('admin.programe_zettat.edit', $project->id) }}">
-                                ✏️
-                            </a>
-                            <button type="button" class="text-red-600 hover:text-red-800" title="Delete"
-                                @click.prevent="open({{ $project->id }}, '{{ addslashes($project->project_name) }}')">
-                                🗑
-                            </button>
-                        </td>
-                    </tr>
+                {{-- Meta info --}}
+                <div class="space-y-2 flex-1">
+                    <div class="flex items-center gap-2 text-sm text-gray-600">
+                        <i class="ri-user-line text-gray-400 text-base"></i>
+                        <span>{{ $project->user->name ?? 'N/A' }}</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-gray-600">
+                        <i class="ri-calendar-line text-gray-400 text-base"></i>
+                        <span>{{ $project->created_at->format('d M Y') }}</span>
+                    </div>
+                    @if($project->formulaires_count ?? null)
+                    <div class="flex items-center gap-2 text-sm text-gray-600">
+                        <i class="ri-file-list-3-line text-gray-400 text-base"></i>
+                        <span>{{ $project->formulaires_count }} formulaire(s)</span>
+                    </div>
+                    @endif
+                </div>
 
-                   
-                </tbody>
-            @endforeach
-        </table>
+                {{-- Actions --}}
+                <div class="flex items-center gap-2 mt-5 pt-4 border-t border-gray-100">
+                    <a href="{{ route('admin.project.submissions', $project->id) }}"
+                       class="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-lg transition"
+                       title="Voir les soumissions">
+                        <i class="ri-file-list-3-line"></i> Soumissions
+                    </a>
+                    <a href="{{ route('admin.programe.edit', $project->id) }}"
+                       class="flex items-center justify-center gap-1.5 px-3 py-2 bg-green-50 hover:bg-green-100 text-green-700 text-xs font-semibold rounded-lg transition"
+                       title="Modifier">
+                        <i class="ri-edit-line"></i> Modifier
+                    </a>
+                    <button type="button"
+                            class="flex items-center justify-center gap-1.5 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-semibold rounded-lg transition"
+                            title="Supprimer"
+                            @click.prevent="open({{ $project->id }}, '{{ addslashes($project->project_name) }}')">
+                        <i class="ri-delete-bin-line"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        @empty
+        <div class="col-span-full bg-white rounded-2xl shadow-sm border border-gray-100 p-16 text-center">
+            <i class="ri-folder-open-line text-6xl text-gray-300 mb-4 block"></i>
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">Aucun projet</h3>
+            <p class="text-gray-400 mb-6">Commencez par créer votre premier projet.</p>
+            <a href="{{ route('admin.programe.create') }}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition">
+                <i class="ri-add-line"></i> Créer un projet
+            </a>
+        </div>
+        @endforelse
     </div>
+
+    <!-- Pagination -->
+    <div class="mt-2">{{ $projects->links() }}</div>
 
     <!-- Delete Confirmation Modal (Alpine + Tailwind) -->
     <div x-show="show" x-transition.opacity class="fixed inset-0 z-40 flex items-center justify-center bg-black/40">

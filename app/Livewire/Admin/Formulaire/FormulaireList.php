@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Formulaire;
 
 use App\Models\DynamicForm;
+use App\Models\AdminActivityLog;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -22,6 +23,15 @@ class FormulaireList extends Component
     {
         $form = DynamicForm::findOrFail($formId);
         $form->update(['is_active' => !$form->is_active]);
+
+        $status = $form->is_active ? 'activated' : 'deactivated';
+        AdminActivityLog::log(
+            'formulaire_toggled',
+            "Formulaire {$status}: {$form->title}",
+            DynamicForm::class,
+            $form->id
+        );
+
         $this->dispatch('alert', type: 'success', title: 'Succès', message: 'Statut du formulaire mis à jour.');
     }
 
@@ -29,6 +39,14 @@ class FormulaireList extends Component
     {
         $form = DynamicForm::findOrFail($formId);
         $form->delete();
+
+        AdminActivityLog::log(
+            'formulaire_deleted',
+            "Deleted formulaire: {$form->title}",
+            DynamicForm::class,
+            $form->id
+        );
+
         $this->dispatch('alert', type: 'success', title: 'Supprimé', message: 'Formulaire supprimé avec succès.');
     }
 
@@ -71,6 +89,13 @@ class FormulaireList extends Component
                 }
             }
         }
+
+        AdminActivityLog::log(
+            'formulaire_duplicated',
+            "Duplicated formulaire: {$original->title} → {$newForm->title}",
+            DynamicForm::class,
+            $newForm->id
+        );
 
         $this->dispatch('alert', type: 'success', title: 'Dupliqué', message: 'Formulaire dupliqué avec succès.');
     }

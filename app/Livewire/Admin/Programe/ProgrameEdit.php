@@ -2,6 +2,7 @@
 namespace App\Livewire\Admin\Programe;
 
 use App\Models\BusinessPlan;
+use App\Models\AdminActivityLog;
 use Livewire\Component;
 use App\Models\Address; 
 use App\Models\ProgrameList;
@@ -114,6 +115,13 @@ class ProgrameEdit extends Component{
             'status' => $this->formulaireStatus,
             'is_required' => $this->formulaireRequired,
         ]);
+
+        AdminActivityLog::log(
+            'formulaire_attached',
+            "Attached formulaire ID {$this->selectedFormulaire} to programme: {$programe->project_name}",
+            ProgrameList::class,
+            $programe->id
+        );
         
         $this->loadFormulaires();
         $this->closeFormulaireModal();
@@ -124,6 +132,14 @@ class ProgrameEdit extends Component{
     {
         $programe = ProgrameList::findOrFail($this->programeId);
         $programe->formulaires()->detach($formulaireId);
+
+        AdminActivityLog::log(
+            'formulaire_detached',
+            "Detached formulaire ID {$formulaireId} from programme: {$programe->project_name}",
+            ProgrameList::class,
+            $programe->id
+        );
+
         $this->loadFormulaires();
         session()->flash('message', 'Formulaire détaché avec succès!');
     }
@@ -173,9 +189,16 @@ class ProgrameEdit extends Component{
             'allowed_address_id' => json_encode($this->allowed_address_id),
         ]);
 
+        AdminActivityLog::log(
+            'programme_updated',
+            "Updated programme: {$programe->project_name}",
+            ProgrameList::class,
+            $programe->id
+        );
+
         session()->flash('message', 'Programme mis à jour avec succès!');
         
-        return redirect()->route('admin.programe_zettat');
+        return redirect()->route('admin.programe');
     }
 
     public function render()

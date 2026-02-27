@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Programe;
 
 use App\Models\ProgrameList;
+use App\Models\AdminActivityLog;
 use App\Models\Address; 
 use Livewire\Component;
 use Illuminate\Support\Str;
@@ -109,16 +110,33 @@ class ProgrameCreate extends Component
             \Log::info('Data to save:', $data);
 
             if ($this->programeId) {
-                ProgrameList::findOrFail($this->programeId)->update($data);
+                $project = ProgrameList::findOrFail($this->programeId);
+                $project->update($data);
                 \Log::info('Project updated', ['id' => $this->programeId]);
+
+                AdminActivityLog::log(
+                    'programme_updated',
+                    "Updated programme: {$project->project_name}",
+                    ProgrameList::class,
+                    $project->id
+                );
+
                 session()->flash('success', 'Project updated successfully!');
+                return redirect()->route('admin.programe.edit', $this->programeId);
             } else {
                 $project = ProgrameList::create($data);
                 \Log::info('Project created', ['id' => $project->id]);
-                session()->flash('success', 'Project created successfully!');
-            }
 
-            return redirect()->route('admin.programe_zettat');
+                AdminActivityLog::log(
+                    'programme_created',
+                    "Created programme: {$project->project_name}",
+                    ProgrameList::class,
+                    $project->id
+                );
+
+                session()->flash('success', 'Projet créé! Vous pouvez maintenant attacher des formulaires.');
+                return redirect()->route('admin.programe.edit', $project->id);
+            }
             
         } catch (\Illuminate\Validation\ValidationException $e) {
             \Log::error('Validation failed', ['errors' => $e->errors()]);

@@ -13,7 +13,7 @@ class FrontAuthController extends Controller
     public function showLogin()
     {
         if (Auth::guard('candidat')->check()) {
-            return redirect()->route('form.dashboard');
+            return redirect()->route('user.dashboard');
         }
         
         return view('livewire.front.auth.login');
@@ -42,7 +42,7 @@ class FrontAuthController extends Controller
                 $candidat->updateTrackingInfo();
                 
                 $request->session()->regenerate();
-                return redirect()->intended(route('form.dashboard'));
+                return redirect()->intended(route('user.dashboard'));
             }
 
             Auth::guard('candidat')->logout();
@@ -59,10 +59,11 @@ class FrontAuthController extends Controller
     public function showRegister()
     {
         if (Auth::guard('candidat')->check()) {
-            return redirect()->route('form.dashboard');
+            return redirect()->route('user.dashboard');
         }
         
-        return view('livewire.front.auth.register');
+        $addresses = \App\Models\Address::orderBy('address_line1')->get();
+        return view('livewire.front.auth.register', compact('addresses'));
     }
 
     public function register(Request $request)
@@ -72,6 +73,9 @@ class FrontAuthController extends Controller
             'prenom' => 'required|string|max:255',
             'email' => 'required|email|unique:candidat,email',
             'password' => 'required|min:6',
+            'address' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'gender' => 'nullable|in:homme,femme',
         ]);
 
         $candidat = Candidat::create([
@@ -80,6 +84,9 @@ class FrontAuthController extends Controller
             'login' => $validated['email'], 
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
+            'address' => $validated['address'] ?? null,
+            'phone' => $validated['phone'] ?? null,
+            'gender' => $validated['gender'] ?? null,
             'is_active' => true,
         ]);
 
@@ -88,7 +95,7 @@ class FrontAuthController extends Controller
         // Update tracking information for first login
         $candidat->updateTrackingInfo();
 
-        return redirect()->route('form.dashboard');
+        return redirect()->route('user.dashboard');
     }
 
     public function logout(Request $request)

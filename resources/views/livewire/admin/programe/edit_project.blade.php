@@ -24,7 +24,7 @@
                            required
                            wire:model.live="project_name"
                            placeholder="e.g. Scholarship Application"
-                           class="w-full px-4 py-2 border rounded-lg">
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg">
                 @error('project_name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
 
@@ -33,7 +33,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">
                         Status
                     </label>
-                    <select wire:model="status" class="w-full px-4 py-2 border rounded-lg">
+                    <select wire:model="status" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
                         <option>Active</option>
                         <option>Inactive</option>
                     </select>
@@ -50,7 +50,7 @@
                     rows="3"
                     placeholder="Explain the purpose of this form..."
                     wire:model.live="description"
-                    class="w-full px-4 py-2 border rounded-lg"></textarea>
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg"></textarea>
                 @error('description') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
             </div>
         </div>
@@ -72,7 +72,7 @@
                            placeholder="e.g. 18"
                            required
                            wire:model.live="min_age"
-                           class="w-full px-4 py-2 border rounded-lg">
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg">
                     @error('min_age') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
 
@@ -86,7 +86,7 @@
                            placeholder="e.g. 35"
                            required
                            wire:model.live="max_age"
-                           class="w-full px-4 py-2 border rounded-lg">
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg">
                     @error('max_age') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
 
@@ -95,7 +95,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">
                             Address Source (Multiple)
                         </label>
-                        <div class="border rounded-lg p-4 max-h-48 overflow-y-auto space-y-2">
+                        <div class="border border-gray-300 rounded-lg p-4 max-h-48 overflow-y-auto space-y-2">
                             @foreach($addresses as $address)
                                 <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
                                     <input type="checkbox" 
@@ -138,7 +138,7 @@
             @if(count($attachedFormulaires) > 0)
                 <div class="space-y-3">
                     @foreach($attachedFormulaires as $formulaire)
-                        <div class="border rounded-lg p-4 bg-white hover:shadow-md transition">
+                        <div class="border border-gray-300 rounded-lg p-4 bg-white hover:shadow-md transition">
                             <div class="flex items-center justify-between gap-4">
                                 <!-- Form Info -->
                                 <div class="flex-1">
@@ -160,14 +160,14 @@
                                            min="1"
                                            value="{{ $formulaire['order'] }}"
                                            wire:change="updateFormulaireOrder({{ $formulaire['id'] }}, $event.target.value)"
-                                           class="w-full px-2 py-1 border rounded text-sm">
+                                           class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
                                 </div>
 
                                 <!-- Status Select -->
                                 <div class="w-32">
                                     <label class="text-xs text-gray-600">Status</label>
                                     <select wire:change="updateFormulaireStatus({{ $formulaire['id'] }}, $event.target.value)"
-                                            class="w-full px-2 py-1 border rounded text-sm">
+                                            class="w-full px-2 py-1 border border-gray-300 rounded text-sm ">
                                         <option value="active" {{ $formulaire['status'] == 'active' ? 'selected' : '' }}>Active</option>
                                         <option value="inactive" {{ $formulaire['status'] == 'inactive' ? 'selected' : '' }}>Inactive</option>
                                         <option value="draft" {{ $formulaire['status'] == 'draft' ? 'selected' : '' }}>Draft</option>
@@ -180,7 +180,7 @@
                                     <input type="checkbox"
                                            {{ $formulaire['is_required'] ? 'checked' : '' }}
                                            wire:click="toggleFormulaireRequired({{ $formulaire['id'] }})"
-                                           class="w-4 h-4 text-blue-600 rounded">
+                                           class="w-4 h-4 text-blue-600 border border-gray-300 rounded">
                                 </div>
 
                                 <!-- Delete Button -->
@@ -206,9 +206,6 @@
                 </div>
             @endif
 
-            <p class="text-xs text-gray-500 mt-2">
-                Attach formulaires to this project and set their order, status, and requirements.
-            </p>
         </div>
 
         <!-- Formulaire Modal -->
@@ -234,7 +231,7 @@
                             Select Formulaire *
                         </label>
                         <select wire:model="selectedFormulaire"
-                                class="w-full px-4 py-2 border rounded-lg">
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg">
                             <option value="">-- Choose a formulaire --</option>
                             @foreach($availableFormulaires as $form)
                                 <option value="{{ $form['id'] }}">
@@ -253,7 +250,7 @@
                         <input type="number"
                                min="1"
                                wire:model="formulaireOrder"
-                               class="w-full px-4 py-2 border rounded-lg">
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg">
                         @error('formulaireOrder') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                     </div>
 
@@ -263,7 +260,7 @@
                             Status *
                         </label>
                         <select wire:model="formulaireStatus"
-                                class="w-full px-4 py-2 border rounded-lg">
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg">
                             <option value="active">Active</option>
                             <option value="inactive">Inactive</option>
                             <option value="draft">Draft</option>
@@ -275,7 +272,7 @@
                         <label class="flex items-center gap-2 cursor-pointer">
                             <input type="checkbox"
                                    wire:model="formulaireRequired"
-                                   class="w-4 h-4 text-blue-600 rounded">
+                                   class="w-4 h-4 text-blue-600 border border-gray-300 rounded">
                             <span class="text-sm text-gray-700">Required for submission</span>
                         </label>
                     </div>
@@ -284,12 +281,12 @@
                     <div class="flex justify-end gap-2">
                         <button type="button"
                                 wire:click="closeFormulaireModal"
-                                class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
+                                class="px-4 py-2 bg-gray-200 border border-gray-300 rounded hover:bg-gray-300">
                             Cancel
                         </button>
                         <button type="button"
                                 wire:click="attachFormulaire"
-                                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                                class="px-4 py-2 bg-blue-600 text-white border border-blue-700 rounded hover:bg-blue-700">
                             Attach
                         </button>
                     </div>

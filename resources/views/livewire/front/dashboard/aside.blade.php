@@ -1,12 +1,12 @@
 <aside class="sidebar d-flex flex-column">
     <div class="logo">
-       <a href="{{ route('form.dashboard') }}"> <img src="{{ asset('assets/site/images/iuhm_logo.png') }}" alt="Logo"></a>
+       <a href="{{ route('user.dashboard') }}"> <img src="{{ asset('assets/site/images/iuhm_logo.png') }}" alt="Logo"></a>
     </div>
 
     <nav class="py-3 flex-grow-1">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a href="{{ route('form.dashboard') }}" class="nav-link {{ request()->routeIs('form.dashboard') ? 'active' : '' }}">
+                <a href="{{ route('user.dashboard') }}" class="nav-link {{ request()->routeIs('user.dashboard') ? 'active' : '' }}">
                     <i class="ri-home-4-line fs-5"></i>
                     <span>Home</span>
                 </a>
@@ -28,7 +28,7 @@
                     @foreach($programe_list ?? [] as $list)
                         <div x-show="open" x-collapse class="ml-3 mt-1 space-y-1">
                             <li class="nav-item">
-                                <a href="{{ route('form.project.detail', $list->id) }}" class="nav-link {{ request()->routeIs('form.project.detail') && request()->route('id') == $list->id ? 'active' : '' }}">
+                                <a href="{{ route('user.project.detail', $list->id) }}" class="nav-link {{ request()->routeIs('user.project.detail') && request()->route('id') == $list->id ? 'active' : '' }}">
                                     <i class="ri-folder-open-line fs-5"></i>
                                     <span>{{ $list->project_name }}</span>
                                 </a>
@@ -57,31 +57,31 @@
                     <!-- Children -->
                     <div x-show="open" x-collapse class="ml-3 mt-1 space-y-1">
                         <li class="nav-item">
-                            <a href="{{ route('form.etude_marche') }}" class="nav-link {{ request()->routeIs('form.etude_marche') ? 'active' : '' }}">
+                            <a href="{{ route('user.etude_marche') }}" class="nav-link {{ request()->routeIs('user.etude_marche') ? 'active' : '' }}">
                                 <i class="ri-search-eye-line fs-5"></i>
                                 <span>Etude De Marche</span>
                             </a>
                         </li>                
                         <li class="nav-item">
-                            <a href="{{ route('form.evaluation_idee') }}" class="nav-link {{ request()->routeIs('form.evaluation_idee') ? 'active' : '' }}">
+                            <a href="{{ route('user.evaluation_idee') }}" class="nav-link {{ request()->routeIs('user.evaluation_idee') ? 'active' : '' }}">
                                 <i class="ri-lightbulb-line fs-5"></i>
                                 <span>Evaluation Idee</span>
                             </a>
                         </li> 
                         <li class="nav-item">
-                            <a href="{{ route('form.bilan_competences') }}" class="nav-link {{ request()->routeIs('form.bilan_competences') ? 'active' : '' }}">
+                            <a href="{{ route('user.bilan_competences') }}" class="nav-link {{ request()->routeIs('user.bilan_competences') ? 'active' : '' }}">
                                 <i class="ri-user-star-line fs-5"></i>
                                 <span>Bilan Competences</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('form.bmc') }}" class="nav-link {{ request()->routeIs('form.bmc') ? 'active' : '' }}">
+                            <a href="{{ route('user.bmc') }}" class="nav-link {{ request()->routeIs('user.bmc') ? 'active' : '' }}">
                                 <i class="ri-layout-grid-line fs-5"></i>
                                 <span>Business model canevas</span>
                             </a>
                         </li> 
                         <li class="nav-item">
-                            <a href="{{ route('form.business_plan') }}" class="nav-link {{ request()->routeIs('form.business_plan') ? 'active' : '' }}">
+                            <a href="{{ route('user.business_plan') }}" class="nav-link {{ request()->routeIs('user.business_plan') ? 'active' : '' }}">
                                 <i class="ri-bar-chart-box-line fs-5"></i>
                                 <span>Business Plan</span>
                             </a>
@@ -95,9 +95,15 @@
                 <small class="nav-link text-muted text-uppercase fw-bold" style="font-size: 0.7rem; letter-spacing: 1px;">Assistance</small>
             </li>
             <li class="nav-item">
-                <a href="{{ route('form.support') }}" class="nav-link {{ request()->routeIs('form.support') ? 'active' : '' }}">
+                <a href="{{ route('user.support') }}" class="nav-link {{ request()->routeIs('user.support') ? 'active' : '' }}">
                     <i class="ri-customer-service-2-line fs-5"></i>
                     <span>Support</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('user.blog') }}" class="nav-link {{ request()->routeIs('user.blog*') ? 'active' : '' }}">
+                    <i class="ri-article-line fs-5"></i>
+                    <span>Blog & Actualités</span>
                 </a>
             </li>
         </ul>

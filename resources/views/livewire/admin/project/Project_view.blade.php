@@ -176,7 +176,7 @@
         <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
             <h3 class="text-lg font-semibold text-gray-900">Recent Project Submissions</h3>
 
-            <a href="{{ route('admin.form-submissions') }}" class="text-indigo-600 hover:text-indigo-900">Voir tout<i class="ri-arrow-right-long-fill"></i></a>
+            <a href="" class="text-indigo-600 hover:text-indigo-900">Voir tout<i class="ri-arrow-right-long-fill"></i></a>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-sm">

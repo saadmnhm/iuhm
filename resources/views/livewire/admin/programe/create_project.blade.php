@@ -1,25 +1,6 @@
 <div class="p-8 bg-gray-50 min-h-screen">
 
-    {{-- Component Check --}}
-    <div class="bg-yellow-50 border border-yellow-200 p-4 rounded-lg mb-4">
-        <p><strong>Component Name:</strong> {{ get_class($this) }}</p>
-        <p><strong>Method Exists:</strong> {{ method_exists($this, 'saveProjectList') ? 'YES' : 'NO' }}</p>
-    </div>
 
-    {{-- Debug: Show current values --}}
-    <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg mb-4" x-data="{ show: false }">
-        <button @click="show = !show" class="text-blue-700 font-semibold">
-            Toggle Debug Info
-        </button>
-        <div x-show="show" class="mt-2 text-sm">
-            <p><strong>Project Name:</strong> {{ $project_name ?? 'empty' }}</p>
-            <p><strong>Description:</strong> {{ $description ?? 'empty' }}</p>
-            <p><strong>Icon:</strong> {{ $icon ?? 'empty' }}</p>
-            <p><strong>Min Age:</strong> {{ $min_age ?? 'empty' }}</p>
-            <p><strong>Max Age:</strong> {{ $max_age ?? 'empty' }}</p>
-            <p><strong>Addresses:</strong> {{ count($allowed_address_id ?? []) }}</p>
-        </div>
-    </div>
 
     @if ($errors->any())
         <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg mb-4">
@@ -50,7 +31,7 @@
                            required
                            wire:model="project_name"
                            placeholder="e.g. Scholarship Application"
-                           class="w-full px-4 py-2 border rounded-lg">
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
                     @error('project_name') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                 </div>
 
@@ -59,7 +40,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">
                         Status
                     </label>
-                    <select class="w-full px-4 py-2 border rounded-lg" wire:model="is_active">
+                    <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" wire:model="is_active">
                         <option value="1">Active</option>
                         <option value="0">Inactive</option>
                     </select>
@@ -74,7 +55,7 @@
                         required
                         wire:model="icon"
                         placeholder="e.g. ri-file-list-3-line"
-                        class="w-full px-4 py-2 border rounded-lg">
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                 @error('icon') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
             </div>
 
@@ -88,7 +69,7 @@
                     wire:model="description"
                     rows="3"
                     placeholder="Explain the purpose of this form..."
-                    class="w-full px-4 py-2 border rounded-lg"></textarea>
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
                 @error('description') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
             </div>
         </div>
@@ -110,7 +91,7 @@
                            placeholder="e.g. 18"
                            required
                            wire:model="min_age"
-                           class="w-full px-4 py-2 border rounded-lg">
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                     @error('min_age') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                 </div>
 
@@ -124,7 +105,7 @@
                            placeholder="e.g. 35"
                            required
                             wire:model="max_age"
-                           class="w-full px-4 py-2 border rounded-lg">
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
                     @error('max_age') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                 </div>
 
@@ -133,7 +114,7 @@
                     <label class="block text-sm font-medium text-gray-700 mb-1">
                         Address Source (Multiple)
                     </label>
-                    <div class="border rounded-lg p-4 max-h-48 overflow-y-auto space-y-2">
+                    <div class="border border-gray-300 rounded-lg p-4 max-h-48 overflow-y-auto space-y-2">
                         @foreach($addresses as $address)
                             <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded">
                                 <input type="checkbox" 
@@ -159,20 +140,17 @@
         <!-- SECTION 3: Form Fields (Champs) -->
         <div class="mb-10">
             <h2 class="text-lg font-medium text-gray-800 mb-4">
-                Form Fields (User Inputs)
+                Formulaires associés
             </h2>
-
-            <!-- Field Row -->
-
-            <!-- Add Field Button -->
-            <button type="button"
-                    class="inline-flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-100">
-                + Add Field
-            </button>
-
-            <p class="text-xs text-gray-500 mt-2">
-                Address Select will use values from backend address list.
-            </p>
+            <div class="rounded-xl border-2 border-dashed border-indigo-200 bg-indigo-50 p-6 flex items-start gap-4">
+                <div class="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                    <i class="ri-information-line text-indigo-600 text-lg"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-semibold text-indigo-800 mb-1">Associer des formulaires après la création</p>
+                    <p class="text-xs text-indigo-600">Sauvegardez d'abord le projet. Vous serez redirigé vers la page d'édition où vous pourrez attacher des formulaires, définir leurs ordres et statuts.</p>
+                </div>
+            </div>
         </div>
 
         <!-- Actions -->
@@ -183,7 +161,7 @@
                 Test Livewire
             </button>
 
-            <a href="{{ route('admin.programe_zettat') }}"
+            <a href="{{ route('admin.programe') }}"
                class="px-5 py-2.5 border rounded-lg text-gray-600 hover:bg-gray-100">
                 Cancel
             </a>

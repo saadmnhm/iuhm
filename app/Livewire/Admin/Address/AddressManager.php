@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Address;
 
 use Livewire\Component;
 use App\Models\Address;
+use App\Models\AdminActivityLog;
 use Livewire\WithPagination;
 
 class AddressManager extends Component
@@ -73,6 +74,13 @@ class AddressManager extends Component
                 'state' => $this->state,
                 'postal_code' => $this->postal_code,
             ]);
+
+            AdminActivityLog::log(
+                'address_updated',
+                "Updated address: {$address->address_line1}, {$address->city}",
+                Address::class,
+                $address->id
+            );
             
             $this->dispatch('alert', [
                 'type' => 'success',
@@ -80,12 +88,19 @@ class AddressManager extends Component
                 'message' => 'Address updated successfully!'
             ]);
         } else {
-            Address::create([
+            $address = Address::create([
                 'address_line1' => $this->address_line1,
                 'city' => $this->city,
                 'state' => $this->state,
                 'postal_code' => $this->postal_code,
             ]);
+
+            AdminActivityLog::log(
+                'address_created',
+                "Created address: {$address->address_line1}, {$address->city}",
+                Address::class,
+                $address->id
+            );
             
             $this->dispatch('alert', [
                 'type' => 'success',
@@ -99,7 +114,15 @@ class AddressManager extends Component
 
     public function delete($id)
     {
-        Address::findOrFail($id)->delete();
+        $address = Address::findOrFail($id);
+        $address->delete();
+
+        AdminActivityLog::log(
+            'address_deleted',
+            "Deleted address: {$address->address_line1}, {$address->city}",
+            Address::class,
+            $address->id
+        );
         
         $this->dispatch('alert', [
             'type' => 'success',
@@ -115,7 +138,7 @@ class AddressManager extends Component
                   ->orWhere('city', 'like', '%' . $this->search . '%');
         })->paginate(10);
 
-        return view('livewire.admin.address-manager', compact('addresses'))->layout('layouts.admin', [
+        return view('livewire.admin.tools.address-manager', compact('addresses'))->layout('layouts.admin', [
                 'header' => 'Manage Addresses'
             ]);;
     }

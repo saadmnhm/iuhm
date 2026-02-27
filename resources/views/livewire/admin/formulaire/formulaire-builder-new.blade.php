@@ -18,7 +18,7 @@
                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600' }}">
                     {{ $is_active ? 'Actif' : 'Inactif' }}
                 </span>
-                <a href="{{ route('form.dynamic_form', $form->slug) }}" target="_blank"
+                <a href="{{ route('user.dynamic_form', $form->slug) }}" target="_blank"
                     class="flex items-center gap-2 px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition border border-blue-200">
                     <i class="ri-external-link-line"></i> Prévisualiser
                 </a>

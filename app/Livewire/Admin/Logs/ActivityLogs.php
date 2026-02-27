@@ -60,7 +60,7 @@ class ActivityLogs extends Component
             ->groupBy('action')
             ->pluck('action');
 
-        return view('livewire.admin.activity-logs', [
+        return view('livewire.admin.tools.activity-logs', [
             'logs' => $logs,
             'actions' => $actions,
         ])->layout('layouts.admin', ['header' => 'Activity Logs']);

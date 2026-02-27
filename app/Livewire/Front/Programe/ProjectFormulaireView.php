@@ -359,7 +359,7 @@ class ProjectFormulaireView extends Component
         }
 
         session()->flash('message', 'Formulaire submitted successfully!');
-        return redirect()->route('form.project.detail', $this->projectId);
+        return redirect()->route('user.project.detail', $this->projectId);
     }
 
     public function saveProgress()

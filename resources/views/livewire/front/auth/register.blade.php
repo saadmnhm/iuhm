@@ -259,6 +259,20 @@ input {
             <input type="text" name="nom" placeholder="Last Name" value="{{ old('nom') }}" required />
             <input type="text" name="prenom" placeholder="First Name" value="{{ old('prenom') }}" required />
             <input type="email" name="email" placeholder="Email" value="{{ old('email') }}" required />
+            <input type="tel" name="phone" placeholder="Téléphone (ex: 0612345678)" value="{{ old('phone') }}" />
+            
+            <select name="gender" style="background-color:#eee;border:none;padding:12px 15px;margin:8px 0;width:100%;border-radius:5px;font-size:14px;color:#333;">
+                <option value="">-- Genre --</option>
+                <option value="homme" {{ old('gender') === 'homme' ? 'selected' : '' }}>Homme</option>
+                <option value="femme" {{ old('gender') === 'femme' ? 'selected' : '' }}>Femme</option>
+            </select>
+
+            <select name="address" style="background-color:#eee;border:none;padding:12px 15px;margin:8px 0;width:100%;border-radius:5px;font-size:14px;color:#333;">
+                <option value="">-- Adresse / Quartier --</option>
+                @foreach($addresses ?? [] as $addr)
+                <option value="{{ $addr->address_line1 }}" {{ old('address') === $addr->address_line1 ? 'selected' : '' }}>{{ $addr->address_line1 }} — {{ $addr->city }}</option>
+                @endforeach
+            </select>
             
             <div class="password-wrapper">
                 <input type="password" id="signup-password" name="password" placeholder="Password" required />

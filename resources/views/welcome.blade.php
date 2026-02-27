@@ -36,10 +36,9 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body text-center align-content-center">
-        <a href="{{ route('form.dashboard') }}" target="_blank" class="btn btn-primary">Espace Candidat</a>
+        <a href="{{ route('user.dashboard') }}" target="_blank" class="btn btn-primary">Espace Candidat</a>
         <a href="{{ route('admin.login') }}"  target="_blank" class="btn btn-primary">Espace Admin</a>
       </div>
-      <p>hna aykon sign in o sign up</p>
     </div>
   </div>
 </div>

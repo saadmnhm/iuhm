@@ -3,42 +3,35 @@
 
         {{-- Read-Only Banner --}}
         @if($isReadOnly && $existingSubmission)
-            <div class="text-blue-700 px-4 py-3 rounded mb-4" role="alert">
-                <div class="flex items-center">
-                    <i class="ri-information-fill mr-2"></i>
-                    <div>
-                        <p class="font-bold">Formulaire submitted - Read Only Mode</p>
-                        <p class="text-sm">
-                            Status: <span class="px-2 py-0.5 rounded text-xs font-medium" style="background-color: {{ $form->color ?? '#2f5496' }}20; color: {{ $form->color ?? '#2f5496' }};">
-                                {{ ucfirst(str_replace('_', ' ', $existingSubmission->status)) }}
-                            </span>
-                            | Submitted: {{ $existingSubmission->submitted_at?->format('Y-m-d H:i') }}
-                        </p>
-                    </div>
+            <div class="alert alert-info d-flex align-items-center gap-2 rounded-3 shadow-sm mb-4" role="alert">
+                <i class="ri-information-fill fs-4"></i>
+                <div>
+                    <p class="fw-bold mb-0">Formulaire soumis — Mode lecture seule</p>
+                    <p class="mb-0 small">
+                        Statut: 
+                        <span class="badge rounded-pill" style="background-color: {{ $form->color ?? '#2f5496' }};">
+                            {{ ['draft' => 'Brouillon', 'submitted' => 'Soumis', 'in_review' => 'En révision', 'approved' => 'Approuvé', 'rejected' => 'Rejeté'][$existingSubmission->status] ?? ucfirst($existingSubmission->status) }}
+                        </span>
+                        &middot; Soumis le {{ $existingSubmission->submitted_at?->format('d/m/Y à H:i') }}
+                    </p>
                 </div>
             </div>
         @endif
 
         {{-- Draft Banner --}}
         @if($submissionId && !$isReadOnly)
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4" role="alert">
-                <div class="flex items-center">
-                    <i class="ri-save-line mr-2"></i>
-                    <p class="text-sm">Draft mode - Your progress is automatically saved.</p>
-                </div>
+            <div class="alert alert-success d-flex align-items-center gap-2 rounded-3 shadow-sm mb-4" role="alert">
+                <i class="ri-save-line fs-4"></i>
+                <p class="mb-0 small">Mode brouillon — Votre progression est sauvegardée automatiquement.</p>
             </div>
         @endif
 
         {{-- Flash Messages --}}
         @if(session()->has('message'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                {{ session('message') }}
-            </div>
+            <div class="alert alert-success rounded-3 shadow-sm mb-4">{{ session('message') }}</div>
         @endif
         @if(session()->has('error'))
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                {{ session('error') }}
-            </div>
+            <div class="alert alert-danger rounded-3 shadow-sm mb-4">{{ session('error') }}</div>
         @endif
 
         {{-- Form Header --}}
@@ -59,34 +52,42 @@
 
         {{-- Introduction Page --}}
         @if($showIntroduction && $formulaire->has_introduction)
-            <div class="mt-4 bg-white rounded-lg p-6 shadow-sm">
-                <div class="prose max-w-none">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">
-                        {{ $formulaire->introduction_title }}
-                    </h2>
+            <div class="mt-4 bg-white rounded-3 p-5 shadow-sm border">
+                <div class="text-center mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" 
+                         style="width: 70px; height: 70px; background-color: {{ $form->color ?? '#2f5496' }}15;">
+                        <i class="ri-book-open-line fs-2" style="color: {{ $form->color ?? '#2f5496' }};"></i>
+                    </div>
+                </div>
+                <h2 class="fw-bold text-center mb-3" style="color: {{ $form->color ?? '#2f5496' }};">
+                    {{ $formulaire->introduction_title }}
+                </h2>
 
-                    @if($formulaire->introduction_title_ar)
-                        <h3 class="text-xl text-gray-700 mb-6" dir="rtl">
-                            {{ $formulaire->introduction_title_ar }}
-                        </h3>
-                    @endif
+                @if($formulaire->introduction_title_ar)
+                    <h3 class="text-center text-muted mb-4" dir="rtl">
+                        {{ $formulaire->introduction_title_ar }}
+                    </h3>
+                @endif
 
-                    <div class="text-gray-700 whitespace-pre-wrap leading-relaxed">
+                <div class="bg-light rounded-3 p-4 mb-4" style="border-left: 4px solid {{ $form->color ?? '#2f5496' }};">
+                    <div class="text-secondary" style="white-space: pre-wrap; line-height: 1.8;">
                         {!! nl2br(e($formulaire->introduction_content)) !!}
                     </div>
-
-                    @if($formulaire->introduction_content_ar)
-                        <div class="mt-8 text-gray-700 whitespace-pre-wrap leading-relaxed" dir="rtl">
-                            {!! nl2br(e($formulaire->introduction_content_ar)) !!}
-                        </div>
-                    @endif
                 </div>
 
-                <div class="mt-8 flex justify-end">
+                @if($formulaire->introduction_content_ar)
+                    <div class="bg-light rounded-3 p-4 mb-4" dir="rtl" style="border-right: 4px solid {{ $form->color ?? '#2f5496' }};">
+                        <div class="text-secondary" style="white-space: pre-wrap; line-height: 1.8;">
+                            {!! nl2br(e($formulaire->introduction_content_ar)) !!}
+                        </div>
+                    </div>
+                @endif
+
+                <div class="text-center mt-4">
                     <button wire:click="skipIntroduction"
-                            class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">
-                        Continue to Form
-                        <i class="ri-arrow-right-line ml-2"></i>
+                            class="btn btn-lg text-white px-5 rounded-pill shadow-sm" 
+                            style="background-color: {{ $form->color ?? '#2f5496' }};">
+                        <i class="ri-play-line me-2"></i> Commencer le formulaire
                     </button>
                 </div>
             </div>
@@ -380,33 +381,33 @@
             <div class="navigation-buttons mt-4 flex justify-center gap-4">
                 @if($currentStep > 1)
                     <button wire:click="previousStep" class="navigation-btn btn-back">
-                        <i class="ri-arrow-left-circle-fill me-1 ms-1"></i> Previous
+                        <i class="ri-arrow-left-circle-fill me-1 ms-1"></i> Précédent
                     </button>
                 @elseif($formulaire->has_introduction && !$showIntroduction)
                     <button wire:click="previousStep" class="navigation-btn btn-back">
                         <i class="ri-arrow-left-circle-fill me-1 ms-1"></i> Introduction
                     </button>
                 @else
-                    <a href="{{ route('form.project.detail', $projectId) }}" class="navigation-btn btn-back">
-                        <i class="ri-arrow-left-circle-fill me-1 ms-1"></i> Back to Project
+                    <a href="{{ route('user.project.detail', $projectId) }}" class="navigation-btn btn-back">
+                        <i class="ri-arrow-left-circle-fill me-1 ms-1"></i> Retour au projet
                     </a>
                 @endif
 
                 @if($currentStep < $totalSteps)
                     <button wire:click="nextStep" class="navigation-btn btn-next" @if($isReadOnly && $currentStep >= $totalSteps) disabled @endif>
-                        Next <i class="ri-arrow-right-circle-fill me-1 ms-1"></i>
+                        Suivant <i class="ri-arrow-right-circle-fill me-1 ms-1"></i>
                     </button>
                 @endif
 
                 @if(!$isReadOnly && $currentStep < $totalSteps)
                     <button wire:click="saveProgress" class="navigation-btn" style="background-color: #28a745;">
-                        <i class="ri-save-line me-1 ms-1"></i> Save Progress
+                        <i class="ri-save-line me-1 ms-1"></i> Sauvegarder
                     </button>
                 @endif
 
                 @if($currentStep == $totalSteps && !$isReadOnly)
                     <button wire:click="submit" class="navigation-btn btn-submit">
-                        Submit <i class="ri-send-plane-fill me-1 ms-1"></i>
+                        Soumettre <i class="ri-send-plane-fill me-1 ms-1"></i>
                     </button>
                 @endif
             </div>

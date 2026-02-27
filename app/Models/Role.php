@@ -1,0 +1,100 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Cache;
+
+class Role extends Model
+{
+    protected $fillable = ['name', 'label', 'color', 'is_system', 'can_access_admin'];
+
+    protected $casts = [
+        'is_system'        => 'boolean',
+        'can_access_admin' => 'boolean',
+    ];
+
+    // ─── Relations ────────────────────────────────────────────────────────────
+
+    public function permissions(): HasMany
+    {
+        return $this->hasMany(RolePermission::class, 'role_name', 'name');
+    }
+
+    // ─── Access Checks ────────────────────────────────────────────────────────
+
+    /**
+     * Check if a role can access a given module.
+     * super_admin always has full unrestricted access.
+     */
+    public static function canAccess(string $roleName, string $moduleKey): bool
+    {
+        if ($roleName === 'super_admin') {
+            return true;
+        }
+
+        return in_array($moduleKey, static::getPermissionsForRole($roleName));
+    }
+
+    /**
+     * Return all permitted module keys for a role (cached 1 hour).
+     */
+    public static function getPermissionsForRole(string $roleName): array
+    {
+        return Cache::remember("role_module_perms.{$roleName}", 3600, function () use ($roleName) {
+            return RolePermission::where('role_name', $roleName)->pluck('module_key')->toArray();
+        });
+    }
+
+    /**
+     * Check if a role has admin-panel access (cached 1 hour).
+     */
+    public static function hasAdminAccess(string $roleName): bool
+    {
+        if (in_array($roleName, ['admin', 'super_admin'])) {
+            return true;
+        }
+
+        return Cache::remember("role_admin_access.{$roleName}", 3600, function () use ($roleName) {
+            return static::where('name', $roleName)->where('can_access_admin', true)->exists();
+        });
+    }
+
+    /**
+     * Clear permission/admin-access cache for one role or all roles.
+     */
+    public static function clearPermissionCache(?string $roleName = null): void
+    {
+        if ($roleName) {
+            Cache::forget("role_module_perms.{$roleName}");
+            Cache::forget("role_admin_access.{$roleName}");
+        } else {
+            foreach (static::pluck('name') as $name) {
+                Cache::forget("role_module_perms.{$name}");
+                Cache::forget("role_admin_access.{$name}");
+            }
+        }
+    }
+
+    // ─── UI Helpers ───────────────────────────────────────────────────────────
+
+    /**
+     * Return Tailwind color classes for a role color string.
+     * ['bg' => '...', 'badge' => '...', 'bar' => '...']
+     */
+    public static function colorClasses(string $color): array
+    {
+        return match ($color) {
+            'blue'   => ['bg' => 'bg-blue-500',   'badge' => 'bg-blue-100 text-blue-800',   'bar' => 'bg-blue-500'],
+            'green'  => ['bg' => 'bg-green-500',  'badge' => 'bg-green-100 text-green-800', 'bar' => 'bg-green-500'],
+            'red'    => ['bg' => 'bg-red-500',    'badge' => 'bg-red-100 text-red-800',     'bar' => 'bg-red-500'],
+            'yellow' => ['bg' => 'bg-yellow-500', 'badge' => 'bg-yellow-100 text-yellow-800','bar'=> 'bg-yellow-500'],
+            'purple' => ['bg' => 'bg-purple-500', 'badge' => 'bg-purple-100 text-purple-800','bar'=> 'bg-purple-500'],
+            'orange' => ['bg' => 'bg-orange-500', 'badge' => 'bg-orange-100 text-orange-800','bar'=> 'bg-orange-500'],
+            'pink'   => ['bg' => 'bg-pink-500',   'badge' => 'bg-pink-100 text-pink-800',   'bar' => 'bg-pink-500'],
+            'indigo' => ['bg' => 'bg-indigo-500', 'badge' => 'bg-indigo-100 text-indigo-800','bar'=> 'bg-indigo-500'],
+            default  => ['bg' => 'bg-gray-500',   'badge' => 'bg-gray-100 text-gray-800',   'bar' => 'bg-gray-500'],
+        };
+    }
+}

@@ -2,11 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\BusinessPlan;
-use App\Models\EtudeMarche;
-use App\Models\EvaluationIdee;
-use App\Models\Bmc;
-use App\Models\BilanCompetence;
+use App\Models\DynamicFormSubmission;
 use Illuminate\Support\Collection;
 
 class FormSubmissionService
@@ -17,11 +13,7 @@ class FormSubmissionService
     protected function getFormModels(): array
     {
         return [
-            'business_plan' => BusinessPlan::class,
-            'etude_marche' => EtudeMarche::class,
-            'evaluation_idee' => EvaluationIdee::class,
-            'bmc' => Bmc::class,
-            'bilan_competence' => BilanCompetence::class,
+            'candidat' => DynamicFormSubmission::class,
         ];
     }
 
@@ -78,7 +70,7 @@ class FormSubmissionService
         $submissions = collect();
 
         foreach ($this->getFormModels() as $formType => $modelClass) {
-            $query = $modelClass::with('candidat');
+            $query = $modelClass::with(['candidat', 'reviewer', 'programe']);
             
             if ($status) {
                 $query->where('status', $status);
@@ -95,14 +87,6 @@ class FormSubmissionService
         }
 
         return $submissions->sortByDesc('created_at');
-    }
-
-    /**
-     * Get recent submissions
-     */
-    public function getRecentSubmissions(int $limit = 10): Collection
-    {
-        return $this->getAllSubmissions()->take($limit);
     }
 
     /**

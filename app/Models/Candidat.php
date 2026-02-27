@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Traits\TracksUserActivity;
 
@@ -14,6 +15,7 @@ class Candidat extends Authenticatable
     protected $table = 'candidat';
 
     protected $fillable = [
+        'matricule',
         'business_plan_id',
         'login',
         'password',
@@ -35,6 +37,10 @@ class Candidat extends Authenticatable
         'last_device',
         'last_login_at',
         'login_count',
+        'reviewed_by',
+        'reviewed_at',
+        'review_notes',
+        'review_status',
     ];
 
     protected $hidden = [
@@ -49,8 +55,14 @@ class Candidat extends Authenticatable
             'is_active' => 'boolean',
             'date_naissance' => 'date',
             'last_login_at' => 'datetime',
-            'login_count' => 'integer',
+            'login_count'  => 'integer',
+            'reviewed_at'  => 'datetime',
         ];
+    }
+
+    public function reviewer()
+    {
+        return $this->belongsTo(User::class, 'reviewed_by');
     }
 
     public function projects()

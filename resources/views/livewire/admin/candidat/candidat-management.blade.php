@@ -13,11 +13,11 @@
 
     <!-- Statistics Grid -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition">
             <div class="flex justify-between items-start">
                 <div>
-                    <p class="text-gray-500 text-sm font-medium">Total Users</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2"></p>
+                    <p class="text-gray-500 text-sm font-medium">Total Candidats</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ $statistics['total'] ?? 0 }}</p>
                 </div>
                 <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                     <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -27,43 +27,43 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition">
             <div class="flex justify-between items-start">
                 <div>
-                    <p class="text-gray-500 text-sm font-medium">Super Admins</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2"></p>
-                </div>
-                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-gray-500 text-sm font-medium">Admins</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2"></p>
+                    <p class="text-gray-500 text-sm font-medium">Actifs</p>
+                    <p class="text-3xl font-bold text-green-600 mt-2">{{ $statistics['active'] ?? 0 }}</p>
                 </div>
                 <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                     <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition">
             <div class="flex justify-between items-start">
                 <div>
-                    <p class="text-gray-500 text-sm font-medium">Regular Users</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2"></p>
+                    <p class="text-gray-500 text-sm font-medium">Inactifs</p>
+                    <p class="text-3xl font-bold text-red-500 mt-2">{{ $statistics['inactive'] ?? 0 }}</p>
                 </div>
-                <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-gray-500 text-sm font-medium">Nouveaux ce mois</p>
+                    <p class="text-3xl font-bold text-indigo-600 mt-2">{{ $statistics['new_this_month'] ?? 0 }}</p>
+                </div>
+                <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                     </svg>
                 </div>
             </div>
@@ -76,14 +76,14 @@
             <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
                 <h3 class="text-lg font-semibold text-gray-900">All Users</h3>
                 @if(Auth::user()->isSuperAdmin() || Auth::user()->isAdmin())
-                <a href="{{ route('admin.users.create') }}" class="px-4 py-2 bg-green-logo text-white rounded-lg transition">
+                <button wire:click="openCreateModal" class="px-4 py-2 bg-green-logo text-white rounded-lg transition">
                     <span class="flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                         </svg>
-                        Create User
+                        Nouveau Candidat
                     </span>
-                </a>
+                </button>
                 @endif
             </div>
 
@@ -106,6 +106,11 @@
                         <div class="flex-1 min-w-0">
                             <div class="text-base font-semibold text-gray-900 truncate">{{ $candidat->nom }} {{ $candidat->prenom }}</div>
                             <div class="text-sm text-gray-500 truncate">{{ $candidat->email }}</div>
+                            @if($candidat->matricule)
+                            <span class="inline-block mt-1 px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs rounded-full font-medium">
+                                <i class="ri-hashtag"></i> {{ $candidat->matricule }}
+                            </span>
+                            @endif
                         </div>
                     </div>
 
@@ -175,10 +180,63 @@
         </div>
     </div>
 
+    <!-- Create / Edit Candidat Modal -->
+    @if($showCreateModal || $showEditModal)
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4" wire:click.self="closeModals">
+        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg z-10 overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-purple-50">
+                <h3 class="text-lg font-bold text-indigo-800 flex items-center gap-2">
+                    <i class="ri-user-add-line text-indigo-600"></i>
+                    {{ $showEditModal ? 'Modifier le candidat' : 'Nouveau candidat' }}
+                </h3>
+                <button wire:click="closeModals" class="text-gray-400 hover:text-gray-600"><i class="ri-close-line text-xl"></i></button>
+            </div>
+            <form wire:submit.prevent="{{ $showEditModal ? 'updateCandidat' : 'createCandidat' }}" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Matricule</label>
+                    <input type="text" wire:model="matricule" placeholder="Ex: MAT-2024-001"
+                           class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none transition text-sm">
+                    @error('matricule') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Nom *</label>
+                        <input type="text" wire:model="nom" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none transition text-sm">
+                        @error('nom') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Prénom *</label>
+                        <input type="text" wire:model="prenom" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none transition text-sm">
+                        @error('prenom') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Email *</label>
+                    <input type="email" wire:model="email" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none transition text-sm">
+                    @error('email') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">{{ $showEditModal ? 'Mot de passe (laisser vide pour garder)' : 'Mot de passe *' }}</label>
+                    <input type="password" wire:model="password" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none transition text-sm">
+                    @error('password') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                </div>
+                <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                    <button type="button" wire:click="closeModals" class="px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">Annuler</button>
+                    <button type="submit" class="px-5 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow transition">
+                        <i class="ri-save-line mr-1"></i> {{ $showEditModal ? 'Mettre à jour' : 'Créer' }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    @endif
+
     <!-- Password Generated Modal -->
     @if($showPasswordModal && $selectedCandidat)
-    <div class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center" wire:click.self="$set('showPasswordModal', false)">
-        <div class="bg-white rounded-xl shadow-xl max-w-md w-full mx-4 p-6">
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4" wire:click.self="$set('showPasswordModal', false)">
+        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"></div>
+        <div class="relative bg-white rounded-xl shadow-xl max-w-md w-full mx-4 p-6 z-10">
             <div class="text-center mb-4">
                 <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

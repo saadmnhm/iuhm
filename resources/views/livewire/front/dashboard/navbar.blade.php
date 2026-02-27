@@ -91,13 +91,13 @@
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end profile-menu" aria-labelledby="profileDropdown">
                     <li>
-                        <a class="dropdown-item" href="{{ route('form.settings') }}">
+                        <a class="dropdown-item" href="{{ route('user.settings') }}">
                             <i class="ri-settings-3-line me-2"></i> Settings
                         </a>
                     </li>
                     <li><hr class="dropdown-divider"></li>
                     <li>
-                        <form action="{{ route('form.logout') }}" method="POST">
+                        <form action="{{ route('user.logout') }}" method="POST">
                             @csrf
                             <button type="submit" class="dropdown-item text-danger">
                                 <i class="ri-logout-box-line me-2"></i> Sign Out

@@ -29,3 +29,10 @@ header{
     width: 30px;
     display: block;
 }
+
+select:focus,
+input:focus,
+textarea:focus,
+button:focus {
+    outline: none;
+}

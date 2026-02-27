@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use App\Models\User;
 use App\Models\Candidat;
+use App\Models\DynamicFormSubmission;
 use App\Services\FormSubmissionService;
 use App\Models\ProgrameList;
 use Livewire\Component;
@@ -15,16 +16,33 @@ class Dashboard extends Component
         $formService = app(FormSubmissionService::class);
         $allSubmissions = $formService->getAllSubmissions();
         
+        // Dynamic address distribution (top 6)
+        $addressDistribution = Candidat::whereNotNull('address')
+            ->selectRaw('address, COUNT(*) as count')
+            ->groupBy('address')
+            ->orderByDesc('count')
+            ->limit(6)
+            ->pluck('count', 'address')
+            ->toArray();
+
+        // Submission status counts
+        $submissionStats = [
+            'submitted' => DynamicFormSubmission::where('status', 'submitted')->count(),
+            'in_review' => DynamicFormSubmission::where('status', 'in_review')->count(),
+            'approved'  => DynamicFormSubmission::where('status', 'approved')->count(),
+            'rejected'  => DynamicFormSubmission::where('status', 'rejected')->count(),
+        ];
+
         $statistics = [
-            'total_projects' => $allSubmissions->count(),
             'total_users' => User::count(),
+            'recent_projects' => $allSubmissions->take(20),
+            'total_projects' => $allSubmissions->count(),
             'total_candidats' => Candidat::count(),
             'male_count' => Candidat::where('gender', 'homme')->count(),
             'female_count' => Candidat::where('gender', 'femme')->count(),
-            'recent_projects' => $formService->getRecentSubmissions(10),
-            'as' => Candidat::where('address', 'Ain Sbaa')->count(),
-            'hm' => Candidat::where('address', 'Hay Mohamadi')->count(),
-            'rn' => Candidat::where('address', 'Roches noires')->count(),
+            'address_labels' => array_keys($addressDistribution),
+            'address_values' => array_values($addressDistribution),
+            'submission_stats' => $submissionStats,
         ];
 
         $programe_list = ProgrameList::all();
@@ -39,6 +57,10 @@ class Dashboard extends Component
         for ($i = 1; $i <= 12; $i++) {
             $chartData[] = $monthlyData[$i] ?? 0;
         }
+        // echo "<pre>";
+        // print_r($programe_list);
+        // echo "</pre>";
+        // exit;
 
         return view('livewire.admin.dashboard', [
             'statistics' => $statistics,

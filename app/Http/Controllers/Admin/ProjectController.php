@@ -78,6 +78,6 @@ class ProjectController extends Controller
         $project = BusinessPlan::findOrFail($id);
         $project->delete();
 
-        return redirect()->route('admin.projects.index')->with('success', 'Project deleted successfully!');
+        return redirect()->route('admin.projects')->with('success', 'Project deleted successfully!');
     }
 }

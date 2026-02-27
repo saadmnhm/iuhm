@@ -58,7 +58,7 @@
                             </div>
 
                             <!-- Action Button -->
-                            <a href="{{ route('form.project.detail', $project->id) }}"
+                            <a href="{{ route('user.project.detail', $project->id) }}"
                                class="block w-full px-6 py-3 bg-blue-600 text-white text-center rounded-lg hover:bg-blue-700 transition font-medium">
                                 View Project
                                 <i class="ri-arrow-right-line ml-2"></i>

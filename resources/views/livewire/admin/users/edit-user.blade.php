@@ -49,9 +49,9 @@
                     </label>
                     <select wire:model="role" id="role" 
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
-                        <option value="user">User</option>
-                        <option value="admin">Admin</option>
-                        <option value="super_admin">Super Admin</option>
+                        @foreach(\App\Models\Role::orderByDesc('is_system')->orderBy('label')->get() as $r)
+                        <option value="{{ $r->name }}">{{ $r->label }}</option>
+                        @endforeach
                     </select>
                     @error('role') <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span> @enderror
                 </div>

@@ -66,7 +66,13 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return in_array($this->role, ['admin', 'super_admin']);
+        // Fast path for system roles
+        if (in_array($this->role, ['admin', 'super_admin'])) {
+            return true;
+        }
+
+        // Custom roles: check DB (cached)
+        return \App\Models\Role::hasAdminAccess($this->role);
     }
 
     public function isActive(): bool

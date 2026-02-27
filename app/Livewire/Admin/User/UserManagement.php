@@ -2,11 +2,13 @@
 
 namespace App\Livewire\Admin\User;
 
+use App\Models\Role;
 use App\Models\User;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use App\Models\AdminActivityLog;
 
 class UserManagement extends Component
 {
@@ -30,10 +32,11 @@ class UserManagement extends Component
 
     protected function rules()
     {
+        $validRoles = Role::pluck('name')->toArray();
         $rules = [
-            'name' => 'required|string|max:255',
+            'name'  => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . ($this->userId ?? 'NULL'),
-            'role' => 'required|in:user,admin,super_admin',
+            'role'  => ['required', 'string', 'in:' . implode(',', $validRoles)],
         ];
 
         if ($this->showCreateModal) {
@@ -119,12 +122,19 @@ class UserManagement extends Component
 
         $this->validate();
 
-        User::create([
+        $user = User::create([
             'name' => $this->name,
             'email' => $this->email,
             'password' => Hash::make($this->password),
             'role' => $this->role,
         ]);
+
+        AdminActivityLog::log(
+            'user_created',
+            "Created user: {$user->name} ({$user->email})",
+            User::class,
+            $user->id
+        );
 
         $this->showCreateModal = false;
         session()->flash('success', 'User created successfully!');
@@ -154,6 +164,13 @@ class UserManagement extends Component
 
         $user->update($data);
 
+        AdminActivityLog::log(
+            'user_updated',
+            "Updated user: {$user->name} ({$user->email})",
+            User::class,
+            $user->id
+        );
+
         $this->showEditModal = false;
         session()->flash('success', 'User updated successfully!');
         $this->reset(['name', 'email', 'password', 'role', 'userId']);
@@ -171,7 +188,15 @@ class UserManagement extends Component
             return;
         }
 
-        User::findOrFail($this->userId)->delete();
+        $user = User::findOrFail($this->userId);
+        $user->delete();
+
+        AdminActivityLog::log(
+            'user_deleted',
+            "Deleted user: {$user->name} ({$user->email})",
+            User::class,
+            $user->id
+        );
 
         $this->showDeleteModal = false;
         session()->flash('success', 'User deleted successfully!');
@@ -207,16 +232,25 @@ class UserManagement extends Component
 
         $users = $query->latest()->paginate(10);
 
+        $allRoles = Role::orderByDesc('is_system')->orderBy('label')->get();
+
+        $roleStats = [];
+        foreach ($allRoles as $r) {
+            $roleStats[$r->name] = User::where('role', $r->name)->count();
+        }
+
         $statistics = [
-            'total_users' => User::count(),
-            'admins' => User::where('role', 'admin')->count(),
-            'super_admins' => User::where('role', 'super_admin')->count(),
+            'total_users'   => User::count(),
+            'admins'        => User::where('role', 'admin')->count(),
+            'super_admins'  => User::where('role', 'super_admin')->count(),
             'regular_users' => User::where('role', 'user')->count(),
         ];
 
         return view('livewire.admin.users.user-management', [
-            'users' => $users,
+            'users'      => $users,
             'statistics' => $statistics,
+            'allRoles'   => $allRoles,
+            'roleStats'  => $roleStats,
         ])->layout('layouts.admin', ['header' => 'User Management']);
     }
 }

@@ -28,7 +28,7 @@ class Aside extends Component
 
     public function checkProfileCompletion()
     {
-        if (request()->routeIs('form.settings')) {
+        if (request()->routeIs('user.settings')) {
             $this->showCompleteProfileModal = false;
             return;
         }
@@ -40,7 +40,7 @@ class Aside extends Component
 
     public function goToSettings()
     {
-        return redirect()->route('form.settings');
+        return redirect()->route('user.settings');
     }
 
     public function render()

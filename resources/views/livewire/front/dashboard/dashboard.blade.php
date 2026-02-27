@@ -127,7 +127,7 @@
                                             <i class="ri-edit-line me-1"></i>Continuer
                                         </a>
                                     @else
-                                        <a href="{{ route('form.project.detail', $prog_list->id) }}" class="btn btn-outline">
+                                        <a href="{{ route('user.project.detail', $prog_list->id) }}" class="btn btn-outline">
                                             <i class="ri-add-circle-line me-1"></i>Commencer
                                         </a>
                                     @endif
@@ -247,10 +247,10 @@
                         </div>
                         <div class="card-body">
                             <div class="d-grid gap-2">
-                                <a href="{{ route('form.support') }}" class="btn btn-outline-secondary">
+                                <a href="{{ route('user.support') }}" class="btn btn-outline-secondary">
                                     <i class="ri-customer-service-2-line me-2"></i>Support
                                 </a>
-                                <a href="{{ route('form.settings') }}" class="btn btn-outline-secondary">
+                                <a href="{{ route('user.settings') }}" class="btn btn-outline-secondary">
                                     <i class="ri-settings-3-line me-2"></i>Paramètres du profil
                                 </a>
                             </div>
