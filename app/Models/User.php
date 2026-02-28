@@ -24,8 +24,6 @@ class User extends Authenticatable
         'password',
         'role',
         'is_active',
-        'address_id',
-        'address_other',
         'last_ip_address',
         'last_user_agent',
         'last_browser',

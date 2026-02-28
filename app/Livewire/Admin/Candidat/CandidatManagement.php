@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Candidat;
 
 use Propaganistas\LaravelPhone\PhoneNumber;
+use App\Models\Address;
 use App\Models\Candidat;
 use App\Models\AdminActivityLog;
 use Livewire\Component;
@@ -31,6 +32,8 @@ class CandidatManagement extends Component
     public $email;
     public $phone;
     public $address;
+    public $address_id = '';
+    public $address_custom = '';
     public $password;
     public $selectedCandidat = null;
     
@@ -44,6 +47,8 @@ class CandidatManagement extends Component
             'prenom' => 'required|string|max:255',
             'email' => 'required|email|unique:candidat,email,' . ($this->candidatId ?? 'NULL'),
             'address' => 'nullable|string|max:500',
+            'address_id' => 'nullable',
+            'address_custom' => 'nullable|string|max:500|required_if:address_id,other',
             'phone' => 'nullable|string|max:20',
         ];
 
@@ -73,7 +78,7 @@ class CandidatManagement extends Component
             return;
         }
 
-        $this->reset(['nom', 'prenom', 'email', 'password', 'candidatId']);
+        $this->reset(['nom', 'prenom', 'email', 'password', 'candidatId', 'address_id', 'address_custom']);
         $this->showCreateModal = true;
     }
 
@@ -97,6 +102,17 @@ class CandidatManagement extends Component
         $this->prenom = $candidat->prenom;
         $this->email = $candidat->email;
         $this->password = '';
+
+        // Determine if saved address matches a known address
+        $known = Address::where('address_line1', $candidat->address)->first();
+        if ($candidat->address && !$known) {
+            $this->address_id = 'other';
+            $this->address_custom = $candidat->address;
+        } else {
+            $this->address_id = $known ? $known->id : '';
+            $this->address_custom = '';
+        }
+
         $this->showEditModal = true;
     }
 
@@ -132,10 +148,11 @@ class CandidatManagement extends Component
 
         $candidat = Candidat::create([
             'matricule' => $this->matricule ?: null,
-            'nom' => $this->nom,
-            'prenom' => $this->prenom,
-            'email' => $this->email,
-            'password' => Hash::make($this->password),
+            'nom'       => $this->nom,
+            'prenom'    => $this->prenom,
+            'email'     => $this->email,
+            'password'  => Hash::make($this->password),
+            'address'   => $this->resolveAddress(),
         ]);
 
         AdminActivityLog::log(
@@ -147,7 +164,7 @@ class CandidatManagement extends Component
 
         $this->showCreateModal = false;
         session()->flash('success', 'Candidat created successfully!');
-        $this->reset(['matricule', 'nom', 'prenom', 'email', 'password', 'candidatId']);
+        $this->reset(['matricule', 'nom', 'prenom', 'email', 'password', 'candidatId', 'address_id', 'address_custom']);
     }
 
     public function updateCandidat()
@@ -163,9 +180,10 @@ class CandidatManagement extends Component
 
         $data = [
             'matricule' => $this->matricule ?: null,
-            'nom' => $this->nom,
-            'prenom' => $this->prenom,
-            'email' => $this->email,
+            'nom'       => $this->nom,
+            'prenom'    => $this->prenom,
+            'email'     => $this->email,
+            'address'   => $this->resolveAddress(),
         ];
 
         if ($this->password) {
@@ -183,7 +201,7 @@ class CandidatManagement extends Component
 
         $this->showEditModal = false;
         session()->flash('success', 'Candidat updated successfully!');
-        $this->reset(['nom', 'prenom', 'email', 'password', 'candidatId']);
+        $this->reset(['nom', 'prenom', 'email', 'password', 'candidatId', 'address_id', 'address_custom']);
     }
 
     public function deleteCandidat()
@@ -261,14 +279,25 @@ class CandidatManagement extends Component
         session()->flash('success', "Candidat {$status} avec succès!");
     }
 
-    public function closeModals()
+    protected function resolveAddress(): ?string
     {
+        if ($this->address_id === 'other') {
+            return $this->address_custom ?: null;
+        }
+        if ($this->address_id) {
+            $addr = Address::find($this->address_id);
+            return $addr ? $addr->address_line1 . ($addr->city ? ', ' . $addr->city : '') : null;
+        }
+        return null;
+    }
+
+    public function closeModals()    {
         $this->showCreateModal = false;
         $this->showEditModal = false;
         $this->showDeleteModal = false;
         $this->showShowModal = false;
         $this->selectedCandidat = null;
-        $this->reset(['nom', 'prenom', 'email', 'password', 'candidatId']);
+        $this->reset(['nom', 'prenom', 'email', 'password', 'candidatId', 'address_id', 'address_custom']);
     }
 
     public function render()
@@ -300,8 +329,9 @@ class CandidatManagement extends Component
         ];
 
         return view('livewire.admin.candidat.candidat-management', [
-            'candidats' => $candidats,
+            'candidats'  => $candidats,
             'statistics' => $statistics,
+            'addresses'  => Address::orderBy('city')->orderBy('address_line1')->get(),
         ])->layout('layouts.admin', ['header' => 'Candidat Management']);
     }
 

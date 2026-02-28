@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Admin\User;
 
-use App\Models\Address;
 use App\Models\Role;
 use App\Models\User;
 use Livewire\Component;
@@ -18,19 +17,15 @@ class CreateUser extends Component
     public $password_confirmation;
     public $role = 'user';
     public $is_active = true;
-    public $address_id = '';
-    public $address_other = '';
 
     protected function rules()
     {
         return [
-            'name'          => 'required|string|max:255',
-            'email'         => 'required|email|unique:users,email',
-            'password'      => 'required|min:6|confirmed',
-            'role'          => ['required', 'string', 'in:' . implode(',', Role::pluck('name')->toArray())],
-            'is_active'     => 'boolean',
-            'address_id'    => 'nullable',
-            'address_other' => 'nullable|string|max:255|required_if:address_id,other',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6|confirmed',
+            'role' => ['required', 'string', 'in:' . implode(',', Role::pluck('name')->toArray())],
+            'is_active' => 'boolean',
         ];
     }
 
@@ -44,13 +39,11 @@ class CreateUser extends Component
         $this->validate();
 
         $user = User::create([
-            'name'          => $this->name,
-            'email'         => $this->email,
-            'password'      => Hash::make($this->password),
-            'role'          => $this->role,
-            'is_active'     => $this->is_active,
-            'address_id'    => $this->address_id === 'other' || $this->address_id === '' ? null : $this->address_id,
-            'address_other' => $this->address_id === 'other' ? $this->address_other : null,
+            'name' => $this->name,
+            'email' => $this->email,
+            'password' => Hash::make($this->password),
+            'role' => $this->role,
+            'is_active' => $this->is_active,
         ]);
 
         session()->flash('success', 'User created successfully!');
@@ -59,8 +52,6 @@ class CreateUser extends Component
 
     public function render()
     {
-        return view('livewire.admin.users.create-user', [
-            'addresses' => Address::orderBy('city')->orderBy('address_line1')->get(),
-        ]);
+        return view('livewire.admin.users.create-user');
     }
 }
