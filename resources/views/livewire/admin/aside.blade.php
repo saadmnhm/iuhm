@@ -59,6 +59,8 @@
                     <span>Historique & Audit</span>
                 </a>
                 @endcanmodule
+
+                <!-- Referrential -->
                 <div x-data="{ open: false }">
                     <!-- Parent -->
                     <button @click="open = !open" class="flex w-full items-center justify-between gap-3 px-4 py-3 rounded-lg transition hover:bg-gray-100">
@@ -137,6 +139,39 @@
 
                     </div>
                 </div>
+                <!-- Referrential -->
+
+                <!-- Association -->
+                @canmodule('association')
+                <div x-data="{ open: false }">
+                    <button @click="open = !open" class="flex w-full items-center justify-between gap-3 px-4 py-3 rounded-lg transition hover:bg-gray-100">
+                        <div class="flex items-center gap-3">
+                            <i class="ri-building-2-line text-lg"></i>
+                            <span>Association</span>
+                        </div>
+                        <svg :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" >
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    
+                    <div x-show="open" x-collapse class="ml-3 mt-1 space-y-1">
+
+                        @canmodule('rh')
+                        <a href="{{ route('admin.rh.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.rh*') ? 'bg-gray-100 font-medium' : '' }}">
+                            <i class="ri-team-line mr-1"></i> Gestion RH
+                        </a>
+                        @endcanmodule
+
+                        @canmodule('association_parameters')
+                        <a href="{{ route('admin.association.parameters') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.association*') ? 'bg-gray-100 font-medium' : '' }}">
+                            <i class="ri-settings-3-line mr-1"></i> Paramètres Association
+                        </a>
+                        @endcanmodule
+
+
+                    </div>
+                </div>
+                @endcanmodule
             </nav>
         </aside>
 
