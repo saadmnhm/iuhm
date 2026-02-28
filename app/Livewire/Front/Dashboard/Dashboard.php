@@ -102,12 +102,6 @@ class Dashboard extends Component
     public function getFormTypesProperty()
     {
         return [
-            'business_plan' => [
-                'label' => 'Business Plan',
-                'icon' => 'ri-bar-chart-box-line',
-                'color' => 'primary',
-                'route' => 'user.business_plan',
-            ],
             'etude_marche' => [
                 'label' => 'Étude de Marché',
                 'icon' => 'ri-search-eye-line',

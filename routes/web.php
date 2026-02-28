@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Livewire\Formulairestatic\BusinessPlan;
 use App\Livewire\Formulairestatic\EvaluationIdee;
 use App\Livewire\Formulairestatic\BilanCompetences;
 use App\Livewire\Formulairestatic\Bmc;
@@ -91,7 +90,6 @@ Route::prefix('user')->name('user.')->group(function () {
 // Protected User Dashboard Routes
 Route::middleware('candidat')->group(function () {
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
-    Route::get('/business-plan', BusinessPlan::class)->name('business_plan');
     Route::get('/bilan-competences', BilanCompetences::class)->name('bilan_competences');
     Route::get('/bmc', Bmc::class)->name('bmc');
     Route::get('/etude-marche', \App\Livewire\Formulairestatic\EtudeMarche::class)->name('etude_marche');

@@ -80,12 +80,7 @@
                                 <span>Business model canevas</span>
                             </a>
                         </li> 
-                        <li class="nav-item">
-                            <a href="{{ route('user.business_plan') }}" class="nav-link {{ request()->routeIs('user.business_plan') ? 'active' : '' }}">
-                                <i class="ri-bar-chart-box-line fs-5"></i>
-                                <span>Business Plan</span>
-                            </a>
-                        </li>
+
                     </div>
                 </div>
             @endif
