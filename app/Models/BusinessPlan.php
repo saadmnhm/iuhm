@@ -11,6 +11,8 @@ class BusinessPlan extends Model
 {
     use HasFactory, SoftDeletes, HasFormSubmission;
 
+    protected $table = 'projects';
+
     protected $fillable = [
         'user_id',
         // Step 0 - Personal Info
