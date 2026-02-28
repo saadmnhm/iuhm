@@ -44,7 +44,6 @@ class ProjectDetail extends Component
         AdminActivityLog::log(
             'registration_added',
             'Added registration number: ' . $this->registration,
-            BusinessPlan::class,
             $this->project->id,
             [
                 'old_registration' => $oldRegistration,
@@ -90,7 +89,6 @@ class ProjectDetail extends Component
         AdminActivityLog::log(
             'project_status_changed',
             "Changed project status from {$oldStatus} to {$this->newStatus}",
-            BusinessPlan::class,
             $this->project->id,
             [
                 'old_status' => $oldStatus,

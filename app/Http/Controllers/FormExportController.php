@@ -6,11 +6,6 @@ use Illuminate\Http\Request;
 
 class FormExportController extends Controller
 {
-    //
-}
-
-
-
     /**
      * Export Etude de Marche to PDF
      */

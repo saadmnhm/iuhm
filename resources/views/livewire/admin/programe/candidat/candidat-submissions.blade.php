@@ -259,9 +259,9 @@
         {{-- Modal panel --}}
         <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl z-10 overflow-hidden">
             {{-- Modal header --}}
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-purple-50">
-                <h2 class="text-lg font-bold text-indigo-800 flex items-center gap-2">
-                    <i class="ri-user-star-line text-indigo-600 text-xl"></i>
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r f">
+                <h2 class="text-lg font-bold text-green-800 flex items-center gap-2">
+                    <i class="ri-user-star-line text-green-600 text-xl"></i>
                     Assigner une révision
                 </h2>
                 <button wire:click="$set('showReviewModal', false)"
@@ -274,23 +274,19 @@
             <div class="px-6 py-5 space-y-5 max-h-[70vh] overflow-y-auto">
                 {{-- Admin card selector --}}
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-3">
-                        <i class="ri-user-line mr-1 text-indigo-500"></i> Choisir le responsable
-                    </label>
-                    {{-- Self card --}}
                     @php $selfAdmin = ['id' => auth()->id(), 'name' => auth()->user()->name, 'role' => auth()->user()->role ?? 'admin']; @endphp
                     <div class="grid grid-cols-3 gap-3">
                         {{-- "Moi-même" card --}}
                         <div wire:click="$set('reviewerId', {{ auth()->id() }})"
                              class="cursor-pointer rounded-xl border-2 p-3 text-center transition-all hover:shadow-md
-                                    {{ $reviewerId == auth()->id() ? 'border-indigo-500 bg-indigo-50 shadow-md' : 'border-gray-200 hover:border-indigo-300' }}">
-                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center text-lg font-bold mx-auto mb-2 shadow">
+                                    {{ $reviewerId == auth()->id() ? 'border-green-500  shadow-md' : 'border-gray-200 hover:border-indigo-300' }}">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 text-white flex items-center justify-center text-lg font-bold mx-auto mb-2 shadow">
                                 {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                             </div>
                             <p class="text-xs font-semibold text-gray-800 truncate">{{ auth()->user()->name }}</p>
-                            <span class="inline-block mt-1 px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs rounded-full font-medium">Moi-même</span>
+                            <span class="inline-block mt-1 px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full font-medium">Moi-même</span>
                             @if($reviewerId == auth()->id())
-                            <div class="mt-1"><i class="ri-checkbox-circle-fill text-indigo-600 text-base"></i></div>
+                            <div class="mt-1"><i class="ri-checkbox-circle-fill text-green-600 text-base"></i></div>
                             @endif
                         </div>
 
@@ -303,7 +299,7 @@
                             @endphp
                             <div wire:click="$set('reviewerId', {{ $admin['id'] }})"
                                  class="cursor-pointer rounded-xl border-2 p-3 text-center transition-all hover:shadow-md
-                                        {{ $reviewerId == $admin['id'] ? 'border-indigo-500 bg-indigo-50 shadow-md' : 'border-gray-200 hover:border-indigo-300' }}">
+                                        {{ $reviewerId == $admin['id'] ? 'border-green-500 bg-green-50 shadow-md' : 'border-gray-200 hover:border-indigo-300' }}">
                                 <div class="w-12 h-12 rounded-full bg-gradient-to-br {{ $colorClass }} text-white flex items-center justify-center text-lg font-bold mx-auto mb-2 shadow">
                                     {{ strtoupper(substr($admin['name'], 0, 1)) }}
                                 </div>
@@ -312,7 +308,7 @@
                                     {{ ucfirst($admin['role'] ?? 'Admin') }}
                                 </span>
                                 @if($reviewerId == $admin['id'])
-                                <div class="mt-1"><i class="ri-checkbox-circle-fill text-indigo-600 text-base"></i></div>
+                                <div class="mt-1"><i class="ri-checkbox-circle-fill text-green-600 text-base"></i></div>
                                 @endif
                             </div>
                             @endif
