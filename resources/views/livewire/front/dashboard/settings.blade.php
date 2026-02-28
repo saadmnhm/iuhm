@@ -159,14 +159,25 @@
 
                                     <div class="col-md-6">
                                         <label for="address" class="block disc mb-2 font-semibold">{{ __('messages.adresse') }}</label>
-                                        <select class="form-control border border-gray-300 rounded p-2 w-full" id="address" name="address" wire:model="address">
+                                        <select class="form-control border border-gray-300 rounded p-2 w-full" id="address" name="address" wire:model.live="address">
                                             <option value="">{{ __('messages.selectionner_adresse') }}</option>
-                                            <option value="Hay Mohamadi">{{ __('messages.hay_mohamadi') }}</option>
-                                            <option value="Ain Sbaa">{{ __('messages.ain_sbaa') }}</option>
-                                            <option value="Roches Noires">{{ __('messages.rochnoir') }}</option>
+                                            @foreach($addresses as $addr)
+                                            <option value="{{ $addr->address_line1 }}">{{ $addr->address_line1 }}{{ $addr->city ? ' — '.$addr->city : '' }}</option>
+                                            @endforeach
+                                            <option value="other">Autre (saisir manuellement)</option>
                                         </select>
                                         @error('address') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                                     </div>
+
+                                    @if($address === 'other')
+                                    <div class="col-md-6">
+                                        <label class="block disc mb-2 font-semibold">Adresse personnalisée <span class="text-danger">*</span></label>
+                                        <input type="text" wire:model="address_custom"
+                                               placeholder="Saisir votre adresse..."
+                                               class="form-control border border-gray-300 rounded p-2 w-full">
+                                        @error('address_custom') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                    </div>
+                                    @endif
 
                                     
                                     <div class="col-12 mt-4">

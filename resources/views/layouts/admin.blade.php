@@ -52,6 +52,60 @@
 
 
 @livewireScripts
+
+    <!-- Alpine (global) and global toast listener -->
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+    <div x-data="toastHandler()" x-cloak x-show="show" x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0" style="position:fixed;right:1rem;bottom:1rem;z-index:1100;">
+        <div :class="type === 'error' ? 'bg-red-600' : (type === 'warning' ? 'bg-yellow-500' : 'bg-green-600')"
+             class="text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3">
+            <svg x-show="type === 'success'" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                 viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round"
+                 stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <svg x-show="type === 'error'" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                 viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round"
+                 stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            <div class="text-sm" x-text="message"></div>
+            <button @click="show = false" class="ml-2 opacity-90 hover:opacity-100">
+                <i class="ri-close-line"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function toastHandler() {
+            return {
+                show: false,
+                message: '',
+                type: 'success',
+                timeout: null,
+                init() {
+                    @if(session('toast'))
+                        this.message = @json(session('toast'));
+                        this.type = 'success';
+                        this.show = true;
+                        this.autoHide();
+                    @endif
+
+                    window.addEventListener('notify', (e) => {
+                        const d = e.detail || {};
+                        this.message = d.message || d.msg || 'Action réussie.';
+                        this.type = d.type || 'success';
+                        this.show = true;
+                        this.autoHide();
+                    });
+                },
+                autoHide() {
+                    clearTimeout(this.timeout);
+                    this.timeout = setTimeout(() => this.show = false, 3500);
+                }
+            }
+        }
+    </script>
+
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>

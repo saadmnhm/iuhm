@@ -81,7 +81,11 @@
                 <div class="flex items-start justify-between mb-3">
                     <div class="flex items-center gap-3">
                         <div class="w-11 h-11 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center text-sm font-bold shadow">
-                            {{ strtoupper(substr($candidat->nom ?? '', 0, 1)) }}{{ strtoupper(substr($candidat->prenom ?? '', 0, 1)) }}
+                          @if($candidat->profile_image)
+                                <img src="{{ asset('uploads/' . $candidat->profile_image) }}" alt="{{ $candidat->nom }} {{ $candidat->prenom }}" class="w-full h-full object-cover rounded-full">
+                            @else
+                                {{ strtoupper(substr($candidat->nom ?? '', 0, 1)) }}{{ strtoupper(substr($candidat->prenom ?? '', 0, 1)) }}
+                          @endif
                         </div>
                         <div>
                             <h4 class="font-semibold text-gray-900 group-hover:text-indigo-700 transition">{{ $candidat->nom }} {{ $candidat->prenom }}</h4>

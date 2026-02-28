@@ -1,10 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Livewire\Formulairestatic\BusinessPlan;
-use App\Livewire\Formulairestatic\EvaluationIdee;
-use App\Livewire\Formulairestatic\BilanCompetences;
-use App\Livewire\Formulairestatic\Bmc;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\FrontAuthController ;
 use App\Livewire\Front\Dashboard\Dashboard;
@@ -22,31 +18,18 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', \App\Livewire\Admin\Dashboard::class)->name('dashboard');
         Route::post('/address/create', [\App\Http\Controllers\Admin\DashboardController::class, 'createAddress'])->name('address.create');
         Route::post('/address/delete/{id}', [\App\Http\Controllers\Admin\DashboardController::class, 'DeleteAddess'])->name('address.delete');
-        Route::get('/projects', \App\Livewire\Admin\Project\ProjectList::class)->name('projects');
         Route::get('/projects/{id}', \App\Livewire\Admin\Project\ProjectDetail::class)->name('projects.show');
-        Route::get('/projects/{id}/export-pdf', [\App\Http\Controllers\Admin\ProjectExportController::class, 'exportPdf'])->name('projects.export.pdf');
-        Route::get('/projects/{id}/preview-pdf', [\App\Http\Controllers\Admin\ProjectExportController::class, 'previewPdf'])->name('projects.preview.pdf');
         
-        // Form Detail Pages
-        Route::get('/etude-marche/{id}', \App\Livewire\Admin\Formold\EtudeMarcheDetail::class)->name('etude-marche.show');
-        Route::get('/evaluation-idee/{id}', \App\Livewire\Admin\Formold\EvaluationIdeeDetail::class)->name('evaluation-idee.show');
-        Route::get('/bmc/{id}', \App\Livewire\Admin\Formold\BmcDetail::class)->name('bmc.show');
-        Route::get('/bilan-competence/{id}', \App\Livewire\Admin\Formold\BilanCompetenceDetail::class)->name('bilan-competence.show');
-        
-        // Form PDF Exports
-        Route::get('/etude-marche/{id}/export-pdf', [\App\Http\Controllers\FormExportController::class, 'exportEtudeMarche'])->name('etude-marche.export-pdf');
-        Route::get('/evaluation-idee/{id}/export-pdf', [\App\Http\Controllers\FormExportController::class, 'exportEvaluationIdee'])->name('evaluation-idee.export-pdf');
-        Route::get('/bmc/{id}/export-pdf', [\App\Http\Controllers\FormExportController::class, 'exportBmc'])->name('bmc.export-pdf');
-        Route::get('/bilan-competence/{id}/export-pdf', [\App\Http\Controllers\FormExportController::class, 'exportBilanCompetence'])->name('bilan-competence.export-pdf');
+
 
         Route::get('/users', \App\Livewire\Admin\User\UserManagement::class)->name('users.index')->middleware('module:users');
         Route::get('/candidats', \App\Livewire\Admin\Candidat\CandidatManagement::class)->name('candidats.index')->middleware('module:candidats');
         Route::get('/candidats/{id}', \App\Livewire\Admin\Candidat\ShowCandidat::class)->name('candidats.show')->middleware('module:candidats');
+        Route::get('/candidats/{id}/edit', \App\Livewire\Admin\Candidat\EditCandidat::class)->name('candidats.edit')->middleware('module:candidats');
         Route::get('/users/create', \App\Livewire\Admin\User\CreateUser::class)->name('users.create')->middleware('module:users');
         Route::get('/users/{id}', \App\Livewire\Admin\User\ShowUser::class)->name('users.show')->middleware('module:users');
         Route::get('/users/{id}/edit', \App\Livewire\Admin\User\EditUser::class)->name('users.edit')->middleware('module:users');
         Route::get('/addresses', \App\Livewire\Admin\Address\AddressManager::class)->name('addresses.index')->middleware('module:addresses');
-        Route::get('/projects/{id}/add-registration', \App\Livewire\Admin\RegistrationId::class)->name('add.registration');
         Route::get('/activity-logs', \App\Livewire\Admin\Logs\ActivityLogs::class)->name('activity.logs')->middleware('module:activity_logs');
         Route::get('/dev-tools', \App\Livewire\Admin\Tools\DevTools::class)->name('dev.tools')->middleware('module:dev_tools');
         Route::get('/rh', \App\Livewire\Admin\Rh\RhManagement::class)->name('rh.index')->middleware('module:rh');
@@ -70,7 +53,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         
         Route::get('/projects_view', App\Livewire\Admin\Project\ProjectView::class)->name('projects_view');
-        Route::get('/form-submissions/{type}/{id}', \App\Livewire\Admin\Project\FormSubmissionView::class)->name('form-submissions.view');
 
         // Dynamic Form Builder (Referential)
         Route::get('/formulaires', \App\Livewire\Admin\Formulaire\FormulaireList::class)->name('formulaires.index')->middleware('module:formulaires');
@@ -91,11 +73,6 @@ Route::prefix('user')->name('user.')->group(function () {
 // Protected User Dashboard Routes
 Route::middleware('candidat')->group(function () {
     Route::get('/dashboard', Dashboard::class)->name('dashboard');
-    Route::get('/business-plan', BusinessPlan::class)->name('business_plan');
-    Route::get('/bilan-competences', BilanCompetences::class)->name('bilan_competences');
-    Route::get('/bmc', Bmc::class)->name('bmc');
-    Route::get('/etude-marche', \App\Livewire\Formulairestatic\EtudeMarche::class)->name('etude_marche');
-    Route::get('/evaluation-idee', EvaluationIdee::class)->name('evaluation_idee');
     Route::get('/settings', \App\Livewire\Front\Dashboard\Settings::class)->name('settings');
     Route::get('/support', \App\Livewire\Front\Dashboard\Support::class)->name('support');
     Route::get('/f/{slug}', \App\Livewire\Front\DynamicFormWizard::class)->name('dynamic_form');

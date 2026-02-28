@@ -2,18 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\EtudeMarche;
-use App\Models\EvaluationIdee;
-use App\Models\Bmc;
-use App\Models\BilanCompetence;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
-
 
 class FormExportController extends Controller
 {
-
-
     /**
      * Export Etude de Marche to PDF
      */

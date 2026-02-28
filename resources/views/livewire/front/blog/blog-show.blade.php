@@ -5,9 +5,9 @@
         </a>
     </div>
 
-    <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+    <div class="card shadow-sm border-0 rounded-3 overflow-hidden max-w-4xl m-auto">
         @if($post->image)
-        <img src="{{ $post->image }}" class="card-img-top" alt="{{ $post->title }}" style="max-height: 400px; object-fit: cover;">
+        <img src="{{ Str::startsWith($post->image, ['http','https','/storage']) ? $post->image : asset($post->image) }}" class="card-img-top" alt="{{ $post->title }}" style="max-height: 400px; object-fit: cover;">
         @endif
 
         <div class="card-body p-4 p-md-5">

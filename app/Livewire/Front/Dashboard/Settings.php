@@ -7,6 +7,7 @@ use Livewire\Attributes\Layout;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Address;
 use Illuminate\Validation\Rule;
 
 #[Layout('layouts.app')]
@@ -24,6 +25,7 @@ class Settings extends Component
     public $phone;
     public $gender;
     public $address;
+    public $address_custom = '';
     public $profile_image;
     public $new_profile_image;
     
@@ -44,7 +46,19 @@ class Settings extends Component
         $this->age = $this->candidat->age;
         $this->phone = $this->candidat->phone;
         $this->gender = $this->candidat->gender;
-        $this->address = $this->candidat->address;
+
+        // Determine if saved address is a known one or a custom one
+        $knownAddress = $this->candidat->address
+            ? Address::where('address_line1', $this->candidat->address)->exists()
+            : true;
+        if ($this->candidat->address && !$knownAddress) {
+            $this->address = 'other';
+            $this->address_custom = $this->candidat->address;
+        } else {
+            $this->address = $this->candidat->address;
+            $this->address_custom = '';
+        }
+
         $this->profile_image = $this->candidat->profile_image;
     }
 
@@ -57,8 +71,9 @@ class Settings extends Component
             'email' => ['required', 'email', 'max:255', Rule::unique('candidat', 'email')->ignore($this->candidat->id)],
             'age' => 'nullable|integer|min:18|max:100',
             'phone' => 'nullable|string|max:20',
-            'gender' => 'nullable|string|in:homme,femme',
-            'address' => 'nullable|string|max:255',
+            'gender'         => 'nullable|string|in:homme,femme',
+            'address'        => 'nullable|string|max:255',
+            'address_custom' => 'nullable|string|max:500|required_if:address,other',
         ]);
 
         // Handle profile image upload
@@ -89,6 +104,12 @@ class Settings extends Component
 
         unset($validated['new_profile_image']);
         
+        // Resolve address value
+        if (($validated['address'] ?? '') === 'other') {
+            $validated['address'] = $validated['address_custom'] ?: null;
+        }
+        unset($validated['address_custom']);
+
         $this->candidat->update($validated);
         
         // Refresh the profile image
@@ -133,6 +154,8 @@ class Settings extends Component
 
     public function render()
     {
-        return view('livewire.front.dashboard.settings');
+        return view('livewire.front.dashboard.settings', [
+            'addresses' => Address::orderBy('city')->orderBy('address_line1')->get(),
+        ]);
     }
 }

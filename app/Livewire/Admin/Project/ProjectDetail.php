@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Admin\Project;
 
-use App\Models\BusinessPlan;
 use App\Models\Candidat;
 use App\Models\AdminActivityLog;
 use Livewire\Component;
@@ -25,26 +24,6 @@ class ProjectDetail extends Component
         $this->loadProject();
     }
 
-    public function loadProject()
-    {
-        $this->project = BusinessPlan::with([
-            'user',
-            'products',
-            'candidat',
-            'employees',
-            'presentations',
-            'deliveries',
-            'equipment',
-            'rawMaterials',
-            'financials',
-            'reviewer'
-        ])->findOrFail($this->projectId);
-
-        $this->candidat = $this->project->candidat;
-        $this->newStatus = $this->project->status;
-        $this->reviewNotes = $this->project->review_notes;
-    }
-
     public function saveRegistration()
     {
         $this->validate([
@@ -65,7 +44,6 @@ class ProjectDetail extends Component
         AdminActivityLog::log(
             'registration_added',
             'Added registration number: ' . $this->registration,
-            BusinessPlan::class,
             $this->project->id,
             [
                 'old_registration' => $oldRegistration,
@@ -111,7 +89,6 @@ class ProjectDetail extends Component
         AdminActivityLog::log(
             'project_status_changed',
             "Changed project status from {$oldStatus} to {$this->newStatus}",
-            BusinessPlan::class,
             $this->project->id,
             [
                 'old_status' => $oldStatus,

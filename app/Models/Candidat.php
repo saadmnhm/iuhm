@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use App\Models\DynamicFormSubmission;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Traits\TracksUserActivity;
 
@@ -16,7 +17,6 @@ class Candidat extends Authenticatable
 
     protected $fillable = [
         'matricule',
-        'business_plan_id',
         'login',
         'password',
         'nom',
@@ -67,42 +67,8 @@ class Candidat extends Authenticatable
 
     public function projects()
     {
-        return $this->hasMany(BusinessPlan::class);
+        return $this->hasMany(DynamicFormSubmission::class);
     }
-
-    public function businessPlans()
-    {
-        return $this->hasMany(BusinessPlan::class);
-    }
-
-    public function etudeMarches()
-    {
-        return $this->hasMany(EtudeMarche::class);
-    }
-
-    public function evaluationIdees()
-    {
-        return $this->hasMany(EvaluationIdee::class);
-    }
-
-    public function bmcs()
-    {
-        return $this->hasMany(Bmc::class);
-    }
-
-    public function bilanCompetences()
-    {
-        return $this->hasMany(BilanCompetence::class);
-    }
-
-    /**
-     * Get the latest project for this candidat
-     */
-    public function latestProject()
-    {
-        return $this->hasOne(BusinessPlan::class)->latestOfMany();
-    }
-
     /**
      * Get projects by form type
      */

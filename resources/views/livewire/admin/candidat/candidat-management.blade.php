@@ -216,6 +216,26 @@
                     <input type="email" wire:model="email" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none transition text-sm">
                     @error('email') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                 </div>
+                <!-- Address -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Adresse</label>
+                    <select wire:model.live="address_id" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none transition text-sm bg-white">
+                        <option value="">— Sélectionner une adresse —</option>
+                        @foreach($addresses as $addr)
+                            <option value="{{ $addr->id }}">{{ $addr->address_line1 }}{{ $addr->city ? ' — '.$addr->city : '' }}</option>
+                        @endforeach
+                        <option value="other">Autre (saisir manuellement)</option>
+                    </select>
+                    @error('address_id') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                </div>
+                @if($address_id === 'other')
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Adresse personnalisée *</label>
+                    <input type="text" wire:model="address_custom" placeholder="Saisir l'adresse complète..."
+                           class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none transition text-sm">
+                    @error('address_custom') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                </div>
+                @endif
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">{{ $showEditModal ? 'Mot de passe (laisser vide pour garder)' : 'Mot de passe *' }}</label>
                     <input type="password" wire:model="password" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400 outline-none transition text-sm">

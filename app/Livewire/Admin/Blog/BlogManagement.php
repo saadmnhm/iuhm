@@ -8,6 +8,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
 
 class BlogManagement extends Component
 {
@@ -84,8 +85,11 @@ class BlogManagement extends Component
         }
 
         if ($this->newImage) {
-            $path = $this->newImage->store('blog', 'public');
-            $data['image'] = '/storage/' . $path;
+            $dir = public_path('assets/site/images/blog');
+            File::ensureDirectoryExists($dir);
+            $filename = uniqid('blog_') . '.' . $this->newImage->getClientOriginalExtension();
+            copy($this->newImage->getRealPath(), $dir . DIRECTORY_SEPARATOR . $filename);
+            $data['image'] = 'assets/site/images/blog/' . $filename;
         }
 
         if ($this->editMode) {

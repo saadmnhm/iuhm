@@ -69,25 +69,33 @@ class FrontAuthController extends Controller
     public function register(Request $request)
     {
         $validated = $request->validate([
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'email' => 'required|email|unique:candidat,email',
-            'password' => 'required|min:6',
-            'address' => 'nullable|string|max:255',
-            'phone' => 'nullable|string|max:20',
-            'gender' => 'nullable|in:homme,femme',
+            'nom'          => 'required|string|max:255',
+            'prenom'       => 'required|string|max:255',
+            'email'        => 'required|email|unique:candidat,email',
+            'password'     => 'required|min:6',
+            'address_id'   => 'nullable|string',
+            'address_other'=> 'nullable|string|max:500|required_if:address_id,other',
+            'phone'        => 'nullable|string|max:20',
+            'gender'       => 'nullable|in:homme,femme',
         ]);
 
+        $address = null;
+        if (($validated['address_id'] ?? '') === 'other') {
+            $address = $validated['address_other'] ?? null;
+        } elseif (!empty($validated['address_id'])) {
+            $address = $validated['address_id'];
+        }
+
         $candidat = Candidat::create([
-            'nom' => $validated['nom'],
-            'prenom' => $validated['prenom'], 
-            'login' => $validated['email'], 
-            'email' => $validated['email'],
+            'nom'      => $validated['nom'],
+            'prenom'   => $validated['prenom'],
+            'login'    => $validated['email'],
+            'email'    => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'address' => $validated['address'] ?? null,
-            'phone' => $validated['phone'] ?? null,
-            'gender' => $validated['gender'] ?? null,
-            'is_active' => true,
+            'address'  => $address,
+            'phone'    => $validated['phone'] ?? null,
+            'gender'   => $validated['gender'] ?? null,
+            'is_active'=> true,
         ]);
 
         Auth::guard('candidat')->login($candidat);

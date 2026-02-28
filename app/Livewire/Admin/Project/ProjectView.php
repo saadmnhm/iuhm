@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Admin\Project;
 
-use App\Models\BusinessPlan;
 use Livewire\Component;
 use App\Models\Candidat;
 use Livewire\WithPagination;

@@ -267,12 +267,17 @@ input {
                 <option value="femme" {{ old('gender') === 'femme' ? 'selected' : '' }}>Femme</option>
             </select>
 
-            <select name="address" style="background-color:#eee;border:none;padding:12px 15px;margin:8px 0;width:100%;border-radius:5px;font-size:14px;color:#333;">
+            <select name="address_id" id="address_id_select" onchange="toggleAddressOther(this)" style="background-color:#eee;border:none;padding:12px 15px;margin:8px 0;width:100%;border-radius:5px;font-size:14px;color:#333;">
                 <option value="">-- Adresse / Quartier --</option>
                 @foreach($addresses ?? [] as $addr)
-                <option value="{{ $addr->address_line1 }}" {{ old('address') === $addr->address_line1 ? 'selected' : '' }}>{{ $addr->address_line1 }} — {{ $addr->city }}</option>
+                <option value="{{ $addr->address_line1 }}" {{ old('address_id') === $addr->address_line1 ? 'selected' : '' }}>{{ $addr->address_line1 }}{{ $addr->city ? ' — '.$addr->city : '' }}</option>
                 @endforeach
+                <option value="other" {{ old('address_id') === 'other' ? 'selected' : '' }}>Autre (saisir manuellement)</option>
             </select>
+            <input type="text" id="address_other_input" name="address_other"
+                   placeholder="Saisir votre adresse..."
+                   value="{{ old('address_other') }}"
+                   style="display:none;background-color:#eee;border:none;padding:12px 15px;margin:8px 0;width:100%;border-radius:5px;font-size:14px;" />
             
             <div class="password-wrapper">
                 <input type="password" id="signup-password" name="password" placeholder="Password" required />
@@ -303,6 +308,24 @@ input {
             icon.classList.add('ri-eye-line');
         }
     }
+
+    function toggleAddressOther(select) {
+        const otherInput = document.getElementById('address_other_input');
+        if (select.value === 'other') {
+            otherInput.style.display = 'block';
+            otherInput.required = true;
+        } else {
+            otherInput.style.display = 'none';
+            otherInput.required = false;
+            otherInput.value = '';
+        }
+    }
+
+    // On page load, restore state if old('address_id') === 'other'
+    document.addEventListener('DOMContentLoaded', function () {
+        const sel = document.getElementById('address_id_select');
+        if (sel) toggleAddressOther(sel);
+    });
 </script>
 </body>
 </html>

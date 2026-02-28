@@ -139,8 +139,8 @@
                         <td class="px-4 py-3 text-center">
                             <div class="flex items-center gap-3">
                                 <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-semibold text-xs">
-                                    @if($userSub->is_candidat)
-                                            {{ substr($userSub->user->nom ?? '', 0, 1) }}{{ substr($userSub->user->prenom ?? '', 0, 1) }}
+                                    @if($userSub->user->profile_image)
+                                        <img src="{{ asset('uploads/' . $userSub->user->profile_image) }}" alt="{{ $userSub->user->nom }} {{ $userSub->user->prenom }}" class="w-full h-full object-cover rounded-full">
                                     @else
                                             {{ substr($userSub->user->name ?? '', 0, 1) }}
                                     @endif
