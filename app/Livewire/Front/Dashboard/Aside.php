@@ -5,13 +5,10 @@ namespace App\Livewire\Front\Dashboard;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Auth;
-use App\Models\BusinessPlan;
-
 class Aside extends Component
 {
     public $showCompleteProfileModal = false;
     public $candidat;
-    public $business_plan = [];
 
     public function mount()
     {

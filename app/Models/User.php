@@ -79,9 +79,4 @@ class User extends Authenticatable
     {
         return $this->is_active ?? true;
     }
-
-    public function projects()
-    {
-        return $this->hasMany(BusinessPlan::class);
-    }
 }

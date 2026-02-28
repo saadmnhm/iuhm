@@ -75,26 +75,6 @@ class Candidat extends Authenticatable
         return $this->hasMany(BusinessPlan::class);
     }
 
-    public function etudeMarches()
-    {
-        return $this->hasMany(EtudeMarche::class);
-    }
-
-    public function evaluationIdees()
-    {
-        return $this->hasMany(EvaluationIdee::class);
-    }
-
-    public function bmcs()
-    {
-        return $this->hasMany(Bmc::class);
-    }
-
-    public function bilanCompetences()
-    {
-        return $this->hasMany(BilanCompetence::class);
-    }
-
     /**
      * Get the latest project for this candidat
      */

@@ -101,33 +101,4 @@ trait HasFormSubmission
         };
     }
 
-    /**
-     * Get the form type from the model class
-     */
-    protected function getFormType(): string
-    {
-        return match(class_basename($this)) {
-            'BusinessPlan' => 'business_plan',
-            'EtudeMarche' => 'etude_marche',
-            'EvaluationIdee' => 'evaluation_idee',
-            'Bmc' => 'bmc',
-            'BilanCompetence' => 'bilan_competence',
-            default => 'unknown',
-        };
-    }
-
-
-    /**
-     * Available form types
-     */
-    public static function formTypes(): array
-    {
-        return [
-            'business_plan' => 'Business Plan',
-            'etude_marche' => 'Étude de Marché',
-            'evaluation_idee' => "Évaluation d'Idée",
-            'bmc' => 'Business Model Canvas',
-            'bilan_competence' => 'Bilan de Compétences',
-        ];
-    }
 }

@@ -101,33 +101,7 @@ class Dashboard extends Component
 
     public function getFormTypesProperty()
     {
-        return [
-            'etude_marche' => [
-                'label' => 'Étude de Marché',
-                'icon' => 'ri-search-eye-line',
-                'color' => 'info',
-                'route' => 'user.etude_marche',
-            ],
-            'evaluation_idee' => [
-                'label' => 'Évaluation d\'Idée',
-                'icon' => 'ri-lightbulb-line',
-                'color' => 'warning',
-                'route' => 'user.evaluation_idee',
-            ],
-            'bmc' => [
-                'label' => 'Business Model Canvas',
-                'icon' => 'ri-layout-grid-line',
-                'color' => 'success',
-                'route' => 'user.bmc',
-                
-            ],
-            'bilan_competence' => [
-                'label' => 'Bilan de Compétences',
-                'icon' => 'ri-user-star-line',
-                'color' => 'secondary',
-                'route' => 'user.bilan_competences',
-            ],
-        ];
+        return [];
     }
 
     public function getProjectForType($formType)
