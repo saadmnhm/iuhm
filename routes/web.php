@@ -52,7 +52,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         
         Route::get('/projects_view', App\Livewire\Admin\Project\ProjectView::class)->name('projects_view');
-        Route::get('/form-submissions/{type}/{id}', \App\Livewire\Admin\Project\FormSubmissionView::class)->name('form-submissions.view');
 
         // Dynamic Form Builder (Referential)
         Route::get('/formulaires', \App\Livewire\Admin\Formulaire\FormulaireList::class)->name('formulaires.index')->middleware('module:formulaires');
