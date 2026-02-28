@@ -125,6 +125,7 @@ class Dashboard extends Component
                 'icon' => 'ri-layout-grid-line',
                 'color' => 'success',
                 'route' => 'user.bmc',
+                
             ],
             'bilan_competence' => [
                 'label' => 'Bilan de Compétences',
