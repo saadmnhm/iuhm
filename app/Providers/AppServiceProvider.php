@@ -34,7 +34,7 @@ class AppServiceProvider extends ServiceProvider
         app()->setLocale($locale);
         View::composer(['layouts.admin', 'layouts.app', 'livewire.front.dashboard.*'], function ($view) {
             $view->with('programe_list', ProgrameList::all());
-            $view->with('addresses', Address::paginate(10));
+            $view->with('addresses', Address::orderBy('city')->orderBy('address_line1')->get());
         });
     }
 }
