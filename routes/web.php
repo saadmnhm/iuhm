@@ -33,7 +33,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/activity-logs', \App\Livewire\Admin\Logs\ActivityLogs::class)->name('activity.logs')->middleware('module:activity_logs');
         Route::get('/dev-tools', \App\Livewire\Admin\Tools\DevTools::class)->name('dev.tools')->middleware('module:dev_tools');
         Route::get('/rh', \App\Livewire\Admin\Rh\RhManagement::class)->name('rh.index')->middleware('module:rh');
-        Route::get('/roles', \App\Livewire\Admin\Roles\RoleManagement::class)->name('roles.index')->middleware('super_admin');
+        Route::get('/roles', \App\Livewire\Admin\Roles\RoleManagement::class)->name('roles.index')->middleware('module:gestion_roles');
         Route::get('/my-submissions', \App\Livewire\Admin\Submissions\MyAssignedSubmissions::class)->name('my.submissions')->middleware('module:my_submissions');
         Route::get('/all-submissions', \App\Livewire\Admin\Submissions\AllSubmissions::class)->name('all.submissions')->middleware('module:all_submissions');
         Route::get('/association-parameters', \App\Livewire\Admin\Settings\AssociationParameters::class)->name('association.parameters')->middleware('module:association_parameters');

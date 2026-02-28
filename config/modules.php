@@ -29,8 +29,10 @@ return [
         'formulaires'            => ['label' => 'Formulaires',               'icon' => 'ri-file-list-3-line'],
         'activity_logs'          => ['label' => 'Activity Logs',             'icon' => 'ri-history-line'],
         'rh'                     => ['label' => 'Gestion RH',                'icon' => 'ri-team-line'],
+        'gestion_roles'          => ['label' => 'Gestion des Rôles',         'icon' => 'ri-key-line'],
         'association_parameters' => ['label' => 'Paramètres Association',    'icon' => 'ri-settings-3-line'],
         'blog'                   => ['label' => 'Blog & Actualités',         'icon' => 'ri-article-line'],
         'dev_tools'              => ['label' => 'Dev Tools',                 'icon' => 'ri-code-s-slash-line'],
-    ],
+
+        ],
 ];

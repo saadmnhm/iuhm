@@ -111,12 +111,12 @@
                         </a>
                         @endcanmodule
 
-                        @if(auth()->user()->role === 'super_admin')
+                        @canmodule('gestion_roles')
                         <a href="{{ route('admin.roles.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.roles*') ? 'bg-gray-100 font-medium' : '' }}">
                             <i class="ri-shield-user-line mr-1"></i> Gestion des Rôles
                         </a>
-                        @endif
-
+                        @endcanmodule
+                        
                         @canmodule('association_parameters')
                         <a href="{{ route('admin.association.parameters') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.association*') ? 'bg-gray-100 font-medium' : '' }}">
                             <i class="ri-settings-3-line mr-1"></i> Paramètres Association
