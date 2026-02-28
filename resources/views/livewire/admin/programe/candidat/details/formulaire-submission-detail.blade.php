@@ -21,25 +21,11 @@
                 </div>
             </div>
             <div class="flex gap-2">
-                <!-- Status Badge -->
-                <div class="flex items-center gap-2">
-                    @if($submission->status === 'draft')
-                        <span class="px-3 py-1 text-sm font-medium rounded-full bg-gray-100 text-gray-800">Brouillon</span>
-                    @elseif($submission->status === 'submitted')
-                        <span class="px-3 py-1 text-sm font-medium rounded-full bg-blue-100 text-blue-800">Soumis</span>
-                    @elseif($submission->status === 'in_review')
-                        <span class="px-3 py-1 text-sm font-medium rounded-full bg-yellow-100 text-yellow-800">En révision</span>
-                    @elseif($submission->status === 'approved')
-                        <span class="px-3 py-1 text-sm font-medium rounded-full bg-green-100 text-green-800">Approuvé</span>
-                    @elseif($submission->status === 'rejected')
-                        <span class="px-3 py-1 text-sm font-medium rounded-full bg-red-100 text-red-800">Rejeté</span>
-                    @endif
-                </div>
                 <a href="{{ route('admin.candidat.submission.export', ['candidatId' => $submission->candidat_id ?? $submission->candidat->id, 'id' => $submission->id]) }}" target="_blank"
                                 class="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-semibold rounded-lg border border-red-200 transition">
                     <i class="ri-file-pdf-line"></i> Export PDF
                 </a>
-                <a href="" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition">
+                <a href="{{ route('admin.candidat.submissions', $submission->candidat->id) }}" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition">
                     Retour
                 </a>
             </div>

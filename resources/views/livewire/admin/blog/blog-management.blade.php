@@ -55,7 +55,7 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition overflow-hidden group">
             @if($post->image)
             <div class="h-40 bg-gray-100 overflow-hidden">
-                <img src="{{ $post->image }}" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                <img src="{{ Str::startsWith($post->image, ['http','https','/storage']) ? $post->image : asset($post->image) }}" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
             </div>
             @else
             <div class="h-40 bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center">

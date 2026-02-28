@@ -1,217 +1,253 @@
-<div class="min-h-screen bg-gray-50 py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <!-- Success/Error Messages -->
-        @if (session()->has('message'))
-            <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg">
-                {{ session('message') }}
-            </div>
-        @endif
-        
-        @if (session()->has('error'))
-            <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
-                {{ session('error') }}
-            </div>
-        @endif
+<div>
 
-        <!-- Project Header -->
-        <div class="bg-white rounded-xl shadow-sm p-8 mb-8">
-            <div class="flex items-start justify-between">
-                <div class="flex-1">
-                    <h1 class="text-3xl font-bold text-gray-900 mb-3">{{ $project->project_name }}</h1>
-                    <p class="text-gray-600 mb-4">{{ $project->description }}</p>
-                    
-                    <div class="flex flex-wrap gap-4 text-sm">
-                        <div class="flex items-center gap-2">
-                            <i class="ri-file-list-line text-blue-600"></i>
-                            <span class="text-gray-700">{{ count($formulaires) }} Formulaires</span>
+    @php
+        $totalForms     = count($formulaires);
+        $completedForms = collect($formulaires)->where('is_completed', true)->count();
+        $pendingForms   = $totalForms - $completedForms;
+        $progress       = $totalForms > 0 ? ($completedForms / $totalForms) * 100 : 0;
+        $allDone        = $completedForms === $totalForms && $totalForms > 0;
+    @endphp
+
+    @if (session()->has('success'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if (session()->has('message'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6">
+            {{ session('message') }}
+        </div>
+    @endif
+    @if (session()->has('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    <!-- Back Button -->
+    <div class="mb-6">
+        <a href="" class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition">
+            <i class="ri-arrow-left-s-line"></i> Retour aux programmes
+        </a>
+    </div>
+
+    <!-- Statistics Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-gray-500 text-sm font-medium">Total Formulaires</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ $totalForms }}</p>
+                </div>
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <i class="ri-file-list-3-line text-blue-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-gray-500 text-sm font-medium">Complétés</p>
+                    <p class="text-3xl font-bold text-green-600 mt-2">{{ $completedForms }}</p>
+                </div>
+                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                    <i class="ri-checkbox-circle-line text-green-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-gray-500 text-sm font-medium">En attente</p>
+                    <p class="text-3xl font-bold text-red-500 mt-2">{{ $pendingForms }}</p>
+                </div>
+                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                    <i class="ri-time-line text-red-500 text-xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition">
+            <div class="flex justify-between items-start">
+                <div>
+                    <p class="text-gray-500 text-sm font-medium">Progression</p>
+                    <p class="text-3xl font-bold text-indigo-600 mt-2">{{ round($progress) }}%</p>
+                </div>
+                <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                    <i class="ri-pie-chart-line text-indigo-600 text-xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- All-done banner -->
+    @if($allDone)
+    <div class="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 flex items-center gap-3">
+        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <i class="ri-trophy-fill text-green-600 text-xl"></i>
+        </div>
+        <div>
+            <div class="font-bold text-green-800">Félicitations ! Dossier complet</div>
+            <p class="text-sm text-green-600 mt-0.5">Tous vos formulaires ont été soumis. Nous reviendrons vers vous prochainement.</p>
+        </div>
+    </div>
+    @endif
+
+    <!-- Programme Header Card -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
+        <div class="px-6 py-4 border-b border-gray-100 flex flex-wrap justify-between items-center gap-4">
+            <div>
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
+                        <i class="ri-folder-3-line mr-1"></i>Programme
+                    </span>
+                    @if($project->status === 'Active')
+                        <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-green-100 text-green-700">
+                            <i class="ri-radio-button-line mr-1"></i>Actif
+                        </span>
+                    @endif
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900">{{ $project->project_name }}</h3>
+                @if($project->description)
+                    <p class="text-sm text-gray-500 mt-1">{{ $project->description }}</p>
+                @endif
+            </div>
+            @if($totalForms > 0)
+            <div class="flex items-center gap-3">
+                <div class="w-36 bg-gray-200 rounded-full h-2">
+                    <div class="h-2 rounded-full transition-all duration-500 {{ $allDone ? 'bg-green-500' : 'bg-blue-500' }}"
+                         style="width: {{ $progress }}%"></div>
+                </div>
+                <span class="text-sm font-medium text-gray-600">{{ $completedForms }}/{{ $totalForms }}</span>
+            </div>
+            @endif
+        </div>
+    </div>
+
+    <!-- Formulaires Section -->
+    <div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">
+            <i class="ri-list-check-2 mr-2"></i>Formulaires requis ({{ $totalForms }})
+        </h3>
+
+        @if(count($formulaires) > 0)
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            @foreach($formulaires as $index => $formulaire)
+                @php
+                    $canStart = true;
+                    for ($i = 0; $i < $index; $i++) {
+                        if ($formulaires[$i]['is_required'] && !$formulaires[$i]['is_completed']) {
+                            $canStart = false; break;
+                        }
+                    }
+                    $isNext = ($currentFormulaireIndex === $index);
+                    $color  = $formulaire['color'];
+                @endphp
+
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200 {{ !$canStart ? 'opacity-50' : '' }}">
+                    <div class="p-6">
+                        <!-- Icon and Title -->
+                        <div class="flex items-center mb-4 pb-4 border-b border-gray-100">
+                            <div class="w-14 h-14 rounded-full flex items-center justify-center mr-4 flex-shrink-0 relative"
+                                 style="background: {{ $formulaire['is_completed'] ? '#dcfce7' : ($canStart ? $color.'18' : '#f3f4f6') }};
+                                        border: 2px solid {{ $formulaire['is_completed'] ? '#22c55e' : ($canStart ? $color : '#d1d5db') }};">
+                                @if($formulaire['is_completed'])
+                                    <i class="ri-checkbox-circle-fill text-2xl text-green-500"></i>
+                                @elseif(!$canStart)
+                                    <i class="ri-lock-2-fill text-2xl text-gray-400"></i>
+                                @else
+                                    <i class="{{ $formulaire['icon'] }} text-2xl" style="color: {{ $color }};"></i>
+                                @endif
+                                <!-- Step badge -->
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="text-base font-semibold text-gray-900 truncate">{{ $formulaire['title'] }}</div>
+                                @if($formulaire['title_ar'])
+                                    <div class="text-sm text-gray-500 truncate" dir="rtl">{{ $formulaire['title_ar'] }}</div>
+                                @endif
+                                <div class="flex flex-wrap items-center gap-1 mt-1">
+                                    @if($formulaire['is_required'])
+                                        <span class="inline-block px-2 py-0.5 bg-red-100 text-red-700 text-xs rounded-full font-medium">Requis</span>
+                                    @endif
+                                    @if($formulaire['has_introduction'])
+                                        <span class="inline-block px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full font-medium">
+                                            <i class="ri-book-open-line mr-0.5"></i>Intro
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <i class="ri-checkbox-circle-line text-green-600"></i>
-                            <span class="text-gray-700">
-                                {{ collect($formulaires)->where('is_completed', true)->count() }} Completed
-                            </span>
+
+                        <!-- Status Badge -->
+                        <div class="mb-4">
+                            @if($formulaire['is_completed'])
+                                <span class="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
+                                    <i class="ri-checkbox-circle-line mr-1"></i>Complété
+                                </span>
+                                <div class="text-xs text-gray-400 mt-1.5">
+                                    <i class="ri-calendar-check-line mr-1"></i>{{ \Carbon\Carbon::parse($formulaire['submitted_at'])->format('d M Y') }}
+                                </div>
+                            @elseif(!$canStart)
+                                <span class="px-3 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600">
+                                    <i class="ri-lock-2-line mr-1"></i>Verrouillé
+                                </span>
+                                <div class="text-xs text-gray-400 mt-1.5">
+                                    <i class="ri-information-line mr-1"></i>Complétez les étapes précédentes
+                                </div>
+                            @elseif($isNext)
+                                <span class="px-3 py-1 text-xs font-medium rounded-full"
+                                      style="background: {{ $color }}18; color: {{ $color }};">
+                                    <i class="ri-arrow-right-circle-line mr-1"></i>Prochaine étape
+                                </span>
+                            @else
+                                <span class="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
+                                    <i class="ri-file-edit-line mr-1"></i>Disponible
+                                </span>
+                            @endif
                         </div>
-                        <div class="flex items-center gap-2">
-                            <i class="ri-time-line text-orange-600"></i>
-                            <span class="text-gray-700">
-                                {{ collect($formulaires)->where('is_completed', false)->count() }} Pending
-                            </span>
+
+                        <!-- Action Button -->
+                        <div>
+                            @if($formulaire['is_completed'])
+                                <button wire:click="startFormulaire({{ $index }})"
+                                        class="w-full px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 text-center">
+                                    <i class="ri-eye-line mr-1"></i>Voir
+                                </button>
+                            @elseif($canStart)
+                                <button wire:click="startFormulaire({{ $index }})"
+                                        wire:loading.attr="disabled"
+                                        wire:target="startFormulaire({{ $index }})"
+                                        class="w-full px-4 py-2 text-white text-sm font-medium rounded-lg transition-colors duration-200 text-center flex items-center justify-center gap-2"
+                                        style="background: {{ $color }};">
+                                    <span wire:loading.remove wire:target="startFormulaire({{ $index }})">
+                                        <i class="{{ $isNext ? 'ri-play-circle-fill' : 'ri-edit-2-line' }} mr-1"></i>
+                                        {{ $isNext ? 'Commencer' : 'Remplir' }}
+                                    </span>
+                                    <span wire:loading wire:target="startFormulaire({{ $index }})">
+                                        <span class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                                    </span>
+                                </button>
+                            @else
+                                <button disabled
+                                        class="w-full px-4 py-2 bg-gray-200 text-gray-400 text-sm font-medium rounded-lg cursor-not-allowed text-center">
+                                     <i class="ri-lock-2-line mr-1"></i>Verrouillé
+                                </button>
+                            @endif
                         </div>
                     </div>
                 </div>
-                
-                <div class="text-right">
-                    <span class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium 
-                        {{ $project->status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600' }}">
-                        {{ $project->status }}
-                    </span>
-                </div>
-            </div>
+
+            @endforeach
         </div>
 
-        <!-- Progress Bar -->
-        @php
-            $totalForms = count($formulaires);
-            $completedForms = collect($formulaires)->where('is_completed', true)->count();
-            $progress = $totalForms > 0 ? ($completedForms / $totalForms) * 100 : 0;
-        @endphp
-        
-        @if($totalForms > 0)
-            <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
-                <div class="flex items-center justify-between mb-3">
-                    <h2 class="text-lg font-semibold text-gray-800">Overall Progress</h2>
-                    <span class="text-2xl font-bold text-blue-600">{{ round($progress) }}%</span>
-                </div>
-                <div class="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-                    <div class="bg-gradient-to-r from-blue-500 to-green-500 h-3 rounded-full transition-all duration-500"
-                         style="width: {{ $progress }}%"></div>
-                </div>
-                <p class="text-sm text-gray-600 mt-2">
-                    {{ $completedForms }} of {{ $totalForms }} formulaires completed
-                </p>
-            </div>
+        @else
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
+            <i class="ri-file-list-3-line text-gray-400 text-5xl mb-4 block"></i>
+            <p class="text-gray-500">Ce programme n'a pas encore de formulaires attachés.</p>
+        </div>
         @endif
-
-        <!-- Formulaires Cards Grid -->
-        <div class="mb-6">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">Required Formulaires</h2>
-            
-            @if(count($formulaires) > 0)
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @foreach($formulaires as $index => $formulaire)
-                        @php
-                            $canStart = true;
-                            // Check if previous required formulaires are completed
-                            for ($i = 0; $i < $index; $i++) {
-                                if ($formulaires[$i]['is_required'] && !$formulaires[$i]['is_completed']) {
-                                    $canStart = false;
-                                    break;
-                                }
-                            }
-                        @endphp
-                        
-                        <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border-2 
-                            {{ $formulaire['is_completed'] ? 'border-green-500' : ($canStart ? 'border-blue-400' : 'border-gray-300') }}">
-                            
-                            <!-- Card Header with Icon -->
-                            <div class="p-6" style="background: linear-gradient(135deg, {{ $formulaire['color'] }}15 0%, {{ $formulaire['color'] }}05 100%);">
-                                <div class="flex items-start justify-between mb-4">
-                                    <!-- Order Badge -->
-                                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm
-                                        {{ $formulaire['is_completed'] ? 'bg-green-500' : 'bg-blue-500' }}">
-                                        {{ $formulaire['order'] }}
-                                    </div>
-                                    
-                                    <!-- Status Badge -->
-                                    @if($formulaire['is_completed'])
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                            <i class="ri-checkbox-circle-fill mr-1"></i> Completed
-                                        </span>
-                                    @elseif(!$canStart)
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
-                                            <i class="ri-lock-line mr-1"></i> Locked
-                                        </span>
-                                    @else
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                            <i class="ri-play-circle-line mr-1"></i> Available
-                                        </span>
-                                    @endif
-                                </div>
-                                
-                                <!-- Icon -->
-                                <div class="flex justify-center mb-4">
-                                    <div class="w-20 h-20 rounded-full flex items-center justify-center bg-white shadow-md">
-                                        <i class="{{ $formulaire['icon'] }} text-4xl" style="color: {{ $formulaire['color'] }};"></i>
-                                    </div>
-                                </div>
-
-                                <!-- Title -->
-                                <h3 class="text-lg font-bold text-gray-900 text-center mb-2">
-                                    {{ $formulaire['title'] }}
-                                </h3>
-                                
-                                @if($formulaire['title_ar'])
-                                    <p class="text-sm text-gray-600 text-center mb-3" dir="rtl">{{ $formulaire['title_ar'] }}</p>
-                                @endif
-                            </div>
-                            
-                            <!-- Card Body -->
-                            <div class="p-6">
-                                <!-- Badges -->
-                                <div class="flex flex-wrap gap-2 mb-4">
-                                    @if($formulaire['is_required'])
-                                        <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800">
-                                            <i class="ri-star-fill mr-1"></i> Required
-                                        </span>
-                                    @endif
-                                    
-                                    @if($formulaire['has_introduction'])
-                                        <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-800">
-                                            <i class="ri-book-open-line mr-1"></i> Introduction
-                                        </span>
-                                    @endif
-                                </div>
-
-                                <!-- Status Info -->
-                                @if($formulaire['is_completed'])
-                                    <div class="mb-4 p-3 bg-green-50 rounded-lg border border-green-200">
-                                        <div class="flex items-center gap-2 text-sm text-green-700">
-                                            <i class="ri-checkbox-circle-fill text-lg"></i>
-                                            <div>
-                                                <div class="font-semibold">Completed</div>
-                                                <div class="text-xs">{{ \Carbon\Carbon::parse($formulaire['submitted_at'])->format('M d, Y') }}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @elseif(!$canStart)
-                                    <div class="mb-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                                        <p class="text-sm text-yellow-800 flex items-start gap-2">
-                                            <i class="ri-lock-line mt-0.5"></i>
-                                            <span>Complete previous required forms to unlock</span>
-                                        </p>
-                                    </div>
-                                @else
-                                    <div class="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                                        <div class="flex items-center gap-2 text-sm text-blue-700">
-                                            <i class="ri-play-circle-line text-lg"></i>
-                                            <span class="font-semibold">Ready to start</span>
-                                        </div>
-                                    </div>
-                                @endif
-                                
-                                <!-- Action Button -->
-                                @if($formulaire['is_completed'])
-                                    <button wire:click="startFormulaire({{ $index }})"
-                                            class="w-full px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium flex items-center justify-center gap-2">
-                                        <i class="ri-eye-line"></i>
-                                        View Submission
-                                    </button>
-                                @else
-                                    <button wire:click="startFormulaire({{ $index }})"
-                                            {{ !$canStart ? 'disabled' : '' }}
-                                            class="w-full px-4 py-3 rounded-lg font-medium transition flex items-center justify-center gap-2
-                                                {{ $canStart 
-                                                    ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md hover:shadow-lg' 
-                                                    : 'bg-gray-300 text-gray-500 cursor-not-allowed' }}">
-                                        <i class="ri-play-circle-line text-lg"></i>
-                                        {{ $index === $currentFormulaireIndex ? 'Continue' : 'Start Form' }}
-                                    </button>
-                                @endif
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-            @else
-                <div class="bg-white rounded-xl shadow-sm p-12 text-center">
-                    <i class="ri-file-list-line text-6xl text-gray-300 mb-4"></i>
-                    <h3 class="text-xl font-semibold text-gray-700 mb-2">No Formulaires Available</h3>
-                    <p class="text-gray-500">This project doesn't have any formulaires attached yet.</p>
-                </div>
-            @endif
-        </div>
-
-        <!-- Back Button -->
-       
     </div>
+
 </div>

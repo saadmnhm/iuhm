@@ -26,7 +26,11 @@
             <!-- Candidat Avatar and Name -->
             <div class="flex items-center pb-6 border-b border-gray-200 mb-6">
                 <div class="w-24 h-24 rounded-full bg-green-logo flex items-center justify-center text-white text-3xl font-semibold mr-6">
-                    {{ strtoupper(substr($candidat->nom, 0, 1)) }}{{ strtoupper(substr($candidat->prenom, 0, 1)) }}
+                @if($candidat->profile_image)
+                    <img src="{{ asset('uploads/' . $candidat->profile_image) }}" alt="{{ $candidat->nom }} {{ $candidat->prenom }}" class="w-full h-full object-cover rounded-full">
+                @else
+                {{ strtoupper(substr($candidat->nom, 0, 1) . substr($candidat->prenom, 0, 1)) }}
+                @endif
                 </div>
                 <div class="flex-1">
                     <h4 class="text-2xl font-semibold text-gray-900 mb-1">{{ $candidat->nom }} {{ $candidat->prenom }}</h4>
@@ -42,6 +46,9 @@
                             Inactif
                         </span>
                     @endif
+                    <a href="{{ route('admin.candidats.edit', $candidat->id) }}" class="px-4 ms-3 py-2 bg-green-logo text-white rounded-lg transition">
+                            edit
+                    </a>
                 </div>
             </div>
 
@@ -52,12 +59,10 @@
                         <span class="text-sm font-medium text-gray-500 block mb-2">ID</span>
                         <span class="text-base text-gray-900">#{{ $candidat->id }}</span>
                     </div>
-
                     <div class="bg-gray-50 p-4 rounded-lg">
-                        <span class="text-sm font-medium text-gray-500 block mb-2">Login</span>
-                        <span class="text-base text-gray-900">{{ $candidat->login }}</span>
+                        <span class="text-sm font-medium text-gray-500 block mb-2">Genre</span>
+                        <span class="text-base text-gray-900">{{ $candidat->gender ? ucfirst($candidat->gender) : 'N/A' }}</span>
                     </div>
-
                     <div class="bg-gray-50 p-4 rounded-lg">
                         <span class="text-sm font-medium text-gray-500 block mb-2">Email</span>
                         <span class="text-base text-gray-900">{{ $candidat->email ?? 'N/A' }}</span>
@@ -71,8 +76,8 @@
 
                 <div class="space-y-4">
                     <div class="bg-gray-50 p-4 rounded-lg">
-                        <span class="text-sm font-medium text-gray-500 block mb-2">Genre</span>
-                        <span class="text-base text-gray-900">{{ $candidat->gender ? ucfirst($candidat->gender) : 'N/A' }}</span>
+                        <span class="text-sm font-medium text-gray-500 block mb-2">Matricule</span>
+                        <span class="text-base text-gray-900">{{ $candidat->matricule }}</span>
                     </div>
 
                     <div class="bg-gray-50 p-4 rounded-lg">
@@ -88,19 +93,19 @@
                     <div class="bg-gray-50 p-4 rounded-lg">
                         <span class="text-sm font-medium text-gray-500 block mb-2">Total Projets</span>
                         <span class="text-base text-gray-900 font-semibold">{{ $candidat->projects()->count() }}</span>
-                    </div>
-                </div>
+                    </div>                </div>
             </div>
         </div>
     </div>
 
     <!-- Projects List -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+        @php $projectsList = $candidat->projects()->with(['form', 'programe'])->latest()->get(); @endphp
         <div class="px-6 py-4 border-b border-gray-100">
-            <h3 class="text-lg font-semibold text-gray-900">Formulaires Soumis ({{ $candidat->projects()->count() }})</h3>
+            <h3 class="text-lg font-semibold text-gray-900">Formulaires Soumis ({{ $projectsList->count() }})</h3>
         </div>
 
-        @if($candidat->projects()->count() > 0)
+        @if($projectsList->count() > 0)
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
@@ -113,16 +118,16 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    @foreach($candidat->projects()->latest()->get() as $project)
+                    @foreach($projectsList as $project)
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 py-1 text-xs font-medium rounded-full bg-{{ $project->form_type_badge_color }}-100 text-{{ $project->form_type_badge_color }}-800">
-                                {{ $project->form_type_label }}
+                            <span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
+                                {{ $project->form->title ?? 'N/A' }}
                             </span>
                         </td>
                         <td class="px-6 py-4">
                             <div class="text-sm font-medium text-gray-900">
-                                {{ $project->project_name ?? 'Sans titre' }}
+                                {{ $project->programe->project_name ?? 'Sans titre' }}
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
@@ -132,7 +137,7 @@
                             {{ $project->created_at->format('d/m/Y') }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm">
-                            <a href="{{ route('admin.projects.show', $project->id) }}" 
+                            <a href="{{ route('admin.candidat.submissions', $candidat->id) }}" 
                                class="text-blue-600 hover:text-blue-800 font-medium">
                                 Voir le projet
                             </a>

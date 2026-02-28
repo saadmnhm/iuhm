@@ -17,6 +17,8 @@ class Dashboard extends Component
     public $projects = [];
     public $dynamicSubmissions = [];
     public $showCompleteProfileModal = false;
+    public $activeFilter = null;
+    public $searchQuery = '';
     protected $formSubmissionService;
 
     public function boot(FormSubmissionService $formSubmissionService)
@@ -76,20 +78,29 @@ class Dashboard extends Component
             ->toArray();
     }
 
-    public function resumeForm($submissionIndex)
+    public function setFilter(string $status)
     {
-        $sub = $this->dynamicSubmissions[$submissionIndex] ?? null;
+        $this->activeFilter = ($this->activeFilter === $status) ? null : $status;
+    }
+
+    public function clearFilters()
+    {
+        $this->activeFilter = null;
+        $this->searchQuery = '';
+    }
+
+    public function resumeForm($submissionId)
+    {
+        $sub = collect($this->dynamicSubmissions)->firstWhere('id', $submissionId);
         if (!$sub) return;
 
         if ($sub['programe_id']) {
-            // Project-based formulaire
             return redirect()->route('user.project.formulaire', [
                 'projectId' => $sub['programe_id'],
                 'formulaireSlug' => $sub['form_slug'],
                 'order' => $sub['order'],
             ]);
         } else {
-            // Standalone dynamic form
             return redirect()->route('user.dynamic_form', $sub['form_slug']);
         }
     }
@@ -117,16 +128,36 @@ class Dashboard extends Component
         $allDynamic = collect($this->dynamicSubmissions);
 
         $stats = [
-            'total' => $this->projects->count() + $allDynamic->count(),
-            'drafts' => $this->projects->where('status', 'draft')->count() + $allDynamic->where('status', 'draft')->count(),
-            'submitted' => $this->projects->whereIn('status', ['submitted', 'in_review'])->count() + $allDynamic->whereIn('status', ['submitted', 'in_review'])->count(),
+            'total'    => $this->projects->count() + $allDynamic->count(),
+            'drafts'   => $this->projects->where('status', 'draft')->count() + $allDynamic->where('status', 'draft')->count(),
+            'submitted'=> $this->projects->whereIn('status', ['submitted', 'in_review'])->count() + $allDynamic->whereIn('status', ['submitted', 'in_review'])->count(),
             'approved' => $this->projects->where('status', 'approved')->count() + $allDynamic->where('status', 'approved')->count(),
+            'rejected' => $this->projects->where('status', 'rejected')->count() + $allDynamic->where('status', 'rejected')->count(),
         ];
+
+        // Build filtered view of submissions
+        $filteredSubmissions = $allDynamic;
+        if ($this->activeFilter) {
+            if ($this->activeFilter === 'submitted') {
+                $filteredSubmissions = $allDynamic->whereIn('status', ['submitted', 'in_review']);
+            } else {
+                $filteredSubmissions = $allDynamic->where('status', $this->activeFilter);
+            }
+        }
+        if ($this->searchQuery) {
+            $q = strtolower($this->searchQuery);
+            $filteredSubmissions = $filteredSubmissions->filter(fn($s) =>
+                str_contains(strtolower($s['form_title'] ?? ''), $q) ||
+                str_contains(strtolower($s['programe_name'] ?? ''), $q)
+            );
+        }
+
         $programe_list = ProgrameList::all();
 
         return view('livewire.front.dashboard.dashboard', [
-            'stats' => $stats,
-            'programe_list' => $programe_list,
+            'stats'               => $stats,
+            'programe_list'       => $programe_list,
+            'filteredSubmissions' => $filteredSubmissions->values()->toArray(),
         ]);
     }
 }

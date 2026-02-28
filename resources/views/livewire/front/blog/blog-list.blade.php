@@ -23,7 +23,7 @@
         <div class="col-md-6 col-lg-4">
             <div class="card h-100 shadow-sm border-0 rounded-3 overflow-hidden">
                 @if($post->image)
-                <img src="{{ $post->image }}" class="card-img-top" alt="{{ $post->title }}" style="height: 180px; object-fit: cover;">
+                <img src="{{ Str::startsWith($post->image, ['http','https','/storage']) ? $post->image : asset($post->image) }}" class="card-img-top" alt="{{ $post->title }}" style="height: 180px; object-fit: cover;">
                 @else
                 <div class="bg-light d-flex align-items-center justify-content-center" style="height: 180px;">
                     <i class="ri-article-line" style="font-size: 3rem; color: #ccc;"></i>

@@ -6,6 +6,7 @@ use App\Models\DynamicFormSubmission;
 use App\Models\DynamicForm;
 use App\Models\ProgrameList;
 use App\Models\User;
+use App\Models\Candidat;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -37,6 +38,52 @@ class AllSubmissions extends Component
     {
         $this->reset(['search', 'statusFilter', 'programeFilter', 'formulaireFilter', 'responsableFilter', 'genderFilter', 'addressFilter', 'dateFrom', 'dateTo']);
         $this->resetPage();
+    }
+
+    /** Click a stat card to toggle/set the status filter */
+    public function filterByStatus(string $status): void
+    {
+        $this->statusFilter = ($this->statusFilter === $status && $status !== 'all') ? 'all' : $status;
+        $this->resetPage();
+    }
+
+    /** Clear a single active filter chip */
+    public function clearFilter(string $field): void
+    {
+        $defaults = [
+            'search'            => '',
+            'statusFilter'      => 'all',
+            'programeFilter'    => 'all',
+            'formulaireFilter'  => 'all',
+            'responsableFilter' => 'all',
+            'genderFilter'      => 'all',
+            'addressFilter'     => 'all',
+            'dateFrom'          => '',
+            'dateTo'            => '',
+        ];
+        if (array_key_exists($field, $defaults)) {
+            $this->$field = $defaults[$field];
+            $this->resetPage();
+        }
+    }
+
+    /** Inline status change from the table row */
+    public function updateStatus(int $id, string $newStatus): void
+    {
+        $allowed = ['draft', 'submitted', 'in_review', 'approved', 'rejected'];
+        if (!in_array($newStatus, $allowed)) return;
+        DynamicFormSubmission::findOrFail($id)->update(['status' => $newStatus]);
+        session()->flash('toast', 'Statut mis à jour avec succès.');
+        $this->dispatchBrowserEvent('notify', ['type' => 'success', 'message' => 'Statut mis à jour avec succès.']);
+    }
+
+    /** Assign or unassign a reviewer inline */
+    public function assignResponsable(int $id, ?int $adminId): void
+    {
+        DynamicFormSubmission::findOrFail($id)->update(['reviewed_by' => $adminId]);
+        $msg = $adminId ? 'Responsable assigné.' : 'Responsable retiré.';
+        session()->flash('toast', $msg);
+        $this->dispatchBrowserEvent('notify', ['type' => 'success', 'message' => $msg]);
     }
 
     public function render()
@@ -105,21 +152,24 @@ class AllSubmissions extends Component
 
         $submissions = $query->latest()->paginate(15);
 
-        // Filter options
-        $programmes = ProgrameList::orderBy('project_name')->get(['id', 'project_name']);
+        $programmes  = ProgrameList::orderBy('project_name')->get(['id', 'project_name']);
         $formulaires = DynamicForm::orderBy('title')->get(['id', 'title']);
-        $admins = User::whereIn('role', ['admin', 'super_admin'])->orderBy('name')->get(['id', 'name']);
-        $addresses = \App\Models\Candidat::whereNotNull('address')
-            ->select('address')->distinct()->orderBy('address')->pluck('address');
+        $admins      = User::whereIn('role', ['admin', 'super_admin'])->orderBy('name')->get(['id', 'name']);
+        $addresses   = Candidat::whereNotNull('address')
+                           ->select('address')->distinct()->orderBy('address')->pluck('address');
 
-        // Stats
+        $weekStart = now()->startOfWeek();
         $stats = [
-            'total'     => DynamicFormSubmission::count(),
-            'submitted' => DynamicFormSubmission::where('status', 'submitted')->count(),
-            'approved'  => DynamicFormSubmission::where('status', 'approved')->count(),
-            'rejected'  => DynamicFormSubmission::where('status', 'rejected')->count(),
-            'in_review' => DynamicFormSubmission::where('status', 'in_review')->count(),
-            'draft'     => DynamicFormSubmission::where('status', 'draft')->count(),
+            'total'          => DynamicFormSubmission::count(),
+            'draft'          => DynamicFormSubmission::where('status', 'draft')->count(),
+            'submitted'      => DynamicFormSubmission::where('status', 'submitted')->count(),
+            'in_review'      => DynamicFormSubmission::where('status', 'in_review')->count(),
+            'approved'       => DynamicFormSubmission::where('status', 'approved')->count(),
+            'rejected'       => DynamicFormSubmission::where('status', 'rejected')->count(),
+            'submitted_week' => DynamicFormSubmission::where('status', 'submitted')->where('created_at', '>=', $weekStart)->count(),
+            'approved_week'  => DynamicFormSubmission::where('status', 'approved')->where('updated_at', '>=', $weekStart)->count(),
+            'rejected_week'  => DynamicFormSubmission::where('status', 'rejected')->where('updated_at', '>=', $weekStart)->count(),
+            'in_review_week' => DynamicFormSubmission::where('status', 'in_review')->where('updated_at', '>=', $weekStart)->count(),
         ];
 
         return view('livewire.admin.submissions.all-submissions', compact(

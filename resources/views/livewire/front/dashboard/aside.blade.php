@@ -1,102 +1,133 @@
-<aside class="sidebar d-flex flex-column">
+﻿<aside class="sidebar d-flex flex-column">
     <div class="logo">
-       <a href="{{ route('user.dashboard') }}"> <img src="{{ asset('assets/site/images/iuhm_logo.png') }}" alt="Logo"></a>
+        <a href="{{ route('user.dashboard') }}">
+            <img src="{{ asset('assets/site/images/iuhm_logo.png') }}" alt="Logo">
+        </a>
     </div>
 
     <nav class="py-3 flex-grow-1">
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a href="{{ route('user.dashboard') }}" class="nav-link {{ request()->routeIs('user.dashboard') ? 'active' : '' }}">
-                    <i class="ri-home-4-line fs-5"></i>
-                    <span>Home</span>
-                </a>
-            </li>
-            <div x-data="{ open: false }">
-                <button @click="open = !open" class="flex w-full items-center justify-between gap-3 px-4 py-3 rounded-lg transition hover:bg-gray-100">
-                    <div class="flex items-center gap-3">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3" />
-                            </svg>
-                            <span>Projets</span>
-                            <!-- Arrow -->
-                            <svg :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" >
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                            </svg>
-                        </div>
-                    </button>
-                    @foreach($programe_list ?? [] as $list)
-                        <div x-show="open" x-collapse class="ml-3 mt-1 space-y-1">
-                            <li class="nav-item">
-                                <a href="{{ route('user.project.detail', $list->id) }}" class="nav-link {{ request()->routeIs('user.project.detail') && request()->route('id') == $list->id ? 'active' : '' }}">
-                                    <i class="ri-folder-open-line fs-5"></i>
-                                    <span>{{ $list->project_name }}</span>
-                                </a>
-                            </li>
-                        </div>
-                    @endforeach 
-            </div>
-            
+        <ul class="nav flex-column gap-1">
 
-            <li class="nav-item mt-3">
-                <small class="nav-link text-muted text-uppercase fw-bold" style="font-size: 0.7rem; letter-spacing: 1px;">Assistance</small>
-            </li>
+            {{-- Dashboard --}}
             <li class="nav-item">
-                <a href="{{ route('user.support') }}" class="nav-link {{ request()->routeIs('user.support') ? 'active' : '' }}">
-                    <i class="ri-customer-service-2-line fs-5"></i>
-                    <span>Support</span>
+                <a href="{{ route('user.dashboard') }}"
+                   class="nav-link d-flex align-items-center gap-2 {{ request()->routeIs('user.dashboard') ? 'active' : '' }}"
+                   style="{{ request()->routeIs('user.dashboard') ? 'background:#6366f115;color:#648454;border-radius:.55rem;font-weight:600;' : '' }}">
+                    <i class="ri-home-4-line fs-5" style="{{ request()->routeIs('user.dashboard') ? 'color:#648454;' : '' }}"></i>
+                    <span>Tableau de bord</span>
+                    @if(request()->routeIs('user.dashboard'))
+                        <span class="ms-auto rounded-pill" style="width:6px;height:6px;background:#648454;display:inline-block;"></span>
+                    @endif
                 </a>
             </li>
+
+            {{-- Section label --}}
+            <li class="nav-item mt-2 mb-1">
+                <small class="nav-link text-muted text-uppercase fw-bold px-3"
+                       style="font-size:.65rem;letter-spacing:1.2px;pointer-events:none;">Programmes</small>
+            </li>
+
+            {{-- Projets collapsible --}}
+            <li class="nav-item" x-data="{ open: {{ request()->routeIs('user.project.*') ? 'true' : 'false' }} }">
+                <button @click="open = !open"
+                        class="nav-link w-100 d-flex align-items-center gap-2 text-start"
+                        style="background:none;border:none;">
+                    <i class="ri-folder-open-line fs-5" ></i>
+                    <span class="flex-grow-1">Projets</span>
+                    <i :class="open ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"
+                       style="font-size:1rem;transition:transform .2s;"></i>
+                </button>
+
+                <div x-show="open" x-collapse class="ps-3 mt-1">
+                    @foreach($programe_list ?? [] as $list)
+                    <a href="{{ route('user.project.detail', $list->id) }}"
+                       class="nav-link d-flex align-items-center gap-2 py-2 {{ request()->routeIs('user.project.detail') && request()->route('id') == $list->id ? 'active' : '' }}"
+                       style="font-size:.85rem;border-radius:.45rem;
+                              {{ request()->routeIs('user.project.detail') && request()->route('id') == $list->id ? 'background:#6366f110;color:#648454;font-weight:600;' : '' }}">
+                        <i class="ri-arrow-right-s-line" style="font-size:.9rem;{{ request()->routeIs('user.project.detail') && request()->route('id') == $list->id ? 'color:#648454;' : 'color:#94a3b8;' }}"></i>
+                        <span class="text-truncate">{{ $list->project_name }}</span>
+                    </a>
+                    @endforeach
+                </div>
+            </li>
+
+            {{-- Section label: Ressources --}}
+            <li class="nav-item mt-2 mb-1">
+                <small class="nav-link text-muted text-uppercase fw-bold px-3"
+                       style="font-size:.65rem;letter-spacing:1.2px;pointer-events:none;">Ressources</small>
+            </li>
+
             <li class="nav-item">
-                <a href="{{ route('user.blog') }}" class="nav-link {{ request()->routeIs('user.blog*') ? 'active' : '' }}">
-                    <i class="ri-article-line fs-5"></i>
+                <a href="{{ route('user.blog') }}"
+                   class="nav-link d-flex align-items-center gap-2 {{ request()->routeIs('user.blog*') ? 'active' : '' }}"
+                   style="{{ request()->routeIs('user.blog*') ? 'background:#f59e0b15;color:#b45309;border-radius:.55rem;font-weight:600;' : '' }}">
+                    <i class="ri-article-line fs-5" style="{{ request()->routeIs('user.blog*') ? 'color:#f59e0b;' : '' }}"></i>
                     <span>Blog & Actualités</span>
+                    @if(request()->routeIs('user.blog*'))
+                        <span class="ms-auto rounded-pill" style="width:6px;height:6px;background:#f59e0b;display:inline-block;"></span>
+                    @endif
                 </a>
             </li>
+
+            {{-- Section label: Assistance --}}
+            <li class="nav-item mt-2 mb-1">
+                <small class="nav-link text-muted text-uppercase fw-bold px-3"
+                       style="font-size:.65rem;letter-spacing:1.2px;pointer-events:none;">Assistance</small>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ route('user.support') }}"
+                   class="nav-link d-flex align-items-center gap-2 {{ request()->routeIs('user.support') ? 'active' : '' }}"
+                   style="{{ request()->routeIs('user.support') ? 'background:#22c55e15;color:#15803d;border-radius:.55rem;font-weight:600;' : '' }}">
+                    <i class="ri-customer-service-2-line fs-5" style="{{ request()->routeIs('user.support') ? 'color:#22c55e;' : '' }}"></i>
+                    <span>Support</span>
+                    @if(request()->routeIs('user.support'))
+                        <span class="ms-auto rounded-pill" style="width:6px;height:6px;background:#22c55e;display:inline-block;"></span>
+                    @endif
+                </a>
+            </li>
+
         </ul>
     </nav>
-        @if($showCompleteProfileModal)
-            <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5);">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header border-0">
-                            <h5 class="modal-title fw-bold">
-                                <i class="ri-information-line text-warning me-2"></i>
-                                Complete Your Profile
-                            </h5>
-                        </div>
-                        <div class="modal-body">
-                            <div class="text-center mb-4">
-                                <div class="mb-3">
-                                    <i class="ri-user-settings-line" style="font-size: 4rem; color: #648454;"></i>
-                                </div>
-                                <h5 class="mb-3">Your profile is incomplete</h5>
-                                <p class="text-muted mb-0">
-                                    Please complete your profile information to access all features. 
-                                    Add your phone number, address, city, and country to get started.
-                                </p>
-                            </div>
-                            
-                            <div class="alert alert-info d-flex align-items-start">
-                                <i class="ri-lightbulb-line me-2 mt-1"></i>
-                                <div>
-                                    <strong>Why complete your profile?</strong>
-                                    <ul class="mb-0 mt-2 ps-3">
-                                        <li>Submit and manage projects</li>
-                                        <li>Receive important notifications</li>
-                                        <li>Better support and communication</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer border-0">
-                        
-                            <button type="button" class="btn btn-primary" wire:click="goToSettings">
-                                <i class="ri-settings-3-line me-1"></i>Complete Profile Now
-                            </button>
+
+    {{-- Profile complete modal (kept here for Aside component context) --}}
+    @if($showCompleteProfileModal)
+    <div class="modal fade show d-block" tabindex="-1" style="background:rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold">
+                        <i class="ri-information-line text-warning me-2"></i>Complete Your Profile
+                    </h5>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-4">
+                        <i class="ri-user-settings-line" style="font-size:3.5rem;color:#648454;"></i>
+                        <h5 class="mt-3 mb-2">Your profile is incomplete</h5>
+                        <p class="text-muted mb-0 small">
+                            Please complete your profile information to access all features.
+                        </p>
+                    </div>
+                    <div class="alert alert-info d-flex align-items-start border-0 rounded-3">
+                        <i class="ri-lightbulb-line me-2 mt-1"></i>
+                        <div>
+                            <strong>Why complete your profile?</strong>
+                            <ul class="mb-0 mt-2 ps-3 small">
+                                <li>Submit and manage projects</li>
+                                <li>Receive important notifications</li>
+                                <li>Better support and communication</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn fw-semibold" wire:click="goToSettings"
+                            style="background:#648454;color:white;border-radius:.6rem;">
+                        <i class="ri-settings-3-line me-1"></i>Complete Profile Now
+                    </button>
+                </div>
             </div>
-        @endif
+        </div>
+    </div>
+    @endif
 </aside>
