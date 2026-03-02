@@ -820,7 +820,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Clé du champ</label>
-                            <div class="w-full px-4 py-2.5 rounded-lg border border-gray-100 bg-gray-50 text-sm font-mono text-gray-600 min-h-[42px]">{{ $fieldForm['field_key'] ?: '—' }}</div>
+                            <div class="w-full px-4 py-2.5 rounded-lg border border-gray-100 bg-gray-50 text-sm font-mono text-gray-600 min-h-[42px] overflow-x-auto">{{ $fieldForm['field_key'] ?: '—' }}</div>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Type <span class="text-red-500">*</span></label>
@@ -833,7 +833,6 @@
                                 <option value="date">Date</option>
                                 <option value="select">Liste déroulante</option>
                                 <option value="radio">Boutons radio</option>
-                                <option value="checkbox">Cases à cocher</option>
                                 <option value="file">Fichier</option>
                                 <option value="heading">Titre (décoratif)</option>
                                 <option value="paragraph">Paragraphe (décoratif)</option>

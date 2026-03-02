@@ -150,7 +150,7 @@ class AllSubmissions extends Component
             $query->whereDate('created_at', '<=', $this->dateTo);
         }
 
-        $submissions = $query->latest()->paginate(15);
+        $submissions = $query->latest()->where('status', 'submitted')->paginate(15);
 
         $programmes  = ProgrameList::orderBy('project_name')->get(['id', 'project_name']);
         $formulaires = DynamicForm::orderBy('title')->get(['id', 'title']);

@@ -264,7 +264,7 @@
     @endif
 
     {{-- ══ Submissions Table ══ --}}
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden relative">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 relative">
 
         {{-- Loading overlay --}}
         <div wire:loading
@@ -275,7 +275,6 @@
             </div>
         </div>
 
-        <div class="overflow-x-auto">
             <table class="w-full">
                 <thead class="bg-gray-50 border-b border-gray-100">
                     <tr>
@@ -471,7 +470,6 @@
                     @endforelse
                 </tbody>
             </table>
-        </div>
     </div>
 
     {{-- Pagination --}}

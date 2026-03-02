@@ -12,7 +12,7 @@ class DynamicFormSubmission extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'dynamic_form_id', 'candidat_id', 'user_id', 'programe_id', 'status', 'current_step',
+        'dynamic_form_id', 'candidat_id', 'user_id', 'programe_id', 'status','is_submitted', 'current_step',
         'submitted_at', 'reviewed_at', 'review_notes', 'reviewed_by',
     ];
 
