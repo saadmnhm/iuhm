@@ -233,7 +233,7 @@ class DynamicFormWizard extends Component
                 ],
                 [
                     'current_step' => $this->step,
-                    'status' => 'draft',
+                    'is_submitted' => false,
                 ]
             );
 
@@ -326,7 +326,7 @@ class DynamicFormWizard extends Component
         $submission = DynamicFormSubmission::find($this->submissionId);
         if ($submission) {
             $submission->update([
-                'status' => 'submitted',
+                'is_submitted' => true,
                 'submitted_at' => now(),
             ]);
         }

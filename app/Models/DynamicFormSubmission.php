@@ -63,7 +63,7 @@ class DynamicFormSubmission extends Model
 
     public function isSubmitted(): bool
     {
-        return in_array($this->status, ['submitted', 'in_review', 'approved', 'rejected']);
+        return in_array($this->is_submitted, [true, 'true', 1, '1']);
     }
 
     public function canBeEdited(): bool

@@ -2,7 +2,7 @@
 
     @php
         $totalForms     = count($formulaires);
-        $completedForms = collect($formulaires)->where('is_completed', true)->count();
+        $completedForms = collect($formulaires)->where('is_submitted', true)->count();
         $pendingForms   = $totalForms - $completedForms;
         $progress       = $totalForms > 0 ? ($completedForms / $totalForms) * 100 : 0;
         $allDone        = $completedForms === $totalForms && $totalForms > 0;
@@ -138,7 +138,7 @@
                 @php
                     $canStart = true;
                     for ($i = 0; $i < $index; $i++) {
-                        if ($formulaires[$i]['is_required'] && !$formulaires[$i]['is_completed']) {
+                        if ($formulaires[$i]['is_required'] && !$formulaires[$i]['is_submitted']) {
                             $canStart = false; break;
                         }
                     }
@@ -151,9 +151,9 @@
                         <!-- Icon and Title -->
                         <div class="flex items-center mb-4 pb-4 border-b border-gray-100">
                             <div class="w-14 h-14 rounded-full flex items-center justify-center mr-4 flex-shrink-0 relative"
-                                 style="background: {{ $formulaire['is_completed'] ? '#dcfce7' : ($canStart ? $color.'18' : '#f3f4f6') }};
-                                        border: 2px solid {{ $formulaire['is_completed'] ? '#22c55e' : ($canStart ? $color : '#d1d5db') }};">
-                                @if($formulaire['is_completed'])
+                                 style="background: {{ $formulaire['is_submitted'] == true ? '#dcfce7' : ($canStart ? $color.'18' : '#f3f4f6') }};
+                                        border: 2px solid {{ $formulaire['is_submitted'] == true ? '#22c55e' : ($canStart ? $color : '#d1d5db') }};">
+                                @if($formulaire['is_submitted'] == true)
                                     <i class="ri-checkbox-circle-fill text-2xl text-green-500"></i>
                                 @elseif(!$canStart)
                                     <i class="ri-lock-2-fill text-2xl text-gray-400"></i>
@@ -182,7 +182,7 @@
 
                         <!-- Status Badge -->
                         <div class="mb-4">
-                            @if($formulaire['is_completed'])
+                            @if($formulaire['is_submitted'] == true)
                                 <span class="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
                                     <i class="ri-checkbox-circle-line mr-1"></i>Complété
                                 </span>
@@ -210,7 +210,7 @@
 
                         <!-- Action Button -->
                         <div>
-                            @if($formulaire['is_completed'])
+                            @if($formulaire['is_submitted'] == true)
                                 <button wire:click="startFormulaire({{ $index }})"
                                         class="w-full px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 text-center">
                                     <i class="ri-eye-line mr-1"></i>Voir

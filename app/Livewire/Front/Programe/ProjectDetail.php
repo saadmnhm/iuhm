@@ -55,6 +55,7 @@ class ProjectDetail extends Component
                 'status' => $form->pivot->status,
                 'submission_id' => $submission?->id,
                 'submitted_at' => $submission?->submitted_at,
+                'is_submitted' => $submission?->is_submitted ?? false,
                 'is_completed' => in_array($submission?->status, ['submitted', 'in_review', 'approved']),
                 'index' => $index,
             ];
