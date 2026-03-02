@@ -53,8 +53,7 @@
 
 @livewireScripts
 
-    <!-- Alpine (global) and global toast listener -->
-    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <!-- Toast listener (Alpine is bundled inside Livewire 3 — do NOT load it separately) -->
 
     <div x-data="toastHandler()" x-cloak x-show="show" x-transition:enter="transition ease-out duration-200"
          x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"

@@ -161,9 +161,14 @@ class FormulaireBuilder extends Component
 
     public function saveSettings()
     {
+        // Auto-generate slug from title if empty (safety net for debounce timing)
+        if (empty(trim($this->slug)) && !empty(trim($this->title))) {
+            $this->slug = Str::slug($this->title);
+        }
+
         $this->validate([
             'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:dynamic_forms,slug,' . $this->formId,
+            'slug' => 'required|string|max:255|unique:dynamic_forms,slug,' . ($this->formId ?? 'NULL'),
             'icon' => 'required|string',
             'color' => 'required|string',
             'bg_color' => 'required|string',
@@ -269,9 +274,7 @@ class FormulaireBuilder extends Component
 
     public function updatedTitle()
     {
-        if (!$this->formId) {
-            $this->slug = Str::slug($this->title);
-        }
+        $this->slug = Str::slug($this->title);
     }
 
     // ============ STEP MANAGEMENT ============

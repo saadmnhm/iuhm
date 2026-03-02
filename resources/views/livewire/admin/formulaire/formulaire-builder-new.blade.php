@@ -57,10 +57,11 @@
                         <i class="ri-information-line text-blue-500"></i> Informations générales
                     </h3>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" x-data="{ slugPreview: '{{ addslashes($slug) }}' }">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Titre du formulaire <span class="text-red-500">*</span></label>
-                            <input type="text" wire:model.live.debounce.500ms="title"
+                            <input type="text" wire:model.blur="title"
+                                @input="slugPreview = $event.target.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-').replace(/-+/g,'-')"
                                 class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-sm"
                                 placeholder="Ex: Business Plan">
                             @error('title') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
@@ -68,14 +69,14 @@
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Titre en arabe</label>
-                            <input type="text" wire:model="title_ar" dir="rtl"
+                            <input type="text" wire:model.blur="title_ar" dir="rtl"
                                 class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-sm"
                                 placeholder="العنوان بالعربية">
                         </div>
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Slug (URL)</label>
-                            <div class="w-full px-4 py-2.5 rounded-lg border border-gray-100 bg-gray-50 text-sm font-mono text-gray-600 min-h-[42px]">{{ $slug ?: '—' }}</div>
+                            <div class="w-full px-4 py-2.5 rounded-lg border border-gray-100 bg-gray-50 text-sm font-mono text-gray-600 min-h-[42px]" x-text="slugPreview || '—'"></div>
                             @error('slug') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                         </div>
 
@@ -161,11 +162,11 @@
                     </h3>
                     <div class="grid grid-cols-5 gap-2">
                         @foreach($availableIcons as $ic)
-                            <button type="button" wire:click="$set('icon', '{{ $ic }}')" wire:key="icon-{{ $loop->index }}"
+                            <button type="button" wire:click="selectIcon('{{ $ic }}')" wire:key="icon-{{ $loop->index }}"
                                 class="w-10 h-10 rounded-lg flex items-center justify-center text-lg transition
                                     {{ $icon === $ic ? 'text-white' : 'text-gray-600 bg-gray-50 hover:bg-gray-100' }}"
                                 style="{{ $icon === $ic ? 'background-color: ' . $color : '' }}">
-                                <i class="{{ $ic }}"></i>
+                                <i class="{{ $ic }}" style="pointer-events: none;"></i>
                             </button>
                         @endforeach
                     </div>
@@ -805,7 +806,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Libellé <span class="text-red-500">*</span></label>
-                            <input type="text" wire:model.live.debounce.500ms="fieldForm.label"
+                            <input type="text" wire:model.blur="fieldForm.label"
                                 class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 outline-none text-sm"
                                 placeholder="Ex: Quel est votre nom ?">
                         </div>
@@ -929,7 +930,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Titre <span class="text-red-500">*</span></label>
-                            <input type="text" wire:model.live.debounce.500ms="tableForm.title"
+                            <input type="text" wire:model.blur="tableForm.title"
                                 class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 outline-none text-sm">
                         </div>
                         <div>
@@ -1009,7 +1010,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">En-tête <span class="text-red-500">*</span></label>
-                            <input type="text" wire:model.live.debounce.500ms="columnForm.header"
+                            <input type="text" wire:model.blur="columnForm.header"
                                 class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 outline-none text-sm">
                         </div>
                         <div>
