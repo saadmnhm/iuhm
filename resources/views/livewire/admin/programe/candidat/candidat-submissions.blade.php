@@ -87,26 +87,26 @@
     </div>
 
     <!-- ═══════════════════════════ QUICK STATUS STRIP ═══════════════════════════ -->
-    @php $activeforms = collect($statistics['form_attached'] ?? [])->where('is_active', 'active'); @endphp
+    @php
+     $activeforms = collect($statistics['form_attached']);
+     
+     @endphp
+
     @if($activeforms->count())
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-6">
         @foreach($activeforms as $sf)
         <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-3 flex items-center justify-between">
             <div>
                 <p class="text-xs text-gray-500 uppercase font-medium truncate" style="max-width:100px" title="{{ $sf['title'] }}">{{ $sf['title'] }}</p>
-                @php
-                    $sColor = match($sf['actual_status'] ?? null) {
-                        'submitted'  => 'bg-blue-100 text-blue-800',
-                        'in_review'  => 'bg-purple-100 text-purple-800',
-                        'approved'   => 'bg-green-100 text-green-800',
-                        'rejected'   => 'bg-red-100 text-red-800',
-                        'draft'      => 'bg-yellow-100 text-yellow-800',
-                        default      => 'bg-gray-100 text-gray-600',
-                    };
-                @endphp
-                <span class="mt-1 inline-block text-xs font-semibold px-2 py-0.5 rounded {{ $sColor }}">
-                    {{ $sf['status_label'] }}
+                @if($sf['is_submitted'] == 1)
+                <span class="mt-1 inline-block text-xs font-semibold px-2 py-0.5 rounded bg-green-100 text-green-800">
+                    Soumis
                 </span>
+                @else
+                <span class="mt-1 inline-block text-xs font-semibold px-2 py-0.5 rounded bg-gray-100 text-gray-500">
+                    Non soumis
+                </span>
+                @endif
             </div>
             <div class="w-10 h-10 rounded-lg flex items-center justify-center ml-2 flex-shrink-0"
                  style="color:{{ $sf['color'] ?? '#6366f1' }};background-color:{{ $sf['color'] ?? '#6366f1' }}20;">
@@ -132,7 +132,7 @@
                 'draft'      => 'bg-yellow-100 text-yellow-800',
                 default      => 'bg-gray-100 text-gray-500',
             };
-            $isSubmitted = !is_null($sub['actual_status']) && $sub['actual_status'] !== null;
+            $isSubmitted = !is_null($sub['is_submitted']) && $sub['is_submitted'] == 1;
         @endphp
         <div class="bg-white rounded-xl shadow-sm border-2 overflow-hidden hover:shadow-md transition-all flex flex-col"
              style="border-color: {{ $accentColor }}30;">
@@ -205,15 +205,6 @@
                         </button>
                         @endif
 
-                        {{-- Bottom row: Assign review + Export PDF --}}
-                        <div class="flex gap-2">
-                            @if($sub['submission_id'])
-                            <a href="{{ route('admin.candidat.submission.export', ['candidatId' => $candidat->id, 'id' => $sub['submission_id']]) }}" target="_blank"
-                               class="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-semibold rounded-lg border border-red-200 transition">
-                                <i class="ri-file-pdf-line"></i> Export PDF
-                            </a>
-                            @endif
-                        </div>
                     </div>
                 @endif
             </div>

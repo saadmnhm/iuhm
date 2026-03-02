@@ -103,6 +103,7 @@ class CandidatSubmissions extends Component
                     'completed' => $completed,
                     'is_active' => $formulaire->pivot->status,
                     'actual_status'    => $DynamicFormSubmission?->status,
+                    'is_submitted'     => $DynamicFormSubmission?->is_submitted ?? 0,
                     'status_label'     => $DynamicFormSubmission?->status
                         ? (['draft' => 'Brouillon', 'submitted' => 'Soumis', 'in_review' => 'En révision', 'approved' => 'Approuvé', 'rejected' => 'Rejeté'][$DynamicFormSubmission->status] ?? ucfirst($DynamicFormSubmission->status))
                         : 'Non soumis',
@@ -202,6 +203,7 @@ class CandidatSubmissions extends Component
                 'completed'        => $sub && in_array($sub->status, ['submitted', 'in_review', 'approved']) ? 1 : 0,
                 'is_active'        => $formulaire->pivot->status,
                 'actual_status'    => $sub?->status,
+                'is_submitted'     => $sub?->is_submitted,
                 'status_label'     => $sub?->status
                     ? ($statusLabels[$sub->status] ?? ucfirst($sub->status))
                     : 'Non soumis',

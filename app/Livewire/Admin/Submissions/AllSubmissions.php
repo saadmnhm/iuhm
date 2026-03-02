@@ -74,7 +74,7 @@ class AllSubmissions extends Component
         if (!in_array($newStatus, $allowed)) return;
         DynamicFormSubmission::findOrFail($id)->update(['status' => $newStatus]);
         session()->flash('toast', 'Statut mis à jour avec succès.');
-        $this->dispatchBrowserEvent('notify', ['type' => 'success', 'message' => 'Statut mis à jour avec succès.']);
+        $this->dispatch('notify', type: 'success', message: 'Statut mis à jour avec succès.');
     }
 
     /** Assign or unassign a reviewer inline */
@@ -83,7 +83,7 @@ class AllSubmissions extends Component
         DynamicFormSubmission::findOrFail($id)->update(['reviewed_by' => $adminId]);
         $msg = $adminId ? 'Responsable assigné.' : 'Responsable retiré.';
         session()->flash('toast', $msg);
-        $this->dispatchBrowserEvent('notify', ['type' => 'success', 'message' => $msg]);
+        $this->dispatch('notify', type: 'success', message: $msg);
     }
 
     public function render()
@@ -150,7 +150,7 @@ class AllSubmissions extends Component
             $query->whereDate('created_at', '<=', $this->dateTo);
         }
 
-        $submissions = $query->latest()->where('status', 'submitted')->paginate(15);
+        $submissions = $query->latest()->where('is_submitted', true)->paginate(15);
 
         $programmes  = ProgrameList::orderBy('project_name')->get(['id', 'project_name']);
         $formulaires = DynamicForm::orderBy('title')->get(['id', 'title']);

@@ -12,11 +12,22 @@ class DynamicForm extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'title', 'title_ar', 'introduction', 'introduction_ar',
-        'slug', 'icon', 'color', 'bg_color',
-        'is_active', 'has_steps', 'sort_order',
-        'has_introduction', 'introduction_title', 'introduction_title_ar',
-        'introduction_content', 'introduction_content_ar',
+        'title',
+        'title_ar',
+        'introduction',
+        'introduction_ar',
+        'slug', 
+        'icon', 
+        'color', 
+        'bg_color',
+        'is_active', 
+        'has_steps', 
+        'sort_order',
+        'has_introduction', 
+        'introduction_title', 
+        'introduction_title_ar',
+        'introduction_content', 
+        'introduction_content_ar',
     ];
 
     protected $casts = [

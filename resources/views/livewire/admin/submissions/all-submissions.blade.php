@@ -36,7 +36,6 @@
     @php
         $statCards = [
             ['key' => 'all',       'label' => 'Total',        'value' => $stats['total'],     'icon' => 'ri-file-list-3-line',     'color' => 'blue',   'week' => null],
-            ['key' => 'draft',     'label' => 'Brouillon',    'value' => $stats['draft'],     'icon' => 'ri-draft-line',           'color' => 'gray',   'week' => null],
             ['key' => 'submitted', 'label' => 'Soumis',       'value' => $stats['submitted'], 'icon' => 'ri-send-plane-line',      'color' => 'indigo', 'week' => $stats['submitted_week']],
             ['key' => 'in_review', 'label' => 'En révision',  'value' => $stats['in_review'], 'icon' => 'ri-time-line',            'color' => 'amber',  'week' => $stats['in_review_week']],
             ['key' => 'approved',  'label' => 'Approuvés',    'value' => $stats['approved'],  'icon' => 'ri-checkbox-circle-line', 'color' => 'green',  'week' => $stats['approved_week']],
@@ -50,14 +49,12 @@
             'rejected'  => 'bg-red-100 text-red-800',
         ];
         $statusLabels = [
-            'draft'     => 'Brouillon',
             'submitted' => 'Soumis',
             'in_review' => 'En révision',
             'approved'  => 'Approuvé',
             'rejected'  => 'Rejeté',
         ];
         $statusDropdown = [
-            'draft'     => ['gray',   'Brouillon'],
             'submitted' => ['indigo', 'Soumis'],
             'in_review' => ['amber',  'En révision'],
             'approved'  => ['green',  'Approuvé'],
@@ -129,7 +126,6 @@
                     class="border rounded-lg text-sm py-2.5 px-3 focus: focus:ring-indigo-400 outline-none bg-white transition
                            {{ $statusFilter !== 'all' ? 'border-indigo-400 text-indigo-700 font-medium' : 'border-gray-300' }}">
                 <option value="all">Tous les statuts</option>
-                <option value="draft">Brouillon</option>
                 <option value="submitted">Soumis</option>
                 <option value="in_review">En révision</option>
                 <option value="approved">Approuvé</option>
@@ -280,9 +276,9 @@
                     <tr>
                         <th class="px-4 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Candidat</th>
                         <th class="px-4 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Formulaire</th>
-                        <th class="px-4 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Programme</th>
+                        <th class="px-4 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Projet</th>
+                        <!-- <th class="px-4 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Responsable</th> -->
                         <th class="px-4 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Responsable</th>
-                        <th class="px-4 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Statut</th>
                         <th class="px-4 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Date</th>
                         <th class="px-4 py-3.5 text-center text-xs font-semibold text-gray-500 uppercase tracking-wide">Actions</th>
                     </tr>
@@ -335,52 +331,55 @@
                             </span>
                         </td>
 
-                        {{-- Responsable — interactive assign dropdown --}}
-                        <td onclick="event.stopPropagation()" class="px-4 py-3.5">
-                            <div x-data="{ ropen: false }" class="relative inline-block">
-                                @if($sub->reviewer)
-                                <button @click="ropen = !ropen"
-                                        class="flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 bg-blue-50 text-blue-700 rounded-full border border-blue-100 hover:bg-blue-100 transition">
-                                    <span class="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
-                                        {{ strtoupper(substr($sub->reviewer->name, 0, 1)) }}
-                                    </span>
-                                    {{ Str::before($sub->reviewer->name, ' ') ?: $sub->reviewer->name }}
-                                    <i class="ri-arrow-down-s-line text-xs text-blue-400"></i>
-                                </button>
-                                @else
-                                <button @click="ropen = !ropen"
-                                        class="flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 border border-dashed border-gray-300 text-gray-400 rounded-full hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50 transition">
-                                    <i class="ri-user-add-line"></i> Assigner
-                                </button>
-                                @endif
 
-                                <div x-show="ropen" @click.outside="ropen = false"
-                                     x-transition:enter="transition ease-out duration-150"
-                                     x-transition:enter-start="opacity-0 scale-95"
-                                     x-transition:enter-end="opacity-100 scale-100"
-                                     class="absolute z-50 mt-1 left-0 bg-white rounded-xl shadow-xl border border-gray-100 py-1 w-48 max-h-60 overflow-y-auto">
+                        @if (false)
+                            <!-- {{-- Responsable — interactive assign dropdown --}}
+                            <td onclick="event.stopPropagation()" class="px-4 py-3.5">
+                                <div x-data="{ ropen: false }" class="relative inline-block">
                                     @if($sub->reviewer)
-                                    <button @click="ropen = false; $wire.assignResponsable({{ $sub->id }}, null)"
-                                            class="w-full text-left px-3 py-2 text-xs hover:bg-red-50 text-red-500 transition flex items-center gap-2">
-                                        <i class="ri-user-unfollow-line"></i> Retirer le responsable
-                                    </button>
-                                    <div class="border-t border-gray-100 my-1"></div>
-                                    @endif
-                                    @foreach($admins as $admin)
-                                    <button @click="ropen = false; $wire.assignResponsable({{ $sub->id }}, {{ $admin->id }})"
-                                            class="w-full text-left px-3 py-2 text-xs hover:bg-indigo-50 text-gray-700 transition flex items-center gap-2 {{ $sub->reviewed_by === $admin->id ? 'bg-indigo-50 font-semibold' : '' }}">
-                                        <span class="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
-                                            {{ strtoupper(substr($admin->name, 0, 1)) }}
+                                    <button @click="ropen = !ropen"
+                                            class="flex items-center gap-1.5 text-xs font-medium px-2.5 py-1.5 bg-blue-50 text-blue-700 rounded-full border border-blue-100 hover:bg-blue-100 transition">
+                                        <span class="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
+                                            {{ strtoupper(substr($sub->reviewer->name, 0, 1)) }}
                                         </span>
-                                        {{ $admin->name }}
-                                        @if($sub->reviewed_by === $admin->id)
-                                        <i class="ri-check-line ml-auto text-indigo-600"></i>
-                                        @endif
+                                        {{ Str::before($sub->reviewer->name, ' ') ?: $sub->reviewer->name }}
+                                        <i class="ri-arrow-down-s-line text-xs text-blue-400"></i>
                                     </button>
-                                    @endforeach
+                                    @else
+                                    <button @click="ropen = !ropen"
+                                            class="flex items-center gap-1 text-xs font-medium px-2.5 py-1.5 border border-dashed border-gray-300 text-gray-400 rounded-full hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50 transition">
+                                        <i class="ri-user-add-line"></i> Assigner
+                                    </button>
+                                    @endif
+    
+                                    <div x-show="ropen" @click.outside="ropen = false"
+                                         x-transition:enter="transition ease-out duration-150"
+                                         x-transition:enter-start="opacity-0 scale-95"
+                                         x-transition:enter-end="opacity-100 scale-100"
+                                         class="absolute z-50 mt-1 left-0 bg-white rounded-xl shadow-xl border border-gray-100 py-1 w-48 max-h-60 overflow-y-auto">
+                                        @if($sub->reviewer)
+                                        <button @click="ropen = false; $wire.assignResponsable({{ $sub->id }}, null)"
+                                                class="w-full text-left px-3 py-2 text-xs hover:bg-red-50 text-red-500 transition flex items-center gap-2">
+                                            <i class="ri-user-unfollow-line"></i> Retirer le responsable
+                                        </button>
+                                        <div class="border-t border-gray-100 my-1"></div>
+                                        @endif
+                                        @foreach($admins as $admin)
+                                        <button @click="ropen = false; $wire.assignResponsable({{ $sub->id }}, {{ $admin->id }})"
+                                                class="w-full text-left px-3 py-2 text-xs hover:bg-indigo-50 text-gray-700 transition flex items-center gap-2 {{ $sub->reviewed_by === $admin->id ? 'bg-indigo-50 font-semibold' : '' }}">
+                                            <span class="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
+                                                {{ strtoupper(substr($admin->name, 0, 1)) }}
+                                            </span>
+                                            {{ $admin->name }}
+                                            @if($sub->reviewed_by === $admin->id)
+                                            <i class="ri-check-line ml-auto text-indigo-600"></i>
+                                            @endif
+                                        </button>
+                                        @endforeach
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
+                            </td> -->
+                        @endif
 
                         {{-- Statut — interactive change popover --}}
                         <td onclick="event.stopPropagation()" class="px-4 py-3.5">
@@ -439,17 +438,7 @@
                                         <i class="ri-user-line text-blue-500 w-4 text-center"></i>
                                         Profil candidat
                                     </a>
-                                    <div class="border-t border-gray-100 my-1"></div>
-                                    <p class="px-4 py-1 text-xs text-gray-400 font-semibold uppercase tracking-wide">Changer statut</p>
-                                    @foreach($statusDropdown as $skey => [$scolor, $slabel])
-                                    @if($sub->status !== $skey)
-                                    <button @click="aopen = false; $wire.updateStatus({{ $sub->id }}, '{{ $skey }}')"
-                                            class="w-full flex items-center gap-2.5 px-4 py-1.5 text-sm text-gray-600 hover:bg-gray-50 transition">
-                                        <span class="w-2 h-2 rounded-full bg-{{ $scolor }}-500"></span>
-                                        {{ $slabel }}
-                                    </button>
-                                    @endif
-                                    @endforeach
+                                    
                                     @endif
                                 </div>
                             </div>

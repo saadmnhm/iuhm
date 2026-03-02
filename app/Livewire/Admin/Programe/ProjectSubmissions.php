@@ -137,7 +137,7 @@ class ProjectSubmissions extends Component
     public function render()
     {
         // Get submissions grouped by candidat_id (primary) and user_id (fallback)
-        $submissions = DynamicFormSubmission::where('programe_id', $this->projectId);
+        $submissions = DynamicFormSubmission::where('programe_id', $this->projectId)->where('is_submitted', true);
         
         // Apply status filter
         if ($this->filterStatus !== 'all') {
