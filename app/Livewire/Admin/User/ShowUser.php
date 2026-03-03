@@ -6,7 +6,7 @@ use App\Models\User;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 
-#[Layout('layouts.admin', ['header' => 'View User'])]
+#[Layout('layouts.admin', ['header' => 'View Admin Details'])]
 class ShowUser extends Component
 {
     public $user;

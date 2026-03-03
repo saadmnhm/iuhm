@@ -13,18 +13,34 @@
                     <span>Dashboard</span>
                 </a>
 
-                {{-- Programme submissions links --}}
-                @canmodule('programmes')
-                @foreach($programe_list ?? [] as $list)
-                    <a href="{{ route('admin.project.submissions', $list->id) }}" 
-                    class="flex items-center gap-3 px-4 py-3 rounded-lg transition {{ request()->routeIs('admin.project.submissions') && request()->route('id') == $list->id ? 'bg-white/20' : 'hover:bg-white/10' }}">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+
+
+                <div x-data="{ open: false }">
+                    <button @click="open = !open" class="flex w-full items-center justify-between gap-3 px-4 py-3 rounded-lg transition hover:bg-gray-100">
+                        <div class="flex items-center gap-3">
+                            <i class="ri-folder-open-line text-lg"></i>
+                            <span>Projets</span>
+                        </div>
+                        <svg :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" >
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                         </svg>
-                        <span>{{ $list->project_name }}</span>
-                    </a>
-                @endforeach
-                @endcanmodule
+                    </button>
+                    
+                    <div x-show="open" x-collapse class="ml-3 mt-1 space-y-1">
+
+                        {{-- Programme submissions links --}}
+                        @canmodule('programmes')
+                        @foreach($programe_list ?? [] as $list)
+                            <a href="{{ route('admin.project.submissions', $list->id) }}" 
+                            class="flex items-center gap-3 px-4 py-3 rounded-lg transition {{ request()->routeIs('admin.project.submissions') && request()->route('id') == $list->id ? 'bg-white/20' : 'hover:bg-white/10' }}">
+                                <i class="{{ $list->icon }} text-lg"></i>
+                                <span>{{ $list->project_name }}</span>
+                            </a>
+                        @endforeach
+                        @endcanmodule
+
+                    </div>
+                </div>
 
                 @canmodule('support')
                 <a href="{{ route('admin.support.tickets') }}" 

@@ -7,7 +7,7 @@
 
     <div class="bg-white rounded-xl shadow-sm border border-gray-100">
         <div class="px-6 py-4 border-b border-gray-100">
-            <h3 class="text-lg font-semibold text-gray-900">Edit User</h3>
+            <h3 class="text-lg font-semibold text-gray-900">Edit Admin</h3>
         </div>
 
         <form wire:submit.prevent="updateUser" class="p-6">
@@ -63,7 +63,7 @@
                                class="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
                         <span class="text-sm font-medium text-gray-700">Account is Active</span>
                     </label>
-                    <p class="text-xs text-gray-500 mt-2 ml-8">Uncheck to disable this user's account</p>
+                    <p class="text-xs text-gray-500 mt-2 ml-8">Uncheck to disable this Admin's account</p>
                     @error('is_active') <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span> @enderror
                 </div>
             </div>
@@ -72,7 +72,7 @@
             <div class="flex gap-3 mt-8 pt-6 border-t border-gray-200">
                 <button type="submit" 
                         class="flex-1 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors duration-200">
-                    Update User
+                    Update Admin
                 </button>
                 <a href="{{ route('admin.users.show', $userId) }}" 
                    class="flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 text-center font-medium rounded-lg transition-colors duration-200">

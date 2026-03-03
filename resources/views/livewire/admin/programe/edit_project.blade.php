@@ -40,6 +40,75 @@
                 </div>
             </div>
 
+            <!-- Icon Picker -->
+            <div class="mt-6" x-data="{
+                open: false,
+                icons: [
+                    'ri-file-list-3-line','ri-file-text-line','ri-survey-line','ri-clipboard-line',
+                    'ri-book-open-line','ri-draft-line','ri-article-line','ri-newspaper-line',
+                    'ri-task-line','ri-todo-line','ri-list-check-2','ri-list-ordered',
+                    'ri-pie-chart-line','ri-bar-chart-line','ri-line-chart-line','ri-funds-line',
+                    'ri-briefcase-line','ri-building-line','ri-store-line','ri-shopping-bag-line',
+                    'ri-user-line','ri-team-line','ri-group-line','ri-contacts-line',
+                    'ri-lightbulb-line','ri-brain-line','ri-graduation-cap-line','ri-medal-line',
+                    'ri-heart-line','ri-shield-check-line','ri-settings-line','ri-tools-line',
+                    'ri-money-dollar-circle-line','ri-bank-line','ri-wallet-line','ri-coin-line',
+                    'ri-calendar-line','ri-time-line','ri-map-pin-line','ri-earth-line',
+                    'ri-star-line','ri-trophy-line','ri-flag-line','ri-bookmark-line',
+                    'ri-rocket-line','ri-map-line','ri-global-line','ri-compass-line',
+                    'ri-leaf-line','ri-plant-line','ri-recycle-line','ri-sun-line',
+                    'ri-home-line','ri-hospital-line','ri-government-line','ri-community-line'
+                ]
+            }">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Icon *</label>
+
+                <!-- Trigger button -->
+                <button type="button" @click="open = true"
+                    class="flex items-center gap-3 px-4 py-2.5 border border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition w-full text-left">
+                    <span class="w-9 h-9 rounded-lg flex items-center justify-center text-white text-lg flex-shrink-0"
+                          style="background-color: {{ $color }};">
+                        <i class="{{ $icon }}"></i>
+                    </span>
+                    <div>
+                        <p class="text-sm font-medium text-gray-800">{{ $icon }}</p>
+                        <p class="text-xs text-gray-400">Click to change icon</p>
+                    </div>
+                    <i class="ri-arrow-down-s-line text-gray-400 ml-auto"></i>
+                </button>
+                @error('icon') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+
+                <!-- Popup modal -->
+                <div x-show="open" x-cloak
+                     class="fixed inset-0 z-50 flex items-center justify-center"
+                     style="background:rgba(0,0,0,0.45);">
+                    <div @click.outside="open = false"
+                         class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
+                        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                            <h3 class="font-semibold text-gray-800 flex items-center gap-2">
+                                <i class="ri-remixicon-line text-blue-500"></i> Choose an Icon
+                            </h3>
+                            <button type="button" @click="open = false"
+                                class="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600">
+                                <i class="ri-close-line text-lg"></i>
+                            </button>
+                        </div>
+                        <div class="p-5">
+                            <div class="grid grid-cols-7 gap-2">
+                                <template x-for="ic in icons" :key="ic">
+                                    <button type="button"
+                                        @click="open = false; $wire.selectIcon(ic)"
+                                        :class="'{{ $icon }}' === ic ? 'ring-2 ring-blue-500 text-white' : 'bg-gray-50 hover:bg-gray-100 text-gray-600'"
+                                        :style="'{{ $icon }}' === ic ? 'background-color:{{ $color }};' : ''"
+                                        class="w-10 h-10 rounded-lg flex items-center justify-center text-lg transition">
+                                        <i :class="ic" style="pointer-events:none;"></i>
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Description -->
             <div class="mt-6">
                 <label class="block text-sm font-medium text-gray-700 mb-1">

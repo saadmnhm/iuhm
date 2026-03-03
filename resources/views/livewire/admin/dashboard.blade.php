@@ -27,7 +27,7 @@
         <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition">
             <div class="flex justify-between items-start">
                 <div>
-                    <p class="text-gray-500 text-sm font-medium">Total Users</p>
+                    <p class="text-gray-500 text-sm font-medium">Total Admin</p>
                     <p class="text-3xl font-bold text-gray-900 mt-2">{{ $statistics['total_users'] }}</p>
                 </div>
                 <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">

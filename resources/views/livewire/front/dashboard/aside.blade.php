@@ -121,10 +121,10 @@
                     </div>
                 </div>
                 <div class="modal-footer border-0 pt-0">
-                    <button type="button" class="btn fw-semibold" wire:click="goToSettings"
-                            style="background:#648454;color:white;border-radius:.6rem;">
+                    <a href="{{ route('user.settings') }}" class="btn fw-semibold"
+                       style="background:#648454;color:white;border-radius:.6rem;">
                         <i class="ri-settings-3-line me-1"></i>Complete Profile Now
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>

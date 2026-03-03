@@ -8,7 +8,7 @@ use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Hash;
 
-#[Layout('layouts.admin', ['header' => 'Create User'])]
+#[Layout('layouts.admin', ['header' => 'Create Admin'])]
 class CreateUser extends Component
 {
     public $name;

@@ -15,6 +15,7 @@ class Dashboard extends Component
     {
         $formService = app(FormSubmissionService::class);
         $allSubmissions = $formService->getAllSubmissions();
+        $programe_list = ProgrameList::all();
         
         // Dynamic address distribution (top 6)
         $addressDistribution = Candidat::whereNotNull('address')
@@ -36,7 +37,7 @@ class Dashboard extends Component
         $statistics = [
             'total_users' => User::count(),
             'recent_projects' => $allSubmissions->take(20),
-            'total_projects' => $allSubmissions->count(),
+            'total_projects' => $programe_list->count(),
             'total_candidats' => Candidat::count(),
             'male_count' => Candidat::where('gender', 'homme')->count(),
             'female_count' => Candidat::where('gender', 'femme')->count(),

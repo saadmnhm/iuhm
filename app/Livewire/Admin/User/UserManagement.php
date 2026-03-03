@@ -251,6 +251,6 @@ class UserManagement extends Component
             'statistics' => $statistics,
             'allRoles'   => $allRoles,
             'roleStats'  => $roleStats,
-        ])->layout('layouts.admin', ['header' => 'User Management']);
+        ])->layout('layouts.admin', ['header' => 'Admin Management']);
     }
 }

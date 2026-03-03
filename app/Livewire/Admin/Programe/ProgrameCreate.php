@@ -69,6 +69,11 @@ class ProgrameCreate extends Component
         }
     }
 
+    public function selectIcon(string $iconClass): void
+    {
+        $this->icon = $iconClass;
+    }
+
     public function saveProjectList()
     {
         $created_by = Auth::id();

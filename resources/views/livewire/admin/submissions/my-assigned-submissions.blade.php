@@ -24,7 +24,7 @@
 
     {{-- ═══ Tabs ═══ --}}
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
-        <div class="flex border-b border-gray-100">
+        <!-- <div class="flex border-b border-gray-100">
             <button wire:click="$set('tab', 'candidats')"
                     class="flex-1 py-3 text-center text-sm font-semibold transition {{ $tab === 'candidats' ? 'text-indigo-700 border-b-2 border-indigo-600 bg-indigo-50/50' : 'text-gray-500 hover:text-gray-700' }}">
                 <i class="ri-user-line mr-1"></i> Candidats assignés
@@ -33,7 +33,7 @@
                     class="flex-1 py-3 text-center text-sm font-semibold transition {{ $tab === 'submissions' ? 'text-indigo-700 border-b-2 border-indigo-600 bg-indigo-50/50' : 'text-gray-500 hover:text-gray-700' }}">
                 <i class="ri-file-list-3-line mr-1"></i> Soumissions assignées ({{ $stats['submissions_total'] }})
             </button>
-        </div>
+        </div> -->
 
         {{-- ═══ Toolbar ═══ --}}
         <div class="p-4 flex flex-wrap items-center gap-3">

@@ -15,6 +15,9 @@ class ProgrameEdit extends Component{
     public $project_name;
     public $status = 'Active';
     public $description;
+    public $icon = 'ri-file-list-3-line';
+    public $color = '#2f5496';
+    public $bg_color = '#ffffff';
     public $min_age;
     public $max_age;
     public $allowed_address_id = [];
@@ -44,6 +47,10 @@ class ProgrameEdit extends Component{
                 ? $programe->allowed_address_id 
                 : json_decode($programe->allowed_address_id, true)) 
             : [];
+
+        $this->icon = $programe->icon ?? 'ri-file-list-3-line';
+        $this->color = $programe->color ?? '#2f5496';
+        $this->bg_color = $programe->bg_color ?? '#ffffff';
             
         $this->loadFormulaires();
     }
@@ -166,11 +173,19 @@ class ProgrameEdit extends Component{
         $this->loadFormulaires();
     }
 
+    public function selectIcon(string $iconClass): void
+    {
+        $this->icon = $iconClass;
+    }
+
     public function save()
     {
         $this->validate([
             'project_name' => 'required|string|max:255',
             'description' => 'required|string',
+            'icon' => 'required|string|max:255',
+            'color' => 'nullable|string|max:7',
+            'bg_color' => 'nullable|string|max:7',
             'min_age' => 'required|integer|min:0',
             'max_age' => 'required|integer|min:0|gte:min_age',
             'allowed_address_id' => 'nullable|array',
@@ -182,9 +197,11 @@ class ProgrameEdit extends Component{
             'project_name' => $this->project_name,
             'status' => $this->status,
             'description' => $this->description,
+            'icon' => $this->icon,
+            'color' => $this->color,
+            'bg_color' => $this->bg_color,
             'min_age' => $this->min_age,
             'max_age' => $this->max_age,
-            // FIX: Ensure it's saved as JSON
             'allowed_address_id' => json_encode($this->allowed_address_id),
         ]);
 

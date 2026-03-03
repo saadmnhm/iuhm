@@ -7,7 +7,7 @@
 
     <div class="bg-white rounded-xl shadow-sm border border-gray-100">
         <div class="px-6 py-4 border-b border-gray-100">
-            <h3 class="text-lg font-semibold text-gray-900">Create New User</h3>
+            <h3 class="text-lg font-semibold text-gray-900">Create New Admin</h3>
         </div>
 
         <form wire:submit.prevent="createUser" class="p-6">
@@ -83,7 +83,7 @@
             <div class="flex gap-3 mt-8 pt-6 border-t border-gray-200">
                 <button type="submit" 
                         class="flex-1 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors duration-200">
-                    Create User
+                    Create Admin
                 </button>
                 <a href="{{ route('admin.users.index') }}" 
                    class="flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 text-center font-medium rounded-lg transition-colors duration-200">

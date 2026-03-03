@@ -16,7 +16,7 @@
         <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <div class="flex justify-between items-start">
                 <div>
-                    <p class="text-gray-500 text-sm font-medium">Total Users</p>
+                    <p class="text-gray-500 text-sm font-medium">Total Admin</p>
                     <p class="text-3xl font-bold text-gray-900 mt-2">{{ $statistics['total_users'] }}</p>
                 </div>
                 <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -74,7 +74,7 @@
     <div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
             <div class="px-6 py-4 border-b border-gray-100 flex flex-wrap items-center gap-3">
-                <h3 class="text-lg font-semibold text-gray-900 mr-auto">All Users</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mr-auto">All Admin</h3>
 
                 {{-- Search --}}
                 <div class="relative">
@@ -100,7 +100,7 @@
 
                 @if(Auth::user()->isSuperAdmin() || Auth::user()->isAdmin())
                 <a href="{{ route('admin.users.create') }}" class="flex items-center gap-2 px-4 py-2 bg-green-logo text-white text-sm font-semibold rounded-lg transition">
-                    <i class="ri-user-add-line"></i> Créer un utilisateur
+                    <i class="ri-user-add-line"></i> Créer une Admin
                 </a>
                 @endif
             </div>
