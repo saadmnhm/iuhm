@@ -7,6 +7,7 @@ use App\Models\Role;
 use App\Models\RolePermission;
 use Illuminate\View\View;
 use Livewire\Component;
+use Illuminate\Support\Str;
 
 class RoleManagement extends Component
 {
@@ -43,6 +44,13 @@ class RoleManagement extends Component
         $this->showRoleModal   = true;
     }
 
+    public function updatedRoleLabel(): void
+    {
+        // Auto-generate technical name from label using underscores
+        $slug = Str::slug($this->roleLabel, '_');
+        $this->roleName = $slug;
+    }
+
     public function openEdit(int $id): void
     {
         $role = Role::findOrFail($id);
@@ -58,6 +66,21 @@ class RoleManagement extends Component
 
     public function saveRole(): void
     {
+        // Ensure technical name is generated if empty
+        if (empty(trim($this->roleName)) && !empty(trim($this->roleLabel))) {
+            $this->roleName = Str::slug($this->roleLabel, '_');
+        }
+
+        // Make roleName unique if necessary
+        $original = $this->roleName;
+        $i = 1;
+        while (Role::where('name', $this->roleName)
+            ->when($this->editingRoleId, fn($q) => $q->where('id', '!=', $this->editingRoleId))
+            ->exists()) {
+            $this->roleName = $original . '_' . $i;
+            $i++;
+        }
+
         $uniqueRule = 'unique:roles,name' . ($this->editingRoleId ? ",{$this->editingRoleId}" : '');
         $this->validate([
             'roleName'  => ['required', 'regex:/^[a-z0-9_]+$/', 'max:50', $uniqueRule],

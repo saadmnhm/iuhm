@@ -128,17 +128,10 @@
             {{-- Modal body --}}
             <div class="p-6 space-y-5">
 
-                {{-- Technical name (hidden for system roles) --}}
+                {{-- Technical name (auto-generated; hidden from admins) --}}
                 @if(!$editingIsSystem)
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
-                        Nom technique
-                        <span class="text-gray-400 font-normal text-xs ml-1">lettres_minuscules, chiffres et _</span>
-                    </label>
-                    <input type="text" wire:model="roleName" placeholder="ex: responsable_rh"
-                           class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm font-mono focus:ring-2 focus:ring-indigo-400 outline-none transition">
-                    @error('roleName') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                </div>
+                <input type="hidden" wire:model="roleName">
+                <div class="text-xs text-gray-500">Le nom technique est généré automatiquement à partir du nom d'affichage.</div>
                 @else
                 <div class="p-3 bg-gray-50 rounded-lg flex items-center gap-2 text-sm text-gray-600">
                     <i class="ri-lock-line text-gray-400"></i>
