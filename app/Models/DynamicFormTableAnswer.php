@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class DynamicFormTableAnswer extends Model
 {
     use SoftDeletes;
+    
     protected $fillable = [
         'dynamic_form_submission_id', 'dynamic_form_table_id',
         'table_key', 'row_index', 'column_key', 'value',
