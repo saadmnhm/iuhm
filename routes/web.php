@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\PrintController;
 use App\Http\Controllers\FrontAuthController ;
 use App\Livewire\Front\Dashboard\Dashboard;
 
@@ -33,6 +34,29 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/activity-logs', \App\Livewire\Admin\Logs\ActivityLogs::class)->name('activity.logs')->middleware('module:activity_logs');
         Route::get('/dev-tools', \App\Livewire\Admin\Tools\DevTools::class)->name('dev.tools')->middleware('module:dev_tools');
         Route::get('/rh', \App\Livewire\Admin\Rh\RhManagement::class)->name('rh.index')->middleware('module:rh');
+        Route::get('/rh/create', \App\Livewire\Admin\Rh\RhCreate::class)->name('rh.create')->middleware('module:rh');
+        Route::get('/rh/{id}/edit', \App\Livewire\Admin\Rh\RhEdit::class)->name('rh.edit')->middleware('module:rh');
+        Route::get('/rh/{id}', \App\Livewire\Admin\Rh\RhShow::class)->name('rh.show')->middleware('module:rh');
+        Route::get('/rh/{id}/print/attestation', [PrintController::class, 'rhAttestation'])->name('rh.print.attestation')->middleware('module:rh');
+        Route::get('/rh/{id}/print/fiche', [PrintController::class, 'rhFiche'])->name('rh.print.fiche')->middleware('module:rh');
+        Route::get('/rh/print/list', [PrintController::class, 'rhList'])->name('rh.print.list')->middleware('module:rh');
+
+        // Finance Module
+        Route::get('/finance', \App\Livewire\Admin\Finance\FinanceDashboard::class)->name('finance.index')->middleware('module:finance');
+        Route::get('/finance/transaction/create', \App\Livewire\Admin\Finance\TransactionCreate::class)->name('finance.create')->middleware('module:finance');
+        Route::get('/finance/transaction/{id}/edit', \App\Livewire\Admin\Finance\TransactionEdit::class)->name('finance.edit')->middleware('module:finance');
+        Route::get('/finance/transaction/{id}', \App\Livewire\Admin\Finance\TransactionShow::class)->name('finance.show')->middleware('module:finance');
+        Route::get('/finance/charge/create', \App\Livewire\Admin\Finance\ChargeCreate::class)->name('finance.charges.create')->middleware('module:finance');
+        Route::get('/finance/transaction/{id}/print', [PrintController::class, 'financeTransaction'])->name('finance.print')->middleware('module:finance');
+        Route::get('/finance/report', [PrintController::class, 'financeReport'])->name('finance.report')->middleware('module:finance');
+
+        // Material Module
+        Route::get('/material', \App\Livewire\Admin\Material\MaterialDashboard::class)->name('material.index')->middleware('module:material');
+        Route::get('/material/create', \App\Livewire\Admin\Material\MaterialCreate::class)->name('material.create')->middleware('module:material');
+        Route::get('/material/{id}/edit', \App\Livewire\Admin\Material\MaterialEdit::class)->name('material.edit')->middleware('module:material');
+        Route::get('/material/{id}', \App\Livewire\Admin\Material\MaterialShow::class)->name('material.show')->middleware('module:material');
+        Route::get('/material/{id}/print/fiche', [PrintController::class, 'materialFiche'])->name('material.print.fiche')->middleware('module:material');
+        Route::get('/material/print/inventory', [PrintController::class, 'materialInventory'])->name('material.print.inventory')->middleware('module:material');
         Route::get('/roles', \App\Livewire\Admin\Roles\RoleManagement::class)->name('roles.index')->middleware('module:gestion_roles');
         Route::get('/my-submissions', \App\Livewire\Admin\Submissions\MyAssignedSubmissions::class)->name('my.submissions')->middleware('module:my_submissions');
         Route::get('/all-submissions', \App\Livewire\Admin\Submissions\AllSubmissions::class)->name('all.submissions')->middleware('module:all_submissions');

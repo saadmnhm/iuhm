@@ -34,5 +34,7 @@ return [
         'blog'                   => ['label' => 'Blog & Actualités',         'icon' => 'ri-article-line'],
         'dev_tools'              => ['label' => 'Dev Tools',                 'icon' => 'ri-code-s-slash-line'],
         "association"            => ['label' => 'Association',               'icon' => 'ri-building-2-line'],
+        'finance'                => ['label' => 'Finance',                   'icon' => 'ri-wallet-line'],
+        'material'               => ['label' => 'Matériel & Inventaire',     'icon' => 'ri-box-line'],
         ],
 ];

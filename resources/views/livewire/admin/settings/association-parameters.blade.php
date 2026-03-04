@@ -12,8 +12,8 @@
         {{-- ═══ Category Sidebar ═══ --}}
         <div class="w-56 flex-shrink-0">
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="p-4 bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-gray-100">
-                    <h3 class="text-sm font-bold text-indigo-800"><i class="ri-settings-3-line mr-1"></i> Catégories</h3>
+                <div class="p-4 bg-gradient-to-r border-b border-gray-100" style="background: #edffe4 !important;">
+                    <h3 class="text-sm font-bold" style="color: #64843A;"><i class="ri-settings-3-line mr-1"></i> Catégories</h3>
                 </div>
                 <div class="p-2 space-y-1">
                     @php
@@ -27,8 +27,8 @@
                     @endphp
                     @foreach($categories as $key => $label)
                     <button wire:click="switchCategory('{{ $key }}')"
-                            class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition
-                            {{ $activeCategory === $key ? 'bg-indigo-100 text-indigo-800' : 'text-gray-600 hover:bg-gray-50' }}">
+                            class="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition {{ $activeCategory === $key ? 'test' :'text-gray-700 hover:bg-gray-50' }}"
+                             style="{{ $activeCategory === $key ? 'background: #edffe4 !important; color: #64843A;' : 'text-gray-700 hover:bg-gray-50' }};">
                         <i class="{{ $catIcons[$key] ?? 'ri-settings-line' }} text-base"></i>
                         {{ $label }}
                     </button>
@@ -40,8 +40,8 @@
         {{-- ═══ Parameters Form ═══ --}}
         <div class="flex-1">
             <form wire:submit.prevent="save" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r from-indigo-50 to-purple-50 flex items-center justify-between">
-                    <h3 class="text-lg font-bold text-indigo-800">
+                <div class="px-6 py-4 border-b border-gray-100 bg-gradient-to-r  flex items-center justify-between" style="background: #edffe4 !important;"    >
+                    <h3 class="text-lg font-bold "style="color: #64843A;">
                         {{ $categories[$activeCategory] ?? 'Paramètres' }}
                     </h3>
                     <span class="text-xs text-gray-500">{{ $params->count() }} paramètres</span>

@@ -167,6 +167,18 @@
                         </a>
                         @endcanmodule
 
+                        @canmodule('finance')
+                        <a href="{{ route('admin.finance.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.finance*') ? 'bg-gray-100 font-medium' : '' }}">
+                            <i class="ri-money-dollar-circle-line mr-1"></i> Finance
+                        </a>
+                        @endcanmodule
+
+                        @canmodule('material')
+                        <a href="{{ route('admin.material.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.material*') ? 'bg-gray-100 font-medium' : '' }}">
+                            <i class="ri-archive-line mr-1"></i> Matériel
+                        </a>
+                        @endcanmodule
+
                         @canmodule('association_parameters')
                         <a href="{{ route('admin.association.parameters') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.association*') ? 'bg-gray-100 font-medium' : '' }}">
                             <i class="ri-settings-3-line mr-1"></i> Paramètres Association

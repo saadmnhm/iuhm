@@ -14,7 +14,7 @@ class RhEmployee extends Model
         'matricule', 'nom', 'prenom', 'cin', 'email', 'phone',
         'poste', 'departement', 'contrat_type', 'date_embauche',
         'date_fin_contrat', 'salaire', 'address', 'gender',
-        'date_naissance', 'status', 'notes', 'created_by',
+        'date_naissance', 'status', 'notes', 'photo_path', 'created_by',
     ];
 
     protected $casts = [

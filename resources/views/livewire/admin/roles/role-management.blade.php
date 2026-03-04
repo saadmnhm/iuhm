@@ -131,7 +131,6 @@
                 {{-- Technical name (auto-generated; hidden from admins) --}}
                 @if(!$editingIsSystem)
                 <input type="hidden" wire:model="roleName">
-                <div class="text-xs text-gray-500">Le nom technique est généré automatiquement à partir du nom d'affichage.</div>
                 @else
                 <div class="p-3 bg-gray-50 rounded-lg flex items-center gap-2 text-sm text-gray-600">
                     <i class="ri-lock-line text-gray-400"></i>
