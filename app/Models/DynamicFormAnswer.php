@@ -4,9 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 
 class DynamicFormAnswer extends Model
 {
+    use SoftDeletes;
+    
     protected $fillable = [
         'dynamic_form_submission_id', 'dynamic_form_field_id',
         'field_key', 'value',

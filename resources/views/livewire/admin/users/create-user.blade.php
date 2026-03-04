@@ -59,6 +59,7 @@
                     </label>
                     <select wire:model="role" id="role" 
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                            <option value="" selected >selection role</option>
                         @foreach(\App\Models\Role::orderByDesc('is_system')->orderBy('label')->get() as $r)
                         <option value="{{ $r->name }}">{{ $r->label }}</option>
                         @endforeach

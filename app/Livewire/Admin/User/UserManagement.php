@@ -105,6 +105,7 @@ class UserManagement extends Component
         }
 
         $this->userId = $userId;
+        $this->selectedUser = User::find($userId);
         $this->showDeleteModal = true;
     }
 
@@ -199,6 +200,7 @@ class UserManagement extends Component
         );
 
         $this->showDeleteModal = false;
+        $this->selectedUser = null;
         session()->flash('success', 'User deleted successfully!');
         $this->userId = null;
     }

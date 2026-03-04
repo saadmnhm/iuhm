@@ -147,6 +147,11 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
                             </svg>
                         </button> -->
+                        <button wire:click="openDeleteModal({{ $candidat->id }})"
+                            class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 text-center">
+                            Delete
+                        </button>
+                        @if(false)
                         <button wire:click="toggleStatus({{ $candidat->id }})" 
                                 class="px-3 py-2 {{ ($candidat->is_active ?? true) ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700' }} text-white text-sm font-medium rounded-lg transition-colors duration-200"
                                 title="{{ ($candidat->is_active ?? true) ? 'Disable' : 'Enable' }} account">
@@ -158,6 +163,8 @@
                                 @endif
                             </svg>
                         </button>
+                        @endif
+
                         @endif
                     </div>
                 </div>
@@ -295,4 +302,82 @@
         </div>
     </div>
     @endif
+
+        <!-- Delete Confirmation Modal -->
+    <div x-data="{ open: @entangle('showDeleteModal').live }" x-cloak>
+        <div
+            x-show="open"
+            x-transition:enter="ease-out duration-200"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="ease-in duration-150"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 z-50 flex items-center justify-center"
+        >
+            {{-- Backdrop --}}
+            <div class="absolute inset-0 bg-black/50" @click="open = false"></div>
+
+            {{-- Panel --}}
+            <div
+                x-show="open"
+                x-transition:enter="ease-out duration-200"
+                x-transition:enter-start="opacity-0 scale-95"
+                x-transition:enter-end="opacity-100 scale-100"
+                x-transition:leave="ease-in duration-150"
+                x-transition:leave-start="opacity-100 scale-100"
+                x-transition:leave-end="opacity-0 scale-95"
+                class="relative bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 z-10 overflow-hidden"
+                @click.stop
+            >
+                {{-- Header --}}
+                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900">Delete Candidat</h3>
+                    </div>
+                    <button @click="open = false" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                {{-- Body --}}
+                <div class="px-6 py-5">
+                    <p class="text-gray-600 text-sm">
+                        Are you sure you want to delete
+                        <span class="font-semibold text-gray-900">{{ $selectedCandidat?->nom ?? 'this candidat' }}</span>?
+                        This action is permanent and cannot be undone.
+                    </p>
+                </div>
+
+                {{-- Footer --}}
+                <div class="flex justify-end gap-3 px-6 py-4 bg-gray-50 border-t border-gray-100">
+                    <button
+                        @click="open = false"
+                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        wire:click="deleteCandidat"
+                        wire:loading.attr="disabled"
+                        class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-60"
+                    >
+                        <svg wire:loading wire:target="deleteCandidat" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                        </svg>
+                        Delete Candidat
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

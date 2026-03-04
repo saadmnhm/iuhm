@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class AssociationParameter extends Model
 {
+    use  SoftDeletes;
     protected $fillable = [
-        'category', 'key', 'label', 'value', 'type', 'options', 'sort_order', 'updated_by',
+        'category', 'key', 'label', 'value', 'type', 'options', 'sort_order', 'updated_by', 'deleted_at',
     ];
 
     protected $casts = [

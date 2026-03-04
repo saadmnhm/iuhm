@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Traits\TracksUserActivity;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, TracksUserActivity;
+    use HasFactory, Notifiable, TracksUserActivity, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -31,6 +32,10 @@ class User extends Authenticatable
         'last_device',
         'last_login_at',
         'login_count',
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        
     ];
 
     /**

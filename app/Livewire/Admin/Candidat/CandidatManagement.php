@@ -129,6 +129,7 @@ class CandidatManagement extends Component
         }
 
         $this->candidatId = $candidatId;
+        $this->selectedCandidat = Candidat::find($candidatId);
         $this->showDeleteModal = true;
     }
 
@@ -227,6 +228,7 @@ class CandidatManagement extends Component
         );
 
         $this->showDeleteModal = false;
+        $this->selectedCandidat = null;
         session()->flash('success', 'Candidat deleted successfully!');
         $this->candidatId = null;
     }

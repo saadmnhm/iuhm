@@ -20,6 +20,8 @@ class SupportTickets extends Component
     public $showResponseModal = false;
     public $selectedTicketId = null;
     public $adminResponse = '';
+    public $showDeleteModal = false;
+    public $selectedTicket = null;
     
     protected $paginationTheme = 'tailwind';
 
@@ -87,6 +89,32 @@ class SupportTickets extends Component
     {
         $this->showResponseModal = false;
         $this->selectedTicketId = null;
+    }
+
+    public function opendeleteConfirmation($ticketId)
+    {
+        $this->selectedTicketId = $ticketId;
+        $this->selectedTicket = SupportTicket::find($ticketId);
+        $this->showDeleteModal = true;
+
+    }
+
+    public function deleteTicket()
+    {
+        $ticket = SupportTicket::findOrFail($this->selectedTicketId);
+        $ticket->delete();
+
+        AdminActivityLog::log(
+            'support_ticket_deleted',
+            "Deleted support ticket #{$ticket->id}",
+            SupportTicket::class,
+            $ticket->id
+        );
+
+        $this->showDeleteModal = false;
+        $this->selectedTicketId = null;
+        $this->selectedTicket = null;
+        session()->flash('success', 'Support ticket deleted successfully!');
     }
 
     public function render()

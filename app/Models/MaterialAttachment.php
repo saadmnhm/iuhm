@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MaterialAttachment extends Model
 {
+    use SoftDeletes;    
     protected $table = 'material_attachments';
 
     protected $fillable = [

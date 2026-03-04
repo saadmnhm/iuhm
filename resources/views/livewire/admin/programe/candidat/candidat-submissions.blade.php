@@ -50,12 +50,13 @@
                         class="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg shadow transition">
                             <i class="ri-file-pdf-line"></i> Exporter tout (PDF)
                         </a>
+                        {{-- Candidat-level reviewer badge --}}
+                        @if(!$candidat->reviewer)
                         <button wire:click="openReviewModal()"
                                 class="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-lg border border-indigo-200 transition">
                             <i class="ri-user-star-line"></i> Assigner révision
                         </button>
-                        {{-- Candidat-level reviewer badge --}}
-                        @if($candidat->reviewer)
+                        @else 
                         @php
                             $crBadge = match($candidat->review_status) {
                                 'in_review' => 'bg-purple-100 text-purple-800 border-purple-200',
@@ -70,7 +71,8 @@
                                 default     => ucfirst($candidat->review_status ?? ''),
                             };
                         @endphp
-                        <span class="inline-flex items-center gap-1 px-3 py-2 text-xs font-semibold rounded-lg border {{ $crBadge }}">
+                        
+                        <span wire:click="openReviewModal()" class="inline-flex items-center gap-1 px-3 py-2 cursor-pointer text-xs font-semibold rounded-lg border {{ $crBadge }}">
                             <i class="ri-user-star-fill"></i>
                             {{ $candidat->reviewer->name }}
                             @if($crLabel) &nbsp;·&nbsp; {{ $crLabel }} @endif

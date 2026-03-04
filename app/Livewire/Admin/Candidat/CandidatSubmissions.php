@@ -36,10 +36,7 @@ class CandidatSubmissions extends Component
     {
         $this->candidatId = $id;
         $this->candidat   = Candidat::with('reviewer')->findOrFail($id);
-        $this->admins     = User::whereIn('role', ['admin', 'super_admin'])
-            ->orderBy('name')
-            ->get(['id', 'name', 'role'])
-            ->toArray();
+        $this->admins     = User::all()->sortBy('name')->values()->toArray();
         
         // Get the first project this candidat has submissions for
         $firstSubmission = DynamicFormSubmission::where('candidat_id', $id)
