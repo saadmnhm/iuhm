@@ -82,7 +82,7 @@ return new class extends Migration
             $table->string('header');
             $table->string('header_ar')->nullable();
             $table->string('column_key');
-            $table->enum('input_type', ['text', 'number', 'checkbox', 'select', 'readonly', 'label'])->default('text');
+            $table->enum('input_type', ['text', 'number', 'checkbox', 'select', 'readonly', 'label', 'radio'])->default('text');
             $table->json('options')->nullable(); // for select/checkbox choices
             $table->boolean('is_totaled')->default(false); // whether this column shows a total
             $table->string('width')->nullable(); // e.g. '200px' or '30%'

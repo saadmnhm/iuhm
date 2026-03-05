@@ -1031,6 +1031,7 @@
                                 <option value="text">Texte</option>
                                 <option value="number">Nombre</option>
                                 <option value="checkbox">Case à cocher</option>
+                                <option value="radio">Case à cocher (radio)</option>
                                 <option value="select">Liste déroulante</option>
                                 <option value="readonly">Lecture seule</option>
                                 <option value="label">Label (texte fixe)</option>
