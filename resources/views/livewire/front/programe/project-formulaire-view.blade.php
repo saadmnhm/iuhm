@@ -268,8 +268,9 @@
                                                             @elseif($col->input_type === 'radio')
                                                                 <div style="text-align: center;">
                                                                     <input type="radio"
-                                                                        wire:model="tableData.{{ $table->table_key }}.{{ $ri }}.{{ $col->column_key }}"
-                                                                        value="1"
+                                                                        wire:model="tableData.{{ $table->table_key }}.{{ $ri }}._radio"
+                                                                        value="{{ $col->column_key }}"
+                                                                        name="radio_{{ $table->table_key }}_{{ $ri }}"
                                                                         style="accent-color: {{ $form->color ?? '#2f5496' }};"
                                                                         @if($isReadOnly) disabled @endif>
                                                                 </div>
@@ -317,8 +318,9 @@
                                                             @elseif($col->input_type === 'radio')
                                                                 <div style="text-align: center;">
                                                                     <input type="radio"
-                                                                        wire:model="tableData.{{ $table->table_key }}.{{ $ri }}.{{ $col->column_key }}"
-                                                                        value="1"
+                                                                        wire:model="tableData.{{ $table->table_key }}.{{ $ri }}._radio"
+                                                                        value="{{ $col->column_key }}"
+                                                                        name="radio_{{ $table->table_key }}_{{ $ri }}"
                                                                         style="accent-color: {{ $form->color ?? '#2f5496' }};"
                                                                         @if($isReadOnly) disabled @endif>
                                                                 </div>
