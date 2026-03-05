@@ -633,7 +633,7 @@ class FormulaireBuilder extends Component
         $this->validate([
             'columnForm.header' => 'required|string|max:255',
             'columnForm.column_key' => 'required|string|max:255',
-            'columnForm.input_type' => 'required|in:text,number,checkbox,select,readonly,label',
+            'columnForm.input_type' => 'required|in:text,number,checkbox,select,readonly,label,radio',
         ]);
 
         $data = [
