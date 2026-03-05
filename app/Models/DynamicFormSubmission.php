@@ -58,17 +58,17 @@ class DynamicFormSubmission extends Model
 
     public function isDraft(): bool
     {
-        return $this->status === 'draft';
+        return $this->is_submitted == 0;
     }
 
     public function isSubmitted(): bool
     {
-        return in_array($this->is_submitted, [true, 'true', 1, '1']);
+        return $this->is_submitted == 1; 
     }
 
     public function canBeEdited(): bool
     {
-        return $this->status === 'draft';
+        return $this->is_submitted == 0;
     }
 
     public function getAnswer(string $fieldKey): ?string
