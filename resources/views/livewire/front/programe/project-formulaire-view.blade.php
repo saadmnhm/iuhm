@@ -403,10 +403,6 @@
                     <button wire:click="previousStep" class="navigation-btn btn-back w-100 w-md-auto">
                         <i class="ri-arrow-left-circle-fill me-1 ms-1"></i> Précédent
                     </button>
-                @elseif($formulaire->has_introduction && !$showIntroduction)
-                    <button wire:click="previousStep" class="navigation-btn btn-back w-100 w-md-auto">
-                        <i class="ri-arrow-left-circle-fill me-1 ms-1"></i> Introduction
-                    </button>
                 @else
                     <a href="{{ route('user.project.detail', $projectId) }}" class="navigation-btn btn-back w-100 w-md-auto text-center">
                         <i class="ri-arrow-left-circle-fill me-1 ms-1"></i> Retour au projet
