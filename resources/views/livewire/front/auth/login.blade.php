@@ -471,6 +471,33 @@ input {
   }
 }
 
+/* Keep panel animation layout stable (LTR), apply RTL only to content */
+[dir="rtl"] .container {
+  direction: ltr;
+}
+
+[dir="rtl"] form {
+  direction: rtl;
+  text-align: right;
+}
+
+[dir="rtl"] form h1,
+[dir="rtl"] form span,
+[dir="rtl"] form .alert,
+[dir="rtl"] form .mobile-toggle {
+  text-align: center;
+}
+
+[dir="rtl"] .password-wrapper input {
+  padding-right: 15px;
+  padding-left: 45px;
+}
+
+[dir="rtl"] .password-toggle {
+  right: auto;
+  left: 15px;
+}
+
     </style>
 </head>
 
