@@ -40,8 +40,13 @@ class FrontAuthController extends Controller
             if ($candidat->is_active) {
                 // Update tracking information
                 $candidat->updateTrackingInfo();
-                
+
                 $request->session()->regenerate();
+
+                if (!$candidat->hasVerifiedEmail()) {
+                    return redirect()->route('user.verification.notice');
+                }
+
                 return redirect()->intended(route('user.dashboard'));
             }
 
@@ -99,11 +104,14 @@ class FrontAuthController extends Controller
         ]);
 
         Auth::guard('candidat')->login($candidat);
-        
+
         // Update tracking information for first login
         $candidat->updateTrackingInfo();
 
-        return redirect()->route('user.dashboard');
+        // Send email verification
+        $candidat->sendEmailVerificationNotification();
+
+        return redirect()->route('user.verification.notice');
     }
 
     public function logout(Request $request)

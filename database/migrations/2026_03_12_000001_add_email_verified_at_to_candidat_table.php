@@ -3,22 +3,20 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
     public function up(): void
     {
-        // Change enum to varchar so any text can be stored
         Schema::table('candidat', function (Blueprint $table) {
-            $table->string('address', 500)->nullable()->change();
+            $table->timestamp('email_verified_at')->nullable()->after('email');
         });
     }
 
     public function down(): void
     {
         Schema::table('candidat', function (Blueprint $table) {
-            $table->enum('address', ['Hay Mohamadi', 'Ain Sbaa', 'Roches Noires'])->nullable()->change();
+            $table->dropColumn('email_verified_at');
         });
     }
 };

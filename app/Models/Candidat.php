@@ -2,16 +2,19 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 use App\Models\User;
 use App\Models\DynamicFormSubmission;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Traits\TracksUserActivity;
+use App\Notifications\CandidatVerifyEmail;
 
-class Candidat extends Authenticatable
+class Candidat extends Authenticatable implements MustVerifyEmail
 {
-    use SoftDeletes, TracksUserActivity;
+    use Notifiable, SoftDeletes, TracksUserActivity;
     
     protected $table = 'candidat';
 
@@ -41,6 +44,7 @@ class Candidat extends Authenticatable
         'reviewed_at',
         'review_notes',
         'review_status',
+        'email_verified_at',
     ];
 
     protected $hidden = [
@@ -56,8 +60,17 @@ class Candidat extends Authenticatable
             'date_naissance' => 'date',
             'last_login_at' => 'datetime',
             'login_count'  => 'integer',
-            'reviewed_at'  => 'datetime',
+            'reviewed_at'        => 'datetime',
+            'email_verified_at'  => 'datetime',
         ];
+    }
+
+    /**
+     * Send the email verification notification using the candidat-specific route.
+     */
+    public function sendEmailVerificationNotification(): void
+    {
+        $this->notify(new CandidatVerifyEmail);
     }
 
     public function reviewer()

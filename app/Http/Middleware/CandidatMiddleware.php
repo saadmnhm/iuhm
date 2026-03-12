@@ -27,6 +27,10 @@ class CandidatMiddleware
             ]);
         }
 
+        if (!$candidat->hasVerifiedEmail()) {
+            return redirect()->route('user.verification.notice');
+        }
+
         return $next($request);
     }
 }

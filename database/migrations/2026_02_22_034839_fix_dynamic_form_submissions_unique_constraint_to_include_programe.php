@@ -11,18 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // First, add the new unique constraint with programe_id
-        // For NULL programe_id (standalone forms), MySQL will allow multiple rows
-        \Illuminate\Support\Facades\DB::statement('
-            ALTER TABLE dynamic_form_submissions 
-            ADD UNIQUE KEY dynamic_form_submissions_unique_per_project (dynamic_form_id, candidat_id, programe_id)
-        ');
-        
-        // Now drop the old constraint
-        \Illuminate\Support\Facades\DB::statement('
-            ALTER TABLE dynamic_form_submissions 
-            DROP INDEX dynamic_form_submissions_dynamic_form_id_candidat_id_unique
-        ');
+        // Add new index first so the FK on dynamic_form_id is always covered
+        Schema::table('dynamic_form_submissions', function (Blueprint $table) {
+            $table->unique(['dynamic_form_id', 'candidat_id', 'programe_id'], 'dynamic_form_submissions_unique_per_project');
+        });
+        // Now it's safe to drop the old index
+        Schema::table('dynamic_form_submissions', function (Blueprint $table) {
+            $table->dropUnique('dynamic_form_submissions_dynamic_form_id_candidat_id_unique');
+        });
     }
 
     /**
@@ -30,14 +26,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        \Illuminate\Support\Facades\DB::statement('
-            ALTER TABLE dynamic_form_submissions 
-            ADD UNIQUE KEY dynamic_form_submissions_dynamic_form_id_candidat_id_unique (dynamic_form_id, candidat_id)
-        ');
-        
-        \Illuminate\Support\Facades\DB::statement('
-            ALTER TABLE dynamic_form_submissions 
-            DROP INDEX dynamic_form_submissions_unique_per_project
-        ');
+        Schema::table('dynamic_form_submissions', function (Blueprint $table) {
+            $table->dropUnique('dynamic_form_submissions_unique_per_project');
+            $table->unique(['dynamic_form_id', 'candidat_id'], 'dynamic_form_submissions_dynamic_form_id_candidat_id_unique');
+        });
     }
 };
