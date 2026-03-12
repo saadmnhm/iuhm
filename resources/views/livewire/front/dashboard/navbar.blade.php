@@ -12,6 +12,13 @@
             <!-- Right Side -->
             <div class="navbar-right">
 
+                <div class="lang-switcher d-flex align-items-center gap-2">
+                    <a href="{{ route('lang.switch', ['locale' => 'fr']) }}"
+                       class="lang-chip {{ app()->getLocale()==='fr' ? 'active' : '' }}">FR</a>
+                    <a href="{{ route('lang.switch', ['locale' => 'ar']) }}"
+                       class="lang-chip {{ app()->getLocale()==='ar' ? 'active' : '' }}">AR</a>
+                </div>
+
                 <!-- Notifications Dropdown -->
                 <div class="dropdown notification-dropdown">
                     <button class="nav-icon-btn" type="button" id="notificationDropdown"
@@ -107,23 +114,6 @@
                                     <i class="ri-logout-box-line"></i> Déconnexion
                                 </button>
                             </form>
-                        </li>
-                        <li><hr class="dropdown-divider my-1"></li>
-                        <li>
-                            <div class="d-flex gap-2 px-3 pb-2 justify-content-center">
-                                <a href="{{ route('lang.switch', ['locale' => 'fr']) }}"
-                                class="btn btn-xs fw-semibold"
-                                style="padding:4px 12px;border-radius:.4rem;font-size:.75rem;
-                                        {{ app()->getLocale()==='fr' ? 'background:#648454;color:white;border:1px solid #648454;' : 'background:white;color:#374151;border:1px solid #e2e8f0;' }}">FR</a>
-                                <a href="{{ route('lang.switch', ['locale' => 'en']) }}"
-                                class="btn btn-xs fw-semibold"
-                                style="padding:4px 12px;border-radius:.4rem;font-size:.75rem;
-                                        {{ app()->getLocale()==='en' ? 'background:#648454;color:white;border:1px solid #648454;' : 'background:white;color:#374151;border:1px solid #e2e8f0;' }}">EN</a>
-                                <a href="{{ route('lang.switch', ['locale' => 'ar']) }}"
-                                class="btn btn-xs fw-semibold"
-                                style="padding:4px 12px;border-radius:.4rem;font-size:.75rem;
-                                        {{ app()->getLocale()==='ar' ? 'background:#648454;color:white;border:1px solid #648454;' : 'background:white;color:#374151;border:1px solid #e2e8f0;' }}">AR</a>
-                            </div>
                         </li>
                     </ul>
                 </div>

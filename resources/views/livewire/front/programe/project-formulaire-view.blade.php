@@ -52,7 +52,7 @@
 
         {{-- Introduction Page --}}
         @if($showIntroduction && $formulaire->has_introduction)
-            <div class="mt-4 bg-white rounded-3 p-5 shadow-sm border">
+            <div class="mt-4 bg-white rounded-3 p-3 p-md-5 shadow-sm border">
                 <div class="text-center mb-4">
                     <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" 
                          style="width: 70px; height: 70px; background-color: {{ $form->color ?? '#2f5496' }}15;">
@@ -69,14 +69,14 @@
                     </h3>
                 @endif
 
-                <div class="bg-light rounded-3 p-4 mb-4" style="border-left: 4px solid {{ $form->color ?? '#2f5496' }};">
+                <div class="bg-light rounded-3 p-3 p-md-4 mb-4" style="border-left: 4px solid {{ $form->color ?? '#2f5496' }};">
                     <div class="text-secondary" style="white-space: pre-wrap; line-height: 1.8;">
                         {!! nl2br(e($formulaire->introduction_content)) !!}
                     </div>
                 </div>
 
                 @if($formulaire->introduction_content_ar)
-                    <div class="bg-light rounded-3 p-4 mb-4" dir="rtl" style="border-right: 4px solid {{ $form->color ?? '#2f5496' }};">
+                    <div class="bg-light rounded-3 p-3 p-md-4 mb-4" dir="rtl" style="border-right: 4px solid {{ $form->color ?? '#2f5496' }};">
                         <div class="text-secondary" style="white-space: pre-wrap; line-height: 1.8;">
                             {!! nl2br(e($formulaire->introduction_content_ar)) !!}
                         </div>
@@ -84,8 +84,8 @@
                 @endif
 
                 <div class="text-center mt-4">
-                    <button wire:click="skipIntroduction"
-                            class="btn btn-lg text-white px-5 rounded-pill shadow-sm" 
+                        <button wire:click="skipIntroduction"
+                            class="btn text-white px-4 px-md-5 py-2 py-md-3 rounded-pill shadow-sm" 
                             style="background-color: {{ $form->color ?? '#2f5496' }};">
                         <i class="ri-play-line me-2"></i> Commencer le formulaire
                     </button>
@@ -127,7 +127,7 @@
 
                     {{-- Render Fields --}}
                     @foreach($currentStepData->fields->sortBy('sort_order') as $field)
-                        <div class="mt-4 {{ $field->is_full_width ? '' : 'w-1/2 inline-block' }}">
+                        <div class="mt-4 {{ $field->is_full_width ? '' : 'w-full md:w-1/2 md:inline-block' }}" style="vertical-align: top;">
                             @if($field->type === 'heading')
                                 <h4 class="step-title mt-3" style="color: {{ $form->color ?? '#2f5496' }}; font-size: 1.2rem;">{{ $field->label }}</h4>
                             @elseif($field->type === 'paragraph')
@@ -234,7 +234,8 @@
                             <p class="disc mb-2" style="font-weight: 600;">{{ $table->title }}</p>
 
                             @if($table->columns->isNotEmpty())
-                                <table class="table-auto border-collapse border border-gray-300 w-full">
+                                <div class="overflow-x-auto">
+                                <table class="table-auto border-collapse border border-gray-300 w-full" style="min-width: 760px;">
                                     <thead>
                                         <tr>
                                             @if(!$table->has_dynamic_rows && $table->fixedRows->isNotEmpty())
@@ -378,6 +379,7 @@
                                         @endif
                                     </tbody>
                                 </table>
+                                </div>
 
                                 @if($table->has_dynamic_rows && !$isReadOnly)
                                     <button wire:click="addTableRow('{{ $table->table_key }}')" class="more-row mt-2">
@@ -396,35 +398,35 @@
             @endif
 
             {{-- Navigation Buttons --}}
-            <div class="navigation-buttons mt-4 flex justify-center gap-4">
+            <div class="navigation-buttons mt-4 d-flex flex-wrap justify-content-center gap-2 gap-md-3">
                 @if($currentStep > 1)
-                    <button wire:click="previousStep" class="navigation-btn btn-back">
+                    <button wire:click="previousStep" class="navigation-btn btn-back w-100 w-md-auto">
                         <i class="ri-arrow-left-circle-fill me-1 ms-1"></i> Précédent
                     </button>
                 @elseif($formulaire->has_introduction && !$showIntroduction)
-                    <button wire:click="previousStep" class="navigation-btn btn-back">
+                    <button wire:click="previousStep" class="navigation-btn btn-back w-100 w-md-auto">
                         <i class="ri-arrow-left-circle-fill me-1 ms-1"></i> Introduction
                     </button>
                 @else
-                    <a href="{{ route('user.project.detail', $projectId) }}" class="navigation-btn btn-back">
+                    <a href="{{ route('user.project.detail', $projectId) }}" class="navigation-btn btn-back w-100 w-md-auto text-center">
                         <i class="ri-arrow-left-circle-fill me-1 ms-1"></i> Retour au projet
                     </a>
                 @endif
 
                 @if($currentStep < $totalSteps)
-                    <button wire:click="nextStep" class="navigation-btn btn-next" @if($isReadOnly && $currentStep >= $totalSteps) disabled @endif>
+                    <button wire:click="nextStep" class="navigation-btn btn-next w-100 w-md-auto" @if($isReadOnly && $currentStep >= $totalSteps) disabled @endif>
                         Suivant <i class="ri-arrow-right-circle-fill me-1 ms-1"></i>
                     </button>
                 @endif
 
                 @if(!$isReadOnly && $currentStep < $totalSteps)
-                    <button wire:click="saveProgress" class="navigation-btn" style="background-color: #28a745;">
+                    <button wire:click="saveProgress" class="navigation-btn w-100 w-md-auto" style="background-color: #28a745;">
                         <i class="ri-save-line me-1 ms-1"></i> Sauvegarder
                     </button>
                 @endif
 
                 @if($currentStep == $totalSteps && !$isReadOnly)
-                    <button wire:click="submit" class="navigation-btn btn-submit">
+                    <button wire:click="submit" class="navigation-btn btn-submit w-100 w-md-auto">
                         Soumettre <i class="ri-send-plane-fill me-1 ms-1"></i>
                     </button>
                 @endif

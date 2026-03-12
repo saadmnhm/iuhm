@@ -1,25 +1,7 @@
 <div>
     <div class="parent-steps container">
         {{-- Read-Only Banner --}}
-        @if($isReadOnly && $existingSubmission)
-            <div class="text-blue-700 px-4 py-3 rounded mb-4" role="alert">
-                <div class="flex items-center">
-                    <i class="ri-information-fill mr-2"></i>
-                    <div>
-                        <p class="font-bold">Formulaire soumis - Mode lecture seule</p>
-                        <p class="text-sm">
-                            Statut: <span class="px-2 py-0.5 rounded text-xs font-medium" style="background-color: {{ $form->color }}20; color: {{ $form->color }};">
-                                {{ $existingSubmission->status_label }}
-                            </span>
-                            | Soumis: {{ $existingSubmission->submitted_at?->format('Y-m-d H:i') }}
-                        </p>
-                        @if($existingSubmission->review_notes)
-                            <p class="text-sm mt-2"><strong>Notes admin:</strong> {{ $existingSubmission->review_notes }}</p>
-                        @endif
-                    </div>
-                </div>
-            </div>
-        @endif
+
 
         {{-- Draft Banner --}}
         @if($submissionId && !$isReadOnly)

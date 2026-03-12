@@ -1,13 +1,13 @@
 <div>
     {{-- Page Header --}}
-    <div class="d-flex align-items-start align-items-sm-center justify-content-between mb-3 mb-sm-4">
+    <div class="d-flex align-items-center justify-content-between mb-4">
         <div class="d-flex align-items-center gap-3">
             <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
-                 style="width:40px;height:40px;background:linear-gradient(135deg,#648454,#8baf74);">
+                 style="width:44px;height:44px;background:linear-gradient(135deg,#648454,#8baf74);">
                 <i class="ri-broadcast-fill text-white fs-5"></i>
             </div>
             <div>
-                <h4 class="fw-bold mb-0" style="color:#2d3748;font-size:1.05rem;">Historique des messages</h4>
+                <h4 class="fw-bold mb-0" style="color:#2d3748;">Historique des messages</h4>
                 <p class="text-muted mb-0" style="font-size:.8rem;">Tous les messages diffusés par l'administration</p>
             </div>
         </div>
@@ -22,18 +22,18 @@
         <div class="card border-0 shadow-sm rounded-4 overflow-hidden {{ !$isRead ? 'border-start border-4' : '' }}"
              style="{{ !$isRead ? 'border-left:4px solid #648454 !important;' : '' }}">
 
-            <div class="card-body py-3 py-sm-4 px-3 px-sm-4">
-                <div class="d-flex align-items-start gap-2 gap-sm-3">
+            <div class="card-body py-4 px-4">
+                <div class="d-flex align-items-start gap-3">
 
                     {{-- Icon --}}
                     <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
-                        style="width:38px;height:38px;background:{{ $isRead ? '#f0f0f0' : 'linear-gradient(135deg,#648454,#8baf74)' }}">
+                         style="width:42px;height:42px;background:{{ $isRead ? '#f0f0f0' : 'linear-gradient(135deg,#648454,#8baf74)' }}">
                         <i class="ri-notification-3-{{ $isRead ? 'line' : 'fill' }} {{ $isRead ? 'text-muted' : 'text-white' }} fs-5"></i>
                     </div>
 
                     {{-- Content --}}
                     <div class="flex-grow-1 min-w-0">
-                        <div class="d-flex align-items-start align-items-sm-center gap-2 flex-wrap mb-1">
+                        <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
                             <span class="fw-bold" style="color:#2d3748;font-size:.95rem;">{{ $broadcast->title }}</span>
                             @if(!$isRead)
                                 <span class="badge rounded-pill text-white" style="background:#648454;font-size:.65rem;">Nouveau</span>
@@ -42,7 +42,7 @@
 
                         <p class="text-muted mb-2" style="font-size:.875rem;line-height:1.7;">{{ $broadcast->message }}</p>
 
-                        <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-1 gap-sm-3 flex-wrap">
+                        <div class="d-flex align-items-center gap-3 flex-wrap">
                             <span class="text-muted d-flex align-items-center gap-1" style="font-size:.75rem;">
                                 <i class="ri-time-line"></i>
                                 {{ $broadcast->created_at->diffForHumans() }}
