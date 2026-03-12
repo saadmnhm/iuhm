@@ -28,6 +28,11 @@ class Candidat extends Authenticatable implements MustVerifyEmail
         'profile_image',
         'gender',
         'address',
+        'selected_region',
+        'selected_city',
+        'selected_prefecture',
+        'morocco_location_id',
+        'address_detail',
         'email',
         'phone',
         'date_naissance',
@@ -73,9 +78,22 @@ class Candidat extends Authenticatable implements MustVerifyEmail
         $this->notify(new CandidatVerifyEmail);
     }
 
+    /**
+     * Send the password reset notification using the custom branded notification.
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new \App\Notifications\CandidatResetPassword($token));
+    }
+
     public function reviewer()
     {
         return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    public function moroccoLocation()
+    {
+        return $this->belongsTo(MoroccoLocation::class, 'morocco_location_id');
     }
 
     public function projects()

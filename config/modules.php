@@ -18,6 +18,7 @@ return [
         // ── Top nav ───────────────────────────────────────────────────────────
         'programmes'             => ['label' => 'Programmes (soumissions)',  'icon' => 'ri-group-line'],
         'support'                => ['label' => 'Support Tickets',           'icon' => 'ri-customer-service-2-line'],
+        'chat'                   => ['label' => 'Chat & Broadcast',          'icon' => 'ri-chat-3-line'],
         'my_submissions'         => ['label' => 'Mes Assignations',          'icon' => 'ri-task-line'],
         'all_submissions'        => ['label' => 'Toutes Soumissions',        'icon' => 'ri-file-list-3-line'],
         'history_audit'          => ['label' => 'Historique & Audit',        'icon' => 'ri-git-commit-line'],

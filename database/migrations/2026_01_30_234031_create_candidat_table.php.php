@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('prenom');
             $table->string('profile_image')->nullable();
             $table->enum('gender', ['homme', 'femme'])->nullable();
-            $table->enum('address', ['Hay Mohamadi', 'Ain Sbaa', 'Roches Noires'])->nullable();
+            $table->enum('address')->nullable();
             $table->string('email')->nullable()->unique();
             $table->string('phone', 20)->nullable();
             $table->date('date_naissance')->nullable();

@@ -7,7 +7,8 @@ use Livewire\Attributes\Layout;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\Address;
+use Illuminate\Support\Str;
+use App\Models\MoroccoLocation;
 use Illuminate\Validation\Rule;
 
 #[Layout('layouts.app')]
@@ -25,7 +26,11 @@ class Settings extends Component
     public $phone;
     public $gender;
     public $address;
-    public $address_custom = '';
+    public $selected_region = '';
+    public $selected_city = '';
+    public $selected_prefecture = '';
+    public $selected_location_id = null;
+    public $address_detail = '';
     public $profile_image;
     public $new_profile_image;
     
@@ -46,18 +51,12 @@ class Settings extends Component
         $this->age = $this->candidat->age;
         $this->phone = $this->candidat->phone;
         $this->gender = $this->candidat->gender;
-
-        // Determine if saved address is a known one or a custom one
-        $knownAddress = $this->candidat->address
-            ? Address::where('address_line1', $this->candidat->address)->exists()
-            : true;
-        if ($this->candidat->address && !$knownAddress) {
-            $this->address = 'other';
-            $this->address_custom = $this->candidat->address;
-        } else {
-            $this->address = $this->candidat->address;
-            $this->address_custom = '';
-        }
+        $this->address = $this->candidat->address;
+        $this->selected_region = $this->candidat->selected_region;
+        $this->selected_city = $this->candidat->selected_city;
+        $this->selected_prefecture = $this->candidat->selected_prefecture;
+        $this->selected_location_id = $this->candidat->morocco_location_id;
+        $this->address_detail = $this->candidat->address_detail;
 
         $this->profile_image = $this->candidat->profile_image;
     }
@@ -65,16 +64,69 @@ class Settings extends Component
     public function updateProfile()
     {
         $validated = $this->validate([
-            'new_profile_image' => 'nullable|image|max:2048',
+            'new_profile_image' => [
+                'nullable',
+                'file',
+                'max:2048', // 2 MB
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    if (! $value) {
+                        return;
+                    }
+
+                    // ── Extension whitelist ─────────────────────────────────
+                    $ext = strtolower($value->getClientOriginalExtension());
+                    $allowedExt = ['jpg', 'jpeg', 'png', 'webp'];
+                    if (! in_array($ext, $allowedExt, true)) {
+                        $fail('Extension non autorisée. Formats acceptés : jpg, jpeg, png, webp.');
+                        return;
+                    }
+
+                    // ── Real MIME-type (prevents disguised files) ───────────
+                    $mime = $value->getMimeType();
+                    $allowedMime = ['image/jpeg', 'image/png', 'image/webp'];
+                    if (! in_array($mime, $allowedMime, true)) {
+                        $fail('Le fichier doit être une image réelle (jpg, png, webp).');
+                        return;
+                    }
+
+                    // ── Filename safety ─────────────────────────────────────
+                    $baseName = pathinfo($value->getClientOriginalName(), PATHINFO_FILENAME);
+                    if (preg_match('/[<>\/\\|?*:\x00-\x1f"\']/', $baseName)) {
+                        $fail('Le nom du fichier contient des caractères non autorisés.');
+                    }
+                },
+            ],
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
             'email' => ['required', 'email', 'max:255', Rule::unique('candidat', 'email')->ignore($this->candidat->id)],
             'age' => 'nullable|integer|min:18|max:100',
             'phone' => 'nullable|string|max:20',
-            'gender'         => 'nullable|string|in:homme,femme',
-            'address'        => 'nullable|string|max:255',
-            'address_custom' => 'nullable|string|max:500|required_if:address,other',
+            'gender'              => 'nullable|string|in:homme,femme',
+            'selected_region'     => 'nullable|string|max:255|required_with:selected_city,selected_prefecture,address_detail',
+            'selected_city'       => 'nullable|string|max:255|required_with:selected_region,selected_prefecture,address_detail',
+            'selected_prefecture' => 'nullable|string|max:255|required_with:selected_region,selected_city,address_detail',
+            'address_detail'      => 'nullable|string|max:500|required_with:selected_region,selected_city,selected_prefecture',
         ]);
+
+        $locationId = null;
+        if (
+            !empty($validated['selected_region'])
+            && !empty($validated['selected_city'])
+            && !empty($validated['selected_prefecture'])
+        ) {
+            $location = MoroccoLocation::query()
+                ->where('region', $validated['selected_region'])
+                ->where('city', $validated['selected_city'])
+                ->where('prefecture', $validated['selected_prefecture'])
+                ->first();
+
+            if (!$location) {
+                $this->addError('selected_prefecture', 'Localisation invalide. Veuillez choisir une préfecture valide.');
+                return;
+            }
+
+            $locationId = $location->id;
+        }
 
         // Handle profile image upload
         if ($this->new_profile_image) {
@@ -84,8 +136,11 @@ class Settings extends Component
                 mkdir($uploadPath, 0755, true);
             }
             
-            // Generate unique filename
-            $filename = time() . '_' . uniqid() . '.' . $this->new_profile_image->getClientOriginalExtension();
+            // Generate safe unique filename
+            $ext      = strtolower($this->new_profile_image->getClientOriginalExtension());
+            $baseName = pathinfo($this->new_profile_image->getClientOriginalName(), PATHINFO_FILENAME);
+            $safeName = Str::slug(preg_replace('/[^a-zA-Z0-9\-_ ]/', '', $baseName)) ?: 'image';
+            $filename = time() . '_' . uniqid() . '_' . $safeName . '.' . $ext;
             $relativePath = 'profile-images/' . $filename;
             
             // Move the file to uploads directory
@@ -104,11 +159,11 @@ class Settings extends Component
 
         unset($validated['new_profile_image']);
         
-        // Resolve address value
-        if (($validated['address'] ?? '') === 'other') {
-            $validated['address'] = $validated['address_custom'] ?: null;
-        }
-        unset($validated['address_custom']);
+        $validated['selected_region'] = $validated['selected_region'] ?? null;
+        $validated['selected_city'] = $validated['selected_city'] ?? null;
+        $validated['selected_prefecture'] = $validated['selected_prefecture'] ?? null;
+        $validated['morocco_location_id'] = $locationId;
+        $validated['address_detail'] = $validated['address_detail'] ?: null;
 
         $this->candidat->update($validated);
         
@@ -152,10 +207,66 @@ class Settings extends Component
         $this->activeTab = $tab;
     }
 
+    public function updatedSelectedRegion()
+    {
+        $this->selected_city = '';
+        $this->selected_prefecture = '';
+        $this->selected_location_id = null;
+    }
+
+    public function updatedSelectedCity()
+    {
+        $this->selected_prefecture = '';
+        $this->selected_location_id = null;
+    }
+
+    public function updatedSelectedPrefecture($value)
+    {
+        if (!$value || !$this->selected_region || !$this->selected_city) {
+            $this->selected_location_id = null;
+            return;
+        }
+
+        $this->selected_location_id = MoroccoLocation::query()
+            ->where('region', $this->selected_region)
+            ->where('city', $this->selected_city)
+            ->where('prefecture', $value)
+            ->value('id');
+    }
+
     public function render()
     {
+        $regions = MoroccoLocation::query()
+            ->select('region')
+            ->distinct()
+            ->orderBy('region')
+            ->pluck('region');
+
+        $cities = collect();
+        if (!empty($this->selected_region)) {
+            $cities = MoroccoLocation::query()
+                ->where('region', $this->selected_region)
+                ->select('city')
+                ->distinct()
+                ->orderBy('city')
+                ->pluck('city');
+        }
+
+        $prefectures = collect();
+        if (!empty($this->selected_city)) {
+            $prefectures = MoroccoLocation::query()
+                ->where('region', $this->selected_region)
+                ->where('city', $this->selected_city)
+                ->select('prefecture')
+                ->distinct()
+                ->orderBy('prefecture')
+                ->pluck('prefecture');
+        }
+
         return view('livewire.front.dashboard.settings', [
-            'addresses' => Address::orderBy('city')->orderBy('address_line1')->get(),
+            'regions' => $regions,
+            'cities' => $cities,
+            'prefectures' => $prefectures,
         ]);
     }
 }

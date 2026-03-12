@@ -5,10 +5,13 @@ namespace App\Livewire\Front\Dashboard;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Services\FormSubmissionService;
+use App\Services\ProjectEligibilityService;
 use App\Models\Candidat;
 use App\Models\ProgrameList;
 use App\Models\DynamicFormSubmission;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 #[Layout('layouts.app')]
 class Dashboard extends Component
@@ -20,10 +23,12 @@ class Dashboard extends Component
     public $activeFilter = null;
     public $searchQuery = '';
     protected $formSubmissionService;
+    protected $eligibilityService;
 
-    public function boot(FormSubmissionService $formSubmissionService)
+    public function boot(FormSubmissionService $formSubmissionService, ProjectEligibilityService $eligibilityService)
     {
         $this->formSubmissionService = $formSubmissionService;
+        $this->eligibilityService = $eligibilityService;
     }
 
     public function mount()
@@ -126,6 +131,50 @@ class Dashboard extends Component
     public function render()
     {
         $allDynamic = collect($this->dynamicSubmissions);
+        $candidateAge = $this->candidat->age;
+
+        if (!$candidateAge && $this->candidat->date_naissance) {
+            $candidateAge = Carbon::parse($this->candidat->date_naissance)->age;
+        }
+
+        $submittedProjectIds = $allDynamic
+            ->pluck('programe_id')
+            ->filter()
+            ->unique()
+            ->values();
+
+        $projects = ProgrameList::query()
+            ->where('is_active', true)
+            ->orderBy('sort_order')
+            ->get();
+
+        $projectInsights = $projects->map(function ($project) use ($submittedProjectIds) {
+            $check = $this->eligibilityService->evaluate($this->candidat, $project);
+            $alreadyStarted = $submittedProjectIds->contains((int) $project->id);
+
+            return [
+                'id' => $project->id,
+                'name' => $project->project_name,
+                'description' => Str::limit(strip_tags((string) $project->description), 140),
+                'icon' => $project->icon ?: 'ri-briefcase-4-line',
+                'color' => $project->color ?: '#2f5496',
+                'bg_color' => $project->bg_color ?: '#f8fafc',
+                'min_age' => $project->min_age,
+                'max_age' => $project->max_age,
+                'eligible' => $check['eligible'],
+                'reasons' => $check['reasons'],
+                'already_started' => $alreadyStarted,
+            ];
+        })
+        ->sortByDesc('eligible')
+        ->values();
+
+        $projectEligibilityStats = [
+            'total' => $projectInsights->count(),
+            'eligible' => $projectInsights->where('eligible', true)->count(),
+            'not_eligible' => $projectInsights->where('eligible', false)->count(),
+            'started' => $projectInsights->where('already_started', true)->count(),
+        ];
 
         $stats = [
             'total'    => $this->projects->count() + $allDynamic->count(),
@@ -152,12 +201,12 @@ class Dashboard extends Component
             );
         }
 
-        $programe_list = ProgrameList::all();
-
         return view('livewire.front.dashboard.dashboard', [
-            'stats'               => $stats,
-            'programe_list'       => $programe_list,
-            'filteredSubmissions' => $filteredSubmissions->values()->toArray(),
+            'stats'                   => $stats,
+            'filteredSubmissions'     => $filteredSubmissions->values()->toArray(),
+            'projectInsights'         => $projectInsights->toArray(),
+            'projectEligibilityStats' => $projectEligibilityStats,
+            'candidateAge'            => $candidateAge,
         ]);
     }
 }

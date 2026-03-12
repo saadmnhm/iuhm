@@ -72,7 +72,7 @@
                                             type="file"
                                             id="profile-image"
                                             wire:model="new_profile_image"
-                                            accept="image/*"
+                                            accept=".jpg,.jpeg,.png,.webp"
                                             class="form-control"
                                         >
 
@@ -157,27 +157,58 @@
                                         @enderror
                                     </div>
 
-                                    <div class="col-md-6">
-                                        <label for="address" class="block disc mb-2 font-semibold">{{ __('messages.adresse') }}</label>
-                                        <select class="form-control border border-gray-300 rounded p-2 w-full" id="address" name="address" wire:model.live="address">
-                                            <option value="">{{ __('messages.selectionner_adresse') }}</option>
-                                            @foreach($addresses as $addr)
-                                            <option value="{{ $addr->address_line1 }}">{{ $addr->address_line1 }}{{ $addr->city ? ' — '.$addr->city : '' }}</option>
+                                    <div class="col-md-3">
+                                        <label for="selected_region" class="form-label">Région</label>
+                                        <select class="form-control @error('selected_region') is-invalid @enderror" id="selected_region" wire:model.live="selected_region">
+                                            <option value="">Sélectionner une région</option>
+                                            @foreach($regions as $region)
+                                                <option value="{{ $region }}">{{ $region }}</option>
                                             @endforeach
-                                            <option value="other">Autre (saisir manuellement)</option>
                                         </select>
-                                        @error('address') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                        @error('selected_region')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
-                                    @if($address === 'other')
-                                    <div class="col-md-6">
-                                        <label class="block disc mb-2 font-semibold">Adresse personnalisée <span class="text-danger">*</span></label>
-                                        <input type="text" wire:model="address_custom"
-                                               placeholder="Saisir votre adresse..."
-                                               class="form-control border border-gray-300 rounded p-2 w-full">
-                                        @error('address_custom') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                    <div class="col-md-3">
+                                        <label for="selected_city" class="form-label">Ville</label>
+                                        <select class="form-control @error('selected_city') is-invalid @enderror" id="selected_city" wire:model.live="selected_city" {{ empty($selected_region) ? 'disabled' : '' }}>
+                                            <option value="">Sélectionner une ville</option>
+                                            @foreach($cities as $city)
+                                                <option value="{{ $city }}">{{ $city }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('selected_city')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
-                                    @endif
+
+                                    <div class="col-md-3">
+                                        <label for="selected_prefecture" class="form-label">Préfecture</label>
+                                        <select class="form-control @error('selected_prefecture') is-invalid @enderror" id="selected_prefecture" wire:model.live="selected_prefecture" {{ empty($selected_city) ? 'disabled' : '' }}>
+                                            <option value="">Sélectionner une préfecture</option>
+                                            @foreach($prefectures as $prefecture)
+                                                <option value="{{ $prefecture }}">{{ $prefecture }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('selected_prefecture')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-3">
+                                        <label for="address_detail" class="form-label">Détails adresse (IMM, GH...)</label>
+                                        <input
+                                            type="text"
+                                            class="form-control @error('address_detail') is-invalid @enderror"
+                                            id="address_detail"
+                                            wire:model="address_detail"
+                                            placeholder="Ex: IMM 12, GH B, Appartement 4"
+                                        >
+                                        @error('address_detail')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
 
                                     
                                     <div class="col-12 mt-4">

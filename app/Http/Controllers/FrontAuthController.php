@@ -7,6 +7,7 @@ use App\Models\Candidat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 
 class FrontAuthController extends Controller
 {
@@ -57,7 +58,7 @@ class FrontAuthController extends Controller
         }
 
         return back()->withErrors([
-            'login' => 'The provided credentials do not match our records.',
+            'login' => 'Votre e-mail ou mot de passe est incorrect.',
         ])->withInput($request->only('login'));
     }
 
@@ -119,7 +120,65 @@ class FrontAuthController extends Controller
         Auth::guard('candidat')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        
         return redirect()->route('user.login');
     }
+
+    // ── Password Reset ──────────────────────────────────────────────────────
+
+    public function showForgotPassword()
+    {
+        if (Auth::guard('candidat')->check()) {
+            return redirect()->route('user.dashboard');
+        }
+        return view('livewire.front.auth.forgot-password');
+    }
+
+    public function sendResetLink(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        // Always show a generic success message to prevent email enumeration
+        Password::broker('candidats')->sendResetLink(
+            $request->only('email')
+        );
+
+        return back()->with('status', true);
+    }
+
+    public function showResetPassword(Request $request, string $token)
+    {
+        return view('livewire.front.auth.reset-password', [
+            'token' => $token,
+            'email' => $request->query('email', ''),
+        ]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token'                 => 'required',
+            'email'                 => 'required|email',
+            'password'              => 'required|min:6|confirmed',
+            'password_confirmation' => 'required',
+        ]);
+
+        $status = Password::broker('candidats')->reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($candidat, $password) {
+                $candidat->forceFill([
+                    'password' => Hash::make($password),
+                ])->save();
+            }
+        );
+
+        if ($status === Password::PASSWORD_RESET) {
+            return redirect()->route('user.login')
+                ->with('success', app()->getLocale() === 'ar'
+                    ? 'تم إعادة تعيين كلمة المرور بنجاح! يمكنك الآن تسجيل الدخول.'
+                    : 'Mot de passe réinitialisé avec succès ! Vous pouvez maintenant vous connecter.');
+        }
+
+        return back()->withErrors(['email' => __($status)]);
+    }
+
 }

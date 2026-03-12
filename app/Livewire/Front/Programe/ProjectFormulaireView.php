@@ -10,6 +10,7 @@ use App\Models\DynamicFormAnswer;
 use App\Models\DynamicFormTableAnswer;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Services\ProjectEligibilityService;
 
 class ProjectFormulaireView extends Component
 {
@@ -33,6 +34,12 @@ class ProjectFormulaireView extends Component
 
     public ?int $submissionId = null;
     public ?DynamicFormSubmission $existingSubmission = null;
+    protected ProjectEligibilityService $eligibilityService;
+
+    public function boot(ProjectEligibilityService $eligibilityService): void
+    {
+        $this->eligibilityService = $eligibilityService;
+    }
 
     public function mount($projectId, $formulaireSlug, $order)
     {
@@ -40,12 +47,22 @@ class ProjectFormulaireView extends Component
         $this->formulaireSlug = $formulaireSlug;
         $this->order = $order;
 
-        $this->loadData();
+        return $this->loadData();
     }
 
     public function loadData()
     {
         $this->project = ProgrameList::findOrFail($this->projectId);
+
+        $candidat = Auth::guard('candidat')->user();
+        if ($candidat) {
+            $check = $this->eligibilityService->evaluate($candidat, $this->project);
+            if (!$check['eligible']) {
+                session()->flash('error', 'Vous ne pouvez pas remplir ce projet: ' . implode(' ', $check['reasons']));
+                return redirect()->route('user.projects.list');
+            }
+        }
+
         $this->formulaire = DynamicForm::with(['steps.fields', 'steps.tables.columns', 'steps.tables.fixedRows'])
             ->where('slug', $this->formulaireSlug)
             ->firstOrFail();

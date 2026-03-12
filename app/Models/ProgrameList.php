@@ -24,6 +24,7 @@ class ProgrameList extends Model
         'min_age',
         'max_age',
         'allowed_address_id',
+        'allowed_location_ids',
         'form_attached_id',
         'sort_order',
         'is_active',
@@ -32,6 +33,7 @@ class ProgrameList extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
+        'allowed_location_ids' => 'array',
     ];
 
     protected static function booted(): void

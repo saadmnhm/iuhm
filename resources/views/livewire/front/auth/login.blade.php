@@ -1,9 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+@php
+    $locale = app()->getLocale();
+    $isAr   = $locale === 'ar';
+    $dir    = $isAr ? 'rtl' : 'ltr';
+    $t = [
+        'page_title'    => $isAr ? 'تسجيل الدخول' : 'Connexion — IUHM',
+        // Sign-In panel
+        'signin_title'  => $isAr ? 'تسجيل الدخول' : 'Connexion',
+        'or_account'    => $isAr ? 'أو استخدم حسابك' : 'ou utilisez votre compte',
+        'login_ph'      => $isAr ? 'البريد الإلكتروني أو اسم المستخدم' : 'Email ou Login',
+        'password_ph'   => $isAr ? 'كلمة المرور' : 'Mot de passe',
+        'forgot'        => $isAr ? 'نسيت كلمة المرور؟' : 'Mot de passe oublié ?',
+        'signin_btn'    => $isAr ? 'دخول' : 'Connexion',
+        // Sign-Up panel
+        'signup_title'  => $isAr ? 'إنشاء حساب' : 'Créer un compte',
+        'or_email'      => $isAr ? 'أو استخدم بريدك الإلكتروني للتسجيل' : 'ou utilisez votre email pour vous inscrire',
+        'nom_ph'        => $isAr ? 'النسب' : 'Nom',
+        'prenom_ph'     => $isAr ? 'الاسم' : 'Prénom',
+        'login_field_ph'=> $isAr ? 'اسم المستخدم' : 'Login',
+        'email_ph'      => $isAr ? 'البريد الإلكتروني' : 'Email',
+        'signup_btn'    => $isAr ? 'إنشاء حساب' : 'Inscription',
+        // Overlay
+        'welcome_back'  => $isAr ? 'أهلاً بعودتك!' : 'Bon retour !',
+        'welcome_desc'  => $isAr ? 'يرجى تسجيل الدخول بمعلوماتك الشخصية' : 'Connectez-vous avec vos informations personnelles',
+        'overlay_signin'=> $isAr ? 'تسجيل الدخول' : 'Connexion',
+        'hello_title'   => $isAr ? 'مرحباً!' : 'Bonjour !',
+        'hello_desc'    => $isAr ? 'أدخل بياناتك الشخصية وابدأ رحلتك معنا' : 'Entrez vos informations et commencez votre aventure',
+        'overlay_signup'=> $isAr ? 'إنشاء حساب' : 'Inscription',
+        // Mobile toggles
+        'mobile_have'   => $isAr ? 'لديك حساب بالفعل؟ تسجيل الدخول' : 'Vous avez un compte ? Se connecter',
+        'mobile_no'     => $isAr ? 'ليس لديك حساب؟ إنشاء حساب' : 'Pas de compte ? S\'inscrire',
+    ];
+@endphp
+<html lang="{{ $locale }}" dir="{{ $dir }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Login - Dashboard</title>
+    <title>{{ $t['page_title'] }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -443,17 +476,30 @@ input {
 
 
 <body>
+
+{{-- Language Switcher --}}
+<div style="position:fixed;top:16px;{{ $isAr ? 'left' : 'right' }}:16px;z-index:1000;display:flex;gap:8px;">
+    <a href="{{ route('lang.switch', 'fr') }}"
+       style="display:inline-flex;align-items:center;gap:4px;padding:5px 14px;border-radius:20px;border:2px solid {{ $locale==='fr' ? '#648454' : '#ddd' }};background:{{ $locale==='fr' ? '#648454' : '#fff' }};color:{{ $locale==='fr' ? '#fff' : '#666' }};font-size:13px;font-weight:700;text-decoration:none;">
+        🇫🇷 FR
+    </a>
+    <a href="{{ route('lang.switch', 'ar') }}"
+       style="display:inline-flex;align-items:center;gap:4px;padding:5px 14px;border-radius:20px;border:2px solid {{ $locale==='ar' ? '#648454' : '#ddd' }};background:{{ $locale==='ar' ? '#648454' : '#fff' }};color:{{ $locale==='ar' ? '#fff' : '#666' }};font-size:13px;font-weight:700;text-decoration:none;">
+        🇲🇦 AR
+    </a>
+</div>
+
 <div class="container" id="container">
     <!-- Sign Up Form -->
     <div class="form-container sign-up-container">
         <form method="POST" action="{{ route('user.register.post') }}">
             @csrf
-            <h1>Sign Up</h1>
+            <h1>{{ $t['signup_title'] }}</h1>
             <div class="social-container">
                 <a href="#" class="social"><i class="fab fa-apple"></i></a>
                 <a href="#" class="social"><i class="fab fa-google"></i></a>
             </div>
-            <span>or use your email for registration</span>
+            <span>{{ $t['or_email'] }}</span>
             
             @if ($errors->any())
                 <div class="alert alert-danger">
@@ -463,26 +509,23 @@ input {
                 </div>
             @endif
             <div style="display: flex; gap: 15px;">
-
-            <input type="text" name="nom" placeholder="nom" value="{{ old('nom') }}" required />
-            <input type="text" name="prenom" placeholder="prenom" value="{{ old('prenom') }}" required />
-
+                <input type="text" name="nom" placeholder="{{ $t['nom_ph'] }}" value="{{ old('nom') }}" required />
+                <input type="text" name="prenom" placeholder="{{ $t['prenom_ph'] }}" value="{{ old('prenom') }}" required />
             </div>
-            <input type="text" name="login" placeholder="login" value="{{ old('login') }}" required />
-            <input type="email" name="email" placeholder="Email" value="{{ old('email') }}" required />
+            <input type="text" name="login" placeholder="{{ $t['login_field_ph'] }}" value="{{ old('login') }}" required />
+            <input type="email" name="email" placeholder="{{ $t['email_ph'] }}" value="{{ old('email') }}" required />
             
             <div class="password-wrapper">
-                <input type="password" id="signup-password" name="password" placeholder="Password" required />
+                <input type="password" id="signup-password" name="password" placeholder="{{ $t['password_ph'] }}" required />
                 <button type="button" class="password-toggle" onclick="togglePassword('signup-password', this)">
                     <i class="ri-eye-line"></i>
                 </button>
             </div>
-            
 
-            <button type="submit" class="mt-4">Sign Up</button>
+            <button type="submit" class="mt-4">{{ $t['signup_btn'] }}</button>
             
             <div class="mobile-toggle" id="mobileSignIn">
-                Already have an account? Sign In
+                {{ $t['mobile_have'] }}
             </div>
         </form>
     </div>
@@ -491,12 +534,12 @@ input {
     <div class="form-container sign-in-container">
         <form method="POST" action="{{ route('user.login.post') }}">
             @csrf
-            <h1>Sign In</h1>
+            <h1>{{ $t['signin_title'] }}</h1>
             <div class="social-container">
-                <a href="#" class="social"><i class="fab fa-apple "></i></a>
+                <a href="#" class="social"><i class="fab fa-apple"></i></a>
                 <a href="#" class="social"><i class="fab fa-google"></i></a>
             </div>
-            <span>or use your account</span>
+            <span>{{ $t['or_account'] }}</span>
             
             @if ($errors->any())
                 <div class="alert alert-danger">
@@ -507,26 +550,23 @@ input {
             @endif
 
             @if (session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
-                </div>
+                <div class="alert alert-success">{{ session('success') }}</div>
             @endif
 
-          
-            <input type="text" name="login" placeholder="Login or Email" value="{{ old('login') }}" required />            
+            <input type="text" name="login" placeholder="{{ $t['login_ph'] }}" value="{{ old('login') }}" required />
            
             <div class="password-wrapper">
-                <input type="password" id="signin-password" name="password" placeholder="Password" required />
+                <input type="password" id="signin-password" name="password" placeholder="{{ $t['password_ph'] }}" required />
                 <button type="button" class="password-toggle" onclick="togglePassword('signin-password', this)">
                     <i class="ri-eye-line"></i>
                 </button>
             </div>
             
-            <a href="#">Forgot your password?</a>
-            <button type="submit">Sign In</button>
+            <a href="{{ route('user.password.request') }}">{{ $t['forgot'] }}</a>
+            <button type="submit">{{ $t['signin_btn'] }}</button>
             
             <div class="mobile-toggle" id="mobileSignUp">
-                Don't have an account? Sign Up
+                {{ $t['mobile_no'] }}
             </div>
         </form>
     </div>
@@ -535,14 +575,14 @@ input {
     <div class="overlay-container">
         <div class="overlay">
             <div class="overlay-panel overlay-left">
-                <h1>Welcome Back!</h1>
-                <p>Please login with your personal info</p>
-                <button class="ghost" id="signIn">Sign In</button>
+                <h1>{{ $t['welcome_back'] }}</h1>
+                <p>{{ $t['welcome_desc'] }}</p>
+                <button class="ghost" id="signIn">{{ $t['overlay_signin'] }}</button>
             </div>
             <div class="overlay-panel overlay-right">
-                <h1>Hello, Friend!</h1>
-                <p>Enter your personal details and start your journey with us</p>
-                <button class="ghost" id="signUp">Sign Up</button>
+                <h1>{{ $t['hello_title'] }}</h1>
+                <p>{{ $t['hello_desc'] }}</p>
+                <button class="ghost" id="signUp">{{ $t['overlay_signup'] }}</button>
             </div>
         </div>
     </div>

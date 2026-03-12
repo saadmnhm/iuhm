@@ -6,12 +6,20 @@ use Livewire\Component;
 use App\Models\ProgrameList;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
+use App\Services\ProjectEligibilityService;
 
 class ProjectList extends Component
 {
     use WithPagination;
     
     public $search = '';
+
+    protected ProjectEligibilityService $eligibilityService;
+
+    public function boot(ProjectEligibilityService $eligibilityService): void
+    {
+        $this->eligibilityService = $eligibilityService;
+    }
     
     public function updatedSearch()
     {
@@ -30,22 +38,20 @@ class ProjectList extends Component
             });
         }
         
-        // Check age eligibility for candidat
+        $projects = $query->paginate(12);
+        $eligibilityMap = [];
+
         if (Auth::guard('candidat')->check()) {
             $candidat = Auth::guard('candidat')->user();
-            $userAge = $candidat->age ?? 0;
-            if ($userAge > 0) {
-                $query->where(function($q) use ($userAge) {
-                    $q->where('min_age', '<=', $userAge)
-                      ->where('max_age', '>=', $userAge);
-                });
+            foreach ($projects as $project) {
+                $check = $this->eligibilityService->evaluate($candidat, $project);
+                $eligibilityMap[$project->id] = $check;
             }
         }
         
-        $projects = $query->paginate(12);
-        
         return view('livewire.front.programe.project-list', [
             'projects' => $projects,
+            'eligibilityMap' => $eligibilityMap,
         ])->layout('layouts.app', ['title' => 'Available Projects']);
     }
 }

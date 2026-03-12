@@ -3,7 +3,7 @@
 namespace App\Livewire\Admin\Address;
 
 use Livewire\Component;
-use App\Models\Address;
+use App\Models\MoroccoLocation;
 use App\Models\AdminActivityLog;
 use Livewire\WithPagination;
 
@@ -13,22 +13,20 @@ class AddressManager extends Component
 
     public $modalOpen = false;
     public $editMode = false;
-    public $addressId;
+    public $locationId;
     
     // Form fields
-    public $address_line1;
+    public $region;
     public $city;
-    public $state;
-    public $postal_code;
+    public $prefecture;
     
     // Search
     public $search = '';
     
     protected $rules = [
-        'address_line1' => 'required|string|max:255',
+        'region' => 'required|string|max:150',
         'city' => 'required|string|max:100',
-        'state' => 'nullable|string|max:100',
-        'postal_code' => 'nullable|string|max:20',
+        'prefecture' => 'required|string|max:150',
     ];
 
     public function updatingSearch()
@@ -38,26 +36,25 @@ class AddressManager extends Component
 
     public function openModal()
     {
-        $this->reset(['address_line1', 'city', 'state', 'postal_code', 'addressId', 'editMode']);
+        $this->reset(['region', 'city', 'prefecture', 'locationId', 'editMode']);
         $this->modalOpen = true;
     }
 
     public function closeModal()
     {
         $this->modalOpen = false;
-        $this->reset(['address_line1', 'city', 'state', 'postal_code', 'addressId', 'editMode']);
+        $this->reset(['region', 'city', 'prefecture', 'locationId', 'editMode']);
         $this->resetValidation();
     }
 
     public function edit($id)
     {
-        $address = Address::findOrFail($id);
+        $location = MoroccoLocation::findOrFail($id);
         
-        $this->addressId = $id;
-        $this->address_line1 = $address->address_line1;
-        $this->city = $address->city;
-        $this->state = $address->state;
-        $this->postal_code = $address->postal_code;
+        $this->locationId = $id;
+        $this->region = $location->region;
+        $this->city = $location->city;
+        $this->prefecture = $location->prefecture;
         $this->editMode = true;
         $this->modalOpen = true;
     }
@@ -67,45 +64,43 @@ class AddressManager extends Component
         $this->validate();
 
         if ($this->editMode) {
-            $address = Address::findOrFail($this->addressId);
-            $address->update([
-                'address_line1' => $this->address_line1,
+            $location = MoroccoLocation::findOrFail($this->locationId);
+            $location->update([
+                'region' => $this->region,
                 'city' => $this->city,
-                'state' => $this->state,
-                'postal_code' => $this->postal_code,
+                'prefecture' => $this->prefecture,
             ]);
 
             AdminActivityLog::log(
-                'address_updated',
-                "Updated address: {$address->address_line1}, {$address->city}",
-                Address::class,
-                $address->id
+                'location_updated',
+                "Updated location: {$location->region} / {$location->city} / {$location->prefecture}",
+                MoroccoLocation::class,
+                $location->id
             );
             
             $this->dispatch('alert', [
                 'type' => 'success',
                 'title' => 'Success',
-                'message' => 'Address updated successfully!'
+                'message' => 'Location updated successfully!'
             ]);
         } else {
-            $address = Address::create([
-                'address_line1' => $this->address_line1,
+            $location = MoroccoLocation::create([
+                'region' => $this->region,
                 'city' => $this->city,
-                'state' => $this->state,
-                'postal_code' => $this->postal_code,
+                'prefecture' => $this->prefecture,
             ]);
 
             AdminActivityLog::log(
-                'address_created',
-                "Created address: {$address->address_line1}, {$address->city}",
-                Address::class,
-                $address->id
+                'location_created',
+                "Created location: {$location->region} / {$location->city} / {$location->prefecture}",
+                MoroccoLocation::class,
+                $location->id
             );
             
             $this->dispatch('alert', [
                 'type' => 'success',
                 'title' => 'Success',
-                'message' => 'Address created successfully!'
+                'message' => 'Location created successfully!'
             ]);
         }
 
@@ -114,32 +109,33 @@ class AddressManager extends Component
 
     public function delete($id)
     {
-        $address = Address::findOrFail($id);
-        $address->delete();
+        $location = MoroccoLocation::findOrFail($id);
+        $location->delete();
 
         AdminActivityLog::log(
-            'address_deleted',
-            "Deleted address: {$address->address_line1}, {$address->city}",
-            Address::class,
-            $address->id
+            'location_deleted',
+            "Deleted location: {$location->region} / {$location->city} / {$location->prefecture}",
+            MoroccoLocation::class,
+            $location->id
         );
         
         $this->dispatch('alert', [
             'type' => 'success',
             'title' => 'Deleted',
-            'message' => 'Address deleted successfully!'
+            'message' => 'Location deleted successfully!'
         ]);
     }
 
     public function render()
     {
-        $addresses = Address::when($this->search, function($query) {
-            $query->where('address_line1', 'like', '%' . $this->search . '%')
-                  ->orWhere('city', 'like', '%' . $this->search . '%');
-        })->paginate(10);
+        $addresses = MoroccoLocation::query()->when($this->search, function($query) {
+            $query->where('region', 'like', '%' . $this->search . '%')
+                  ->orWhere('city', 'like', '%' . $this->search . '%')
+                  ->orWhere('prefecture', 'like', '%' . $this->search . '%');
+        })->orderBy('region')->orderBy('city')->orderBy('prefecture')->paginate(10);
 
         return view('livewire.admin.tools.address-manager', compact('addresses'))->layout('layouts.admin', [
-                'header' => 'Manage Addresses'
-            ]);;
+                'header' => 'Manage Morocco Locations'
+            ]);
     }
 }

@@ -87,6 +87,23 @@
                 </a>
             </li>
 
+            <li class="nav-item">
+                <a href="{{ route('user.chat') }}"
+                   class="nav-link d-flex align-items-center gap-2 {{ request()->routeIs('user.chat') ? 'active' : '' }}"
+                   style="{{ request()->routeIs('user.chat') ? 'background:#3b82f615;color:#1d4ed8;border-radius:.55rem;font-weight:600;' : '' }}">
+                    <i class="ri-chat-3-line fs-5" style="{{ request()->routeIs('user.chat') ? 'color:#3b82f6;' : '' }}"></i>
+                    <span class="flex-grow-1">Chat Admin</span>
+                    @php
+                        $unreadChat = \App\Models\ChatMessage::unreadForCandidat(Auth::guard('candidat')->id());
+                    @endphp
+                    @if($unreadChat > 0)
+                        <span class="badge rounded-pill" style="background:#ef4444;font-size:.65rem;">{{ $unreadChat }}</span>
+                    @elseif(request()->routeIs('user.chat'))
+                        <span class="ms-auto rounded-pill" style="width:6px;height:6px;background:#3b82f6;display:inline-block;"></span>
+                    @endif
+                </a>
+            </li>
+
         </ul>
     </nav>
 

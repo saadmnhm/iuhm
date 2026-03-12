@@ -22,6 +22,9 @@
         @if($projects->count() > 0)
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                 @foreach($projects as $project)
+                    @php
+                        $eligibility = $eligibilityMap[$project->id] ?? ['eligible' => true, 'reasons' => []];
+                    @endphp
                     <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-200 overflow-hidden group">
                         <!-- Card Header -->
                         <div class="h-2 bg-gradient-to-r from-blue-500 to-purple-500"></div>
@@ -51,18 +54,32 @@
 
                             <!-- Status Badge -->
                             <div class="mb-4">
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium 
-                                    {{ $project->status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600' }}">
-                                    {{ $project->status }}
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium {{ $eligibility['eligible'] ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-700' }}">
+                                    {{ $eligibility['eligible'] ? 'Eligible' : 'Not eligible' }}
                                 </span>
                             </div>
 
+                            @if(!$eligibility['eligible'])
+                                <div class="mb-4 text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg p-2.5">
+                                    @foreach($eligibility['reasons'] as $reason)
+                                        <div>• {{ $reason }}</div>
+                                    @endforeach
+                                </div>
+                            @endif
+
                             <!-- Action Button -->
-                            <a href="{{ route('user.project.detail', $project->id) }}"
-                               class="block w-full px-6 py-3 bg-blue-600 text-white text-center rounded-lg hover:bg-blue-700 transition font-medium">
-                                View Project
-                                <i class="ri-arrow-right-line ml-2"></i>
-                            </a>
+                            @if($eligibility['eligible'])
+                                <a href="{{ route('user.project.detail', $project->id) }}"
+                                   class="block w-full px-6 py-3 bg-blue-600 text-white text-center rounded-lg hover:bg-blue-700 transition font-medium">
+                                    View Project
+                                    <i class="ri-arrow-right-line ml-2"></i>
+                                </a>
+                            @else
+                                <button type="button" disabled
+                                    class="block w-full px-6 py-3 bg-gray-300 text-gray-600 text-center rounded-lg font-medium cursor-not-allowed">
+                                    Unavailable for your profile
+                                </button>
+                            @endif
                         </div>
                     </div>
                 @endforeach

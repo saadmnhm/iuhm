@@ -3,7 +3,7 @@ namespace App\Livewire\Admin\Programe;
 
 use App\Models\AdminActivityLog;
 use Livewire\Component;
-use App\Models\Address; 
+use App\Models\MoroccoLocation;
 use App\Models\ProgrameList;
 use App\Models\DynamicForm;
 use App\Models\Candidat;
@@ -21,6 +21,11 @@ class ProgrameEdit extends Component{
     public $min_age;
     public $max_age;
     public $allowed_address_id = [];
+    public $allowed_location_ids = [];
+    public bool $showLocationModal = false;
+    public $locationRegionFilter = '';
+    public $locationCityFilter = '';
+    public $locationSearch = '';
     
     // Formulaire management
     public $showFormulaireModal = false;
@@ -47,6 +52,10 @@ class ProgrameEdit extends Component{
                 ? $programe->allowed_address_id 
                 : json_decode($programe->allowed_address_id, true)) 
             : [];
+
+        $this->allowed_location_ids = is_array($programe->allowed_location_ids)
+            ? $programe->allowed_location_ids
+            : (json_decode($programe->allowed_location_ids ?? '[]', true) ?? []);
 
         $this->icon = $programe->icon ?? 'ri-file-list-3-line';
         $this->color = $programe->color ?? '#2f5496';
@@ -189,6 +198,7 @@ class ProgrameEdit extends Component{
             'min_age' => 'required|integer|min:0',
             'max_age' => 'required|integer|min:0|gte:min_age',
             'allowed_address_id' => 'nullable|array',
+            'allowed_location_ids' => 'nullable|array',
         ]);
 
         $programe = ProgrameList::findOrFail($this->programeId);
@@ -203,6 +213,7 @@ class ProgrameEdit extends Component{
             'min_age' => $this->min_age,
             'max_age' => $this->max_age,
             'allowed_address_id' => json_encode($this->allowed_address_id),
+            'allowed_location_ids' => array_values(array_unique(array_map('intval', $this->allowed_location_ids ?? []))),
         ]);
 
         AdminActivityLog::log(
@@ -217,10 +228,68 @@ class ProgrameEdit extends Component{
         return redirect()->route('admin.programe');
     }
 
+    public function openLocationModal(): void
+    {
+        $this->locationRegionFilter = '';
+        $this->locationCityFilter = '';
+        $this->locationSearch = '';
+        $this->showLocationModal = true;
+    }
+
+    public function closeLocationModal(): void
+    {
+        $this->showLocationModal = false;
+    }
+
+    public function updatedLocationRegionFilter(): void
+    {
+        $this->locationCityFilter = '';
+    }
+
+    public function removeSelectedLocation(int $id): void
+    {
+        $this->allowed_location_ids = collect($this->allowed_location_ids)
+            ->map(fn ($x) => (int) $x)
+            ->reject(fn ($x) => $x === $id)
+            ->values()
+            ->toArray();
+    }
+
     public function render()
     {
-        $addresses = Address::all();
-        return view('livewire.admin.programe.edit_project', compact('addresses'))
-            ->layout('layouts.admin', ['header' => 'Edit Project', 'adresses' => $addresses]);
+        $regions = MoroccoLocation::query()->select('region')->distinct()->orderBy('region')->pluck('region');
+
+        $cities = MoroccoLocation::query()
+            ->when($this->locationRegionFilter, fn ($q) => $q->where('region', $this->locationRegionFilter))
+            ->select('city')
+            ->distinct()
+            ->orderBy('city')
+            ->pluck('city');
+
+        $locations = MoroccoLocation::query()
+            ->when($this->locationRegionFilter, fn ($q) => $q->where('region', $this->locationRegionFilter))
+            ->when($this->locationCityFilter, fn ($q) => $q->where('city', $this->locationCityFilter))
+            ->when($this->locationSearch, function ($q) {
+                $search = trim($this->locationSearch);
+                $q->where(function ($subQuery) use ($search) {
+                    $subQuery->where('region', 'like', "%{$search}%")
+                        ->orWhere('city', 'like', "%{$search}%")
+                        ->orWhere('prefecture', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy('region')
+            ->orderBy('city')
+            ->orderBy('prefecture')
+            ->get();
+
+        $selectedLocations = MoroccoLocation::query()
+            ->whereIn('id', $this->allowed_location_ids ?: [0])
+            ->orderBy('region')
+            ->orderBy('city')
+            ->orderBy('prefecture')
+            ->get();
+
+        return view('livewire.admin.programe.edit_project', compact('regions', 'cities', 'locations', 'selectedLocations'))
+            ->layout('layouts.admin', ['header' => 'Edit Project']);
     }
 }

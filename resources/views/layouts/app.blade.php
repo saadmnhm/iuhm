@@ -29,7 +29,9 @@
             </div>
         </div>
     </div>
+    <livewire:front.dashboard.broadcast-popup />
 </div>
+
 
     @livewireScripts
 

@@ -1,9 +1,31 @@
+@php
+    $locale = app()->getLocale();
+    $isAr   = $locale === 'ar';
+    $dir    = $isAr ? 'rtl' : 'ltr';
+    $t = [
+        'title'      => $isAr ? 'إنشاء حساب' : 'Créer un compte',
+        'or_email'   => $isAr ? 'أو استخدم بريدك الإلكتروني' : 'ou utilisez votre email',
+        'nom'        => $isAr ? 'النسب' : 'Nom',
+        'prenom'     => $isAr ? 'الاسم' : 'Prénom',
+        'email'      => $isAr ? 'البريد الإلكتروني' : 'Email',
+        'phone'      => $isAr ? 'الهاتف (مثال: 0612345678)' : 'Téléphone (ex: 0612345678)',
+        'genre'      => $isAr ? '-- الجنس --' : '-- Genre --',
+        'homme'      => $isAr ? 'ذكر' : 'Homme',
+        'femme'      => $isAr ? 'أنثى' : 'Femme',
+        'address'    => $isAr ? '-- الحي / العنوان --' : '-- Adresse / Quartier --',
+        'addr_other' => $isAr ? 'أخرى' : 'Autre (saisir manuellement)',
+        'addr_ph'    => $isAr ? 'أدخل عنوانك...' : 'Saisir votre adresse...',
+        'password'   => $isAr ? 'كلمة المرور' : 'Mot de passe',
+        'submit'     => $isAr ? 'إنشاء حساب' : 'S\'inscrire',
+        'have_acct'  => $isAr ? 'لديك حساب؟ تسجيل الدخول' : 'Vous avez un compte ? Se connecter',
+    ];
+@endphp
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ $locale }}" dir="{{ $dir }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - Dashboard</title>
+    <title>{{ $t['title'] }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -236,17 +258,30 @@ input {
     </style>
 </head>
 <body>
+
+{{-- Language Switcher --}}
+<div style="position:fixed;top:16px;{{ $isAr ? 'left' : 'right' }}:16px;z-index:1000;display:flex;gap:8px;">
+    <a href="{{ route('lang.switch', 'fr') }}"
+       style="display:inline-flex;align-items:center;gap:4px;padding:5px 14px;border-radius:20px;border:2px solid {{ $locale==='fr' ? '#648454' : '#ddd' }};background:{{ $locale==='fr' ? '#648454' : '#fff' }};color:{{ $locale==='fr' ? '#fff' : '#666' }};font-size:13px;font-weight:700;text-decoration:none;">
+        🇫🇷 FR
+    </a>
+    <a href="{{ route('lang.switch', 'ar') }}"
+       style="display:inline-flex;align-items:center;gap:4px;padding:5px 14px;border-radius:20px;border:2px solid {{ $locale==='ar' ? '#648454' : '#ddd' }};background:{{ $locale==='ar' ? '#648454' : '#fff' }};color:{{ $locale==='ar' ? '#fff' : '#666' }};font-size:13px;font-weight:700;text-decoration:none;">
+        🇲🇦 AR
+    </a>
+</div>
+
 <div class="container" id="container">
     <!-- Sign Up Form -->
     <div class="form-container sign-up-container">
         <form method="POST" action="{{ route('user.register.post') }}">
             @csrf
-            <h1>Create Account</h1>
+            <h1>{{ $t['title'] }}</h1>
             <div class="social-container">
                 <a href="#" class="social"><i class="fab fa-apple"></i></a>
                 <a href="#" class="social"><i class="fab fa-google"></i></a>
             </div>
-            <span>or use your email for registration</span>
+            <span>{{ $t['or_email'] }}</span>
             
             @if ($errors->any())
                 <div class="alert alert-danger">
@@ -256,39 +291,39 @@ input {
                 </div>
             @endif
 
-            <input type="text" name="nom" placeholder="Last Name" value="{{ old('nom') }}" required />
-            <input type="text" name="prenom" placeholder="First Name" value="{{ old('prenom') }}" required />
-            <input type="email" name="email" placeholder="Email" value="{{ old('email') }}" required />
-            <input type="tel" name="phone" placeholder="Téléphone (ex: 0612345678)" value="{{ old('phone') }}" />
+            <input type="text" name="nom" placeholder="{{ $t['nom'] }}" value="{{ old('nom') }}" required />
+            <input type="text" name="prenom" placeholder="{{ $t['prenom'] }}" value="{{ old('prenom') }}" required />
+            <input type="email" name="email" placeholder="{{ $t['email'] }}" value="{{ old('email') }}" required />
+            <input type="tel" name="phone" placeholder="{{ $t['phone'] }}" value="{{ old('phone') }}" />
             
             <select name="gender" style="background-color:#eee;border:none;padding:12px 15px;margin:8px 0;width:100%;border-radius:5px;font-size:14px;color:#333;">
-                <option value="">-- Genre --</option>
-                <option value="homme" {{ old('gender') === 'homme' ? 'selected' : '' }}>Homme</option>
-                <option value="femme" {{ old('gender') === 'femme' ? 'selected' : '' }}>Femme</option>
+                <option value="">{{ $t['genre'] }}</option>
+                <option value="homme" {{ old('gender') === 'homme' ? 'selected' : '' }}>{{ $t['homme'] }}</option>
+                <option value="femme" {{ old('gender') === 'femme' ? 'selected' : '' }}>{{ $t['femme'] }}</option>
             </select>
 
             <select name="address_id" id="address_id_select" onchange="toggleAddressOther(this)" style="background-color:#eee;border:none;padding:12px 15px;margin:8px 0;width:100%;border-radius:5px;font-size:14px;color:#333;">
-                <option value="">-- Adresse / Quartier --</option>
+                <option value="">{{ $t['address'] }}</option>
                 @foreach($addresses ?? [] as $addr)
                 <option value="{{ $addr->address_line1 }}" {{ old('address_id') === $addr->address_line1 ? 'selected' : '' }}>{{ $addr->address_line1 }}{{ $addr->city ? ' — '.$addr->city : '' }}</option>
                 @endforeach
-                <option value="other" {{ old('address_id') === 'other' ? 'selected' : '' }}>Autre (saisir manuellement)</option>
+                <option value="other" {{ old('address_id') === 'other' ? 'selected' : '' }}>{{ $t['addr_other'] }}</option>
             </select>
             <input type="text" id="address_other_input" name="address_other"
-                   placeholder="Saisir votre adresse..."
+                   placeholder="{{ $t['addr_ph'] }}"
                    value="{{ old('address_other') }}"
                    style="display:none;background-color:#eee;border:none;padding:12px 15px;margin:8px 0;width:100%;border-radius:5px;font-size:14px;" />
             
             <div class="password-wrapper">
-                <input type="password" id="signup-password" name="password" placeholder="Password" required />
+                <input type="password" id="signup-password" name="password" placeholder="{{ $t['password'] }}" required />
                 <button type="button" class="password-toggle" onclick="togglePassword('signup-password', this)">
                     <i class="ri-eye-line"></i>
                 </button>
             </div>
             
-            <button type="submit" class="mt-4">Sign Up</button>
+            <button type="submit" class="mt-4">{{ $t['submit'] }}</button>
             
-            <a href="{{ route('user.login') }}">Already have an account? Sign In</a>
+            <a href="{{ route('user.login') }}">{{ $t['have_acct'] }}</a>
         </form>
     </div>
 </div>

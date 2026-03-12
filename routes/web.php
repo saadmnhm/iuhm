@@ -67,6 +67,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/blog', \App\Livewire\Admin\Blog\BlogManagement::class)->name('blog.index')->middleware('module:blog');
         Route::get('/history-audit', \App\Livewire\Admin\Submissions\HistoryAudit::class)->name('history.audit')->middleware('module:history_audit');
         Route::get('/support-tickets', \App\Livewire\Admin\Support\SupportTickets::class)->name('support.tickets')->middleware('module:support');
+
+        // Chat
+        Route::get('/chat', \App\Livewire\Admin\Chat\ChatList::class)->name('chat.list')->middleware('module:chat');
+        Route::get('/chat/{candidatId}', \App\Livewire\Admin\Chat\ChatConversation::class)->name('chat.conversation')->middleware('module:chat');
+        Route::get('/broadcast', \App\Livewire\Admin\Chat\BroadcastMessage::class)->name('chat.broadcast')->middleware('module:chat');
+
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
         
         
@@ -97,7 +103,31 @@ Route::prefix('user')->name('user.')->group(function () {
     Route::get('/register', [FrontAuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [FrontAuthController::class, 'register'])->name('register.post');
 
-    // Email verification notice — auth-only, no verified check (avoids redirect loop)
+    // Password Reset
+    Route::get('/password/forgot',          [FrontAuthController::class, 'showForgotPassword'])->name('password.request');
+    Route::post('/password/forgot',         [FrontAuthController::class, 'sendResetLink'])->name('password.email');
+    Route::get('/password/reset/{token}',   [FrontAuthController::class, 'showResetPassword'])->name('password.reset');
+    Route::post('/password/reset',          [FrontAuthController::class, 'resetPassword'])->name('password.update');
+
+    Route::post('/logout', [FrontAuthController::class, 'logout'])->name('logout');
+
+    // Protected User Dashboard Routes
+    Route::middleware('candidat')->group(function () {
+        Route::get('/dashboard', Dashboard::class)->name('dashboard');
+        Route::get('/settings', \App\Livewire\Front\Dashboard\Settings::class)->name('settings');
+        Route::get('/support', \App\Livewire\Front\Dashboard\Support::class)->name('support');
+        Route::get('/chat', \App\Livewire\Front\Dashboard\Chat::class)->name('chat');
+        Route::get('/f/{slug}', \App\Livewire\Front\DynamicFormWizard::class)->name('dynamic_form');
+        // Project Routes
+        Route::get('/projects', \App\Livewire\Front\Programe\ProjectList::class)->name('projects.list');
+        Route::get('/projects/{id}', \App\Livewire\Front\Programe\ProjectDetail::class)->name('project.detail');
+        Route::get('/projects/{projectId}/formulaire/{formulaireSlug}/{order}', \App\Livewire\Front\Programe\ProjectFormulaireView::class)->name('project.formulaire');
+        Route::get('/blog', \App\Livewire\Front\Blog\BlogList::class)->name('blog');
+        Route::get('/blog/{slug}', \App\Livewire\Front\Blog\BlogShow::class)->name('blog.show');
+    });
+
+
+    
     Route::get('/email/verify', function () {
         if (!Auth::guard('candidat')->check()) {
             return redirect()->route('user.login');
@@ -108,7 +138,6 @@ Route::prefix('user')->name('user.')->group(function () {
         return view('livewire.front.auth.verify-email');
     })->name('verification.notice');
 
-    // Verify email via signed link
     Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {
         $candidat = \App\Models\Candidat::findOrFail($id);
 
@@ -127,7 +156,6 @@ Route::prefix('user')->name('user.')->group(function () {
         return redirect()->route('user.dashboard')->with('verified', true);
     })->middleware('signed')->name('verification.verify');
 
-    // Resend verification email — auth-only, no verified check
     Route::post('/email/verification-notification', function (Request $request) {
         if (!Auth::guard('candidat')->check()) {
             return redirect()->route('user.login');
@@ -139,23 +167,6 @@ Route::prefix('user')->name('user.')->group(function () {
             return back()->withErrors(['email' => 'Failed to send email: ' . $e->getMessage()]);
         }
     })->middleware('throttle:6,1')->name('verification.send');
-
-    // Logout must be outside candidat middleware so unverified users can log out
-    Route::post('/logout', [FrontAuthController::class, 'logout'])->name('logout');
-
-    // Protected User Dashboard Routes
-    Route::middleware('candidat')->group(function () {
-        Route::get('/dashboard', Dashboard::class)->name('dashboard');
-        Route::get('/settings', \App\Livewire\Front\Dashboard\Settings::class)->name('settings');
-        Route::get('/support', \App\Livewire\Front\Dashboard\Support::class)->name('support');
-        Route::get('/f/{slug}', \App\Livewire\Front\DynamicFormWizard::class)->name('dynamic_form');
-        // Project Routes
-        Route::get('/projects', \App\Livewire\Front\Programe\ProjectList::class)->name('projects.list');
-        Route::get('/projects/{id}', \App\Livewire\Front\Programe\ProjectDetail::class)->name('project.detail');
-        Route::get('/projects/{projectId}/formulaire/{formulaireSlug}/{order}', \App\Livewire\Front\Programe\ProjectFormulaireView::class)->name('project.formulaire');
-        Route::get('/blog', \App\Livewire\Front\Blog\BlogList::class)->name('blog');
-        Route::get('/blog/{slug}', \App\Livewire\Front\Blog\BlogShow::class)->name('blog.show');
-    });
 
 });
 

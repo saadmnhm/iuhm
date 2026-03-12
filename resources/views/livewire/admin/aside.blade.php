@@ -52,6 +52,32 @@
                 </a>
                 @endcanmodule
 
+                @canmodule('chat')
+                <div x-data="{ open: {{ request()->routeIs('admin.chat*') ? 'true' : 'false' }} }">
+                    <button @click="open = !open" class="flex w-full items-center justify-between gap-3 px-4 py-3 rounded-lg transition hover:bg-white/10">
+                        <div class="flex items-center gap-3">
+                            <i class="ri-chat-3-line text-lg"></i>
+                            <span>Chat & Broadcast</span>
+                            @php $totalUnread = \App\Models\ChatMessage::totalUnreadForAdmin(); @endphp
+                            @if($totalUnread > 0)
+                                <span class="bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">{{ $totalUnread > 99 ? '99+' : $totalUnread }}</span>
+                            @endif
+                        </div>
+                        <svg :class="open ? 'rotate-180' : ''" class="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div x-show="open" x-collapse class="ml-3 mt-1 space-y-1">
+                        <a href="{{ route('admin.chat.list') }}" class="block px-4 py-2 rounded hover:bg-white/10 {{ request()->routeIs('admin.chat.list') || (request()->routeIs('admin.chat.conversation')) ? 'bg-white/20 font-medium' : '' }}">
+                            <i class="ri-chat-3-line mr-1"></i> Conversations
+                        </a>
+                        <a href="{{ route('admin.chat.broadcast') }}" class="block px-4 py-2 rounded hover:bg-white/10 {{ request()->routeIs('admin.chat.broadcast') ? 'bg-white/20 font-medium' : '' }}">
+                            <i class="ri-broadcast-line mr-1"></i> Broadcast
+                        </a>
+                    </div>
+                </div>
+                @endcanmodule
+
                 @canmodule('my_submissions')
                 <a href="{{ route('admin.my.submissions') }}" 
                    class="flex items-center gap-3 px-4 py-3 rounded-lg transition {{ request()->routeIs('admin.my.submissions') ? 'bg-white/20' : 'hover:bg-white/10' }}">

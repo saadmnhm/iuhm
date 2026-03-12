@@ -4,7 +4,7 @@ namespace App\Livewire\Admin\Programe;
 
 use App\Models\ProgrameList;
 use App\Models\AdminActivityLog;
-use App\Models\Address; 
+use App\Models\MoroccoLocation;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
@@ -21,11 +21,16 @@ class ProgrameCreate extends Component
     public $bg_color = '#ffffff';
     public $min_age = null;
     public $max_age = null;
-    public $allowed_address_id = []; 
+    public $allowed_address_id = [];
+    public $allowed_location_ids = [];
     public $form_attached_id = null;
     public $sort_order = 0;
     public $is_active = true;
     public $created_by = null;
+    public bool $showLocationModal = false;
+    public $locationRegionFilter = '';
+    public $locationCityFilter = '';
+    public $locationSearch = '';
 
     protected function rules()
     {
@@ -38,6 +43,7 @@ class ProgrameCreate extends Component
             'min_age' => 'required|integer|min:0',
             'max_age' => 'required|integer|min:0|gte:min_age',
             'allowed_address_id' => 'nullable|array',
+            'allowed_location_ids' => 'nullable|array',
             'form_attached_id' => 'nullable|integer',
             'sort_order' => 'nullable|integer',
             'is_active' => 'boolean',
@@ -62,6 +68,9 @@ class ProgrameCreate extends Component
             
             // Decode JSON to array
             $this->allowed_address_id = json_decode($list->allowed_address_id, true) ?? [];
+            $this->allowed_location_ids = is_array($list->allowed_location_ids)
+                ? $list->allowed_location_ids
+                : (json_decode($list->allowed_location_ids ?? '[]', true) ?? []);
             
             $this->form_attached_id = $list->form_attached_id;
             $this->sort_order = $list->sort_order;
@@ -86,6 +95,7 @@ class ProgrameCreate extends Component
             'min_age' => $this->min_age,
             'max_age' => $this->max_age,
             'allowed_address_id' => $this->allowed_address_id,
+            'allowed_location_ids' => $this->allowed_location_ids,
             'created_by' => $this->created_by,
         ]);
 
@@ -106,6 +116,7 @@ class ProgrameCreate extends Component
                 'min_age' => $this->min_age,
                 'max_age' => $this->max_age,
                 'allowed_address_id' => json_encode($this->allowed_address_id ?? []),
+                'allowed_location_ids' => array_values(array_unique(array_map('intval', $this->allowed_location_ids ?? []))),
                 'form_attached_id' => $this->form_attached_id,
                 'sort_order' => $this->sort_order ?? 0,
                 'is_active' => $this->is_active,
@@ -165,12 +176,72 @@ class ProgrameCreate extends Component
         }
     }
 
+    public function openLocationModal(): void
+    {
+        $this->locationRegionFilter = '';
+        $this->locationCityFilter = '';
+        $this->locationSearch = '';
+        $this->showLocationModal = true;
+    }
+
+    public function closeLocationModal(): void
+    {
+        $this->showLocationModal = false;
+    }
+
+    public function updatedLocationRegionFilter(): void
+    {
+        $this->locationCityFilter = '';
+    }
+
+    public function removeSelectedLocation(int $id): void
+    {
+        $this->allowed_location_ids = collect($this->allowed_location_ids)
+            ->map(fn ($x) => (int) $x)
+            ->reject(fn ($x) => $x === $id)
+            ->values()
+            ->toArray();
+    }
+
     public function render()
     {
-        $addresses = Address::all();
+        $regions = MoroccoLocation::query()->select('region')->distinct()->orderBy('region')->pluck('region');
+
+        $cities = MoroccoLocation::query()
+            ->when($this->locationRegionFilter, fn ($q) => $q->where('region', $this->locationRegionFilter))
+            ->select('city')
+            ->distinct()
+            ->orderBy('city')
+            ->pluck('city');
+
+        $locations = MoroccoLocation::query()
+            ->when($this->locationRegionFilter, fn ($q) => $q->where('region', $this->locationRegionFilter))
+            ->when($this->locationCityFilter, fn ($q) => $q->where('city', $this->locationCityFilter))
+            ->when($this->locationSearch, function ($q) {
+                $search = trim($this->locationSearch);
+                $q->where(function ($subQuery) use ($search) {
+                    $subQuery->where('region', 'like', "%{$search}%")
+                        ->orWhere('city', 'like', "%{$search}%")
+                        ->orWhere('prefecture', 'like', "%{$search}%");
+                });
+            })
+            ->orderBy('region')
+            ->orderBy('city')
+            ->orderBy('prefecture')
+            ->get();
+
+        $selectedLocations = MoroccoLocation::query()
+            ->whereIn('id', $this->allowed_location_ids ?: [0])
+            ->orderBy('region')
+            ->orderBy('city')
+            ->orderBy('prefecture')
+            ->get();
         
         return view('livewire.admin.programe.create_project', [
-            'addresses' => $addresses
+            'regions' => $regions,
+            'cities' => $cities,
+            'locations' => $locations,
+            'selectedLocations' => $selectedLocations,
         ])
             ->layout('layouts.admin', [
                 'header' => $this->programeId ? 'Edit Project' : 'Create New Project'

@@ -6,6 +6,7 @@ use Livewire\Component;
 use App\Models\ProgrameList;
 use App\Models\DynamicFormSubmission;
 use Illuminate\Support\Facades\Auth;
+use App\Services\ProjectEligibilityService;
 
 class ProjectDetail extends Component
 {
@@ -13,11 +14,17 @@ class ProjectDetail extends Component
     public $project;
     public $formulaires = [];
     public $currentFormulaireIndex = null;
+    protected ProjectEligibilityService $eligibilityService;
+
+    public function boot(ProjectEligibilityService $eligibilityService): void
+    {
+        $this->eligibilityService = $eligibilityService;
+    }
     
     public function mount($id)
     {
         $this->projectId = $id;
-        $this->loadProject();
+        return $this->loadProject();
     }
     
     public function loadProject()
@@ -26,6 +33,15 @@ class ProjectDetail extends Component
             $query->where('programe_formulaire.status', 'active')
                   ->orderBy('programe_formulaire.order');
         }])->findOrFail($this->projectId);
+
+        $candidat = Auth::guard('candidat')->user();
+        if ($candidat) {
+            $check = $this->eligibilityService->evaluate($candidat, $this->project);
+            if (!$check['eligible']) {
+                session()->flash('error', 'Vous ne pouvez pas accéder à ce projet: ' . implode(' ', $check['reasons']));
+                return redirect()->route('user.projects.list');
+            }
+        }
         
         // Frontend is behind candidat middleware, always use candidat guard
         $candidatId = Auth::guard('candidat')->id();
