@@ -1,4 +1,5 @@
-﻿<aside class="sidebar d-flex flex-column">
+﻿<div>
+<aside class="sidebar d-flex flex-column">
     <div class="logo">
         <a href="{{ route('user.dashboard') }}">
             <img src="{{ asset('assets/site/images/iuhm_logo.png') }}" alt="Logo">
@@ -119,44 +120,47 @@
         </ul>
     </nav>
 
-    {{-- Profile complete modal (kept here for Aside component context) --}}
-    @if($showCompleteProfileModal)
-    <div class="modal fade show d-block" tabindex="-1" style="background:rgba(0,0,0,0.5);">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 rounded-4">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold">
-                        <i class="ri-information-line text-warning me-2"></i>Complete Your Profile
-                    </h5>
+</aside>
+
+{{-- Profile complete modal (rendered outside sidebar so it shows on mobile too) --}}
+@if($showCompleteProfileModal)
+<div class="modal fade show d-block" tabindex="-1" style="background:rgba(0,0,0,0.5);z-index:2000;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">
+                    <i class="ri-information-line text-warning me-2"></i>Complete Your Profile
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-4">
+                    <i class="ri-user-settings-line" style="font-size:3.5rem;color:#648454;"></i>
+                    <h5 class="mt-3 mb-2">Your profile is incomplete</h5>
+                    <p class="text-muted mb-0 small">
+                        Please complete your profile information to access all features.
+                    </p>
                 </div>
-                <div class="modal-body">
-                    <div class="text-center mb-4">
-                        <i class="ri-user-settings-line" style="font-size:3.5rem;color:#648454;"></i>
-                        <h5 class="mt-3 mb-2">Your profile is incomplete</h5>
-                        <p class="text-muted mb-0 small">
-                            Please complete your profile information to access all features.
-                        </p>
+                <div class="alert alert-info d-flex align-items-start border-0 rounded-3">
+                    <i class="ri-lightbulb-line me-2 mt-1"></i>
+                    <div>
+                        <strong>Why complete your profile?</strong>
+                        <ul class="mb-0 mt-2 ps-3 small">
+                            <li>Submit and manage projects</li>
+                            <li>Receive important notifications</li>
+                            <li>Better support and communication</li>
+                        </ul>
                     </div>
-                    <div class="alert alert-info d-flex align-items-start border-0 rounded-3">
-                        <i class="ri-lightbulb-line me-2 mt-1"></i>
-                        <div>
-                            <strong>Why complete your profile?</strong>
-                            <ul class="mb-0 mt-2 ps-3 small">
-                                <li>Submit and manage projects</li>
-                                <li>Receive important notifications</li>
-                                <li>Better support and communication</li>
-                            </ul>
-                        </div>
-                    </div>
                 </div>
-                <div class="modal-footer border-0 pt-0">
-                    <a href="{{ route('user.settings') }}" class="btn fw-semibold"
-                       style="background:#648454;color:white;border-radius:.6rem;">
-                        <i class="ri-settings-3-line me-1"></i>Complete Profile Now
-                    </a>
-                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <a href="{{ route('user.settings') }}" class="btn fw-semibold"
+                   style="background:#648454;color:white;border-radius:.6rem;">
+                    <i class="ri-settings-3-line me-1"></i>Complete Profile Now
+                </a>
             </div>
         </div>
     </div>
-    @endif
-</aside>
+</div>
+@endif
+
+</div>
