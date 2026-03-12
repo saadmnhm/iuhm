@@ -25,7 +25,7 @@ class Aside extends Component
             return;
         }
         
-        if (!$this->candidat->phone || !$this->candidat->address || !$this->candidat->age) {
+        if (!$this->candidat->phone || !$this->candidat->selected_prefecture || !$this->candidat->age) {
             $this->showCompleteProfileModal = true;
         }
     }
