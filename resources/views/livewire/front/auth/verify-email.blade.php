@@ -120,9 +120,9 @@
 
         <form method="POST" action="{{ route('user.logout') }}">
             @csrf
-            <a href="" onclick="this.closest('form').submit()" class="logout-link">
+            <button type="submit" class="logout-link" style="background:none;border:none;cursor:pointer;">
                 Log out
-            </a>
+            </button>
         </form>
     </div>
 </body>

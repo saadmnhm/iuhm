@@ -132,9 +132,16 @@ Route::prefix('user')->name('user.')->group(function () {
         if (!Auth::guard('candidat')->check()) {
             return redirect()->route('user.login');
         }
-        Auth::guard('candidat')->user()->sendEmailVerificationNotification();
-        return back()->with('message', 'Verification link sent!');
+        try {
+            Auth::guard('candidat')->user()->sendEmailVerificationNotification();
+            return back()->with('message', 'Verification link sent!');
+        } catch (\Exception $e) {
+            return back()->withErrors(['email' => 'Failed to send email: ' . $e->getMessage()]);
+        }
     })->middleware('throttle:6,1')->name('verification.send');
+
+    // Logout must be outside candidat middleware so unverified users can log out
+    Route::post('/logout', [FrontAuthController::class, 'logout'])->name('logout');
 
     // Protected User Dashboard Routes
     Route::middleware('candidat')->group(function () {
@@ -148,8 +155,6 @@ Route::prefix('user')->name('user.')->group(function () {
         Route::get('/projects/{projectId}/formulaire/{formulaireSlug}/{order}', \App\Livewire\Front\Programe\ProjectFormulaireView::class)->name('project.formulaire');
         Route::get('/blog', \App\Livewire\Front\Blog\BlogList::class)->name('blog');
         Route::get('/blog/{slug}', \App\Livewire\Front\Blog\BlogShow::class)->name('blog.show');
-        
-        Route::post('/logout', [FrontAuthController::class, 'logout'])->name('logout');
     });
 
 });
