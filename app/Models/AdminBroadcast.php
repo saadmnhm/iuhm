@@ -38,11 +38,13 @@ class AdminBroadcast extends Model
      */
     public static function unreadForCandidat(int $candidatId): \Illuminate\Database\Eloquent\Collection
     {
-        $readIds = BroadcastRead::where('candidat_id', $candidatId)->pluck('broadcast_id');
+            $readIds = BroadcastRead::where('candidat_id', $candidatId)
+                ->pluck('broadcast_id')
+                ->toArray();
 
-        return static::where('is_active', true)
-            ->whereNotIn('id', $readIds)
-            ->where(function ($q) use ($candidatId) {
+            return static::where('is_active', true)
+                ->when(!empty($readIds), fn($q) => $q->whereNotIn('id', $readIds))
+                ->where(function ($q) use ($candidatId) {
                 $q->where('target_type', 'all')
                   ->orWhere(function ($q2) use ($candidatId) {
                       $q2->where('target_type', 'single')
@@ -50,7 +52,7 @@ class AdminBroadcast extends Model
                   })
                   ->orWhere(function ($q3) use ($candidatId) {
                       $q3->where('target_type', 'selected')
-                         ->whereJsonContains('target_candidat_ids', $candidatId);
+                             ->whereJsonContains('target_candidat_ids', (int) $candidatId);
                   });
             })
             ->orderBy('created_at', 'desc')

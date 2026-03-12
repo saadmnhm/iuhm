@@ -428,16 +428,28 @@ textarea{
 
         @media (max-width: 991px) {
             .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                width: min(84vw, 320px);
+                max-width: 320px;
                 transform: translateX(-100%);
             }
             
             .sidebar.show {
                 transform: translateX(0);
             }
+
+            body.sidebar-open {
+                overflow: hidden;
+                touch-action: none;
+            }
             
             .main-content {
                 margin-left: 0;
                 width: 100%;
+                min-width: 0;
             }
             
             .content-area {
@@ -789,9 +801,36 @@ textarea{
     .top-navbar {
         padding: 0.75rem 1rem;
     }
+
+    .sidebar .logo {
+        padding: 1rem 1rem 0.75rem;
+    }
+
+    .sidebar .logo img {
+        width: 112px;
+    }
+
+    .sidebar .nav-link {
+        margin: 0.18rem 0.4rem;
+        padding: 0.68rem 0.75rem;
+        gap: 0.6rem;
+        font-size: 0.92rem;
+    }
+
+    .sidebar .nav-link i {
+        font-size: 1.1rem !important;
+    }
+
+    .page-title {
+        font-size: 1rem;
+    }
     
     .notification-menu {
-        width: 280px;
+        width: min(92vw, 320px);
+    }
+
+    .profile-menu {
+        width: min(86vw, 260px);
     }
 }
 

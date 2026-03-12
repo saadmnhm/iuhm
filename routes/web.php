@@ -124,6 +124,7 @@ Route::prefix('user')->name('user.')->group(function () {
         Route::get('/projects/{projectId}/formulaire/{formulaireSlug}/{order}', \App\Livewire\Front\Programe\ProjectFormulaireView::class)->name('project.formulaire');
         Route::get('/blog', \App\Livewire\Front\Blog\BlogList::class)->name('blog');
         Route::get('/blog/{slug}', \App\Livewire\Front\Blog\BlogShow::class)->name('blog.show');
+            Route::get('/broadcasts', \App\Livewire\Front\Dashboard\BroadcastHistory::class)->name('broadcasts.history');
     });
 
 

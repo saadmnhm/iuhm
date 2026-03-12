@@ -69,24 +69,55 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     if (sidebarToggle && sidebar && overlay) {
+        const closeSidebar = () => {
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+            document.body.classList.remove('sidebar-open');
+        };
+
+        const openSidebar = () => {
+            sidebar.classList.add('show');
+            overlay.classList.add('show');
+            document.body.classList.add('sidebar-open');
+        };
+
         // Toggle sidebar on button click
         sidebarToggle.addEventListener('click', function(e) {
             e.stopPropagation();
-            sidebar.classList.toggle('show');
-            overlay.classList.toggle('show');
+            const isOpen = sidebar.classList.contains('show');
+            if (isOpen) {
+                closeSidebar();
+                return;
+            }
+            openSidebar();
         });
         
         // Close sidebar when clicking overlay
-        overlay.addEventListener('click', function() {
-            sidebar.classList.remove('show');
-            overlay.classList.remove('show');
+        overlay.addEventListener('click', closeSidebar);
+
+        // Close sidebar when clicking any nav link on mobile
+        sidebar.addEventListener('click', function(e) {
+            if (window.innerWidth >= 992) return;
+            const link = e.target.closest('a.nav-link');
+            if (link) {
+                closeSidebar();
+            }
         });
+
+        // Close on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeSidebar();
+            }
+        });
+
+        // Close after Livewire page navigation
+        document.addEventListener('livewire:navigated', closeSidebar);
         
         // Close sidebar on window resize to desktop
         window.addEventListener('resize', function() {
             if (window.innerWidth >= 992) {
-                sidebar.classList.remove('show');
-                overlay.classList.remove('show');
+                closeSidebar();
             }
         });
     }

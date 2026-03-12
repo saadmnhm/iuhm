@@ -104,6 +104,18 @@
                 </a>
             </li>
 
+            <li class="nav-item">
+                <a href="{{ route('user.broadcasts.history') }}"
+                   class="nav-link d-flex align-items-center gap-2 {{ request()->routeIs('user.broadcasts.history') ? 'active' : '' }}"
+                   style="{{ request()->routeIs('user.broadcasts.history') ? 'background:#64845415;color:#648454;border-radius:.55rem;font-weight:600;' : '' }}">
+                    <i class="ri-broadcast-line fs-5" style="{{ request()->routeIs('user.broadcasts.history') ? 'color:#648454;' : '' }}"></i>
+                    <span>Historique messages</span>
+                    @if(request()->routeIs('user.broadcasts.history'))
+                        <span class="ms-auto rounded-pill" style="width:6px;height:6px;background:#648454;display:inline-block;"></span>
+                    @endif
+                </a>
+            </li>
+
         </ul>
     </nav>
 

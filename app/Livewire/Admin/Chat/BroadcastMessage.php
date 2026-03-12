@@ -16,7 +16,7 @@ class BroadcastMessage extends Component
     public string $title       = '';
     public string $message     = '';
     public string $targetType  = 'all';     // all | selected | single
-    public ?int   $singleId    = null;
+    public $singleId = null;
     public array  $selectedIds = [];
 
     public bool $showForm = false;
@@ -26,10 +26,25 @@ class BroadcastMessage extends Component
         'title'        => 'required|string|max:255',
         'message'      => 'required|string|max:2000',
         'targetType'   => 'required|in:all,selected,single',
-        'singleId'     => 'nullable|required_if:targetType,single|exists:candidat,id',
-        'selectedIds'  => 'nullable|required_if:targetType,selected|array|min:1',
-        'selectedIds.*'=> 'exists:candidat,id',
     ];
+
+    public function updatedTargetType(string $value): void
+    {
+        if ($value === 'all') {
+            $this->singleId = null;
+            $this->selectedIds = [];
+            return;
+        }
+
+        if ($value === 'single') {
+            $this->selectedIds = [];
+            return;
+        }
+
+        if ($value === 'selected') {
+            $this->singleId = null;
+        }
+    }
 
     public function openForm(): void
     {
@@ -39,15 +54,31 @@ class BroadcastMessage extends Component
 
     public function sendBroadcast(): void
     {
-        $this->validate();
+        $rules = $this->rules;
+
+        if ($this->targetType === 'single') {
+            $rules['singleId'] = 'required|integer|exists:candidat,id';
+        }
+
+        if ($this->targetType === 'selected') {
+            $rules['selectedIds'] = 'required|array|min:1';
+            $rules['selectedIds.*'] = 'integer|exists:candidat,id';
+        }
+
+        $this->validate($rules);
+
+        $singleId = $this->targetType === 'single' ? (int) $this->singleId : null;
+        $selectedIds = $this->targetType === 'selected'
+            ? array_values(array_map('intval', $this->selectedIds))
+            : null;
 
         AdminBroadcast::create([
             'admin_id'            => Auth::id(),
             'title'               => $this->title,
             'message'             => $this->message,
             'target_type'         => $this->targetType,
-            'target_candidat_ids' => $this->targetType === 'selected' ? $this->selectedIds : null,
-            'target_candidat_id'  => $this->targetType === 'single'   ? $this->singleId   : null,
+            'target_candidat_ids' => $selectedIds,
+            'target_candidat_id'  => $singleId,
             'is_active'           => true,
         ]);
 

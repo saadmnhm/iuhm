@@ -160,19 +160,7 @@
                             @endif
                         </span>
                     </div>
-                    <div class="flex items-center gap-2 flex-shrink-0">
-                        @if($b->is_active)
-                        <button wire:click="deactivate({{ $b->id }})"
-                                class="text-xs text-gray-500 hover:text-orange-600 transition px-2 py-1 rounded border border-gray-200 hover:border-orange-300">
-                            Désactiver
-                        </button>
-                        @endif
-                        <button wire:click="delete({{ $b->id }})"
-                                onclick="return confirm('Supprimer ce broadcast?')"
-                                class="text-xs text-red-500 hover:text-red-700 transition px-2 py-1 rounded border border-red-100 hover:border-red-300">
-                            <i class="ri-delete-bin-line"></i>
-                        </button>
-                    </div>
+                   
                 </div>
                 <p class="text-sm text-gray-600 mt-1">{{ \Str::limit($b->message, 120) }}</p>
                 <div class="text-xs text-gray-400 mt-1 flex items-center gap-3">

@@ -20,15 +20,34 @@ class BroadcastPopup extends Component
 
     public function mount(): void
     {
+        $this->loadUnread();
+    }
+
+    private function loadUnread(): void
+    {
         $candidat = Auth::guard('candidat')->user();
         if (!$candidat) return;
 
         $broadcasts = AdminBroadcast::unreadForCandidat($candidat->id);
-        $this->queue = $broadcasts->pluck('id')->toArray();
+
+        // Merge newly found IDs into queue (avoid duplicates with current)
+        $existingIds = $this->current
+            ? array_merge([$this->current->id], $this->queue)
+            : $this->queue;
+        $newIds = $broadcasts->pluck('id')->diff($existingIds)->values()->toArray();
+        $this->queue = array_merge($this->queue, $newIds);
 
         $this->unreadChatCount = ChatMessage::unreadForCandidat($candidat->id);
 
-        $this->showNext();
+        if (!$this->current) {
+            $this->showNext();
+        }
+    }
+
+    /** Called by wire:poll every 15s to pick up newly sent broadcasts */
+    public function refresh(): void
+    {
+        $this->loadUnread();
     }
 
     private function showNext(): void
@@ -41,13 +60,16 @@ class BroadcastPopup extends Component
         $this->current = AdminBroadcast::find($id);
     }
 
-    public function dismiss(): void
+    /** Mark current broadcast as read and advance to next */
+    public function markRead(): void
     {
         $candidat = Auth::guard('candidat')->user();
         if ($this->current && $candidat) {
             BroadcastRead::firstOrCreate([
                 'broadcast_id' => $this->current->id,
                 'candidat_id'  => $candidat->id,
+            ], [
+                'read_at' => now(),
             ]);
         }
         $this->showNext();
