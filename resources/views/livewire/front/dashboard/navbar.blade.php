@@ -25,7 +25,7 @@
                             data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                         <i class="ri-notification-3-line"></i>
                         @if($unreadCount > 0)
-                        <span class="notification-badge">{{ $unreadCount > 9 ? '9+' : $unreadCount }}</span>
+                        <span class="notification-badge"></span>
                         @endif
                     </button>
 

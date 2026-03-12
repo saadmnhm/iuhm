@@ -70,14 +70,14 @@
                 @endif
 
                 <div class="bg-light rounded-3 p-3 p-md-4 mb-4" style="border-left: 4px solid {{ $form->color ?? '#2f5496' }};">
-                    <div class="text-secondary" style="white-space: pre-wrap; line-height: 1.8;">
+                    <div class="text-secondary" style=" line-height: 1.8;">
                         {!! nl2br(e($formulaire->introduction_content)) !!}
                     </div>
                 </div>
 
                 @if($formulaire->introduction_content_ar)
                     <div class="bg-light rounded-3 p-3 p-md-4 mb-4" dir="rtl" style="border-right: 4px solid {{ $form->color ?? '#2f5496' }};">
-                        <div class="text-secondary" style="white-space: pre-wrap; line-height: 1.8;">
+                        <div class="text-secondary" style=" line-height: 1.8;">
                             {!! nl2br(e($formulaire->introduction_content_ar)) !!}
                         </div>
                     </div>

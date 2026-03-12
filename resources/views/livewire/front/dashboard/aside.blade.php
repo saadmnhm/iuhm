@@ -6,14 +6,19 @@
         </a>
     </div>
 
-    <nav class="py-3 flex-grow h">
+    <nav class="py-3 flex-grow">
         <ul class="nav flex-column gap-1">
 
-            {{-- Dashboard --}}
+            {{-- Main Section --}}
+            <li class="nav-item mt-1 mb-1">
+                <small class="sidebar-section-label">Navigation principale</small>
+            </li>
+
+            {{-- Dashboard (high priority) --}}
             <li class="nav-item">
                 <a href="{{ route('user.dashboard') }}"
-                   class="nav-link d-flex align-items-center gap-2 {{ request()->routeIs('user.dashboard') ? 'active' : '' }}"
-                   style="{{ request()->routeIs('user.dashboard') ? 'background:#6366f115;color:#648454;border-radius:.55rem;font-weight:600;' : '' }}">
+                   class="nav-link sidebar-main-link d-flex align-items-center gap-2 {{ request()->routeIs('user.dashboard') ? 'active' : '' }}"
+                   style="{{ request()->routeIs('user.dashboard') ? 'background:#6366f115;color:#648454;border-radius:.65rem;font-weight:700;' : '' }}">
                     <i class="ri-home-4-line fs-5" style="{{ request()->routeIs('user.dashboard') ? 'color:#648454;' : '' }}"></i>
                     <span>Tableau de bord</span>
                     @if(request()->routeIs('user.dashboard'))
@@ -22,40 +27,44 @@
                 </a>
             </li>
 
-            {{-- Section label --}}
-            <li class="nav-item mt-2 mb-1">
-                <small class="nav-link text-muted text-uppercase fw-bold px-3"
-                       style="font-size:.65rem;letter-spacing:1.2px;pointer-events:none;">Programmes</small>
-            </li>
+            {{-- Projects Hub (highest priority) --}}
+            <li class="nav-item" x-data="{ open: true }">
+                <div class="project-hub">
+                    <button @click="open = !open"
+                            class="project-toggle w-100 d-flex align-items-center gap-2 text-start"
+                            type="button">
+                        <i class="ri-folder-open-line fs-5"></i>
+                        <span class="flex-grow-1 fw-semibold">Mes Projets</span>
+                        <span class="project-count">{{ count($programe_list ?? []) }}</span>
+                        <i :class="open ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'" style="font-size:1rem;"></i>
+                    </button>
 
-            {{-- Projets collapsible --}}
-            <li class="nav-item" x-data="{ open: {{ request()->routeIs('user.project.*') ? 'true' : 'false' }} }">
-                <button @click="open = !open"
-                        class="nav-link w-100 d-flex align-items-center gap-2 text-start"
-                        style="background:none;border:none;">
-                    <i class="ri-folder-open-line fs-5" ></i>
-                    <span class="flex-grow-1">Projets</span>
-                    <i :class="open ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'"
-                       style="font-size:1rem;transition:transform .2s;"></i>
-                </button>
+                    <div x-show="open" x-collapse class="mt-2">
+                        <a href="{{ route('user.projects.list') }}"
+                           class="project-item d-flex align-items-center gap-2 {{ request()->routeIs('user.projects.list') ? 'active' : '' }}">
+                            <i class="ri-list-check-2"></i>
+                            <span>Tous les projets</span>
+                        </a>
 
-                <div x-show="open" x-collapse class="ps-3 mt-1">
-                    @foreach($programe_list ?? [] as $list)
-                    <a href="{{ route('user.project.detail', $list->id) }}"
-                       class="nav-link d-flex align-items-center gap-2 py-2 {{ request()->routeIs('user.project.detail') && request()->route('id') == $list->id ? 'active' : '' }}"
-                       style="font-size:.85rem;border-radius:.45rem;
-                              {{ request()->routeIs('user.project.detail') && request()->route('id') == $list->id ? 'background:#6366f110;color:#648454;font-weight:600;' : '' }}">
-                        <i class="ri-arrow-right-s-line" style="font-size:.9rem;{{ request()->routeIs('user.project.detail') && request()->route('id') == $list->id ? 'color:#648454;' : 'color:#94a3b8;' }}"></i>
-                        <span class="text-truncate">{{ $list->project_name }}</span>
-                    </a>
-                    @endforeach
+                        <div class="project-list mt-1">
+                            @forelse($programe_list ?? [] as $list)
+                                <a href="{{ route('user.project.detail', $list->id) }}"
+                                   class="project-item d-flex align-items-center gap-2 {{ request()->routeIs('user.project.detail') && request()->route('id') == $list->id ? 'active' : '' }}">
+                                    <i class="ri-arrow-right-s-line"></i>
+                                    <span class="text-truncate">{{ $list->project_name }}</span>
+                                </a>
+                            @empty
+                                <p class="text-muted small px-2 py-2 mb-0">Aucun projet disponible.</p>
+                            @endforelse
+                        </div>
+                    </div>
                 </div>
             </li>
 
-            {{-- Section label: Ressources --}}
+            {{-- Secondary Section --}}
             <li class="nav-item mt-2 mb-1">
                 <small class="nav-link text-muted text-uppercase fw-bold px-3"
-                       style="font-size:.65rem;letter-spacing:1.2px;pointer-events:none;">Ressources</small>
+                       style="font-size:.65rem;letter-spacing:1.2px;pointer-events:none;">Autres menus</small>
             </li>
 
             <li class="nav-item">
