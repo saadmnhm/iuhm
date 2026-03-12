@@ -1,12 +1,12 @@
 ﻿<div>
-<aside class="sidebar d-flex flex-column">
+<aside class="sidebar d-flex flex-column" style="overflow-x: hidden; height: 100%;">
     <div class="logo">
         <a href="{{ route('user.dashboard') }}">
             <img src="{{ asset('assets/site/images/iuhm_logo.png') }}" alt="Logo">
         </a>
     </div>
 
-    <nav class="py-3 flex-grow-1">
+    <nav class="py-3 flex-grow- h">
         <ul class="nav flex-column gap-1">
 
             {{-- Dashboard --}}
