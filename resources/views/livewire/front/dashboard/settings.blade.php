@@ -58,7 +58,7 @@
                                                     >
                                                 @elseif ($profile_image)
                                                     <img
-                                                        src="{{ asset('uploads/' . $profile_image) }}"
+                                                        src="{{ route('uploads.show', ['path' => $profile_image]) }}"
                                                         alt="Photo de profil"
                                                         class="w-full h-full object-cover"
                                                     >

@@ -6,7 +6,7 @@
         </a>
     </div>
 
-    <nav class="py-3 flex-grow- h">
+    <nav class="py-3 flex-grow h">
         <ul class="nav flex-column gap-1">
 
             {{-- Dashboard --}}

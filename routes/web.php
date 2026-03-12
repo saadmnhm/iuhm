@@ -183,7 +183,11 @@ Route::get('/lang/{locale}', function ($locale) {
     return back();
 })->name('lang.switch');
 
-Route::middleware(['admin'])->get('/uploads/{path}', function ($path) {
+Route::get('/uploads/{path}', function ($path) {
+    if (!Auth::guard('web')->check() && !Auth::guard('candidat')->check()) {
+        abort(403);
+    }
+
     $filePath = base_path('uploads/' . $path);
     
     if (!file_exists($filePath)) {

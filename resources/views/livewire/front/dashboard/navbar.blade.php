@@ -81,7 +81,7 @@
                             data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="profile-avatar">
                             @if($profile_image)
-                                <img src="{{ asset('uploads/' . $profile_image) }}" alt="Profile">
+                                <img src="{{ route('uploads.show', ['path' => $profile_image]) }}" alt="Profile">
                             @else
                                 <i class="ri-user-line"></i>
                             @endif
