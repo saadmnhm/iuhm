@@ -127,7 +127,7 @@ class RoleManagement extends Component
         }
 
         $label = $role->label;
-        RolePermission::where('role_name', $role->name)->delete();
+        RolePermission::withTrashed()->where('role_name', $role->name)->forceDelete();
         Role::clearPermissionCache($role->name);
         $role->delete();
 
@@ -156,7 +156,7 @@ class RoleManagement extends Component
             return;
         }
 
-        RolePermission::where('role_name', $this->permsRoleName)->delete();
+        RolePermission::withTrashed()->where('role_name', $this->permsRoleName)->forceDelete();
         foreach ($this->selectedPerms as $key) {
             RolePermission::create(['role_name' => $this->permsRoleName, 'module_key' => $key]);
         }

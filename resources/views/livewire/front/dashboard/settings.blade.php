@@ -1,9 +1,14 @@
-<div class="container py-4">
+@php
+    $isArabic = str_starts_with(app()->getLocale(), 'ar');
+    $tr = fn (string $fr, string $ar) => $isArabic ? $ar : $fr;
+@endphp
+
+<div class="container py-4" @if($isArabic) dir="rtl" @endif>
     <div class="row justify-content-center">
         <div class="col-lg-10">
             <div class="card shadow-sm">
                 <div class="card-header bg-white py-3">
-                    <h4 class="mb-0"><i class="ri-settings-3-line me-2"></i>Account Settings</h4>
+                    <h4 class="mb-0"><i class="ri-settings-3-line me-2"></i>{{ $tr('Paramètres du compte', 'إعدادات الحساب') }}</h4>
                 </div>
                 <div class="card-body p-0">
                     <!-- Tabs Navigation -->
@@ -13,7 +18,7 @@
                                 class="nav-link {{ $activeTab === 'profile' ? 'active' : '' }}" 
                                 wire:click="setActiveTab('profile')"
                                 type="button">
-                                <i class="ri-user-line me-1"></i> Profile Information
+                                <i class="ri-user-line me-1"></i>{{ $tr('Informations du profil', 'معلومات الملف الشخصي') }}
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
@@ -21,7 +26,7 @@
                                 class="nav-link {{ $activeTab === 'password' ? 'active' : '' }}" 
                                 wire:click="setActiveTab('password')"
                                 type="button">
-                                <i class="ri-lock-password-line me-1"></i> Change Password
+                                <i class="ri-lock-password-line me-1"></i>{{ $tr('Changer le mot de passe', 'تغيير كلمة المرور') }}
                             </button>
                         </li>
                     </ul>
@@ -86,26 +91,26 @@
                                     </div>
                                     <!-- Name Fields -->
                                     <div class="col-md-6">
-                                        <label for="nom" class="form-label">First Name <span class="text-danger">*</span></label>
+                                        <label for="nom" class="form-label">{{ $tr('Prénom', 'الاسم') }} <span class="text-danger">*</span></label>
                                         <input 
                                             type="text" 
                                             class="form-control @error('nom') is-invalid @enderror" 
                                             id="nom" 
                                             wire:model="nom"
-                                            placeholder="Enter your first name">
+                                            placeholder="{{ $tr('Entrez votre prénom', 'أدخل اسمك') }}">
                                         @error('nom')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
 
                                     <div class="col-md-6">
-                                        <label for="prenom" class="form-label">Last Name <span class="text-danger">*</span></label>
+                                        <label for="prenom" class="form-label">{{ $tr('Nom', 'النسب') }} <span class="text-danger">*</span></label>
                                         <input 
                                             type="text" 
                                             class="form-control @error('prenom') is-invalid @enderror" 
                                             id="prenom" 
                                             wire:model="prenom"
-                                            placeholder="Enter your last name">
+                                            placeholder="{{ $tr('Entrez votre nom', 'أدخل نسبك') }}">
                                         @error('prenom')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -113,19 +118,19 @@
 
                                     <div class="col-md-6">
                                             <label for="age" class="block disc mb-2 font-semibold">{{ __('messages.age') }}</label>
-                                            <input type="number" class="form-control border border-gray-300 rounded p-2 w-full" id="age" name="age" wire:model="age" min="18" max="100" placeholder="Ex: 25">
+                                                <input type="number" class="form-control border border-gray-300 rounded p-2 w-full" id="age" name="age" wire:model="age" min="18" max="100" placeholder="{{ $tr('Ex : 25', 'مثال: 25') }}">
                                             @error('age') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                                     </div>
                                     <!-- Login & Email -->
 
                                     <div class="col-md-6">
-                                        <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
+                                        <label for="email" class="form-label">{{ $tr('Adresse email', 'البريد الإلكتروني') }} <span class="text-danger">*</span></label>
                                         <input 
                                             type="email" 
                                             class="form-control @error('email') is-invalid @enderror" 
                                             id="email" 
                                             wire:model="email"
-                                            placeholder="Enter your email">
+                                            placeholder="{{ $tr('Entrez votre email', 'أدخل بريدك الإلكتروني') }}">
                                         @error('email')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
@@ -133,20 +138,20 @@
 
                                     <!-- Contact Information -->
                                     <div class="col-md-6">
-                                        <label for="phone" class="form-label">Phone Number</label>
+                                        <label for="phone" class="form-label">{{ $tr('Téléphone', 'رقم الهاتف') }}</label>
                                         <input 
                                             type="text" 
                                             class="form-control @error('phone') is-invalid @enderror" 
                                             id="phone" 
                                             wire:model="phone"
-                                            placeholder="Enter your phone number">
+                                            placeholder="{{ $tr('Entrez votre numéro de téléphone', 'أدخل رقم هاتفك') }}">
                                         @error('phone')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
 
                                     <div class="col-md-6">
-                                        <label for="gender" class="form-label">Gender</label>
+                                        <label for="gender" class="form-label">{{ $tr('Genre', 'الجنس') }}</label>
                                         <select class="form-control border border-gray-300 rounded p-2 w-full" id="gender" name="gender" wire:model="gender">
                                             <option value="">{{ __('messages.selectionner') }}</option>
                                             <option value="homme">{{ __('messages.homme') }}</option>
@@ -158,9 +163,9 @@
                                     </div>
 
                                     <div class="col-md-3">
-                                        <label for="selected_region" class="form-label">Région</label>
+                                        <label for="selected_region" class="form-label">{{ $tr('Région', 'الجهة') }}</label>
                                         <select class="form-control @error('selected_region') is-invalid @enderror" id="selected_region" wire:model.live="selected_region">
-                                            <option value="">Sélectionner une région</option>
+                                            <option value="">{{ $tr('Sélectionner une région', 'اختر جهة') }}</option>
                                             @foreach($regions as $region)
                                                 <option value="{{ $region }}">{{ $region }}</option>
                                             @endforeach
@@ -171,9 +176,9 @@
                                     </div>
 
                                     <div class="col-md-3">
-                                        <label for="selected_city" class="form-label">Ville</label>
+                                        <label for="selected_city" class="form-label">{{ $tr('Ville', 'المدينة') }}</label>
                                         <select class="form-control @error('selected_city') is-invalid @enderror" id="selected_city" wire:model.live="selected_city" {{ empty($selected_region) ? 'disabled' : '' }}>
-                                            <option value="">Sélectionner une ville</option>
+                                            <option value="">{{ $tr('Sélectionner une ville', 'اختر مدينة') }}</option>
                                             @foreach($cities as $city)
                                                 <option value="{{ $city }}">{{ $city }}</option>
                                             @endforeach
@@ -184,9 +189,9 @@
                                     </div>
 
                                     <div class="col-md-3">
-                                        <label for="selected_prefecture" class="form-label">Préfecture</label>
+                                        <label for="selected_prefecture" class="form-label">{{ $tr('Préfecture', 'العمالة / الإقليم') }}</label>
                                         <select class="form-control @error('selected_prefecture') is-invalid @enderror" id="selected_prefecture" wire:model.live="selected_prefecture" {{ empty($selected_city) ? 'disabled' : '' }}>
-                                            <option value="">Sélectionner une préfecture</option>
+                                            <option value="">{{ $tr('Sélectionner une préfecture', 'اختر عمالة / إقليم') }}</option>
                                             @foreach($prefectures as $prefecture)
                                                 <option value="{{ $prefecture }}">{{ $prefecture }}</option>
                                             @endforeach
@@ -197,13 +202,13 @@
                                     </div>
 
                                     <div class="col-md-3">
-                                        <label for="address_detail" class="form-label">Détails adresse (IMM, GH...)</label>
+                                        <label for="address_detail" class="form-label">{{ $tr('Détails adresse (IMM, GH...)', 'تفاصيل العنوان (IMM, GH...)') }}</label>
                                         <input
                                             type="text"
                                             class="form-control @error('address_detail') is-invalid @enderror"
                                             id="address_detail"
                                             wire:model="address_detail"
-                                            placeholder="Ex: IMM 12, GH B, Appartement 4"
+                                            placeholder="{{ $tr('Ex : IMM 12, GH B, Appartement 4', 'مثال: IMM 12, GH B, شقة 4') }}"
                                         >
                                         @error('address_detail')
                                             <div class="invalid-feedback">{{ $message }}</div>
@@ -213,7 +218,7 @@
                                     
                                     <div class="col-12 mt-4">
                                         <button type="submit" class="btn btn-primary px-4">
-                                            <i class="ri-save-line me-2"></i>Save Changes
+                                            <i class="ri-save-line me-2"></i>{{ $tr('Enregistrer les modifications', 'حفظ التغييرات') }}
                                         </button>
                                     </div>
                                 </div>
@@ -236,49 +241,49 @@
                                     <div class="col-12">
                                         <div class="alert alert-info">
                                             <i class="ri-information-line me-2"></i>
-                                            Password must be at least 6 characters long.
+                                            {{ $tr('Le mot de passe doit contenir au moins 6 caractères.', 'يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.') }}
                                         </div>
                                     </div>
 
                                     <div class="col-md-12">
-                                        <label for="current_password" class="form-label">Current Password <span class="text-danger">*</span></label>
+                                        <label for="current_password" class="form-label">{{ $tr('Mot de passe actuel', 'كلمة المرور الحالية') }} <span class="text-danger">*</span></label>
                                         <input 
                                             type="password" 
                                             class="form-control @error('current_password') is-invalid @enderror" 
                                             id="current_password" 
                                             wire:model="current_password"
-                                            placeholder="Enter your current password">
+                                            placeholder="{{ $tr('Entrez votre mot de passe actuel', 'أدخل كلمة المرور الحالية') }}">
                                         @error('current_password')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
 
                                     <div class="col-md-12">
-                                        <label for="new_password" class="form-label">New Password <span class="text-danger">*</span></label>
+                                        <label for="new_password" class="form-label">{{ $tr('Nouveau mot de passe', 'كلمة المرور الجديدة') }} <span class="text-danger">*</span></label>
                                         <input 
                                             type="password" 
                                             class="form-control @error('new_password') is-invalid @enderror" 
                                             id="new_password" 
                                             wire:model="new_password"
-                                            placeholder="Enter your new password">
+                                            placeholder="{{ $tr('Entrez votre nouveau mot de passe', 'أدخل كلمة المرور الجديدة') }}">
                                         @error('new_password')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
 
                                     <div class="col-md-12">
-                                        <label for="new_password_confirmation" class="form-label">Confirm New Password <span class="text-danger">*</span></label>
+                                        <label for="new_password_confirmation" class="form-label">{{ $tr('Confirmer le nouveau mot de passe', 'تأكيد كلمة المرور الجديدة') }} <span class="text-danger">*</span></label>
                                         <input 
                                             type="password" 
                                             class="form-control" 
                                             id="new_password_confirmation" 
                                             wire:model="new_password_confirmation"
-                                            placeholder="Confirm your new password">
+                                            placeholder="{{ $tr('Confirmez votre nouveau mot de passe', 'أكد كلمة المرور الجديدة') }}">
                                     </div>
 
                                     <div class="col-12 mt-4">
                                         <button type="submit" class="btn btn-primary px-4">
-                                            <i class="ri-lock-line me-2"></i>Update Password
+                                            <i class="ri-lock-line me-2"></i>{{ $tr('Mettre à jour le mot de passe', 'تحديث كلمة المرور') }}
                                         </button>
                                     </div>
                                 </div>

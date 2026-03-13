@@ -1,7 +1,12 @@
-<div>
+@php
+    $isArabic = str_starts_with(app()->getLocale(), 'ar');
+    $tr = fn (string $fr, string $ar) => $isArabic ? $ar : $fr;
+@endphp
+
+<div @if($isArabic) dir="rtl" @endif>
     <div class="mb-4">
         <a href="{{ route('user.blog') }}" class="text-decoration-none text-muted">
-            <i class="ri-arrow-left-line me-1"></i> Retour aux articles
+            <i class="ri-arrow-left-line me-1"></i> {{ $tr('Retour aux articles', 'العودة إلى المقالات') }}
         </a>
     </div>
 
@@ -29,9 +34,9 @@
             @endif
 
             <div class="d-flex align-items-center gap-4 text-muted small mb-4 pb-4 border-bottom">
-                <span><i class="ri-user-line me-1"></i> {{ $post->author->name ?? 'Auteur' }}</span>
+                <span><i class="ri-user-line me-1"></i> {{ $post->author->name ?? $tr('Auteur', 'الكاتب') }}</span>
                 <span><i class="ri-calendar-line me-1"></i> {{ $post->published_at->format('d F Y') }}</span>
-                <span><i class="ri-eye-line me-1"></i> {{ $post->views_count }} vues</span>
+                <span><i class="ri-eye-line me-1"></i> {{ $post->views_count }} {{ $tr('vues', 'مشاهدة') }}</span>
             </div>
 
             @if($post->excerpt)

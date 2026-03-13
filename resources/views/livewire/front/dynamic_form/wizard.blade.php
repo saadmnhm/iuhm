@@ -1,4 +1,9 @@
-<div>
+@php
+    $isArabic = str_starts_with(app()->getLocale(), 'ar');
+    $tr = fn (string $fr, string $ar) => $isArabic ? $ar : $fr;
+@endphp
+
+<div @if($isArabic) dir="rtl" @endif>
     <div class="parent-steps container">
         {{-- Read-Only Banner --}}
 
@@ -8,7 +13,7 @@
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4" role="alert">
                 <div class="flex items-center">
                     <i class="ri-save-line mr-2"></i>
-                    <p class="text-sm">Mode brouillon - Votre progression est automatiquement sauvegardée.</p>
+                    <p class="text-sm">{{ $tr('Mode brouillon - Votre progression est automatiquement sauvegardée.', 'وضع المسودة - يتم حفظ تقدمك تلقائيًا.') }}</p>
                 </div>
             </div>
         @endif
@@ -114,7 +119,7 @@
                                     wire:model="answers.{{ $field->field_key }}"
                                     class="form-control"
                                     @if($isReadOnly) disabled @endif>
-                                    <option value="">{{ $field->placeholder ?: 'Sélectionner...' }}</option>
+                                    <option value="">{{ $field->placeholder ?: $tr('Sélectionner...', 'اختر...') }}</option>
                                     @foreach($field->options ?? [] as $opt)
                                         <option value="{{ $opt }}">{{ $opt }}</option>
                                     @endforeach
@@ -269,7 +274,7 @@
                                                     <td class="border px-2 py-2">
                                                         @if(($tableRowCounts[$table->table_key] ?? $table->min_rows) > $table->min_rows)
                                                             <button wire:click="removeTableRow('{{ $table->table_key }}', {{ $ri }})"
-                                                                class="text-red-500" title="Supprimer">✕</button>
+                                                                class="text-red-500" title="{{ $tr('Supprimer', 'حذف') }}">✕</button>
                                                         @endif
                                                     </td>
                                                 @endif
@@ -282,6 +287,7 @@
                                         <tr class="bg-gray-100 font-bold">
                                             @if(!$table->has_dynamic_rows && $table->fixedRows->isNotEmpty())
                                                 <td class="border px-3 py-2 text-right title-table">Total</td>
+
                                             @endif
                                             @foreach($table->columns->sortBy('sort_order') as $col)
                                                 <td class="border px-3 py-2">
@@ -318,25 +324,25 @@
         <div class="navigation-buttons mt-4 flex justify-center gap-4">
             @if($step > 1)
                 <button wire:click="back" class="navigation-btn btn-back">
-                    <i class="ri-arrow-left-circle-fill me-1 ms-1"></i> Précédent
+                    <i class="ri-arrow-left-circle-fill me-1 ms-1"></i> {{ $tr('Précédent', 'السابق') }}
                 </button>
             @endif
 
             @if($step < $totalSteps)
                 <button wire:click="next" class="navigation-btn btn-next" @if($isReadOnly && $step >= $totalSteps) disabled @endif>
-                    Suivant <i class="ri-arrow-right-circle-fill me-1 ms-1"></i>
+                    {{ $tr('Suivant', 'التالي') }} <i class="ri-arrow-right-circle-fill me-1 ms-1"></i>
                 </button>
             @endif
 
             @if(!$isReadOnly && $step < $totalSteps)
                 <button wire:click="saveAsDraft" class="navigation-btn" style="background-color: #28a745;">
-                    <i class="ri-save-line me-1 ms-1"></i> Sauvegarder
+                    <i class="ri-save-line me-1 ms-1"></i> {{ $tr('Sauvegarder', 'حفظ') }}
                 </button>
             @endif
 
             @if($step == $totalSteps && !$isReadOnly)
                 <button wire:click="submit" class="navigation-btn btn-submit">
-                    Soumettre <i class="ri-send-plane-fill me-1 ms-1"></i>
+                    {{ $tr('Soumettre', 'إرسال') }} <i class="ri-send-plane-fill me-1 ms-1"></i>
                 </button>
             @endif
         </div>
@@ -361,7 +367,7 @@
                 <img src="{{ asset('assets/site/images/indh_logo.png') }}" alt="indh-logo-footer">
                 <img src="{{ asset('assets/site/images/logo_zettat.png') }}" alt="zettat-logo-footer">
             </div>
-            <p class="text-center mt-5">&copy; {{ date('Y') }} Tous droits réservés par <a href="https://www.iuhm.org" target="_blank" style="color: {{ $form->color }};">initiative urbaine hay mohammadi</a></p>
+            <p class="text-center mt-5">&copy; {{ date('Y') }} {{ $tr('Tous droits réservés par', 'جميع الحقوق محفوظة لدى') }} <a href="https://www.iuhm.org" target="_blank" style="color: {{ $form->color }};">initiative urbaine hay mohammadi</a></p>
         </div>
 
         <script>

@@ -1,14 +1,19 @@
-<div>
+@php
+    $isArabic = str_starts_with(app()->getLocale(), 'ar');
+    $tr = fn (string $fr, string $ar) => $isArabic ? $ar : $fr;
+@endphp
+
+<div @if($isArabic) dir="rtl" @endif>
     {{-- Page Header --}}
     <div class="d-flex align-items-center justify-content-between mb-4">
         <div class="d-flex align-items-center gap-3">
-            <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+            <div class="rounded-3 d-flex align-items-center justify-content-center shrink-0"
                  style="width:44px;height:44px;background:linear-gradient(135deg,#648454,#8baf74);">
                 <i class="ri-broadcast-fill text-white fs-5"></i>
             </div>
             <div>
-                <h4 class="fw-bold mb-0" style="color:#2d3748;">Historique des messages</h4>
-                <p class="text-muted mb-0" style="font-size:.8rem;">Tous les messages diffusés par l'administration</p>
+                <h4 class="fw-bold mb-0" style="color:#2d3748;">{{ $tr('Historique des messages', 'سجل الرسائل') }}</h4>
+                <p class="text-muted mb-0" style="font-size:.8rem;">{{ $tr("Tous les messages diffusés par l'administration", 'جميع الرسائل المرسلة من الإدارة') }}</p>
             </div>
         </div>
     </div>
@@ -26,17 +31,17 @@
                 <div class="d-flex align-items-start gap-3">
 
                     {{-- Icon --}}
-                    <div class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                    <div class="rounded-3 d-flex align-items-center justify-content-center shrink-0"
                          style="width:42px;height:42px;background:{{ $isRead ? '#f0f0f0' : 'linear-gradient(135deg,#648454,#8baf74)' }}">
                         <i class="ri-notification-3-{{ $isRead ? 'line' : 'fill' }} {{ $isRead ? 'text-muted' : 'text-white' }} fs-5"></i>
                     </div>
 
                     {{-- Content --}}
-                    <div class="flex-grow-1 min-w-0">
+                    <div class="grow min-w-0">
                         <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
                             <span class="fw-bold" style="color:#2d3748;font-size:.95rem;">{{ $broadcast->title }}</span>
                             @if(!$isRead)
-                                <span class="badge rounded-pill text-white" style="background:#648454;font-size:.65rem;">Nouveau</span>
+                                <span class="badge rounded-pill text-white" style="background:#648454;font-size:.65rem;">{{ $tr('Nouveau', 'جديد') }}</span>
                             @endif
                         </div>
 
@@ -56,7 +61,7 @@
                                 @endphp
                                 <span class="text-success d-flex align-items-center gap-1" style="font-size:.75rem;">
                                     <i class="ri-checkbox-circle-fill"></i>
-                                    Lu {{ $readRecord?->read_at ? \Carbon\Carbon::parse($readRecord->read_at)->diffForHumans() : '' }}
+                                    {{ $tr('Lu', 'مقروء') }} {{ $readRecord?->read_at ? \Carbon\Carbon::parse($readRecord->read_at)->diffForHumans() : '' }}
                                 </span>
                             @endif
                         </div>
@@ -72,11 +77,11 @@
                 </div>
                 <p class="text-muted mb-0" style="font-size:.9rem;">
                     @if($search)
-                        Aucun message trouvé pour « {{ $search }} »
+                        {{ $tr('Aucun message trouvé pour', 'لم يتم العثور على أي رسالة لـ') }} « {{ $search }} »
                     @elseif($filter === 'unread')
-                        Vous avez lu tous vos messages !
+                        {{ $tr('Vous avez lu tous vos messages !', 'لقد قرأت كل رسائلك!') }}
                     @else
-                        Aucun message diffusé pour le moment.
+                        {{ $tr('Aucun message diffusé pour le moment.', 'لا توجد رسائل حاليًا.') }}
                     @endif
                 </p>
             </div>

@@ -1,4 +1,9 @@
-<div>
+@php
+    $isArabic = str_starts_with(app()->getLocale(), 'ar');
+    $tr = fn (string $fr, string $ar) => $isArabic ? $ar : $fr;
+@endphp
+
+<div @if($isArabic) dir="rtl" @endif>
     <div class="parent-steps container">
 
         {{-- Read-Only Banner --}}
@@ -6,13 +11,19 @@
             <div class="alert alert-info d-flex align-items-center gap-2 rounded-3 shadow-sm mb-4" role="alert">
                 <i class="ri-information-fill fs-4"></i>
                 <div>
-                    <p class="fw-bold mb-0">Formulaire soumis — Mode lecture seule</p>
+                    <p class="fw-bold mb-0">{{ $tr('Formulaire soumis — Mode lecture seule', 'تم إرسال الاستمارة — وضع القراءة فقط') }}</p>
                     <p class="mb-0 small">
-                        Statut: 
+                        {{ $tr('Statut', 'الحالة') }}: 
                         <span class="badge rounded-pill" style="background-color: {{ $form->color ?? '#2f5496' }};">
-                            {{ ['draft' => 'Brouillon', 'submitted' => 'Soumis', 'in_review' => 'En révision', 'approved' => 'Approuvé', 'rejected' => 'Rejeté'][$existingSubmission->status] ?? ucfirst($existingSubmission->status) }}
+                            {{ [
+                                'draft' => $tr('Brouillon', 'مسودة'),
+                                'submitted' => $tr('Soumis', 'مرسل'),
+                                'in_review' => $tr('En révision', 'قيد المراجعة'),
+                                'approved' => $tr('Approuvé', 'مقبول'),
+                                'rejected' => $tr('Rejeté', 'مرفوض')
+                            ][$existingSubmission->status] ?? ucfirst($existingSubmission->status) }}
                         </span>
-                        &middot; Soumis le {{ $existingSubmission->submitted_at?->format('d/m/Y à H:i') }}
+                        &middot; {{ $tr('Soumis le', 'تاريخ الإرسال') }} {{ $existingSubmission->submitted_at?->format('d/m/Y à H:i') }}
                     </p>
                 </div>
             </div>
@@ -22,7 +33,7 @@
         @if($submissionId && !$isReadOnly)
             <div class="alert alert-success d-flex align-items-center gap-2 rounded-3 shadow-sm mb-4" role="alert">
                 <i class="ri-save-line fs-4"></i>
-                <p class="mb-0 small">Mode brouillon — Votre progression est sauvegardée automatiquement.</p>
+                <p class="mb-0 small">{{ $tr('Mode brouillon — Votre progression est sauvegardée automatiquement.', 'وضع المسودة — يتم حفظ تقدمك تلقائيًا.') }}</p>
             </div>
         @endif
 
@@ -87,7 +98,7 @@
                         <button wire:click="skipIntroduction"
                             class="btn text-white px-4 px-md-5 py-2 py-md-3 rounded-pill shadow-sm" 
                             style="background-color: {{ $form->color ?? '#2f5496' }};">
-                        <i class="ri-play-line me-2"></i> Commencer le formulaire
+                        <i class="ri-play-line me-2"></i> {{ $tr('Commencer le formulaire', 'بدء الاستمارة') }}
                     </button>
                 </div>
             </div>
@@ -177,7 +188,8 @@
                                         wire:model="answers.{{ $field->field_key }}"
                                         class="form-control"
                                         @if($isReadOnly) disabled @endif>
-                                        <option value="">{{ $field->placeholder ?: '-- Select --' }}</option>
+                                        <option value="">{{ $field->placeholder ?: $tr('Sélectionner...', 'اختر...') }}</option>
+                                        
                                         @foreach($field->options ?? [] as $opt)
                                             <option value="{{ $opt }}">{{ $opt }}</option>
                                         @endforeach
@@ -351,7 +363,7 @@
                                                         <td class="border px-2 py-2">
                                                             @if(($tableRowCounts[$table->table_key] ?? $table->min_rows) > $table->min_rows)
                                                                 <button wire:click="removeTableRow('{{ $table->table_key }}', {{ $ri }})"
-                                                                    class="text-red-500" title="Remove">✕</button>
+                                                                    class="text-red-500" title="{{ $tr('Supprimer', 'حذف') }}">✕</button>
                                                             @endif
                                                         </td>
                                                     @endif
@@ -364,6 +376,7 @@
                                             <tr class="bg-gray-100 font-bold">
                                                 @if(!$table->has_dynamic_rows && $table->fixedRows->isNotEmpty())
                                                     <td class="border px-3 py-2 text-right title-table">Total</td>
+                                                    
                                                 @endif
                                                 @foreach($table->columns->sortBy('sort_order') as $col)
                                                     <td class="border px-3 py-2">
@@ -383,7 +396,7 @@
 
                                 @if($table->has_dynamic_rows && !$isReadOnly)
                                     <button wire:click="addTableRow('{{ $table->table_key }}')" class="more-row mt-2">
-                                        + Add Row
+                                        + {{ $tr('Ajouter une ligne', 'إضافة سطر') }}
                                     </button>
                                 @endif
                             @endif
@@ -401,29 +414,29 @@
             <div class="navigation-buttons mt-4 d-flex flex-wrap justify-content-center gap-2 gap-md-3">
                 @if($currentStep > 1)
                     <button wire:click="previousStep" class="navigation-btn btn-back w-100 w-md-auto">
-                        <i class="ri-arrow-left-circle-fill me-1 ms-1"></i> Précédent
+                        <i class="ri-arrow-left-circle-fill me-1 ms-1"></i> {{ $tr('Précédent', 'السابق') }}
                     </button>
                 @else
                     <a href="{{ route('user.project.detail', $projectId) }}" class="navigation-btn btn-back w-100 w-md-auto text-center">
-                        <i class="ri-arrow-left-circle-fill me-1 ms-1"></i> Retour au projet
+                        <i class="ri-arrow-left-circle-fill me-1 ms-1"></i> {{ $tr('Retour au projet', 'العودة إلى المشروع') }}
                     </a>
                 @endif
 
                 @if($currentStep < $totalSteps)
                     <button wire:click="nextStep" class="navigation-btn btn-next w-100 w-md-auto" @if($isReadOnly && $currentStep >= $totalSteps) disabled @endif>
-                        Suivant <i class="ri-arrow-right-circle-fill me-1 ms-1"></i>
+                        {{ $tr('Suivant', 'التالي') }} <i class="ri-arrow-right-circle-fill me-1 ms-1"></i>
                     </button>
                 @endif
 
                 @if(!$isReadOnly && $currentStep < $totalSteps)
                     <button wire:click="saveProgress" class="navigation-btn w-100 w-md-auto" style="background-color: #28a745;">
-                        <i class="ri-save-line me-1 ms-1"></i> Sauvegarder
+                        <i class="ri-save-line me-1 ms-1"></i> {{ $tr('Sauvegarder', 'حفظ') }}
                     </button>
                 @endif
 
                 @if($currentStep == $totalSteps && !$isReadOnly)
                     <button wire:click="submit" class="navigation-btn btn-submit w-100 w-md-auto">
-                        Soumettre <i class="ri-send-plane-fill me-1 ms-1"></i>
+                        {{ $tr('Soumettre', 'إرسال') }} <i class="ri-send-plane-fill me-1 ms-1"></i>
                     </button>
                 @endif
             </div>
@@ -436,7 +449,7 @@
                 <img src="{{ asset('assets/site/images/indh_logo.png') }}" alt="indh-logo-footer">
                 <img src="{{ asset('assets/site/images/logo_zettat.png') }}" alt="zettat-logo-footer">
             </div>
-            <p class="text-center mt-5">&copy; {{ date('Y') }} All rights reserved by <a href="https://www.iuhm.org" target="_blank" style="color: {{ $form->color ?? '#2f5496' }};">Initiative Urbaine Hay Mohammadi</a></p>
+            <p class="text-center mt-5">&copy; {{ date('Y') }} {{ $tr('Tous droits réservés par', 'جميع الحقوق محفوظة لدى') }} <a href="https://www.iuhm.org" target="_blank" style="color: {{ $form->color ?? '#2f5496' }};">Initiative Urbaine Hay Mohammadi</a></p>
         </div>
 
         <script>

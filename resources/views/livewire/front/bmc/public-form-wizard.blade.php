@@ -1,11 +1,16 @@
-<div>
+@php
+    $isArabic = str_starts_with(app()->getLocale(), 'ar');
+    $tr = fn (string $fr, string $ar) => $isArabic ? $ar : $fr;
+@endphp
+
+<div @if($isArabic) dir="rtl" @endif>
     <div class="parent-steps container">
         @if($isReadOnly)
             <div class="text-blue-700 px-4 py-3 rounded mb-4" role="alert">
                 <div class="flex items-center">
                     <i class="ri-information-fill mr-2"></i>
                     <div>
-                        <p class="font-bold">Formulaire soumis - Mode lecture seule</p>
+                        <p class="font-bold">{{ $tr('Formulaire soumis - Mode lecture seule', 'تم إرسال الاستمارة - وضع القراءة فقط') }}</p>
                     </div>
                 </div>
             </div>
@@ -15,13 +20,13 @@
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4" role="alert">
                 <div class="flex items-center">
                     <i class="ri-save-line mr-2"></i>
-                    <p class="text-sm">Mode brouillon - Votre progression est sauvegardée.</p>
+                    <p class="text-sm">{{ $tr('Mode brouillon - Votre progression est sauvegardée.', 'وضع المسودة - تم حفظ تقدمك.') }}</p>
                 </div>
             </div>
         @endif
 
         <div class="header-form">
-            <h1>Business Model Canevas</h1>
+            <h1>{{ $tr('Business Model Canevas', 'نموذج العمل التجاري') }}</h1>
             <p>( نموذج مخطط العمل )</p>
         </div>
 
@@ -29,10 +34,10 @@
 
         @if(!$isReadOnly)
             <div class="bg-yellow-100 border border-yellow-400 p-4 mb-4 rounded">
-                <h4 class="font-bold mb-2">🧪 Development Testing Tools</h4>
+                <h4 class="font-bold mb-2">🧪 {{ $tr('Outils de test développement', 'أدوات اختبار التطوير') }}</h4>
                 <div class="flex gap-2 flex-wrap">
                     <button wire:click="fillTestData" class="text-black px-3 py-1 rounded text-sm">
-                        Fill All Test Data
+                        {{ $tr('Remplir toutes les données de test', 'ملء كل بيانات الاختبار') }}
                     </button>
                 </div>
             </div>
@@ -41,7 +46,7 @@
         <div class="navigation-buttons mt-4 flex justify-center gap-4">
             @if(!$isReadOnly)
                 <button wire:click="saveAsDraft" class="navigation-btn" style="background-color: #28a745;">
-                    <i class="ri-save-line me-1 ms-1"></i>Save Draft
+                    <i class="ri-save-line me-1 ms-1"></i>{{ $tr('Enregistrer le brouillon', 'حفظ المسودة') }}
                 </button>
                 <button wire:click="submit" class="navigation-btn btn-submit">
                     {{ __('messages.submitter') }} <i class="ri-send-plane-fill me-1 ms-1"></i>
@@ -67,7 +72,7 @@
                 <img src="{{ asset('assets/site/images/indh_logo.png') }}" alt="indh-logo-footer">
                 <img src="{{ asset('assets/site/images/logo_zettat.png') }}" alt="zettat-logo-footer">
             </div>
-            <p class="text-center mt-5">&copy; {{ date('Y') }} Tous droits réservés par <a href="www.iuhm.org" target="_blank" style='color:#2f5496'>initiative urbaine hay mohammadi</a></p>
+            <p class="text-center mt-5">&copy; {{ date('Y') }} {{ $tr('Tous droits réservés par', 'جميع الحقوق محفوظة لدى') }} <a href="www.iuhm.org" target="_blank" style='color:#2f5496'>initiative urbaine hay mohammadi</a></p>
         </div>
 
         <script>

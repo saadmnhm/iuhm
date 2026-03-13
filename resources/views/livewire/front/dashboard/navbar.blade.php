@@ -1,12 +1,16 @@
+@php
+    $isArabic = str_starts_with(app()->getLocale(), 'ar');
+    $tr = fn (string $fr, string $ar) => $isArabic ? $ar : $fr;
+@endphp
 
-<nav class="top-navbar">
+<nav class="top-navbar" @if($isArabic) dir="rtl" @endif>
         <div class="navbar-content">
             <!-- Left Side - Page Title -->
             <div class="navbar-left">
                 <button class="sidebar-toggle d-lg-none" id="sidebarToggle">
                     <i class="ri-menu-line"></i>
                 </button>
-                <h5 class="page-title mb-0">{{ $pageTitle ?? 'Dashboard' }}</h5>
+                <h5 class="page-title mb-0">{{ $pageTitle ?? $tr('Tableau de bord', 'لوحة التحكم') }}</h5>
             </div>
 
             <!-- Right Side -->
@@ -36,7 +40,7 @@
                         <div class="d-flex align-items-center justify-content-between px-4 py-3"
                             style="border-bottom:1px solid #f1f5f9;">
                             <div class="d-flex align-items-center gap-2">
-                                <span class="fw-bold" style="font-size:.9rem;color:#1e293b;">Notifications</span>
+                                <span class="fw-bold" style="font-size:.9rem;color:#1e293b;">{{ $tr('Notifications', 'الإشعارات') }}</span>
                                 @if($unreadCount > 0)
                                 <span class="badge rounded-pill"
                                     style="background:#6366f1;color:white;font-size:.68rem;">{{ $unreadCount }}</span>
@@ -51,11 +55,11 @@
                             href="#"
                             style="border-bottom:1px solid #f8fafc;transition:background .15s;"
                             onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background=''">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 {{ $notif['color'] }}"
+                                <div class="rounded-circle d-flex align-items-center justify-content-center shrink-0 {{ $notif['color'] }}"
                                     style="width:36px;height:36px;color:white;">
                                     <i class="{{ $notif['icon'] }}" style="font-size:.95rem;"></i>
                                 </div>
-                                <div class="flex-grow-1 min-width-0">
+                                <div class="grow min-width-0">
                                     <div class="fw-semibold text-truncate" style="font-size:.82rem;color:#1e293b;">{{ $notif['title'] }}</div>
                                     <div class="text-truncate" style="font-size:.75rem;color:#64748b;">{{ $notif['text'] }}</div>
                                     <div style="font-size:.68rem;color:#94a3b8;margin-top:.15rem;">{{ $notif['time'] }}</div>
@@ -64,7 +68,7 @@
                             @empty
                             <div class="text-center py-5 px-3">
                                 <i class="ri-notification-off-line" style="font-size:2rem;color:#cbd5e1;"></i>
-                                <p class="mt-2 mb-0 text-muted" style="font-size:.82rem;">Aucune notification</p>
+                                <p class="mt-2 mb-0 text-muted" style="font-size:.82rem;">{{ $tr('Aucune notification', 'لا توجد إشعارات') }}</p>
                             </div>
                             @endforelse
                         </div>
@@ -75,7 +79,7 @@
                             <a href="{{ route('user.dashboard') }}"
                             class="text-decoration-none fw-semibold"
                             style="font-size:.78rem;color:#6366f1;">
-                                <i class="ri-external-link-line me-1"></i>Voir toutes les soumissions
+                                <i class="ri-external-link-line me-1"></i>{{ $tr('Voir toutes les soumissions', 'عرض كل الطلبات') }}
                             </a>
                         </div>
                         @endif
@@ -95,7 +99,7 @@
                         </div>
                         <div class="profile-info d-none d-md-block">
                             <div class="profile-name">{{ Auth::guard('candidat')->user()->nom }} {{ Auth::guard('candidat')->user()->prenom }}</div>
-                            <div class="profile-role">Candidat</div>
+                            <div class="profile-role">{{ $tr('Candidat', 'مترشح') }}</div>
                         </div>
                         <i class="ri-arrow-down-s-line d-none d-md-block"></i>
                     </button>
@@ -103,7 +107,7 @@
                         aria-labelledby="profileDropdown">
                         <li>
                             <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('user.settings') }}">
-                                <i class="ri-settings-3-line" style="color:#6366f1;"></i> Paramètres
+                                <i class="ri-settings-3-line" style="color:#6366f1;"></i> {{ $tr('Paramètres', 'الإعدادات') }}
                             </a>
                         </li>
                         <li><hr class="dropdown-divider my-1"></li>
@@ -111,7 +115,7 @@
                             <form action="{{ route('user.logout') }}" method="POST">
                                 @csrf
                                 <button type="submit" class="dropdown-item d-flex align-items-center gap-2 text-danger">
-                                    <i class="ri-logout-box-line"></i> Déconnexion
+                                    <i class="ri-logout-box-line"></i> {{ $tr('Déconnexion', 'تسجيل الخروج') }}
                                 </button>
                             </form>
                         </li>
@@ -125,7 +129,7 @@
             <li class="dropdown-header">
                 <div class="d-flex justify-content-between align-items-center">
                     <span class="fw-bold">Notifications</span>
-                    <a href="#" class="text-primary small">Mark all as read</a>
+                    <a href="#" class="text-primary small">{{ $tr('Tout marquer comme lu', 'تحديد الكل كمقروء') }}</a>
                 </div>
             </li>
             <li><hr class="dropdown-divider"></li>
@@ -137,9 +141,9 @@
                         <i class="ri-file-text-line"></i>
                     </div>
                     <div class="notification-content">
-                        <div class="notification-title">New Project Submitted</div>
-                        <div class="notification-text">Your project has been successfully submitted</div>
-                        <div class="notification-time">5 minutes ago</div>
+                        <div class="notification-title">{{ $tr('Nouveau projet soumis', 'تم إرسال مشروع جديد') }}</div>
+                        <div class="notification-text">{{ $tr('Votre projet a été soumis avec succès', 'تم إرسال مشروعك بنجاح') }}</div>
+                        <div class="notification-time">{{ $tr('Il y a 5 minutes', 'منذ 5 دقائق') }}</div>
                     </div>
                 </a>
             </li>
@@ -149,9 +153,9 @@
                         <i class="ri-check-line"></i>
                     </div>
                     <div class="notification-content">
-                        <div class="notification-title">Project Approved</div>
-                        <div class="notification-text">Your project "Innovation 2024" has been approved</div>
-                        <div class="notification-time">2 hours ago</div>
+                        <div class="notification-title">{{ $tr('Projet approuvé', 'تمت الموافقة على المشروع') }}</div>
+                        <div class="notification-text">{{ $tr('Votre projet "Innovation 2024" a été approuvé', 'تمت الموافقة على مشروعك "Innovation 2024"') }}</div>
+                        <div class="notification-time">{{ $tr('Il y a 2 heures', 'منذ ساعتين') }}</div>
                     </div>
                 </a>
             </li>
@@ -161,9 +165,9 @@
                         <i class="ri-information-line"></i>
                     </div>
                     <div class="notification-content">
-                        <div class="notification-title">Update Required</div>
-                        <div class="notification-text">Please update your profile information</div>
-                        <div class="notification-time">1 day ago</div>
+                        <div class="notification-title">{{ $tr('Mise à jour requise', 'مطلوب تحديث') }}</div>
+                        <div class="notification-text">{{ $tr('Veuillez mettre à jour les informations de votre profil', 'يرجى تحديث معلومات ملفك الشخصي') }}</div>
+                        <div class="notification-time">{{ $tr('Il y a 1 jour', 'منذ يوم واحد') }}</div>
                     </div>
                 </a>
             </li>
@@ -171,7 +175,7 @@
             <li><hr class="dropdown-divider"></li>
             <li>
                 <a class="dropdown-item text-center text-primary" href="#">
-                    View All Notifications
+                    {{ $tr('Voir toutes les notifications', 'عرض كل الإشعارات') }}
                 </a>
             </li>
         </ul>

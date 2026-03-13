@@ -1,15 +1,20 @@
-<div>
+@php
+    $isArabic = str_starts_with(app()->getLocale(), 'ar');
+    $tr = fn (string $fr, string $ar) => $isArabic ? $ar : $fr;
+@endphp
+
+<div @if($isArabic) dir="rtl" @endif>
     {{-- Toolbar --}}
     <div class="row mb-4">
         <div class="col-md-8">
             <div class="input-group">
                 <span class="input-group-text bg-white"><i class="ri-search-line"></i></span>
-                <input type="text" wire:model.live="search" class="form-control" placeholder="Rechercher un article...">
+                <input type="text" wire:model.live="search" class="form-control" placeholder="{{ $tr('Rechercher un article...', 'ابحث عن مقال...') }}">
             </div>
         </div>
         <div class="col-md-4">
             <select wire:model.live="category" class="form-select">
-                <option value="all">Toutes les catégories</option>
+                <option value="all">{{ $tr('Toutes les catégories', 'كل الفئات') }}</option>
                 @foreach($categories as $cat)
                 <option value="{{ $cat }}">{{ $cat }}</option>
                 @endforeach
@@ -35,14 +40,14 @@
                     @endif
                     <h5 class="card-title fw-bold">{{ $post->title }}</h5>
                     @if($post->excerpt)
-                    <p class="card-text text-muted small flex-grow-1">{{ Str::limit($post->excerpt, 120) }}</p>
+                    <p class="card-text text-muted small grow">{{ Str::limit($post->excerpt, 120) }}</p>
                     @endif
                     <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
                         <small class="text-muted">
                             <i class="ri-calendar-line me-1"></i>{{ $post->published_at->format('d/m/Y') }}
                         </small>
                         <a href="{{ route('user.blog.show', $post->slug) }}" class="btn btn-sm btn-outline-primary rounded-pill">
-                            Lire plus <i class="ri-arrow-right-line ms-1"></i>
+                            {{ $tr('Lire plus', 'اقرأ المزيد') }} <i class="ri-arrow-right-line ms-1"></i>
                         </a>
                     </div>
                 </div>
@@ -52,8 +57,8 @@
         <div class="col-12">
             <div class="text-center py-5">
                 <i class="ri-article-line" style="font-size: 4rem; color: #ddd;"></i>
-                <h5 class="text-muted mt-3">Aucun article disponible</h5>
-                <p class="text-muted">Revenez plus tard pour découvrir nos actualités.</p>
+                <h5 class="text-muted mt-3">{{ $tr('Aucun article disponible', 'لا توجد مقالات متاحة') }}</h5>
+                <p class="text-muted">{{ $tr('Revenez plus tard pour découvrir nos actualités.', 'عد لاحقًا لاكتشاف آخر الأخبار.') }}</p>
             </div>
         </div>
         @endforelse

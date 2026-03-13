@@ -1,4 +1,9 @@
-<div>
+@php
+    $isArabic = str_starts_with(app()->getLocale(), 'ar');
+    $tr = fn (string $fr, string $ar) => $isArabic ? $ar : $fr;
+@endphp
+
+<div @if($isArabic) dir="rtl" @endif>
 
     @php
         $totalForms     = count($formulaires);
@@ -27,7 +32,7 @@
     <!-- Back Button -->
     <div class="mb-6">
         <a href="" class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition">
-            <i class="ri-arrow-left-s-line"></i> Retour aux programmes
+            <i class="ri-arrow-left-s-line"></i> {{ $tr('Retour aux programmes', 'العودة إلى البرامج') }}
         </a>
     </div>
 
@@ -36,7 +41,7 @@
         <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition">
             <div class="flex justify-between items-start">
                 <div>
-                    <p class="text-gray-500 text-sm font-medium">Total Formulaires</p>
+                    <p class="text-gray-500 text-sm font-medium">{{ $tr('Total Formulaires', 'إجمالي الاستمارات') }}</p>
                     <p class="text-3xl font-bold text-gray-900 mt-2">{{ $totalForms }}</p>
                 </div>
                 <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -48,7 +53,7 @@
         <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition">
             <div class="flex justify-between items-start">
                 <div>
-                    <p class="text-gray-500 text-sm font-medium">Complétés</p>
+                    <p class="text-gray-500 text-sm font-medium">{{ $tr('Complétés', 'مكتملة') }}</p>
                     <p class="text-3xl font-bold text-green-600 mt-2">{{ $completedForms }}</p>
                 </div>
                 <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
@@ -60,7 +65,7 @@
         <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition">
             <div class="flex justify-between items-start">
                 <div>
-                    <p class="text-gray-500 text-sm font-medium">En attente</p>
+                    <p class="text-gray-500 text-sm font-medium">{{ $tr('En attente', 'قيد الانتظار') }}</p>
                     <p class="text-3xl font-bold text-red-500 mt-2">{{ $pendingForms }}</p>
                 </div>
                 <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
@@ -72,7 +77,7 @@
         <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition">
             <div class="flex justify-between items-start">
                 <div>
-                    <p class="text-gray-500 text-sm font-medium">Progression</p>
+                    <p class="text-gray-500 text-sm font-medium">{{ $tr('Progression', 'نسبة التقدم') }}</p>
                     <p class="text-3xl font-bold text-indigo-600 mt-2">{{ round($progress) }}%</p>
                 </div>
                 <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
@@ -85,12 +90,12 @@
     <!-- All-done banner -->
     @if($allDone)
     <div class="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 flex items-center gap-3">
-        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center shrink-0">
             <i class="ri-trophy-fill text-green-600 text-xl"></i>
         </div>
         <div>
-            <div class="font-bold text-green-800">Félicitations ! Dossier complet</div>
-            <p class="text-sm text-green-600 mt-0.5">Tous vos formulaires ont été soumis. Nous reviendrons vers vous prochainement.</p>
+            <div class="font-bold text-green-800">{{ $tr('Félicitations ! Dossier complet', 'تهانينا! ملفك مكتمل') }}</div>
+            <p class="text-sm text-green-600 mt-0.5">{{ $tr('Tous vos formulaires ont été soumis. Nous reviendrons vers vous prochainement.', 'تم إرسال جميع استماراتك. سنعاود التواصل معك قريبًا.') }}</p>
         </div>
     </div>
     @endif
@@ -101,11 +106,11 @@
             <div>
                 <div class="flex items-center gap-2 mb-1">
                     <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
-                        <i class="ri-folder-3-line mr-1"></i>Programme
+                        <i class="ri-folder-3-line mr-1"></i>{{ $tr('Programme', 'برنامج') }}
                     </span>
                     @if($project->status === 'Active')
                         <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-green-100 text-green-700">
-                            <i class="ri-radio-button-line mr-1"></i>Actif
+                            <i class="ri-radio-button-line mr-1"></i>{{ $tr('Actif', 'نشط') }}
                         </span>
                     @endif
                 </div>
@@ -129,7 +134,7 @@
     <!-- Formulaires Section -->
     <div>
         <h3 class="text-lg font-semibold text-gray-900 mb-4">
-            <i class="ri-list-check-2 mr-2"></i>Formulaires requis ({{ $totalForms }})
+            <i class="ri-list-check-2 mr-2"></i>{{ $tr('Formulaires requis', 'الاستمارات المطلوبة') }} ({{ $totalForms }})
         </h3>
 
         @if(count($formulaires) > 0)
@@ -150,7 +155,7 @@
                     <div class="p-6">
                         <!-- Icon and Title -->
                         <div class="flex items-center mb-4 pb-4 border-b border-gray-100">
-                            <div class="w-14 h-14 rounded-full flex items-center justify-center mr-4 flex-shrink-0 relative"
+                            <div class="w-14 h-14 rounded-full flex items-center justify-center mr-4 shrink-0 relative"
                                  style="background: {{ $formulaire['is_submitted'] == true ? '#dcfce7' : ($canStart ? $color.'18' : '#f3f4f6') }};
                                         border: 2px solid {{ $formulaire['is_submitted'] == true ? '#22c55e' : ($canStart ? $color : '#d1d5db') }};">
                                 @if($formulaire['is_submitted'] == true)
@@ -169,11 +174,11 @@
                                 @endif
                                 <div class="flex flex-wrap items-center gap-1 mt-1">
                                     @if($formulaire['is_required'])
-                                        <span class="inline-block px-2 py-0.5 bg-red-100 text-red-700 text-xs rounded-full font-medium">Requis</span>
+                                        <span class="inline-block px-2 py-0.5 bg-red-100 text-red-700 text-xs rounded-full font-medium">{{ $tr('Requis', 'إلزامي') }}</span>
                                     @endif
                                     @if($formulaire['has_introduction'])
                                         <span class="inline-block px-2 py-0.5 bg-purple-100 text-purple-700 text-xs rounded-full font-medium">
-                                            <i class="ri-book-open-line mr-0.5"></i>Intro
+                                            <i class="ri-book-open-line mr-0.5"></i>{{ $tr('Intro', 'مقدمة') }}
                                         </span>
                                     @endif
                                 </div>
@@ -184,26 +189,26 @@
                         <div class="mb-4">
                             @if($formulaire['is_submitted'] == true)
                                 <span class="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
-                                    <i class="ri-checkbox-circle-line mr-1"></i>Complété
+                                    <i class="ri-checkbox-circle-line mr-1"></i>{{ $tr('Complété', 'مكتمل') }}
                                 </span>
                                 <div class="text-xs text-gray-400 mt-1.5">
                                     <i class="ri-calendar-check-line mr-1"></i>{{ \Carbon\Carbon::parse($formulaire['submitted_at'])->format('d M Y') }}
                                 </div>
                             @elseif(!$canStart)
                                 <span class="px-3 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600">
-                                    <i class="ri-lock-2-line mr-1"></i>Verrouillé
+                                    <i class="ri-lock-2-line mr-1"></i>{{ $tr('Verrouillé', 'مغلق') }}
                                 </span>
                                 <div class="text-xs text-gray-400 mt-1.5">
-                                    <i class="ri-information-line mr-1"></i>Complétez les étapes précédentes
+                                    <i class="ri-information-line mr-1"></i>{{ $tr('Complétez les étapes précédentes', 'أكمل المراحل السابقة') }}
                                 </div>
                             @elseif($isNext)
                                 <span class="px-3 py-1 text-xs font-medium rounded-full"
                                       style="background: {{ $color }}18; color: {{ $color }};">
-                                    <i class="ri-arrow-right-circle-line mr-1"></i>Prochaine étape
+                                    <i class="ri-arrow-right-circle-line mr-1"></i>{{ $tr('Prochaine étape', 'المرحلة التالية') }}
                                 </span>
                             @else
                                 <span class="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700">
-                                    <i class="ri-file-edit-line mr-1"></i>Disponible
+                                    <i class="ri-file-edit-line mr-1"></i>{{ $tr('Disponible', 'متاح') }}
                                 </span>
                             @endif
                         </div>
@@ -213,7 +218,7 @@
                             @if($formulaire['is_submitted'] == true)
                                 <button wire:click="startFormulaire({{ $index }})"
                                         class="w-full px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 text-center">
-                                    <i class="ri-eye-line mr-1"></i>Voir
+                                    <i class="ri-eye-line mr-1"></i>{{ $tr('Voir', 'عرض') }}
                                 </button>
                             @elseif($canStart)
                                 <button wire:click="startFormulaire({{ $index }})"
@@ -223,7 +228,7 @@
                                         style="background: {{ $color }};">
                                     <span wire:loading.remove wire:target="startFormulaire({{ $index }})">
                                         <i class="{{ $isNext ? 'ri-play-circle-fill' : 'ri-edit-2-line' }} mr-1"></i>
-                                        {{ $isNext ? 'Commencer' : 'Remplir' }}
+                                        {{ $isNext ? $tr('Commencer', 'ابدأ') : $tr('Remplir', 'تعبئة') }}
                                     </span>
                                     <span wire:loading wire:target="startFormulaire({{ $index }})">
                                         <span class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
@@ -232,7 +237,7 @@
                             @else
                                 <button disabled
                                         class="w-full px-4 py-2 bg-gray-200 text-gray-400 text-sm font-medium rounded-lg cursor-not-allowed text-center">
-                                     <i class="ri-lock-2-line mr-1"></i>Verrouillé
+                                     <i class="ri-lock-2-line mr-1"></i>{{ $tr('Verrouillé', 'مغلق') }}
                                 </button>
                             @endif
                         </div>
@@ -245,7 +250,7 @@
         @else
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
             <i class="ri-file-list-3-line text-gray-400 text-5xl mb-4 block"></i>
-            <p class="text-gray-500">Ce programme n'a pas encore de formulaires attachés.</p>
+            <p class="text-gray-500">{{ $tr("Ce programme n'a pas encore de formulaires attachés.", 'لا توجد استمارات مرتبطة بهذا البرنامج بعد.') }}</p>
         </div>
         @endif
     </div>

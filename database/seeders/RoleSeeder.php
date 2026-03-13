@@ -49,10 +49,15 @@ class RoleSeeder extends Seeder
         ];
 
         foreach ($adminModules as $module) {
-            RolePermission::firstOrCreate([
-                'role_name'  => 'admin',
-                'module_key' => $module,
-            ]);
+            RolePermission::withTrashed()->updateOrCreate(
+                [
+                    'role_name'  => 'admin',
+                    'module_key' => $module,
+                ],
+                [
+                    'deleted_at' => null,
+                ]
+            );
         }
 
         // Clear all cached permissions

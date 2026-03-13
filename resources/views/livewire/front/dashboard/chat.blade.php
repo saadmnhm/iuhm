@@ -1,4 +1,9 @@
-<div wire:poll.3s="refreshMessages" class="container py-4">
+@php
+    $isArabic = str_starts_with(app()->getLocale(), 'ar');
+    $tr = fn (string $fr, string $ar) => $isArabic ? $ar : $fr;
+@endphp
+
+<div wire:poll.3s="refreshMessages" class="container py-4" @if($isArabic) dir="rtl" @endif>
 
     <div class="d-flex align-items-center gap-2 mb-4">
         <div class="rounded-circle d-flex align-items-center justify-content-center"
@@ -6,8 +11,8 @@
             <i class="ri-customer-service-2-line"></i>
         </div>
         <div>
-            <h5 class="fw-bold mb-0">Chat avec l'Administration</h5>
-            <small class="text-muted">Notre équipe vous répond le plus tôt possible</small>
+            <h5 class="fw-bold mb-0">{{ $tr("Chat avec l'administration", 'دردشة مع الإدارة') }}</h5>
+            <small class="text-muted">{{ $tr('Notre équipe vous répond le plus tôt possible', 'فريقنا سيرد عليك في أقرب وقت ممكن') }}</small>
         </div>
     </div>
 
@@ -51,7 +56,7 @@
                 @else
                     {{-- Admin bubble (left) --}}
                     <div class="d-flex justify-content-start gap-2">
-                        <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                        <div class="rounded-circle d-flex align-items-center justify-content-center shrink-0"
                              style="width:32px;height:32px;background:#2563eb15;color:#2563eb;font-size:.85rem;">
                             <i class="ri-shield-user-line"></i>
                         </div>
@@ -62,7 +67,7 @@
                             </div>
                             <div class="mt-1">
                                 <small class="text-muted" style="font-size:.7rem;">
-                                    Administration · {{ $msg->created_at->format('H:i') }}
+                                    {{ $tr('Administration', 'الإدارة') }} · {{ $msg->created_at->format('H:i') }}
                                 </small>
                             </div>
                         </div>
@@ -71,7 +76,7 @@
             @empty
                 <div class="m-auto text-center text-muted">
                     <i class="ri-chat-3-line" style="font-size:3rem;opacity:.3;"></i>
-                    <p class="mt-2 small">Aucun message. Commencez la conversation!</p>
+                    <p class="mt-2 small">{{ $tr('Aucun message. Commencez la conversation !', 'لا توجد رسائل. ابدأ المحادثة!') }}</p>
                 </div>
             @endforelse
         </div>
@@ -87,7 +92,7 @@
                 wire:model.defer="newMessage"
                 type="text"
                 class="form-control border-0 ps-4"
-                placeholder="Écrivez votre message…"
+                placeholder="{{ $tr('Écrivez votre message…', 'اكتب رسالتك…') }}"
                 style="background:#f8fafc;"
                 @keydown.enter.prevent="$wire.sendMessage()"
                 autofocus

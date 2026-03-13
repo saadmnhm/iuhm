@@ -1,6 +1,10 @@
+@php
+	$isArabic = str_starts_with(app()->getLocale(), 'ar');
+	$tr = fn (string $fr, string $ar) => $isArabic ? $ar : $fr;
+@endphp
 
 {{-- Polls every 15s to detect newly sent broadcasts --}}
-<div wire:poll.3000ms="refresh">
+<div wire:poll.3000ms="refresh" @if($isArabic) dir="rtl" @endif>
 	@if($current)
 	{{-- Dark backdrop - blocks all interaction beneath --}}
 	<div style="position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:10000;"></div>
@@ -12,19 +16,19 @@
 			{{-- Header --}}
 			<div class="card-header d-flex align-items-center gap-2 border-0 py-3"
 				 style="background:linear-gradient(135deg,#648454,#8baf74);">
-				<div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+				<div class="rounded-circle d-flex align-items-center justify-content-center shrink-0"
 					 style="width:40px;height:40px;background:rgba(255,255,255,.2);">
 					<i class="ri-broadcast-fill text-white fs-5"></i>
 				</div>
-				<div class="flex-grow-1">
-					<div class="text-white fw-bold" style="font-size:.9rem;">Message de l'Administration</div>
+				<div class="grow">
+					<div class="text-white fw-bold" style="font-size:.9rem;">{{ $tr("Message de l'administration", 'رسالة من الإدارة') }}</div>
 					<div class="text-white" style="opacity:.75;font-size:.72rem;">
 						{{ $current->created_at->diffForHumans() }}
 					</div>
 				</div>
 				@if(!empty($queue))
 					<span class="badge text-white rounded-pill" style="background:rgba(255,255,255,.25);font-size:.7rem;">
-						+{{ count($queue) }} en attente
+						+{{ count($queue) }} {{ $tr('en attente', 'بانتظار القراءة') }}
 					</span>
 				@endif
 			</div>
@@ -44,7 +48,7 @@
 					<span wire:loading wire:target="markRead"
 						  class="spinner-border spinner-border-sm" role="status"></span>
 					<i wire:loading.remove wire:target="markRead" class="ri-check-line"></i>
-					J'ai lu et compris
+					{{ $tr("J'ai lu et compris", 'قرأت وفهمت') }}
 				</button>
 			</div>
 		</div>

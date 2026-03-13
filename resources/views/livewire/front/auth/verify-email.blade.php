@@ -1,9 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+@php
+    $locale = app()->getLocale();
+    $isAr = str_starts_with($locale, 'ar');
+    $t = [
+        'title' => $isAr ? 'تأكيد البريد الإلكتروني - لوحة التحكم' : 'Vérification de l\'email - Tableau de bord',
+        'heading' => $isAr ? 'تحقق من بريدك الإلكتروني' : 'Vérifiez votre adresse email',
+        'desc' => $isAr
+            ? 'شكرًا على التسجيل! قبل البدء، يرجى التحقق من عنوان بريدك الإلكتروني بالنقر على الرابط الذي أرسلناه للتو إلى'
+            : 'Merci pour votre inscription ! Avant de commencer, veuillez vérifier votre adresse email en cliquant sur le lien que nous venons d\'envoyer à',
+        'resend' => $isAr ? 'إعادة إرسال رابط التحقق' : 'Renvoyer l\'email de vérification',
+        'logout' => $isAr ? 'تسجيل الخروج' : 'Déconnexion',
+    ];
+@endphp
+<html lang="{{ $locale }}" dir="{{ $isAr ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify your email - Dashboard</title>
+    <title>{{ $t['title'] }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <style>
@@ -95,10 +108,9 @@
             <i class="ri-mail-check-line"></i>
         </div>
 
-        <h1>Verify your email address</h1>
+        <h1>{{ $t['heading'] }}</h1>
         <p>
-            Thanks for signing up! Before getting started, please verify your email address
-            by clicking the link we just sent to <strong>{{ Auth::guard('candidat')->user()->email }}</strong>.
+            {{ $t['desc'] }} <strong>{{ Auth::guard('candidat')->user()->email }}</strong>.
         </p>
 
         @if (session('message'))
@@ -115,13 +127,13 @@
 
         <form method="POST" action="{{ route('user.verification.send') }}">
             @csrf
-            <button type="submit" class="btn-verify">Resend verification email</button>
+            <button type="submit" class="btn-verify">{{ $t['resend'] }}</button>
         </form>
 
         <form method="POST" action="{{ route('user.logout') }}">
             @csrf
             <button type="submit" class="logout-link" style="background:none;border:none;cursor:pointer;">
-                Log out
+                {{ $t['logout'] }}
             </button>
         </form>
     </div>
