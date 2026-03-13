@@ -1,6 +1,7 @@
 @php
     $isArabic = str_starts_with(app()->getLocale(), 'ar');
     $tr = fn (string $fr, string $ar) => $isArabic ? $ar : $fr;
+    $displayLabel = fn ($fr, $ar = null) => $isArabic && filled($ar) ? $ar : $fr;
 @endphp
 
 <div @if($isArabic) dir="rtl" @endif>
@@ -52,10 +53,7 @@
                     <i class="{{ $form->icon ?? 'ri-file-list-3-line' }}"></i>
                 </div>
             </div>
-            <h1 style="color: {{ $form->color ?? '#2f5496' }};">{{ $form->title }}</h1>
-            @if($form->title_ar)
-                <p style="color: {{ $form->color ?? '#2f5496' }};">({{ $form->title_ar }})</p>
-            @endif
+            <h1 style="color: {{ $form->color ?? '#2f5496' }};">{{ $displayLabel($form->title, $form->title_ar) }}</h1>
             <p class="text-sm text-gray-500 mt-2">
                 <i class="ri-folder-line mr-1"></i> {{ $project->project_name }}
             </p>
@@ -71,28 +69,14 @@
                     </div>
                 </div>
                 <h2 class="fw-bold text-center mb-3" style="color: {{ $form->color ?? '#2f5496' }};">
-                    {{ $formulaire->introduction_title }}
+                    {{ $displayLabel($formulaire->introduction_title, $formulaire->introduction_title_ar) }}
                 </h2>
-
-                @if($formulaire->introduction_title_ar)
-                    <h3 class="text-center text-muted mb-4" dir="rtl">
-                        {{ $formulaire->introduction_title_ar }}
-                    </h3>
-                @endif
 
                 <div class="bg-light rounded-3 p-3 p-md-4 mb-4" style="border-left: 4px solid {{ $form->color ?? '#2f5496' }};">
                     <div class="text-secondary" style=" line-height: 1.8;">
-                        {!! nl2br(e($formulaire->introduction_content)) !!}
+                        {!! nl2br(e($displayLabel($formulaire->introduction_content, $formulaire->introduction_content_ar))) !!}
                     </div>
                 </div>
-
-                @if($formulaire->introduction_content_ar)
-                    <div class="bg-light rounded-3 p-3 p-md-4 mb-4" dir="rtl" style="border-right: 4px solid {{ $form->color ?? '#2f5496' }};">
-                        <div class="text-secondary" style=" line-height: 1.8;">
-                            {!! nl2br(e($formulaire->introduction_content_ar)) !!}
-                        </div>
-                    </div>
-                @endif
 
                 <div class="text-center mt-4">
                         <button wire:click="skipIntroduction"
@@ -128,10 +112,7 @@
             {{-- Step Content --}}
             @if($currentStepData)
                 <div class="mt-4">
-                    <h3 class="step-title" style="color: {{ $form->color ?? '#2f5496' }};">{{ $currentStepData->title }}</h3>
-                    @if($currentStepData->title_ar)
-                        <p class="text-center mb-2" style="font-weight: bold;">{{ $currentStepData->title_ar }}</p>
-                    @endif
+                    <h3 class="step-title" style="color: {{ $form->color ?? '#2f5496' }};">{{ $displayLabel($currentStepData->title, $currentStepData->title_ar) }}</h3>
                     @if($currentStepData->description)
                         <p class="instructions">{{ $currentStepData->description }}</p>
                     @endif
@@ -140,52 +121,52 @@
                     @foreach($currentStepData->fields->sortBy('sort_order') as $field)
                         <div class="mt-4 {{ $field->is_full_width ? '' : 'w-full md:w-1/2 md:inline-block' }}" style="vertical-align: top;">
                             @if($field->type === 'heading')
-                                <h4 class="step-title mt-3" style="color: {{ $form->color ?? '#2f5496' }}; font-size: 1.2rem;">{{ $field->label }}</h4>
+                                <h4 class="step-title mt-3" style="color: {{ $form->color ?? '#2f5496' }}; font-size: 1.2rem;">{{ $displayLabel($field->label, $field->label_ar) }}</h4>
                             @elseif($field->type === 'paragraph')
-                                <p class="instructions">{{ $field->label }}</p>
+                                <p class="instructions">{{ $displayLabel($field->label, $field->label_ar) }}</p>
                             @else
-                                <label class="disc mb-2" for="field_{{ $field->field_key }}">
-                                    {{ $field->label }}
+                                <label class="disc mb-2" for="field_{{ $field->id }}">
+                                    {{ $displayLabel($field->label, $field->label_ar) }}
                                     @if($field->is_required)<span style="color: red;">*</span>@endif
                                 </label>
 
                                 @if($field->type === 'text')
-                                    <input type="text" id="field_{{ $field->field_key }}"
-                                        wire:model="answers.{{ $field->field_key }}"
+                                    <input type="text" id="field_{{ $field->id }}"
+                                        wire:model="answers.{{ $field->id }}"
                                         class="form-control"
                                         placeholder="{{ $field->placeholder }}"
                                         @if($isReadOnly) readonly @endif>
 
                                 @elseif($field->type === 'textarea')
-                                    <textarea id="field_{{ $field->field_key }}"
-                                        wire:model="answers.{{ $field->field_key }}"
+                                    <textarea id="field_{{ $field->id }}"
+                                        wire:model="answers.{{ $field->id }}"
                                         class="form-control"
                                         placeholder="{{ $field->placeholder }}"
                                         @if($isReadOnly) readonly @endif></textarea>
 
                                 @elseif($field->type === 'number')
-                                    <input type="number" id="field_{{ $field->field_key }}"
-                                        wire:model="answers.{{ $field->field_key }}"
+                                    <input type="number" id="field_{{ $field->id }}"
+                                        wire:model="answers.{{ $field->id }}"
                                         class="form-control border w-full p-1"
                                         placeholder="{{ $field->placeholder }}"
                                         @if($isReadOnly) readonly @endif>
 
                                 @elseif($field->type === 'email')
-                                    <input type="email" id="field_{{ $field->field_key }}"
-                                        wire:model="answers.{{ $field->field_key }}"
+                                    <input type="email" id="field_{{ $field->id }}"
+                                        wire:model="answers.{{ $field->id }}"
                                         class="form-control"
                                         placeholder="{{ $field->placeholder }}"
                                         @if($isReadOnly) readonly @endif>
 
                                 @elseif($field->type === 'date')
-                                    <input type="date" id="field_{{ $field->field_key }}"
-                                        wire:model="answers.{{ $field->field_key }}"
+                                    <input type="date" id="field_{{ $field->id }}"
+                                        wire:model="answers.{{ $field->id }}"
                                         class="form-control border w-full p-1"
                                         @if($isReadOnly) readonly @endif>
 
                                 @elseif($field->type === 'select')
-                                    <select id="field_{{ $field->field_key }}"
-                                        wire:model="answers.{{ $field->field_key }}"
+                                    <select id="field_{{ $field->id }}"
+                                        wire:model="answers.{{ $field->id }}"
                                         class="form-control"
                                         @if($isReadOnly) disabled @endif>
                                         <option value="">{{ $field->placeholder ?: $tr('Sélectionner...', 'اختر...') }}</option>
@@ -200,7 +181,7 @@
                                         @foreach($field->options ?? [] as $opt)
                                             <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                                                 <input type="radio"
-                                                    wire:model="answers.{{ $field->field_key }}"
+                                                    wire:model="answers.{{ $field->id }}"
                                                     value="{{ $opt }}"
                                                     style="accent-color: {{ $form->color ?? '#2f5496' }};"
                                                     @if($isReadOnly) disabled @endif>
@@ -214,7 +195,7 @@
                                         @foreach($field->options ?? [] as $opt)
                                             <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                                                 <input type="checkbox"
-                                                    wire:model="answers.{{ $field->field_key }}"
+                                                    wire:model="answers.{{ $field->id }}"
                                                     value="{{ $opt }}"
                                                     style="accent-color: {{ $form->color ?? '#2f5496' }};"
                                                     @if($isReadOnly) disabled @endif>
@@ -224,7 +205,7 @@
                                     </div>
 
                                 @elseif($field->type === 'file')
-                                    <input type="file" id="field_{{ $field->field_key }}"
+                                    <input type="file" id="field_{{ $field->id }}"
                                         class="form-control"
                                         @if($isReadOnly) disabled @endif>
                                 @endif
@@ -233,7 +214,7 @@
                                     <p class="instructions" style="font-size: 13px; margin-top: 4px;">{{ $field->help_text }}</p>
                                 @endif
 
-                                @error('answers.' . $field->field_key)
+                                @error('answers.' . $field->id)
                                     <span style="color: red; font-size: 13px;">{{ $message }}</span>
                                 @enderror
                             @endif
@@ -243,7 +224,7 @@
                     {{-- Render Tables --}}
                     @foreach($currentStepData->tables->sortBy('sort_order') as $table)
                         <div class="mt-4">
-                            <p class="disc mb-2" style="font-weight: 600;">{{ $table->title }}</p>
+                            <p class="disc mb-2" style="font-weight: 600;">{{ $displayLabel($table->title, $table->title_ar) }}</p>
 
                             @if($table->columns->isNotEmpty())
                                 <div class="overflow-x-auto">
@@ -255,7 +236,7 @@
                                             @endif
                                             @foreach($table->columns->sortBy('sort_order') as $col)
                                                 <th class="title-table border px-4 py-2" @if($col->width) style="width: {{ $col->width }};" @endif>
-                                                    {{ $col->header }}
+                                                    {{ $displayLabel($col->header, $col->header_ar) }}
                                                 </th>
                                             @endforeach
                                             @if($table->has_dynamic_rows && !$isReadOnly)
@@ -268,7 +249,7 @@
                                             {{-- Fixed rows table --}}
                                             @foreach($table->fixedRows->sortBy('sort_order') as $ri => $row)
                                                 <tr>
-                                                    <td class="border px-4 py-2 title-table">{{ $row->label }}</td>
+                                                    <td class="border px-4 py-2 title-table">{{ $displayLabel($row->label, $row->label_ar) }}</td>
                                                     @foreach($table->columns->sortBy('sort_order') as $col)
                                                         <td class="border px-2 py-1">
                                                             @if($col->input_type === 'checkbox')

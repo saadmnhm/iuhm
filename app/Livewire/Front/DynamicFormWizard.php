@@ -17,7 +17,7 @@ class DynamicFormWizard extends Component
     public ?int $submissionId = null;
     public bool $isReadOnly = false;
 
-    // All field answers stored as key => value
+    // All field answers stored as field_id => value
     public array $answers = [];
 
     // All table data stored as table_key => [row_index => [column_key => value]]
@@ -89,9 +89,11 @@ class DynamicFormWizard extends Component
         $submission = DynamicFormSubmission::with(['answers', 'tableAnswers'])->find($this->submissionId);
         if (!$submission) return;
 
-        // Load field answers
+        // Load field answers keyed by stable field id to avoid key collisions across steps.
         foreach ($submission->answers as $answer) {
-            $this->answers[$answer->field_key] = $answer->value;
+            if ($answer->dynamic_form_field_id) {
+                $this->answers[$answer->dynamic_form_field_id] = $answer->value;
+            }
         }
 
         // Load table answers
@@ -205,7 +207,7 @@ class DynamicFormWizard extends Component
         $rules = [];
         foreach ($currentStep->fields as $field) {
             if ($field->is_required && !in_array($field->type, ['heading', 'paragraph'])) {
-                $rules['answers.' . $field->field_key] = 'required';
+                $rules['answers.' . $field->id] = 'required';
             }
         }
 
@@ -239,25 +241,26 @@ class DynamicFormWizard extends Component
 
             $this->submissionId = $submission->id;
 
-            // Save field answers
-            foreach ($this->answers as $key => $value) {
-                $fieldId = null;
-                foreach ($form->steps as $s) {
-                    foreach ($s->fields as $f) {
-                        if ($f->field_key === $key) {
-                            $fieldId = $f->id;
-                            break 2;
-                        }
-                    }
+            // Build a fast lookup map for the current form fields.
+            $fieldsById = $form->steps
+                ->flatMap(fn($s) => $s->fields)
+                ->keyBy('id');
+
+            // Save field answers keyed by dynamic_form_field_id.
+            foreach ($this->answers as $fieldId => $value) {
+                $fieldId = (int) $fieldId;
+                $field = $fieldsById->get($fieldId);
+                if (!$field) {
+                    continue;
                 }
 
                 DynamicFormAnswer::updateOrCreate(
                     [
                         'dynamic_form_submission_id' => $submission->id,
-                        'field_key' => $key,
+                        'dynamic_form_field_id' => $fieldId,
                     ],
                     [
-                        'dynamic_form_field_id' => $fieldId,
+                        'field_key' => $field->field_key,
                         'value' => $value,
                     ]
                 );
@@ -310,7 +313,7 @@ class DynamicFormWizard extends Component
         foreach ($form->steps as $formStep) {
             foreach ($formStep->fields as $field) {
                 if ($field->is_required && !in_array($field->type, ['heading', 'paragraph'])) {
-                    $rules['answers.' . $field->field_key] = 'required';
+                    $rules['answers.' . $field->id] = 'required';
                 }
             }
         }
@@ -347,11 +350,14 @@ class DynamicFormWizard extends Component
     {
         $form = $this->getForm();
         $currentStep = $form->steps->firstWhere('step_number', $this->step);
+        $layoutTitle = str_starts_with(app()->getLocale(), 'ar') && filled($form->title_ar)
+            ? $form->title_ar
+            : $form->title;
 
         return view('livewire.front.dynamic_form.wizard', [
             'form' => $form,
             'currentStep' => $currentStep,
             'totalSteps' => $form->steps->count(),
-        ])->layout('layouts.app', ['title' => $form->title]);
+        ])->layout('layouts.app', ['title' => $layoutTitle]);
     }
 }
