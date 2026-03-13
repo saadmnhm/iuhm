@@ -109,6 +109,8 @@
 
     <script>
         document.addEventListener('livewire:init', () => {
+            let handlingSessionExpired = false;
+
             Livewire.on('alert', (data) => {
                 Swal.fire({
                     title: data.title || 'Success',
@@ -122,16 +124,32 @@
                 fail(({ status, preventDefault }) => {
                     if (status === 419) { // CSRF token mismatch / session expired
                         preventDefault();
+
+                        // Prevent multiple stacked popups from polling/concurrent requests
+                        if (handlingSessionExpired) {
+                            return;
+                        }
+                        handlingSessionExpired = true;
+
+                        const redirectTo = `{{ route('admin.login') }}?expired=1&_t=${Date.now()}`;
+
                         Swal.fire({
                             title: 'Session Expirée',
-                            text: 'Votre session a expiré. La page va être actualisée.',
+                            text: 'Votre session a expiré. Vous allez être redirigé vers la connexion.',
                             icon: 'warning',
                             confirmButtonColor: '#648454',
-                            confirmButtonText: 'Actualiser',
+                            confirmButtonText: 'Se reconnecter',
                             allowOutsideClick: false,
                             timer: 5000,
                             timerProgressBar: true,
-                        }).then(() => window.location.reload());
+                        }).then(() => {
+                            window.location.replace(redirectTo);
+                        });
+
+                        // Fallback in case the modal is blocked/closed unexpectedly
+                        setTimeout(() => {
+                            window.location.replace(redirectTo);
+                        }, 5500);
                     }
                 });
             });
