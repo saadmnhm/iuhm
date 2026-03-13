@@ -13,7 +13,7 @@
 
         {{-- Header --}}
         <tr>
-          <td style="background:linear-gradient(135deg,#3b82f6 0%,#6366f1 100%);padding:40px 48px;text-align:center;">
+          <td style="background:linear-gradient(135deg,#648454 0%,#8baf74 100%);padding:40px 48px;text-align:center;">
             <div style="display:inline-block;background:rgba(255,255,255,0.2);border-radius:50%;padding:14px;margin-bottom:16px;">
               <span style="font-size:32px;">🔑</span>
             </div>
@@ -51,7 +51,7 @@
             {{-- CTA Button --}}
             <div style="text-align:center;margin-bottom:32px;">
               <a href="{{ $url }}"
-                 style="display:inline-block;background:linear-gradient(135deg,#3b82f6,#6366f1);color:#ffffff;text-decoration:none;padding:16px 40px;border-radius:30px;font-size:16px;font-weight:700;letter-spacing:0.5px;box-shadow:0 4px 14px rgba(59,130,246,0.4);">
+                 style="display:inline-block;background:linear-gradient(135deg,#648454,#8baf74);color:#ffffff;text-decoration:none;padding:16px 40px;border-radius:30px;font-size:16px;font-weight:700;letter-spacing:0.5px;box-shadow:0 4px 14px rgba(100,132,84,0.4);">
                 {{ $isAr ? '🔑 إعادة تعيين كلمة المرور' : '🔑 Réinitialiser mon mot de passe' }}
               </a>
             </div>
@@ -73,7 +73,7 @@
         <tr>
           <td style="background:#f7fafc;padding:24px 48px;text-align:center;border-top:1px solid #e2e8f0;">
             <p style="margin:0;font-size:13px;color:#718096;">
-              © {{ date('Y') }} <strong style="color:#3b82f6;">IUHM</strong> — Initiative Urbaine Hors des Murs
+              © {{ date('Y') }} <strong style="color:#648454;">IUHM</strong> — Initiative Urbaine Hors des Murs
             </p>
             <p style="margin:8px 0 0;font-size:12px;color:#a0aec0;">
               Casablanca, Maroc
