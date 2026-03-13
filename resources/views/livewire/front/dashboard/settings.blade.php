@@ -162,7 +162,7 @@
                                         @enderror
                                     </div>
 
-                                    <div class="col-md-3">
+                                    <div class="col-md-6">
                                         <label for="selected_region" class="form-label">{{ $tr('Région', 'الجهة') }}</label>
                                         <select class="form-control @error('selected_region') is-invalid @enderror" id="selected_region" wire:model.live="selected_region">
                                             <option value="">{{ $tr('Sélectionner une région', 'اختر جهة') }}</option>
@@ -175,7 +175,7 @@
                                         @enderror
                                     </div>
 
-                                    <div class="col-md-3">
+                                    <div class="col-md-6">
                                         <label for="selected_city" class="form-label">{{ $tr('Ville', 'المدينة') }}</label>
                                         <select class="form-control @error('selected_city') is-invalid @enderror" id="selected_city" wire:model.live="selected_city" {{ empty($selected_region) ? 'disabled' : '' }}>
                                             <option value="">{{ $tr('Sélectionner une ville', 'اختر مدينة') }}</option>
@@ -188,7 +188,7 @@
                                         @enderror
                                     </div>
 
-                                    <div class="col-md-3">
+                                    <div class="col-md-6">
                                         <label for="selected_prefecture" class="form-label">{{ $tr('Préfecture', 'العمالة / الإقليم') }}</label>
                                         <select class="form-control @error('selected_prefecture') is-invalid @enderror" id="selected_prefecture" wire:model.live="selected_prefecture" {{ empty($selected_city) ? 'disabled' : '' }}>
                                             <option value="">{{ $tr('Sélectionner une préfecture', 'اختر عمالة / إقليم') }}</option>
@@ -201,7 +201,7 @@
                                         @enderror
                                     </div>
 
-                                    <div class="col-md-3">
+                                    <div class="col-md-6">
                                         <label for="address_detail" class="form-label">{{ $tr('Détails adresse (IMM, GH...)', 'تفاصيل العنوان (IMM, GH...)') }}</label>
                                         <input
                                             type="text"
