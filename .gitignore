@@ -20,7 +20,7 @@ Thumbs.db
 # Compiled assets
 /public/hot
 /mix-manifest.json
-
+/uploads
 # Laravel cache & logs
 /storage/*.key
 /storage/logs/*
