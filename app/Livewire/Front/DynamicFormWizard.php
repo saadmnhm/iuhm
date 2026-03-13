@@ -111,6 +111,20 @@ class DynamicFormWizard extends Component
                     }
                     $this->tableRowCounts[$table->table_key] = max($maxRow, $table->min_rows);
                 }
+
+                // Restore _radio selection from saved column values
+                $radioColKeys = $table->columns->where('input_type', 'radio')->pluck('column_key');
+                if ($radioColKeys->isNotEmpty() && isset($this->tableData[$table->table_key])) {
+                    foreach ($this->tableData[$table->table_key] as $ri => &$rowData) {
+                        foreach ($radioColKeys as $colKey) {
+                            if (!empty($rowData[$colKey])) {
+                                $rowData['_radio'] = $colKey;
+                                break;
+                            }
+                        }
+                    }
+                    unset($rowData);
+                }
             }
         }
     }
@@ -270,17 +284,28 @@ class DynamicFormWizard extends Component
             DynamicFormTableAnswer::where('dynamic_form_submission_id', $submission->id)->delete();
             foreach ($this->tableData as $tableKey => $rows) {
                 $tableId = null;
+                $radioColKeys = collect();
                 foreach ($form->steps as $s) {
                     foreach ($s->tables as $t) {
                         if ($t->table_key === $tableKey) {
                             $tableId = $t->id;
+                            $radioColKeys = $t->columns->where('input_type', 'radio')->pluck('column_key');
                             break 2;
                         }
                     }
                 }
 
                 foreach ($rows as $rowIndex => $rowData) {
+                    $selectedRadio = $rowData['_radio'] ?? null;
+
                     foreach ($rowData as $colKey => $val) {
+                        if ($colKey === '_radio') {
+                            continue;
+                        }
+                        if ($radioColKeys->contains($colKey)) {
+                            continue;
+                        }
+
                         if ($val !== '' && $val !== null) {
                             DynamicFormTableAnswer::create([
                                 'dynamic_form_submission_id' => $submission->id,
@@ -291,6 +316,18 @@ class DynamicFormWizard extends Component
                                 'value' => $val,
                             ]);
                         }
+                    }
+
+                    // Save only the selected radio column as 1.
+                    if ($selectedRadio && $radioColKeys->contains($selectedRadio)) {
+                        DynamicFormTableAnswer::create([
+                            'dynamic_form_submission_id' => $submission->id,
+                            'dynamic_form_table_id' => $tableId,
+                            'table_key' => $tableKey,
+                            'row_index' => $rowIndex,
+                            'column_key' => $selectedRadio,
+                            'value' => '1',
+                        ]);
                     }
                 }
             }

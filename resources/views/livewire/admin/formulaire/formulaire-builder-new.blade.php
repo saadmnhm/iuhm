@@ -39,11 +39,6 @@
                 class="flex items-center gap-2 px-6 py-3.5 text-sm font-medium border-b-2 transition {{ !$formId ? 'opacity-50 pointer-events-none' : '' }}">
                 <i class="ri-list-ordered"></i> Étapes & Questions
             </button>
-            <button type="button" @click="activeTab = 'preview'"
-                :class="activeTab === 'preview' ? 'border-green-500 text-green-600 bg-green-50/50' : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'"
-                class="flex items-center gap-2 px-6 py-3.5 text-sm font-medium border-b-2 transition {{ !$formId ? 'opacity-50 pointer-events-none' : '' }}">
-                <i class="ri-eye-line"></i> Aperçu
-            </button>
         </div>
     </div>
 
@@ -1028,14 +1023,24 @@
                             <label class="block text-sm font-medium text-gray-700 mb-1">Type d'entrée <span class="text-red-500">*</span></label>
                             <select wire:model.live="columnForm.input_type"
                                 class="w-full px-4 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 outline-none text-sm">
-                                <option value="text">Texte</option>
-                                <option value="number">Nombre</option>
-                                <option value="checkbox">Case à cocher</option>
-                                <option value="radio">Case à cocher (radio)</option>
-                                <option value="select">Liste déroulante</option>
-                                <option value="readonly">Lecture seule</option>
-                                <option value="label">Label (texte fixe)</option>
+                                @if($tableRequiresRadioColumn)
+                                    <option value="radio">Case à cocher (radio)</option>
+                                @else
+                                    <option value="text">Texte</option>
+                                    <option value="number">Nombre</option>
+                                    <option value="checkbox">Case à cocher</option>
+                                    <option value="radio">Case à cocher (radio)</option>
+                                    <option value="select">Liste déroulante</option>
+                                    <option value="readonly">Lecture seule</option>
+                                    <option value="label">Label (texte fixe)</option>
+                                @endif
                             </select>
+                            @if($tableRequiresRadioColumn)
+                                <p class="text-xs text-amber-600 mt-1">Ce tableau est en mode radio: toutes les colonnes doivent rester de type radio.</p>
+                            @endif
+                            @error('columnForm.input_type')
+                                <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
