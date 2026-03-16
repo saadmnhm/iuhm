@@ -110,6 +110,27 @@
     <script>
         document.addEventListener('livewire:init', () => {
             let handlingSessionExpired = false;
+            const keepAliveUrl = `{{ route('admin.keep-alive') }}`;
+
+            const pingSession = () => {
+                fetch(keepAliveUrl, {
+                    method: 'GET',
+                    credentials: 'same-origin',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    cache: 'no-store',
+                }).catch(() => {});
+            };
+
+            pingSession();
+            setInterval(pingSession, 240000);
+
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden) {
+                    pingSession();
+                }
+            });
 
             Livewire.on('alert', (data) => {
                 Swal.fire({

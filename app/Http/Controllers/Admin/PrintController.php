@@ -9,25 +9,67 @@ use App\Models\Material;
 use App\Models\RhEmployee;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class PrintController extends Controller
 {
-    // ═══════════════════════════════════════
-    //  FINANCE PRINTS
-    // ═══════════════════════════════════════
+
+    private function renderPrintTemplate(
+        Request $request,
+        string $view,
+        array $data,
+        string $fileName,
+        string $paper = 'A4',
+        string $orientation = 'portrait'
+    ): Response {
+        if (!view()->exists($view)) {
+            abort(404, 'Template impression introuvable.');
+        }
+
+        if ($request->boolean('pdf')) {
+            $pdf = Pdf::loadView($view, $data);
+            $pdf->setPaper($paper, $orientation);
+            return $pdf->stream($fileName);
+        }
+
+        $printHtml = view($view, $data)->render();
+
+        $layoutCandidates = [
+            'livewire.admin.impression.layouts.paper',
+        ];
+
+        $layoutView = collect($layoutCandidates)->first(fn (string $candidate) => view()->exists($candidate));
+
+        if (!$layoutView) {
+            abort(404, 'Layout impression introuvable.');
+        }
+
+        return response()->view($layoutView, [
+            'title' => pathinfo($fileName, PATHINFO_FILENAME),
+            'printHtml' => $printHtml,
+        ]);
+    }
+
+    public function fiche_inscription(Request $request, int $id){
+        $candidat = \App\Models\Candidat::with(['moroccoLocation'])->findOrFail($id);
+        $association = \App\Models\AssociationParameter::getByCategory('general');
+
+        return $this->renderPrintTemplate($request,'livewire.admin.impression.fiche-inscription', compact('candidat', 'association'),
+            "fiche-inscription-{$candidat->nom}-{$candidat->prenom}.pdf"
+        );
+    }
 
     /**
      * Print a single transaction receipt / justification
      */
-    public function financeTransaction(int $id)
+    public function financeTransaction(Request $request, int $id)
     {
         $transaction = FinanceTransaction::with(['category', 'creator', 'attachments', 'caisse'])->findOrFail($id);
         $association = \App\Models\AssociationParameter::getByCategory('general');
 
-        $pdf = Pdf::loadView('admin.prints.finance-transaction', compact('transaction', 'association'));
-        $pdf->setPaper('A4');
-
-        return $pdf->stream("transaction-{$transaction->reference}.pdf");
+        return $this->renderPrintTemplate($request,'livewire.admin.impression.finance-transaction', compact('transaction', 'association'),
+            "transaction-{$transaction->reference}.pdf"
+        );
     }
 
     /**
@@ -53,12 +95,12 @@ class PrintController extends Controller
         $solde = (float) $caisse->solde_initial + (float) $totalRevenue - (float) $totalDepense;
         $association = \App\Models\AssociationParameter::getByCategory('general');
 
-        $pdf = Pdf::loadView('admin.prints.finance-report', compact(
-            'caisse', 'transactions', 'totalRevenue', 'totalDepense', 'solde', 'dateFrom', 'dateTo', 'association'
-        ));
-        $pdf->setPaper('A4');
-
-        return $pdf->stream("rapport-financier-{$dateFrom}-{$dateTo}.pdf");
+        return $this->renderPrintTemplate(
+            $request,
+            'livewire.admin.impression.finance-report',
+            compact('caisse', 'transactions', 'totalRevenue', 'totalDepense', 'solde', 'dateFrom', 'dateTo', 'association'),
+            "rapport-financier-{$dateFrom}-{$dateTo}.pdf"
+        );
     }
 
     // ═══════════════════════════════════════
@@ -68,30 +110,36 @@ class PrintController extends Controller
     /**
      * Print a material fiche (single item)
      */
-    public function materialFiche(int $id)
+    public function materialFiche(Request $request, int $id)
     {
         $material = Material::with(['category', 'attachments', 'movements', 'maintenances'])->findOrFail($id);
         $association = \App\Models\AssociationParameter::getByCategory('general');
 
-        $pdf = Pdf::loadView('admin.prints.material-fiche', compact('material', 'association'));
-        $pdf->setPaper('A4');
-
-        return $pdf->stream("fiche-materiel-{$material->reference}.pdf");
+        return $this->renderPrintTemplate(
+            $request,
+            'livewire.admin.impression.material-fiche',
+            compact('material', 'association'),
+            "fiche-materiel-{$material->reference}.pdf"
+        );
     }
 
     /**
      * Print full inventory report
      */
-    public function materialInventory()
+    public function materialInventory(Request $request)
     {
         $materials = Material::with(['category'])->orderBy('name')->get();
         $totalValue = $materials->sum('valeur_totale');
         $association = \App\Models\AssociationParameter::getByCategory('general');
 
-        $pdf = Pdf::loadView('admin.prints.material-inventory', compact('materials', 'totalValue', 'association'));
-        $pdf->setPaper('A4', 'landscape');
-
-        return $pdf->stream("inventaire-" . now()->format('Y-m-d') . ".pdf");
+        return $this->renderPrintTemplate(
+            $request,
+            'livewire.admin.impression.material-inventory',
+            compact('materials', 'totalValue', 'association'),
+            "inventaire-" . now()->format('Y-m-d') . ".pdf",
+            'A4',
+            'landscape'
+        );
     }
 
     // ═══════════════════════════════════════
@@ -101,42 +149,50 @@ class PrintController extends Controller
     /**
      * Print attestation de travail
      */
-    public function rhAttestation(int $id)
+    public function rhAttestation(Request $request, int $id)
     {
         $employee = RhEmployee::findOrFail($id);
         $association = \App\Models\AssociationParameter::getByCategory('general');
 
-        $pdf = Pdf::loadView('admin.prints.rh-attestation', compact('employee', 'association'));
-        $pdf->setPaper('A4');
-
-        return $pdf->stream("attestation-travail-{$employee->nom}-{$employee->prenom}.pdf");
+        return $this->renderPrintTemplate(
+            $request,
+            'livewire.admin.impression.rh-attestation',
+            compact('employee', 'association'),
+            "attestation-travail-{$employee->nom}-{$employee->prenom}.pdf"
+        );
     }
 
     /**
      * Print employee fiche
      */
-    public function rhFiche(int $id)
+    public function rhFiche(Request $request, int $id)
     {
         $employee = RhEmployee::findOrFail($id);
         $association = \App\Models\AssociationParameter::getByCategory('general');
 
-        $pdf = Pdf::loadView('admin.prints.rh-fiche', compact('employee', 'association'));
-        $pdf->setPaper('A4');
-
-        return $pdf->stream("fiche-employe-{$employee->nom}-{$employee->prenom}.pdf");
+        return $this->renderPrintTemplate(
+            $request,
+            'livewire.admin.impression.rh-fiche',
+            compact('employee', 'association'),
+            "fiche-employe-{$employee->nom}-{$employee->prenom}.pdf"
+        );
     }
 
     /**
      * Print employee list
      */
-    public function rhList()
+    public function rhList(Request $request)
     {
         $employees = RhEmployee::where('status', 'active')->orderBy('nom')->get();
         $association = \App\Models\AssociationParameter::getByCategory('general');
 
-        $pdf = Pdf::loadView('admin.prints.rh-list', compact('employees', 'association'));
-        $pdf->setPaper('A4', 'landscape');
-
-        return $pdf->stream("liste-employes-" . now()->format('Y-m-d') . ".pdf");
+        return $this->renderPrintTemplate(
+            $request,
+            'livewire.admin.impression.rh-list',
+            compact('employees', 'association'),
+            "liste-employes-" . now()->format('Y-m-d') . ".pdf",
+            'A4',
+            'landscape'
+        );
     }
 }

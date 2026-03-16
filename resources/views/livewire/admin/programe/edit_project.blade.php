@@ -318,16 +318,6 @@
                                            class="w-4 h-4 text-blue-600 border border-gray-300 rounded">
                                 </div>
 
-                                <!-- Unlock Rule -->
-                                <div class="w-40">
-                                    <label class="text-xs text-gray-600">Unlock next when</label>
-                                    <select wire:change="updateFormulaireUnlockStatus({{ $formulaire['id'] }}, $event.target.value)"
-                                            class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
-                                        <option value="submitted" {{ ($formulaire['unlock_on_status'] ?? 'approved') == 'submitted' ? 'selected' : '' }}>Submitted</option>
-                                        <option value="in_review" {{ ($formulaire['unlock_on_status'] ?? 'approved') == 'in_review' ? 'selected' : '' }}>In review</option>
-                                        <option value="approved" {{ ($formulaire['unlock_on_status'] ?? 'approved') == 'approved' ? 'selected' : '' }}>Approved</option>
-                                    </select>
-                                </div>
 
                                 <!-- Delete Button -->
                                 <button type="button"

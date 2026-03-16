@@ -286,7 +286,7 @@
                 <tbody class="">
                     @forelse($submissions as $sub)
                     @php
-                        $rowUrl = $sub->candidat ? route('admin.candidat.submissions', $sub->candidat_id) : null;
+                        $rowUrl = $sub->candidat ? route('admin.candidat.submissions', ['id' => $sub->candidat_id, 'projectId' => $sub->programe_id]) : null;
                     @endphp
                     <tr class="{{ $rowUrl ? 'cursor-pointer hover:bg-indigo-50/40' : 'hover:bg-gray-50' }} transition-colors duration-100"
                         @if($rowUrl) onclick="window.location='{{ $rowUrl }}'" @endif>
@@ -428,7 +428,7 @@
                                      x-transition:enter-end="opacity-100 scale-100"
                                      class="absolute z-50 right-0 mt-1 bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 w-48">
                                     @if($sub->candidat)
-                                    <a href="{{ route('admin.candidat.submissions', $sub->candidat_id) }}"
+                                                <a href="{{ route('admin.candidat.submissions', ['id' => $sub->candidat_id, 'projectId' => $sub->programe_id]) }}"
                                        class="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition">
                                         <i class="ri-eye-line text-indigo-500 w-4 text-center"></i>
                                         Voir le dossier

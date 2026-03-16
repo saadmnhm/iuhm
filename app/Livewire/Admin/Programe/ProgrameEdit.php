@@ -193,16 +193,6 @@ class ProgrameEdit extends Component{
         $this->loadFormulaires();
     }
 
-    public function updateFormulaireUnlockStatus($formulaireId, $unlockStatus)
-    {
-        if (!in_array($unlockStatus, ['submitted', 'in_review', 'approved'])) {
-            return;
-        }
-
-        $programe = ProgrameList::findOrFail($this->programeId);
-        $programe->formulaires()->updateExistingPivot($formulaireId, ['unlock_on_status' => $unlockStatus]);
-        $this->loadFormulaires();
-    }
 
     public function selectIcon(string $iconClass): void
     {

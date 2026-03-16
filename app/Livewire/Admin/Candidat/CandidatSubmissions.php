@@ -62,19 +62,29 @@ class CandidatSubmissions extends Component
 
 
 
-    public function mount($id)
+    public function mount($id, $projectId = null)
     {
         $this->candidatId = $id;
         $this->candidat   = Candidat::with('reviewer')->findOrFail($id);
         $this->formationRanking = (string) ($this->candidat->formation_ranking ?? '');
         $this->admins     = User::all()->sortBy('name')->values()->toArray();
         
-        // Get the first project this candidat has submissions for
+        // Get project from URL when provided and valid for this candidat; fallback to first available
         $firstSubmission = DynamicFormSubmission::where('candidat_id', $id)
             ->whereNotNull('programe_id')
             ->first();
-        
-        $this->projectId = $firstSubmission->programe_id ?? null;
+
+        $requestedProjectId = $projectId !== null ? (int) $projectId : null;
+        $projectExistsForCandidat = $requestedProjectId
+            ? DynamicFormSubmission::where('candidat_id', $id)
+                ->where('programe_id', $requestedProjectId)
+                ->exists()
+            : false;
+
+        $this->projectId = $projectExistsForCandidat
+            ? $requestedProjectId
+            : ($firstSubmission->programe_id ?? null);
+
         $this->project   = $this->projectId
             ? ProgrameList::with('formulaires')->findOrFail($this->projectId)
             : null;
@@ -599,7 +609,7 @@ class CandidatSubmissions extends Component
     {
         return view('livewire.admin.programe.candidat.candidat-submissions')
             ->layout('layouts.admin', [
-                'header' => 'Soumissions de ' . $this->candidat->nom . ' ' . $this->candidat->prenom,
+                'header' => 'Soumissions de ' . $this->candidat->nom . ' ' . $this->candidat->prenom . ($this->project ? " - {$this->project->project_name}" : ''),
             ]);
     }
 }

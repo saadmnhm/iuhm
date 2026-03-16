@@ -90,96 +90,99 @@
         </div>
 
         <!-- Cards Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="overflow-hidden rounded-xl border border-gray-100 shadow-sm bg-white">
+    <table class="min-w-full divide-y divide-gray-100">
+        <thead class="bg-gray-50">
+            <tr>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Candidat</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Matricule</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Joined</th>
+                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100 bg-white">
             @forelse($candidats as $candidat)
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
-                <div class="p-6">
-                    <!-- User Avatar and Info -->
-                    <div class="flex items-center mb-4 pb-4 border-b border-gray-100">
-                        <div class="w-14 h-14 rounded-full bg-green-logo flex items-center justify-center text-white text-xl font-semibold mr-4">
+            <tr class="hover:bg-gray-50 transition-colors duration-150">
+                <!-- Avatar + Name -->
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-green-logo flex items-center justify-center text-white text-sm font-semibold shrink-0">
                             @if($candidat->profile_image)
-                            <img src="{{ asset('uploads/' . $candidat->profile_image) }}" alt="Profile" class="w-full h-full rounded-full object-cover">
-                        @else
-                            <i class="ri-user-line"></i>
-                        @endif
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="text-base font-semibold text-gray-900 truncate">{{ $candidat->nom }} {{ $candidat->prenom }}</div>
-                            <div class="text-sm text-gray-500 truncate">{{ $candidat->email }}</div>
-                            @if($candidat->matricule)
-                            <span class="inline-block mt-1 px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs rounded-full font-medium">
-                                <i class="ri-hashtag"></i> {{ $candidat->matricule }}
-                            </span>
+                                <img src="{{ asset('uploads/' . $candidat->profile_image) }}" alt="Profile" class="w-full h-full rounded-full object-cover">
+                            @else
+                                <i class="ri-user-line"></i>
                             @endif
                         </div>
+                        <span class="text-sm font-semibold text-gray-900">{{ $candidat->nom }} {{ $candidat->prenom }}</span>
                     </div>
+                </td>
 
-                    <div class="mb-4">
-                        <span class="px-3 py-1 text-xs font-medium rounded-full ">
-                            
-                        </span>
-                        @if(!($candidat->is_active ?? true))
-                        <span class="px-3 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800 ml-2">
-                            Disabled
-                        </span>
-                        @endif
-                    </div>
+                <!-- Email -->
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ $candidat->email }}
+                </td>
 
-                    <!-- Join Date -->
-                    <div class="flex items-center text-sm text-gray-500 mb-4">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <!-- Matricule -->
+                <td class="px-6 py-4 whitespace-nowrap">
+                    @if($candidat->matricule)
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs rounded-full font-medium">
+                            <i class="ri-hashtag"></i> {{ $candidat->matricule }}
+                        </span>
+                    @else
+                        <span class="text-gray-400 text-xs">—</span>
+                    @endif
+                </td>
+
+                <!-- Status -->
+                <td class="px-6 py-4 whitespace-nowrap">
+                    @if(!($candidat->is_active ?? true))
+                        <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">Disabled</span>
+                    @else
+                        <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Active</span>
+                    @endif
+                </td>
+
+                <!-- Joined Date -->
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center gap-1.5 text-sm text-gray-500">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
-                        Joined {{ $candidat->created_at->format('M d, Y') }}
+                        {{ $candidat->created_at->format('M d, Y') }}
                     </div>
+                </td>
 
-                    <!-- Action Buttons -->
-                    <div class="flex gap-2">
-                        <a href="{{ route('admin.candidats.show', $candidat->id) }}" 
-                           class="flex-1 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 text-center">
+                <!-- Actions -->
+                <td class="px-6 py-4 whitespace-nowrap text-right">
+                    <div class="flex items-center justify-end gap-2">
+                        <a href="{{ route('admin.candidats.show', $candidat->id) }}"
+                           class="px-4 py-1.5 bg-gray-600 hover:bg-gray-700 text-white text-xs font-medium rounded-lg transition-colors duration-200">
                             View
                         </a>
                         @if(Auth::user()->isSuperAdmin() || Auth::user()->isAdmin())
-                        <!-- <button wire:click="generateNewPassword({{ $candidat->id }})" 
-                                class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200"
-                                title="Generate new password">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
-                            </svg>
-                        </button> -->
                         <button wire:click="openDeleteModal({{ $candidat->id }})"
-                            class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 text-center">
+                            class="px-4 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg transition-colors duration-200">
                             Delete
                         </button>
-                        @if(false)
-                        <button wire:click="toggleStatus({{ $candidat->id }})" 
-                                class="px-3 py-2 {{ ($candidat->is_active ?? true) ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700' }} text-white text-sm font-medium rounded-lg transition-colors duration-200"
-                                title="{{ ($candidat->is_active ?? true) ? 'Disable' : 'Enable' }} account">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                @if($candidat->is_active ?? true)
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
-                                @else
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                @endif
-                            </svg>
-                        </button>
-                        @endif
-
                         @endif
                     </div>
-                </div>
-            </div>
+                </td>
+            </tr>
             @empty
-            <div class="col-span-full">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
-                    <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <tr>
+                <td colspan="6" class="px-6 py-16 text-center">
+                    <svg class="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
                     </svg>
-                    <p class="text-gray-500">No candidats found</p>
-                </div>
-            </div>
+                    <p class="text-gray-500 text-sm">No candidats found</p>
+                </td>
+            </tr>
             @endforelse
-        </div>
+        </tbody>
+    </table>
+</div>
 
         <!-- Pagination -->
         <div class="mt-6">

@@ -69,5 +69,10 @@ class ProgrameList extends Model
                     ->orderByPivot('order');
     }
 
+    public function projectSubmissions(): HasMany
+    {
+        return $this->hasMany(ProjectSubmission::class, 'programe_id');
+    }
+
 
 }

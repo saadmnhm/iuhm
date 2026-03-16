@@ -6,6 +6,7 @@ use App\Models\DynamicForm;
 use App\Models\DynamicFormSubmission;
 use App\Models\DynamicFormAnswer;
 use App\Models\DynamicFormTableAnswer;
+use App\Models\ProjectSubmission;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -241,6 +242,23 @@ class DynamicFormWizard extends Component
 
         DB::beginTransaction();
         try {
+            $projectSubmissionId = null;
+            $projectId = request()->integer('project_id');
+
+            if ($projectId > 0) {
+                $projectSubmission = ProjectSubmission::updateOrCreate(
+                    [
+                        'candidat_id' => $candidatId,
+                        'programe_id' => $projectId,
+                    ],
+                    [
+                        'last_activity' => now(),
+                    ]
+                );
+
+                $projectSubmissionId = $projectSubmission->id;
+            }
+
             // Create or update submission
             $submission = DynamicFormSubmission::updateOrCreate(
                 [
@@ -248,6 +266,8 @@ class DynamicFormWizard extends Component
                     'candidat_id' => $candidatId,
                 ],
                 [
+                    'programe_id' => $projectId > 0 ? $projectId : null,
+                    'project_submission_id' => $projectSubmissionId,
                     'current_step' => $this->step,
                     'is_submitted' => false,
                 ]

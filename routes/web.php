@@ -19,6 +19,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
     
     Route::middleware('admin')->group(function () {
+        Route::get('/keep-alive', function () {
+            return response()->json(['ok' => true, 'time' => now()->toDateTimeString()]);
+        })->name('keep-alive');
+
         Route::get('/dashboard', \App\Livewire\Admin\Dashboard::class)->name('dashboard');
         Route::post('/address/create', [\App\Http\Controllers\Admin\DashboardController::class, 'createAddress'])->name('address.create');
         Route::post('/address/delete/{id}', [\App\Http\Controllers\Admin\DashboardController::class, 'DeleteAddess'])->name('address.delete');
@@ -30,6 +34,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/candidats', \App\Livewire\Admin\Candidat\CandidatManagement::class)->name('candidats.index')->middleware('module:candidats');
         Route::get('/candidats/{id}', \App\Livewire\Admin\Candidat\ShowCandidat::class)->name('candidats.show')->middleware('module:candidats');
         Route::get('/candidats/{id}/edit', \App\Livewire\Admin\Candidat\EditCandidat::class)->name('candidats.edit')->middleware('module:candidats');
+        Route::get('/candidats/{id}/print/fiche_inscription', [PrintController::class, 'fiche_inscription'])->name('candidats.print.fiche_inscription')->middleware('module:candidats');
         Route::get('/users/create', \App\Livewire\Admin\User\CreateUser::class)->name('users.create')->middleware('module:users');
         Route::get('/users/{id}', \App\Livewire\Admin\User\ShowUser::class)->name('users.show')->middleware('module:users');
         Route::get('/users/{id}/edit', \App\Livewire\Admin\User\EditUser::class)->name('users.edit')->middleware('module:users');
@@ -80,7 +85,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/programe/create', App\Livewire\Admin\Programe\ProgrameCreate::class)->name('programe.create')->middleware('module:programe');
         Route::get('/programe/edit/{id}', App\Livewire\Admin\Programe\ProgrameEdit::class)->name('programe.edit')->middleware('module:programe');
         Route::get('/programe/submissions/{id}', App\Livewire\Admin\Programe\ProjectSubmissions::class)->name('project.submissions')->middleware('module:programmes');
-        Route::get('/programe/candidat/{id}/submissions', \App\Livewire\Admin\Candidat\CandidatSubmissions::class)->name('candidat.submissions')->middleware('module:programmes');
+        Route::get('/programe/candidat/{id}/submissions/{projectId?}', \App\Livewire\Admin\Candidat\CandidatSubmissions::class)->name('candidat.submissions')->middleware('module:programmes');
         Route::get('/programe/candidat/{candidatId}/submission/{id}/export-pdf', [\App\Http\Controllers\Admin\CandidatExportController::class, 'exportSingle'])->name('candidat.submission.export')->middleware('module:candidats');
         Route::get('/programe/candidat/{id}/export-all-pdf', [\App\Http\Controllers\Admin\CandidatExportController::class, 'exportAll'])->name('candidat.export-all')->middleware('module:candidats');
 
@@ -113,6 +118,10 @@ Route::prefix('user')->name('user.')->group(function () {
 
     // Protected User Dashboard Routes
     Route::middleware('candidat')->group(function () {
+        Route::get('/keep-alive', function () {
+            return response()->json(['ok' => true, 'time' => now()->toDateTimeString()]);
+        })->name('keep-alive');
+
         Route::get('/dashboard', Dashboard::class)->name('dashboard');
         Route::get('/settings', \App\Livewire\Front\Dashboard\Settings::class)->name('settings');
         Route::get('/support', \App\Livewire\Front\Dashboard\Support::class)->name('support');

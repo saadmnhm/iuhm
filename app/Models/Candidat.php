@@ -24,6 +24,7 @@ class Candidat extends Authenticatable implements MustVerifyEmail
         'password',
         'nom',
         'prenom',
+        'cin',
         'age',
         'profile_image',
         'gender',
@@ -36,6 +37,8 @@ class Candidat extends Authenticatable implements MustVerifyEmail
         'email',
         'phone',
         'date_naissance',
+        'niveau_etude',
+        'specialite',
         'cv_path',
         'is_active',
         'last_ip_address',
@@ -102,6 +105,11 @@ class Candidat extends Authenticatable implements MustVerifyEmail
     public function projects()
     {
         return $this->hasMany(DynamicFormSubmission::class);
+    }
+
+    public function projectSubmissions()
+    {
+        return $this->hasMany(ProjectSubmission::class);
     }
     /**
      * Get projects by form type

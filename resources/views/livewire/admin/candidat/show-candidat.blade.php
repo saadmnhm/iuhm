@@ -48,7 +48,10 @@
                                 <i class="ri-sort-asc mr-1"></i>ordre des formulaires
                             </a>
                             <a href="{{ route('admin.candidat.submissions', $candidat->id) }}" class="block px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
-                                <i class="ri-flow-chart mr-1"></i> Gérer soumissions / workflow
+                                <i class="ri-flow-chart mr-1"></i> Gérer soumissions
+                            </a>
+                            <a href="{{ route('admin.candidats.print.fiche_inscription', $candidat->id) }}" target="_blank" class="block px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
+                                <i class="ri-printer-line mr-1"></i> Imprimer fiche de renseignement
                             </a>
                             <a href="{{ route('admin.candidats.edit', $candidat->id) }}" class="block px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
                                 <i class="ri-edit-line mr-1"></i> Éditer

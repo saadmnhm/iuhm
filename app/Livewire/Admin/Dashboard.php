@@ -5,25 +5,34 @@ namespace App\Livewire\Admin;
 use App\Models\User;
 use App\Models\Candidat;
 use App\Models\DynamicFormSubmission;
-use App\Services\FormSubmissionService;
+use App\Models\ProjectSubmission;
 use App\Models\ProgrameList;
 use Livewire\Component;
 
 class Dashboard extends Component
 {
+    public $projectId;
+
+
     public function render()
     {
-        $formService = app(FormSubmissionService::class);
-        $allSubmissions = $formService->getAllSubmissions();
+        $latestSubmission = DynamicFormSubmission::latest()->first();
+        $this->projectId = $latestSubmission?->programe_id;
+
+        $allSubmissions = DynamicFormSubmission::with(['candidat', 'programe'])->latest()->get();
         $programe_list = ProgrameList::all();
+
+        $projectSubmissions = ProjectSubmission::latest('updated_at')->get();
+
+
         
         // Dynamic address distribution (top 6)
-        $addressDistribution = Candidat::whereNotNull('address')
-            ->selectRaw('address, COUNT(*) as count')
-            ->groupBy('address')
+        $addressDistribution = Candidat::whereNotNull('selected_prefecture')
+            ->selectRaw('selected_prefecture as selected_prefecture , COUNT(*) as count')
+            ->groupBy('selected_prefecture')
             ->orderByDesc('count')
-            ->limit(6)
-            ->pluck('count', 'address')
+            // ->limit(6)
+            ->pluck('count', 'selected_prefecture')
             ->toArray();
 
         // Submission status counts
@@ -36,6 +45,8 @@ class Dashboard extends Component
 
         $statistics = [
             'total_users' => User::count(),
+            'total_candidats' => Candidat::count(),
+            'total_submissions' => ProjectSubmission::count(),
             'recent_projects' => $allSubmissions->take(20),
             'total_projects' => $programe_list->count(),
             'total_candidats' => Candidat::count(),
@@ -46,8 +57,8 @@ class Dashboard extends Component
             'submission_stats' => $submissionStats,
         ];
 
-        $programe_list = ProgrameList::all();
-        // Get monthly data for all forms
+        
+
         $monthlyData = [];
         foreach ($allSubmissions as $submission) {
             $month = $submission->created_at->month;
@@ -58,15 +69,19 @@ class Dashboard extends Component
         for ($i = 1; $i <= 12; $i++) {
             $chartData[] = $monthlyData[$i] ?? 0;
         }
-        // echo "<pre>";
-        // print_r($programe_list);
-        // echo "</pre>";
-        // exit;
+            
+        // submissions per  project id
+        // foreach ($projectSubmissions as $project) {
+        //     echo "<pre>";
+        //     print_r($project->candidat);
+        //     echo "</pre>";
+        // }
 
         return view('livewire.admin.dashboard', [
             'statistics' => $statistics,
             'chartData' => $chartData,
-            'programe_list' => $programe_list,
+            'userSubmissions' => $projectSubmissions,
+            'admins' => User::whereIn('role', ['admin', 'super_admin'])->orderBy('name')->get(['id', 'name']),
         ])->layout('layouts.admin', ['header' => 'Dashboard']);
     }
     

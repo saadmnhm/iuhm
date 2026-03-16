@@ -190,7 +190,7 @@
 
                 @if($sub->candidat)
                 <div class="mt-3 pt-3 border-t border-gray-100">
-                    <a href="{{ route('admin.candidat.submissions', $sub->candidat_id) }}" class="text-xs text-indigo-600 hover:text-indigo-800 font-semibold">
+                    <a href="{{ route('admin.candidat.submissions', ['id' => $sub->candidat_id, 'projectId' => $sub->programe_id]) }}" class="text-xs text-indigo-600 hover:text-indigo-800 font-semibold">
                         <i class="ri-arrow-right-line mr-1"></i> Voir les soumissions du candidat
                     </a>
                 </div>

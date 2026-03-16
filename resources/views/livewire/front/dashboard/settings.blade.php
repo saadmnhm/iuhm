@@ -117,9 +117,55 @@
                                     </div>
 
                                     <div class="col-md-6">
-                                            <label for="age" class="block disc mb-2 font-semibold">{{ __('messages.age') }}</label>
-                                                <input type="number" class="form-control border border-gray-300 rounded p-2 w-full" id="age" name="age" wire:model="age" min="18" max="100" placeholder="{{ $tr('Ex : 25', 'مثال: 25') }}">
-                                            @error('age') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                        <label for="cin" class="form-label">{{ $tr('CIN', 'رقم البطاقة الوطنية') }} <span class="text-danger">*</span></label>
+                                        <input
+                                            type="text"
+                                            class="form-control @error('cin') is-invalid @enderror"
+                                            id="cin"
+                                            wire:model="cin"
+                                            inputmode="numeric"
+                                            placeholder="{{ $tr('Entrez votre CIN', 'أدخل رقم البطاقة الوطنية') }}">
+                                        @error('cin')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="date_naissance" class="form-label">{{ $tr('Date de naissance', 'تاريخ الازدياد') }} <span class="text-danger">*</span></label>
+                                        <input
+                                            type="date"
+                                            class="form-control @error('date_naissance') is-invalid @enderror"
+                                            id="date_naissance"
+                                            wire:model="date_naissance">
+                                        @error('date_naissance')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="niveau_etude" class="form-label">{{ $tr('Niveau d\'étude', 'المستوى الدراسي') }} <span class="text-danger">*</span></label>
+                                        <input
+                                            type="text"
+                                            class="form-control @error('niveau_etude') is-invalid @enderror"
+                                            id="niveau_etude"
+                                            wire:model="niveau_etude"
+                                            placeholder="{{ $tr('Entrez votre niveau d\'étude', 'أدخل مستواك الدراسي') }}">
+                                        @error('niveau_etude')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="specialite" class="form-label">{{ $tr('Spécialité', 'التخصص') }} <span class="text-danger">*</span></label>
+                                        <input
+                                            type="text"
+                                            class="form-control @error('specialite') is-invalid @enderror"
+                                            id="specialite"
+                                            wire:model="specialite"
+                                            placeholder="{{ $tr('Entrez votre spécialité', 'أدخل تخصصك') }}">
+                                        @error('specialite')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                     <!-- Login & Email -->
 
@@ -138,12 +184,16 @@
 
                                     <!-- Contact Information -->
                                     <div class="col-md-6">
-                                        <label for="phone" class="form-label">{{ $tr('Téléphone', 'رقم الهاتف') }}</label>
+                                        <label for="phone" class="form-label">{{ $tr('Téléphone', 'رقم الهاتف') }} <span class="text-danger">*</span></label>
                                         <input 
-                                            type="text" 
+                                            type="number" 
                                             class="form-control @error('phone') is-invalid @enderror" 
                                             id="phone" 
                                             wire:model="phone"
+                                            min="0"
+                                            step="1"
+                                            inputmode="numeric"
+                                            oninput="this.value=this.value.replace(/\D/g,'')"
                                             placeholder="{{ $tr('Entrez votre numéro de téléphone', 'أدخل رقم هاتفك') }}">
                                         @error('phone')
                                             <div class="invalid-feedback">{{ $message }}</div>
@@ -151,7 +201,7 @@
                                     </div>
 
                                     <div class="col-md-6">
-                                        <label for="gender" class="form-label">{{ $tr('Genre', 'الجنس') }}</label>
+                                        <label for="gender" class="form-label">{{ $tr('Genre', 'الجنس') }} <span class="text-danger">*</span></label>
                                         <select class="form-control border border-gray-300 rounded p-2 w-full" id="gender" name="gender" wire:model="gender">
                                             <option value="">{{ __('messages.selectionner') }}</option>
                                             <option value="homme">{{ __('messages.homme') }}</option>
@@ -163,7 +213,7 @@
                                     </div>
 
                                     <div class="col-md-6">
-                                        <label for="selected_region" class="form-label">{{ $tr('Région', 'الجهة') }}</label>
+                                        <label for="selected_region" class="form-label">{{ $tr('Région', 'الجهة') }} <span class="text-danger">*</span></label>
                                         <select class="form-control @error('selected_region') is-invalid @enderror" id="selected_region" wire:model.live="selected_region">
                                             <option value="">{{ $tr('Sélectionner une région', 'اختر جهة') }}</option>
                                             @foreach($regions as $region)
@@ -176,7 +226,7 @@
                                     </div>
 
                                     <div class="col-md-6">
-                                        <label for="selected_city" class="form-label">{{ $tr('Ville', 'المدينة') }}</label>
+                                        <label for="selected_city" class="form-label">{{ $tr('Ville', 'المدينة') }} <span class="text-danger">*</span></label>
                                         <select class="form-control @error('selected_city') is-invalid @enderror" id="selected_city" wire:model.live="selected_city" {{ empty($selected_region) ? 'disabled' : '' }}>
                                             <option value="">{{ $tr('Sélectionner une ville', 'اختر مدينة') }}</option>
                                             @foreach($cities as $city)
@@ -189,7 +239,7 @@
                                     </div>
 
                                     <div class="col-md-6">
-                                        <label for="selected_prefecture" class="form-label">{{ $tr('Préfecture', 'العمالة / الإقليم') }}</label>
+                                        <label for="selected_prefecture" class="form-label">{{ $tr('Préfecture', 'العمالة / الإقليم') }} <span class="text-danger">*</span></label>
                                         <select class="form-control @error('selected_prefecture') is-invalid @enderror" id="selected_prefecture" wire:model.live="selected_prefecture" {{ empty($selected_city) ? 'disabled' : '' }}>
                                             <option value="">{{ $tr('Sélectionner une préfecture', 'اختر عمالة / إقليم') }}</option>
                                             @foreach($prefectures as $prefecture)
@@ -202,7 +252,7 @@
                                     </div>
 
                                     <div class="col-md-6">
-                                        <label for="address_detail" class="form-label">{{ $tr('Détails adresse (IMM, GH...)', 'تفاصيل العنوان (IMM, GH...)') }}</label>
+                                        <label for="address_detail" class="form-label">{{ $tr('Détails adresse (IMM, GH...)', 'تفاصيل العنوان (IMM, GH...)') }} <span class="text-danger">*</span></label>
                                         <input
                                             type="text"
                                             class="form-control @error('address_detail') is-invalid @enderror"

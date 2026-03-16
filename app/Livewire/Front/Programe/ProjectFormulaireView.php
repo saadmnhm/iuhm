@@ -10,6 +10,7 @@ use App\Models\DynamicFormAnswer;
 use App\Models\DynamicFormTableAnswer;
 use App\Models\CandidatFormulaireOrder;
 use App\Models\CandidatProjectAgreement;
+use App\Models\ProjectSubmission;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Services\ProjectEligibilityService;
@@ -354,6 +355,16 @@ class ProjectFormulaireView extends Component
         try {
             $candidatId = Auth::guard('candidat')->id();
 
+            $projectSubmission = ProjectSubmission::updateOrCreate(
+                [
+                    'candidat_id' => $candidatId,
+                    'programe_id' => $this->projectId,
+                ],
+                [
+                    'last_activity' => now(),
+                ]
+            );
+
             $submission = DynamicFormSubmission::updateOrCreate(
                 [
                     'dynamic_form_id' => $this->formulaire->id,
@@ -361,6 +372,7 @@ class ProjectFormulaireView extends Component
                     'candidat_id' => $candidatId,
                 ],
                 [
+                    'project_submission_id' => $projectSubmission->id,
                     'current_step' => $this->currentStep,
                     'is_submitted' => false,
                 ]
@@ -481,6 +493,10 @@ class ProjectFormulaireView extends Component
                 'status' => 'submitted',
                 'is_submitted' => true,
                 'submitted_at' => now(),
+            ]);
+
+            ProjectSubmission::where('id', $submission->project_submission_id)->update([
+                'last_activity' => now(),
             ]);
         }
 

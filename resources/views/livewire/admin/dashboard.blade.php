@@ -42,8 +42,8 @@
         <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition">
             <div class="flex justify-between items-start">
                 <div>
-                    <p class="text-gray-500 text-sm font-medium">Male Submissions</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ $statistics['male_count'] }}</p>
+                    <p class="text-gray-500 text-sm font-medium">Total Beneficiaires</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ $statistics['total_candidats'] }}</p>
                 </div>
                 <div class="w-12 h-12 bg-cyan-100 rounded-lg flex items-center justify-center">
                     <svg class="w-6 h-6 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -57,8 +57,8 @@
         <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition">
             <div class="flex justify-between items-start">
                 <div>
-                    <p class="text-gray-500 text-sm font-medium">Female Submissions</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ $statistics['female_count'] }}</p>
+                    <p class="text-gray-500 text-sm font-medium">Total Submissions</p>
+                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ $statistics['total_submissions'] }}</p>
                 </div>
                 <div class="w-12 h-12 bg-pink-100 rounded-lg flex items-center justify-center">
                     <svg class="w-6 h-6 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -101,77 +101,74 @@
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Projet</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted By</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Programe</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Responsable</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    @foreach($statistics['recent_projects'] as $project)
-                    @php 
-                        $candidat = $project->candidat ?? null;
-                        $programeName = $project->programe->project_name ?? null;
-                    @endphp
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="flex flex-col gap-1">
-                                    <span class="text-xs text-gray-500">{{ $programeName }}</span>
-                            </div>
-                        </td>
-                        
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            @if($candidat)
-                            <div class="flex items-center">
-                                @if($candidat->profile_image)
-                                    <img class="w-10 h-10 rounded-full mr-4 object-contain" src="{{ asset('uploads/'.$candidat->profile_image) }}" alt="{{ $candidat->nom }} {{ $candidat->prenom }}">
-                                @else
-                                <div class="w-8 h-8 rounded-full bg-green-logo flex items-center justify-center text-white text-sm font-semibold mr-3">
-                                    {{ strtoupper(substr($candidat->nom, 0, 1)) }}
+                <tbody class="divide-y divide-gray-100">
+                    <!--[if BLOCK]><![endif]-->
+                    @forelse($userSubmissions as $submission)
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-4 py-3 text-gray-500">{{ $submission->programe_id ?? 'N/A' }}</td>
+                            <td class="px-4 py-3 text-center">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-semibold text-xs">
+                                        @if($submission->candidat?->profile_image)
+                                            <img src="{{ asset('uploads/' . $submission->candidat->profile_image) }}" alt="{{ $submission->candidat->nom }} {{ $submission->candidat->prenom }}" class="w-full h-full object-cover rounded-full">
+                                        @else
+                                            {{ substr($submission->candidat->nom ?? 'N', 0, 1) }}
+                                        @endif
+                                    </div>
+                                    <div>
+                                        <div class="font-medium text-left text-sm text-gray-800">
+                                            {{ $submission->candidat->nom ?? 'N/A' }} {{ $submission->candidat->prenom ?? '' }}
+                                        </div>
+                                        <div class="text-xs text-gray-400">{{ $submission->candidat->email ?? 'N/A' }}</div>
+                                    </div>
                                 </div>
-                                @endif
+                            </td>
 
-                                <div>
-                                    <div class="text-sm font-medium text-gray-900">{{ $candidat->nom }} {{ $candidat->prenom }} </div>
-                                    <div class="text-sm text-gray-500">{{ $candidat->email }}</div>
-                                </div>
-                            </div>
-                            @else
-                            <span class="text-sm text-gray-400">N/A</span>
-                            @endif
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            @if($project->reviewer)
-                                 <span class="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">{{ $project->reviewer->name }}</span>
-                                @else
-                            <span class="text-sm text-gray-400 italic">Non assigné</span>
-                            @endif
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            @if($project->status === 'draft')
-                                <span class="px-3 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">Brouillon</span>
-                            @elseif($project->status === 'submitted')
-                                <span class="px-3 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">Soumis</span>
-                            @elseif($project->status === 'in_review')
-                                <span class="px-3 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">En révision</span>
-                            @elseif($project->status === 'approved')
-                                <span class="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Approuvé</span>
-                            @elseif($project->status === 'rejected')
-                                <span class="px-3 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">Rejeté</span>
-                            @endif
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ $project->created_at->format('M d, Y') }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm">
-                            <a href="{{ route('admin.candidat.submissions', $candidat->id) }}" class="text-indigo-600 hover:text-indigo-900 svg-view-detail">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#648454">
-                                    <path d="M12.0003 3C17.3924 3 21.8784 6.87976 22.8189 12C21.8784 17.1202 17.3924 21 12.0003 21C6.60812 21 2.12215 17.1202 1.18164 12C2.12215 6.87976 6.60812 3 12.0003 3ZM12.0003 19C16.2359 19 19.8603 16.052 20.7777 12C19.8603 7.94803 16.2359 5 12.0003 5C7.7646 5 4.14022 7.94803 3.22278 12C4.14022 16.052 7.7646 19 12.0003 19ZM12.0003 16.5C9.51498 16.5 7.50026 14.4853 7.50026 12C7.50026 9.51472 9.51498 7.5 12.0003 7.5C14.4855 7.5 16.5003 9.51472 16.5003 12C16.5003 14.4853 14.4855 16.5 12.0003 16.5ZM12.0003 14.5C13.381 14.5 14.5003 13.3807 14.5003 12C14.5003 10.6193 13.381 9.5 12.0003 9.5C10.6196 9.5 9.50026 10.6193 9.50026 12C9.50026 13.3807 10.6196 14.5 12.0003 14.5Z"></path>
-                                </svg>
-                            </a>
-                        </td>
-                    </tr>
-                    @endforeach
+                            <td class="px-4 py-3 text-gray-700">
+                                {{ $submission->project?->project_name ?? 'N/A' }}
+                            </td>
+                            <td class="px-4 py-3 text-gray-700">
+                                {{ $submission->assignedAdmin?->name ?? '-' }}
+                            </td>
+                            <td class="px-4 py-3">
+                                @php
+                                    $submittedCount = $submission->formSubmissions->where('is_submitted', true)->count();
+                                @endphp
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $submittedCount > 0 ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700' }}">
+                                    {{ $submittedCount > 0 ? 'Soumis' : 'Brouillon' }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-3 text-gray-500 text-xs">{{ $submission->last_activity ? \Carbon\Carbon::parse($submission->last_activity)->format('d/m/Y H:i') : 'N/A' }}</td>
+                            <td class="px-4 py-3 text-center">
+                                <a href="{{ route('admin.candidat.submissions', ['id' => $submission->candidat->id, 'projectId' => $submission->programe_id]) }}"
+                                    class="inline-flex items-center px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 transition text-xs font-medium">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                                        </path>
+                                    </svg>
+                                    Voir
+                                </a>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="6" class="px-4 py-12 text-center text-gray-500">
+                                <i class="ri-inbox-line text-4xl mb-2"></i>
+                                <p>No submissions found for this project.</p>
+                            </td>
+                        </tr>
+                    @endforelse
+                    <!--[if ENDBLOCK]><![endif]-->
                 </tbody>
             </table>
         </div>

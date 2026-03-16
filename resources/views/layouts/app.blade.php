@@ -38,18 +38,47 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 <script src="{{ asset('assets/site/js/scripts.js') }}?v=<?= time() ?>"></script>
 <script>
-    // Handle Livewire token mismatch - reload page on session expiration
+    // Handle Livewire token mismatch and keep active sessions alive
     document.addEventListener('livewire:init', () => {
+        let handlingSessionExpired = false;
+        const keepAliveUrl = `{{ route('user.keep-alive') }}`;
+
+        const pingSession = () => {
+            fetch(keepAliveUrl, {
+                method: 'GET',
+                credentials: 'same-origin',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+                cache: 'no-store',
+            }).catch(() => {});
+        };
+
+        pingSession();
+        setInterval(pingSession, 240000);
+
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                pingSession();
+            }
+        });
+
         Livewire.hook('request', ({ fail }) => {
             fail(({ status, preventDefault }) => {
                 if (status === 419) { // CSRF token mismatch / session expired
                     preventDefault();
-                    // Show a brief notification before reloading
+                    if (handlingSessionExpired) {
+                        return;
+                    }
+                    handlingSessionExpired = true;
+
                     const toast = document.createElement('div');
                     toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#f57c00;color:#fff;padding:14px 28px;border-radius:10px;font-size:14px;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.2);';
-                    toast.textContent = 'Session expirée. Actualisation en cours…';
+                    toast.textContent = 'Session expirée. Redirection vers la connexion…';
                     document.body.appendChild(toast);
-                    setTimeout(() => window.location.reload(), 1500);
+
+                    const redirectTo = `{{ route('user.login') }}?expired=1&_t=${Date.now()}`;
+                    setTimeout(() => window.location.replace(redirectTo), 1200);
                 }
             });
         });

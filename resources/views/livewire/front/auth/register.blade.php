@@ -7,6 +7,10 @@
         'or_email'   => $isAr ? 'أو استخدم بريدك الإلكتروني' : 'ou utilisez votre email',
         'nom'        => $isAr ? 'النسب' : 'Nom',
         'prenom'     => $isAr ? 'الاسم' : 'Prénom',
+        'cin'        => $isAr ? 'رقم البطاقة الوطنية (CIN)' : 'Numéro CIN',
+        'date_naissance' => $isAr ? 'تاريخ الازدياد' : 'Date de naissance',
+        'niveau_etude' => $isAr ? 'المستوى الدراسي' : 'Niveau d\'étude',
+        'specialite' => $isAr ? 'التخصص' : 'Spécialité',
         'email'      => $isAr ? 'البريد الإلكتروني' : 'Email',
         'phone'      => $isAr ? 'الهاتف (مثال: 0612345678)' : 'Téléphone (ex: 0612345678)',
         'genre'      => $isAr ? '-- الجنس --' : '-- Genre --',
@@ -293,16 +297,20 @@ input {
 
             <input type="text" name="nom" placeholder="{{ $t['nom'] }}" value="{{ old('nom') }}" required />
             <input type="text" name="prenom" placeholder="{{ $t['prenom'] }}" value="{{ old('prenom') }}" required />
+            <input type="number" name="cin" placeholder="{{ $t['cin'] }}" value="{{ old('cin') }}" required min="0" step="1" inputmode="numeric" oninput="this.value=this.value.replace(/\D/g,'')" />
+            <input type="date" name="date_naissance" value="{{ old('date_naissance') }}" required />
+            <input type="text" name="niveau_etude" placeholder="{{ $t['niveau_etude'] }}" value="{{ old('niveau_etude') }}" required />
+            <input type="text" name="specialite" placeholder="{{ $t['specialite'] }}" value="{{ old('specialite') }}" required />
             <input type="email" name="email" placeholder="{{ $t['email'] }}" value="{{ old('email') }}" required />
-            <input type="tel" name="phone" placeholder="{{ $t['phone'] }}" value="{{ old('phone') }}" />
+            <input type="number" name="phone" placeholder="{{ $t['phone'] }}" value="{{ old('phone') }}" required min="0" step="1" inputmode="numeric" oninput="this.value=this.value.replace(/\D/g,'')" />
             
-            <select name="gender" style="background-color:#eee;border:none;padding:12px 15px;margin:8px 0;width:100%;border-radius:5px;font-size:14px;color:#333;">
+            <select name="gender" required style="background-color:#eee;border:none;padding:12px 15px;margin:8px 0;width:100%;border-radius:5px;font-size:14px;color:#333;">
                 <option value="">{{ $t['genre'] }}</option>
                 <option value="homme" {{ old('gender') === 'homme' ? 'selected' : '' }}>{{ $t['homme'] }}</option>
                 <option value="femme" {{ old('gender') === 'femme' ? 'selected' : '' }}>{{ $t['femme'] }}</option>
             </select>
 
-            <select name="address_id" id="address_id_select" onchange="toggleAddressOther(this)" style="background-color:#eee;border:none;padding:12px 15px;margin:8px 0;width:100%;border-radius:5px;font-size:14px;color:#333;">
+            <select name="address_id" id="address_id_select" required onchange="toggleAddressOther(this)" style="background-color:#eee;border:none;padding:12px 15px;margin:8px 0;width:100%;border-radius:5px;font-size:14px;color:#333;">
                 <option value="">{{ $t['address'] }}</option>
                 @foreach($addresses ?? [] as $addr)
                 <option value="{{ $addr->address_line1 }}" {{ old('address_id') === $addr->address_line1 ? 'selected' : '' }}>{{ $addr->address_line1 }}{{ $addr->city ? ' — '.$addr->city : '' }}</option>
