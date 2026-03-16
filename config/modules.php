@@ -25,7 +25,7 @@ return [
         // ── Referential ───────────────────────────────────────────────────────
         'programe'               => ['label' => 'Gestion Programmes',        'icon' => 'ri-trello-fill'],
         'users'                  => ['label' => 'Gestion Admin',             'icon' => 'ri-admin-line'],
-        'candidats'              => ['label' => 'Gestion Candidat',          'icon' => 'ri-user-community-line'],
+        'candidats'              => ['label' => 'Base de Bénéficiaires',          'icon' => 'ri-user-community-line'],
         'addresses'              => ['label' => 'Addresses',                 'icon' => 'ri-map-pin-line'],
         'formulaires'            => ['label' => 'Formulaires',               'icon' => 'ri-file-list-3-line'],
         'activity_logs'          => ['label' => 'Activity Logs',             'icon' => 'ri-history-line'],

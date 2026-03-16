@@ -181,6 +181,8 @@
                     @error('allowed_location_ids') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
                 </div>
             </div>
+
+         
         </div>
 
         @if($showLocationModal)

@@ -141,12 +141,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             @foreach($formulaires as $index => $formulaire)
                 @php
-                    $canStart = true;
-                    for ($i = 0; $i < $index; $i++) {
-                        if ($formulaires[$i]['is_required'] && !$formulaires[$i]['is_submitted']) {
-                            $canStart = false; break;
-                        }
-                    }
+                    $canStart = $formulaire['can_start'] ?? true;
                     $isNext = ($currentFormulaireIndex === $index);
                     $color  = $formulaire['color'];
                 @endphp
@@ -199,7 +194,7 @@
                                     <i class="ri-lock-2-line mr-1"></i>{{ $tr('Verrouillé', 'مغلق') }}
                                 </span>
                                 <div class="text-xs text-gray-400 mt-1.5">
-                                    <i class="ri-information-line mr-1"></i>{{ $tr('Complétez les étapes précédentes', 'أكمل المراحل السابقة') }}
+                                    <i class="ri-information-line mr-1"></i>{{ $formulaire['lock_reason'] ?? $tr('Complétez les étapes précédentes', 'أكمل المراحل السابقة') }}
                                 </div>
                             @elseif($isNext)
                                 <span class="px-3 py-1 text-xs font-medium rounded-full"

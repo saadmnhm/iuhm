@@ -13,12 +13,13 @@ class DynamicFormSubmission extends Model
 
     protected $fillable = [
         'dynamic_form_id', 'candidat_id', 'user_id', 'programe_id', 'status','is_submitted', 'current_step',
-        'submitted_at', 'reviewed_at', 'review_notes', 'reviewed_by',
+        'submitted_at', 'reviewed_at', 'review_notes', 'reviewed_by', 'workflow_stages',
     ];
 
     protected $casts = [
         'submitted_at' => 'datetime',
         'reviewed_at' => 'datetime',
+        'workflow_stages' => 'array',
     ];
 
     public function form(): BelongsTo

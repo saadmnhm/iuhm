@@ -8,6 +8,8 @@ use App\Models\DynamicForm;
 use App\Models\DynamicFormSubmission;
 use App\Models\DynamicFormAnswer;
 use App\Models\DynamicFormTableAnswer;
+use App\Models\CandidatFormulaireOrder;
+use App\Models\CandidatProjectAgreement;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Services\ProjectEligibilityService;
@@ -52,7 +54,10 @@ class ProjectFormulaireView extends Component
 
     public function loadData()
     {
-        $this->project = ProgrameList::findOrFail($this->projectId);
+        $this->project = ProgrameList::with(['formulaires' => function ($query) {
+            $query->where('programe_formulaire.status', 'active')
+                ->orderBy('programe_formulaire.order');
+        }])->findOrFail($this->projectId);
 
         $candidat = Auth::guard('candidat')->user();
         if ($candidat) {
@@ -63,21 +68,83 @@ class ProjectFormulaireView extends Component
             }
         }
 
-        $this->formulaire = DynamicForm::with(['steps.fields', 'steps.tables.columns', 'steps.tables.fixedRows'])
-            ->where('slug', $this->formulaireSlug)
-            ->firstOrFail();
-
-        // Check if introduction page should be shown
-        $this->showIntroduction = (bool) $this->formulaire->has_introduction;
-
         // Frontend is behind candidat middleware, so always use candidat guard
         $candidatId = Auth::guard('candidat')->id();
 
-        // Load existing submission
-        $existing = DynamicFormSubmission::where('dynamic_form_id', $this->formulaire->id)
+        $hasAgreement = CandidatProjectAgreement::where('candidat_id', $candidatId)
+            ->where('project_id', $this->projectId)
+            ->exists();
+
+        if (!$hasAgreement) {
+            return redirect()->route('user.project.conditions', $this->projectId);
+        }
+
+        $customOrders = CandidatFormulaireOrder::where('candidat_id', $candidatId)
             ->where('programe_id', $this->projectId)
+            ->get()
+            ->keyBy('formulaire_id');
+
+        $submissionMap = DynamicFormSubmission::where('programe_id', $this->projectId)
             ->where('candidat_id', $candidatId)
-            ->first();
+            ->whereIn('dynamic_form_id', $this->project->formulaires->pluck('id'))
+            ->get()
+            ->keyBy('dynamic_form_id');
+
+        $orderedForms = $this->project->formulaires
+            ->map(function ($form) use ($customOrders, $submissionMap) {
+                $submission = $submissionMap->get($form->id);
+
+                return [
+                    'id' => $form->id,
+                    'slug' => $form->slug,
+                    'title' => $form->title,
+                    'is_required' => (bool) $form->pivot->is_required,
+                    'unlock_on_status' => $form->pivot->unlock_on_status ?? 'approved',
+                    'order' => $customOrders->has($form->id)
+                        ? (int) $customOrders->get($form->id)->order
+                        : (int) $form->pivot->order,
+                    'global_order' => (int) $form->pivot->order,
+                    'is_submitted' => (bool) ($submission?->is_submitted ?? false),
+                    'submission_status' => $submission?->status,
+                    'workflow_stages' => is_array($submission?->workflow_stages) ? $submission->workflow_stages : [],
+                ];
+            })
+            ->sortBy([['order', 'asc'], ['global_order', 'asc'], ['id', 'asc']])
+            ->values();
+
+        $blockingTitle = null;
+        $orderedForms = $orderedForms->map(function ($form) use (&$blockingTitle) {
+            $form['can_start'] = $blockingTitle === null;
+            $form['lock_reason'] = $form['can_start']
+                ? null
+                : 'Vous devez attendre la validation du formulaire précédent: ' . $blockingTitle;
+
+            if ($form['is_required'] && !$this->meetsUnlockStatus($form['workflow_stages'] ?? []) && $blockingTitle === null) {
+                $blockingTitle = $form['title'];
+            }
+
+            return $form;
+        })->values();
+
+        $target = $orderedForms->firstWhere('slug', $this->formulaireSlug);
+        if (!$target) {
+            abort(404);
+        }
+
+        $targetSubmission = $submissionMap->get($target['id']);
+        if (!$target['can_start'] && !($targetSubmission && $targetSubmission->isSubmitted())) {
+            session()->flash('error', $target['lock_reason'] ?: 'Vous devez compléter le formulaire précédent.');
+            return redirect()->route('user.project.detail', $this->projectId);
+        }
+
+        $this->order = $target['order'];
+
+        // Load existing submission
+        $existing = $targetSubmission;
+
+        $this->formulaire = DynamicForm::with(['steps.fields', 'steps.tables.columns', 'steps.tables.fixedRows'])
+            ->findOrFail($target['id']);
+        $this->showIntroduction = (bool) $this->formulaire->has_introduction;
 
         if ($existing && $existing->isSubmitted()) {
             $this->existingSubmission = $existing;
@@ -120,6 +187,11 @@ class ProjectFormulaireView extends Component
                 }
             }
         }
+    }
+
+    protected function meetsUnlockStatus(array $workflowStages): bool
+    {
+        return (bool) ($workflowStages['next_form_allowed'] ?? false);
     }
 
     protected function loadExistingData()
@@ -404,6 +476,7 @@ class ProjectFormulaireView extends Component
         $submission = DynamicFormSubmission::find($this->submissionId);
         if ($submission) {
             $submission->update([
+                'status' => 'submitted',
                 'is_submitted' => true,
                 'submitted_at' => now(),
             ]);

@@ -49,6 +49,9 @@ class Candidat extends Authenticatable implements MustVerifyEmail
         'reviewed_at',
         'review_notes',
         'review_status',
+        'formation_ranking',
+        'ranking_feedback_status',
+        'ranking_feedback_note',
         'email_verified_at',
     ];
 

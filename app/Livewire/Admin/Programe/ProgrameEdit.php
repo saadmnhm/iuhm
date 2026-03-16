@@ -22,6 +22,8 @@ class ProgrameEdit extends Component{
     public $max_age;
     public $allowed_address_id = [];
     public $allowed_location_ids = [];
+    public $candidature_types = [];
+    public string $newCandidatureType = '';
     public bool $showLocationModal = false;
     public $locationRegionFilter = '';
     public $locationCityFilter = '';
@@ -35,6 +37,7 @@ class ProgrameEdit extends Component{
     public $formulaireOrder = 1;
     public $formulaireStatus = 'active';
     public $formulaireRequired = true;
+    public $formulaireUnlockStatus = 'approved';
     
     public function mount($id)
     {
@@ -57,6 +60,10 @@ class ProgrameEdit extends Component{
             ? $programe->allowed_location_ids
             : (json_decode($programe->allowed_location_ids ?? '[]', true) ?? []);
 
+        $this->candidature_types = is_array($programe->candidature_types)
+            ? $programe->candidature_types
+            : (json_decode($programe->candidature_types ?? '[]', true) ?? []);
+
         $this->icon = $programe->icon ?? 'ri-file-list-3-line';
         $this->color = $programe->color ?? '#2f5496';
         $this->bg_color = $programe->bg_color ?? '#ffffff';
@@ -75,6 +82,7 @@ class ProgrameEdit extends Component{
                 'order' => $form->pivot->order,
                 'status' => $form->pivot->status,
                 'is_required' => $form->pivot->is_required,
+                'unlock_on_status' => $form->pivot->unlock_on_status ?? 'approved',
                 'has_introduction' => $form->has_introduction,
             ];
         })->toArray();
@@ -101,6 +109,7 @@ class ProgrameEdit extends Component{
         $this->formulaireOrder = count($this->attachedFormulaires) + 1;
         $this->formulaireStatus = 'active';
         $this->formulaireRequired = true;
+        $this->formulaireUnlockStatus = 'approved';
     }
     
     public function closeFormulaireModal()
@@ -115,6 +124,7 @@ class ProgrameEdit extends Component{
             'selectedFormulaire' => 'required|exists:dynamic_forms,id',
             'formulaireOrder' => 'required|integer|min:1',
             'formulaireStatus' => 'required|in:active,inactive,draft',
+            'formulaireUnlockStatus' => 'required|in:submitted,in_review,approved',
         ]);
         
         $programe = ProgrameList::findOrFail($this->programeId);
@@ -129,6 +139,7 @@ class ProgrameEdit extends Component{
             'order' => $this->formulaireOrder,
             'status' => $this->formulaireStatus,
             'is_required' => $this->formulaireRequired,
+            'unlock_on_status' => $this->formulaireUnlockStatus,
         ]);
 
         AdminActivityLog::log(
@@ -182,6 +193,17 @@ class ProgrameEdit extends Component{
         $this->loadFormulaires();
     }
 
+    public function updateFormulaireUnlockStatus($formulaireId, $unlockStatus)
+    {
+        if (!in_array($unlockStatus, ['submitted', 'in_review', 'approved'])) {
+            return;
+        }
+
+        $programe = ProgrameList::findOrFail($this->programeId);
+        $programe->formulaires()->updateExistingPivot($formulaireId, ['unlock_on_status' => $unlockStatus]);
+        $this->loadFormulaires();
+    }
+
     public function selectIcon(string $iconClass): void
     {
         $this->icon = $iconClass;
@@ -199,6 +221,7 @@ class ProgrameEdit extends Component{
             'max_age' => 'required|integer|min:0|gte:min_age',
             'allowed_address_id' => 'nullable|array',
             'allowed_location_ids' => 'nullable|array',
+            'candidature_types' => 'nullable|array',
         ]);
 
         $programe = ProgrameList::findOrFail($this->programeId);
@@ -214,6 +237,7 @@ class ProgrameEdit extends Component{
             'max_age' => $this->max_age,
             'allowed_address_id' => json_encode($this->allowed_address_id),
             'allowed_location_ids' => array_values(array_unique(array_map('intval', $this->allowed_location_ids ?? []))),
+            'candidature_types' => array_values(array_unique(array_filter(array_map('trim', $this->candidature_types ?? [])))),
         ]);
 
         AdminActivityLog::log(
@@ -251,6 +275,30 @@ class ProgrameEdit extends Component{
         $this->allowed_location_ids = collect($this->allowed_location_ids)
             ->map(fn ($x) => (int) $x)
             ->reject(fn ($x) => $x === $id)
+            ->values()
+            ->toArray();
+    }
+
+    public function addCandidatureType(): void
+    {
+        $value = trim($this->newCandidatureType);
+        if ($value === '') {
+            return;
+        }
+
+        $types = collect($this->candidature_types)->map(fn ($t) => trim((string) $t))->filter()->values();
+        if (!$types->contains($value)) {
+            $types->push($value);
+        }
+
+        $this->candidature_types = $types->values()->toArray();
+        $this->newCandidatureType = '';
+    }
+
+    public function removeCandidatureType(string $type): void
+    {
+        $this->candidature_types = collect($this->candidature_types)
+            ->reject(fn ($t) => trim((string) $t) === trim($type))
             ->values()
             ->toArray();
     }

@@ -120,6 +120,7 @@ Route::prefix('user')->name('user.')->group(function () {
         Route::get('/f/{slug}', \App\Livewire\Front\DynamicFormWizard::class)->name('dynamic_form');
         // Project Routes
         Route::get('/projects', \App\Livewire\Front\Programe\ProjectList::class)->name('projects.list');
+        Route::get('/projects/{id}/conditions', \App\Livewire\Front\Programe\ProjectConditionAgreement::class)->name('project.conditions');
         Route::get('/projects/{id}', \App\Livewire\Front\Programe\ProjectDetail::class)->name('project.detail');
         Route::get('/projects/{projectId}/formulaire/{formulaireSlug}/{order}', \App\Livewire\Front\Programe\ProjectFormulaireView::class)->name('project.formulaire');
         Route::get('/blog', \App\Livewire\Front\Blog\BlogList::class)->name('blog');

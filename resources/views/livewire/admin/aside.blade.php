@@ -176,7 +176,7 @@
                         @endcanmodule
                         
                         @canmodule('candidats')
-                        <a href="{{ route('admin.candidats.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.candidats*') ? 'bg-gray-100 font-medium' : '' }}"><i class="ri-user-community-line mr-1"></i>Gestion Candidat</a>
+                        <a href="{{ route('admin.candidats.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.candidats*') ? 'bg-gray-100 font-medium' : '' }}"><i class="ri-user-community-line mr-1"></i>Base de Bénéficiaires</a>
                         @endcanmodule
                         
                         @canmodule('addresses')

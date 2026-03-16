@@ -175,6 +175,8 @@
                     @error('allowed_location_ids') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
                 </div>
             </div>
+
+
         </div>
 
 @if($showLocationModal)
@@ -226,7 +228,7 @@
                                         class="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-1 focus:ring-blue-500 shrink-0">
                                     <div class="min-w-0 text-sm text-gray-700">
                                         <div class="font-medium text-gray-800">{{ $location->prefecture }}</div>
-                                        <div class="text-gray-500 text-xs mt-0.5 break-words">{{ $location->city }} · {{ $location->region }}</div>
+                                        <div class="text-gray-500 text-xs mt-0.5 wrap-break-word">{{ $location->city }} · {{ $location->region }}</div>
                                     </div>
                                 </label>
                             @empty
@@ -314,6 +316,17 @@
                                            {{ $formulaire['is_required'] ? 'checked' : '' }}
                                            wire:click="toggleFormulaireRequired({{ $formulaire['id'] }})"
                                            class="w-4 h-4 text-blue-600 border border-gray-300 rounded">
+                                </div>
+
+                                <!-- Unlock Rule -->
+                                <div class="w-40">
+                                    <label class="text-xs text-gray-600">Unlock next when</label>
+                                    <select wire:change="updateFormulaireUnlockStatus({{ $formulaire['id'] }}, $event.target.value)"
+                                            class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
+                                        <option value="submitted" {{ ($formulaire['unlock_on_status'] ?? 'approved') == 'submitted' ? 'selected' : '' }}>Submitted</option>
+                                        <option value="in_review" {{ ($formulaire['unlock_on_status'] ?? 'approved') == 'in_review' ? 'selected' : '' }}>In review</option>
+                                        <option value="approved" {{ ($formulaire['unlock_on_status'] ?? 'approved') == 'approved' ? 'selected' : '' }}>Approved</option>
+                                    </select>
                                 </div>
 
                                 <!-- Delete Button -->
@@ -408,6 +421,19 @@
                                    class="w-4 h-4 text-blue-600 border border-gray-300 rounded">
                             <span class="text-sm text-gray-700">Required for submission</span>
                         </label>
+                    </div>
+
+                    <!-- Unlock rule -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Unlock next formulaire when status is
+                        </label>
+                        <select wire:model="formulaireUnlockStatus"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                            <option value="submitted">Submitted</option>
+                            <option value="in_review">In review</option>
+                            <option value="approved">Approved</option>
+                        </select>
                     </div>
 
                     <!-- Actions -->

@@ -334,7 +334,7 @@ class CandidatManagement extends Component
             'candidats'  => $candidats,
             'statistics' => $statistics,
             'addresses'  => Address::orderBy('city')->orderBy('address_line1')->get(),
-        ])->layout('layouts.admin', ['header' => 'Candidat Management']);
+        ])->layout('layouts.admin', ['header' => 'Bénéficiaires Management']);
     }
 
 }

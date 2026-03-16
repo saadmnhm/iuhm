@@ -9,6 +9,14 @@
     </div>
     @endif
 
+    @if(session('error'))
+    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
+         class="mb-4 flex items-center gap-3 bg-red-50 border border-red-200 text-red-800 rounded-lg px-4 py-3">
+        <i class="ri-error-warning-line text-red-500 text-xl"></i>
+        <span class="font-medium">{{ session('error') }}</span>
+    </div>
+    @endif
+
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
         <div class="flex lg:flex-row justify-between gap-4">
             <div>
@@ -44,12 +52,33 @@
             </div>
                 {{-- Quick contact buttons --}}
                 <div class="flex flex-wrap items-center gap-2 mt-3">
-                   
-                    <div class="flex items-center gap-3 flex-shrink-0">
-                        <a href="{{ route('admin.candidat.export-all', $candidat->id) }}" target="_blank"
-                        class="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg shadow transition">
-                            <i class="ri-file-pdf-line"></i> Exporter tout (PDF)
-                        </a>
+                    <div x-data="{ open:false }" class="relative">
+                        <button type="button" @click="open = !open"
+                                class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg shadow transition">
+                            <i class="ri-menu-line"></i> Actions candidat
+                            <i class="ri-arrow-down-s-line"></i>
+                        </button>
+                        <div x-show="open" @click.away="open = false" x-cloak
+                             class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 p-2 z-40">
+                            <a href="{{ route('admin.candidats.edit', $candidat->id) }}" class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
+                                <i class="ri-sort-asc mr-1"></i>ordre des formulaires
+                            </a>
+                            <button type="button" wire:click="openFicheModal" @click="open = false"
+                                    class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
+                                <i class="ri-profile-line mr-1"></i> Fiche de renseignement
+                            </button>
+                            <button type="button" wire:click="openEvaluationModal" @click="open = false"
+                                    class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
+                                <i class="ri-survey-line mr-1"></i> Grille d'évaluation
+                            </button>
+                            <a href="{{ route('admin.candidat.export-all', $candidat->id) }}" target="_blank"
+                               class="block px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
+                                <i class="ri-file-pdf-line mr-1"></i> Export PDF complet
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 shrink-0">
                         {{-- Candidat-level reviewer badge --}}
                         @if(!$candidat->reviewer)
                         <button wire:click="openReviewModal()"
@@ -110,7 +139,7 @@
                 </span>
                 @endif
             </div>
-            <div class="w-10 h-10 rounded-lg flex items-center justify-center ml-2 flex-shrink-0"
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center ml-2 shrink-0"
                  style="color:{{ $sf['color'] ?? '#6366f1' }};background-color:{{ $sf['color'] ?? '#6366f1' }}20;">
                 <i class="{{ $sf['icon'] ?? 'ri-file-list-3-line' }} text-lg"></i>
             </div>
@@ -119,8 +148,10 @@
     </div>
     @endif
 
-    <!-- ═══════════════════════════ FORM CARDS ═══════════════════════════ -->
     @php $formForms = collect($statistics['form_attached'] ?? [])->where('is_active', 'active'); @endphp
+
+
+    <!-- ═══════════════════════════ FORM CARDS ═══════════════════════════ -->
     @if($formForms->count())
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         @foreach($formForms as $sub)
@@ -185,11 +216,6 @@
                             <span class="text-gray-500">Soumis le</span>
                             <span class="font-medium text-gray-800">{{ $sub['submitted_at'] ?? '—' }}</span>
                         </div>
-                        @if($sub['review_notes'])
-                        <div class="mt-2 p-2 bg-amber-50 border border-amber-200 rounded text-xs text-amber-800 italic">
-                            <i class="ri-sticky-note-line mr-1"></i>{{ $sub['review_notes'] }}
-                        </div>
-                        @endif
                     </div>
 
                     <!-- Action buttons -->
@@ -201,6 +227,10 @@
                            style="background-color: {{ $accentColor }};">
                             <i class="ri-eye-line"></i> Voir les détails
                         </a>
+                        <button type="button" wire:click="openWorkflowModal({{ $sub['submission_id'] }})"
+                                class="w-full px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-sm font-semibold rounded-lg border border-indigo-200 transition">
+                            <i class="ri-route-line mr-1"></i> Gérer étapes / statut
+                        </button>
                         @else
                         <button disabled class="flex items-center justify-center gap-2 w-full px-4 py-2 bg-gray-200 text-gray-400 text-sm font-semibold rounded-lg cursor-not-allowed">
                             <i class="ri-eye-line"></i> Voir les détails
@@ -220,6 +250,55 @@
         <p class="text-gray-500">Ce candidat n'a soumis aucun formulaire pour ce programme.</p>
     </div>
     @endif
+
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Autorisation de passage au formulaire suivant</h2>
+
+        @php
+            $submittedForms = collect($statistics['form_attached'] ?? [])->filter(function ($item) {
+                return !empty($item['submission_id'])
+                    && (int) ($item['is_submitted'] ?? 0) === 1
+                    && !($item['is_last_form'] ?? false)
+                    && !($item['next_form_allowed'] ?? false);
+            });
+        @endphp
+
+        @if($submittedForms->isEmpty())
+            <p class="text-sm text-gray-500">Aucune soumission à autoriser pour le moment.</p>
+        @else
+            <div class="space-y-3">
+                @foreach($submittedForms as $sub)
+                    <div class="border border-gray-200 rounded-lg p-3 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                        <div>
+                            <div class="text-sm font-semibold text-gray-800">{{ $sub['title'] }}</div>
+                            <div class="text-xs text-gray-500 mt-1">
+                                @if($sub['all_stages_validated'])
+                                    Toutes les étapes sont validées.
+                                @else
+                                    Étapes incomplètes : impossible d'autoriser le passage.
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            @if($sub['all_stages_validated'] ?? false)
+                                <button type="button" wire:click="allowNextFormulaire({{ $sub['submission_id'] }})"
+                                        class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition">
+                                    <i class="ri-check-double-line mr-1"></i> Autoriser passage
+                                </button>
+                            @else
+                                <button type="button" disabled
+                                        class="px-4 py-2 bg-gray-100 text-gray-400 text-sm font-semibold rounded-lg cursor-not-allowed">
+                                    <i class="ri-lock-line mr-1"></i> Étapes non validées
+                                </button>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+    </div>
+
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
         <h2 class="text-lg font-semibold text-gray-800 mb-4">Actions rapides</h2>
         <div class="flex lg:flex-row justify-between gap-5">
@@ -252,7 +331,7 @@
         {{-- Modal panel --}}
         <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl z-10 overflow-hidden">
             {{-- Modal header --}}
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gradient-to-r f">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-linear-to-r f">
                 <h2 class="text-lg font-bold text-green-800 flex items-center gap-2">
                     <i class="ri-user-star-line text-green-600 text-xl"></i>
                     Assigner une révision
@@ -273,7 +352,7 @@
                         <div wire:click="$set('reviewerId', {{ auth()->id() }})"
                              class="cursor-pointer rounded-xl border-2 p-3 text-center transition-all hover:shadow-md
                                     {{ $reviewerId == auth()->id() ? 'border-green-500  shadow-md' : 'border-gray-200 hover:border-indigo-300' }}">
-                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 text-white flex items-center justify-center text-lg font-bold mx-auto mb-2 shadow">
+                            <div class="w-12 h-12 rounded-full bg-linear-to-br from-green-500 to-emerald-600 text-white flex items-center justify-center text-lg font-bold mx-auto mb-2 shadow">
                                 {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                             </div>
                             <p class="text-xs font-semibold text-gray-800 truncate">{{ auth()->user()->name }}</p>
@@ -293,7 +372,7 @@
                             <div wire:click="$set('reviewerId', {{ $admin['id'] }})"
                                  class="cursor-pointer rounded-xl border-2 p-3 text-center transition-all hover:shadow-md
                                         {{ $reviewerId == $admin['id'] ? 'border-green-500 bg-green-50 shadow-md' : 'border-gray-200 hover:border-indigo-300' }}">
-                                <div class="w-12 h-12 rounded-full bg-gradient-to-br {{ $colorClass }} text-white flex items-center justify-center text-lg font-bold mx-auto mb-2 shadow">
+                                <div class="w-12 h-12 rounded-full bg-linear-to-br {{ $colorClass }} text-white flex items-center justify-center text-lg font-bold mx-auto mb-2 shadow">
                                     {{ strtoupper(substr($admin['name'], 0, 1)) }}
                                 </div>
                                 <p class="text-xs font-semibold text-gray-800 truncate">{{ $admin['name'] }}</p>
@@ -362,6 +441,168 @@
                             <i class="ri-loader-4-line animate-spin mr-1"></i> Enregistrement…
                         </span>
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- Fiche modal --}}
+    @if($showFicheModal)
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4" wire:click.self="$set('showFicheModal', false)">
+        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl z-10 overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <h2 class="text-lg font-bold text-gray-800"><i class="ri-profile-line mr-1"></i> Fiche de renseignement</h2>
+                <button wire:click="$set('showFicheModal', false)" class="text-gray-400 hover:text-gray-600"><i class="ri-close-line text-xl"></i></button>
+            </div>
+            <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                <div class="bg-gray-50 rounded-lg p-3"><span class="text-gray-500 block">Nom</span><strong>{{ $candidat->nom }}</strong></div>
+                <div class="bg-gray-50 rounded-lg p-3"><span class="text-gray-500 block">Prénom</span><strong>{{ $candidat->prenom }}</strong></div>
+                <div class="bg-gray-50 rounded-lg p-3"><span class="text-gray-500 block">Email</span><strong>{{ $candidat->email }}</strong></div>
+                <div class="bg-gray-50 rounded-lg p-3"><span class="text-gray-500 block">Téléphone</span><strong>{{ $candidat->phone ?: '—' }}</strong></div>
+                <div class="bg-gray-50 rounded-lg p-3"><span class="text-gray-500 block">Adresse</span><strong>{{ $candidat->address ?: '—' }}</strong></div>
+                <div class="bg-gray-50 rounded-lg p-3"><span class="text-gray-500 block">Statut</span><strong>{{ $candidat->is_active ? 'Actif' : 'Inactif' }}</strong></div>
+                <div class="bg-gray-50 rounded-lg p-3 md:col-span-2">
+                    <span class="text-gray-500 block">Classement des formations</span>
+                    <div class="text-gray-800 whitespace-pre-line">{{ $candidat->formation_ranking ?: 'Non renseigné' }}</div>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-100 bg-gray-50 text-right">
+                <button wire:click="$set('showFicheModal', false)" class="px-4 py-2 bg-gray-700 hover:bg-gray-800 text-white rounded-lg text-sm">Fermer</button>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- Evaluation modal --}}
+    @if($showEvaluationModal)
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4" wire:click.self="$set('showEvaluationModal', false)">
+        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl z-10 overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <h2 class="text-lg font-bold text-gray-800"><i class="ri-survey-line mr-1"></i> Grille d'évaluation candidat</h2>
+                <button wire:click="$set('showEvaluationModal', false)" class="text-gray-400 hover:text-gray-600"><i class="ri-close-line text-xl"></i></button>
+            </div>
+
+            <div class="p-6 space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="text-sm font-semibold text-gray-700">Motivation (0-20)</label>
+                        <input type="number" min="0" max="20" wire:model="motivationScore" class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        @error('motivationScore') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="text-sm font-semibold text-gray-700">Profil (0-20)</label>
+                        <input type="number" min="0" max="20" wire:model="profileScore" class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        @error('profileScore') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="text-sm font-semibold text-gray-700">Viabilité (0-20)</label>
+                        <input type="number" min="0" max="20" wire:model="viabilityScore" class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                        @error('viabilityScore') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                <div class="bg-indigo-50 border border-indigo-100 rounded-lg p-3 text-sm text-indigo-800">
+                    Score total: <strong>{{ (int)$motivationScore + (int)$profileScore + (int)$viabilityScore }}</strong> / 60
+                </div>
+
+                <div>
+                    <label class="text-sm font-semibold text-gray-700">Commentaire</label>
+                    <textarea wire:model="evaluationComment" rows="4" class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="Observations de l'évaluateur..."></textarea>
+                    @error('evaluationComment') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
+                </div>
+            </div>
+
+            <div class="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-2">
+                <button wire:click="$set('showEvaluationModal', false)" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm">Annuler</button>
+                <button wire:click="saveEvaluationGrid" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- Workflow modal --}}
+    @if($showWorkflowModal)
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4" wire:click.self="$set('showWorkflowModal', false)">
+        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"></div>
+        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl z-10 overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                <h2 class="text-lg font-bold text-gray-800"><i class="ri-route-line mr-1"></i> Workflow de validation du formulaire</h2>
+                <button wire:click="$set('showWorkflowModal', false)" class="text-gray-400 hover:text-gray-600"><i class="ri-close-line text-xl"></i></button>
+            </div>
+
+            <div class="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
+                <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-4">
+                    <div>
+                        <label class="text-sm font-semibold text-gray-700">Statut</label>
+                        <select wire:model="workflowStatus" class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                            <option value="draft">Brouillon</option>
+                            <option value="submitted">Soumis</option>
+                            <option value="in_review">En révision</option>
+                            <option value="approved">Approuvé</option>
+                            <option value="rejected">Rejeté</option>
+                        </select>
+                        @error('workflowStatus') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="text-sm font-semibold text-gray-700">Étapes</label>
+                        <label class="flex items-center gap-2 text-sm"><input type="checkbox" wire:model="stageFormationValidated" class="rounded border-gray-300"> Formation validée</label>
+                        <label class="flex items-center gap-2 text-sm"><input type="checkbox" wire:model="stageCandidateInFormation" class="rounded border-gray-300"> Candidat en formation</label>
+                        <label class="flex items-center gap-2 text-sm"><input type="checkbox" wire:model="stageAdministrativeValidated" class="rounded border-gray-300"> Validation administrative finale</label>
+                    </div>
+
+                    <div>
+                        <label class="text-sm font-semibold text-gray-700">Commentaire (obligatoire)</label>
+                        <textarea wire:model="workflowComment" rows="4" class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="Justification du changement de statut / étape..."></textarea>
+                        @error('workflowComment') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" wire:click="saveWorkflowProgress" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm">
+                            <i class="ri-save-line"></i> Enregistrer étapes/statut
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-green-50 border border-green-200 rounded-xl p-4">
+                    <h3 class="text-sm font-semibold text-green-900 mb-3">Passage au formulaire suivant</h3>
+                    @if($workflowIsLastForm)
+                        <p class="text-xs text-green-900/80">Ce formulaire est le dernier de la séquence. Aucun passage suivant à autoriser.</p>
+                    @elseif($workflowAlreadyAllowed)
+                        <p class="text-xs text-green-900/80">Le passage suivant est déjà autorisé pour ce formulaire.</p>
+                    @elseif($stageFormationValidated && $stageCandidateInFormation && $stageAdministrativeValidated && $workflowSubmissionId)
+                        <button type="button" wire:click="allowNextFormulaire({{ $workflowSubmissionId }})" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm">
+                            <i class="ri-check-double-line"></i> Autoriser passage au suivant
+                        </button>
+                    @else
+                        <p class="text-xs text-green-900/80">Validez d'abord toutes les étapes pour activer ce bouton.</p>
+                    @endif
+                </div>
+
+                <div class="bg-white border border-gray-200 rounded-xl p-4">
+                    <h3 class="text-sm font-semibold text-gray-800 mb-3">Historique des changements</h3>
+                    <div class="space-y-2 max-h-[55vh] overflow-y-auto pr-1">
+                        @forelse($workflowHistory as $h)
+                            <div class="border border-gray-200 rounded-lg p-3">
+                                <div class="flex items-center justify-between gap-2">
+                                    <div class="text-xs font-semibold text-gray-700">{{ \App\Models\SubmissionHistory::ACTION_LABELS[$h['action']] ?? ucfirst(str_replace('_',' ', $h['action'])) }}</div>
+                                    <div class="text-xs text-gray-400">{{ $h['at'] }}</div>
+                                </div>
+                                @if($h['old'] || $h['new'])
+                                    <div class="text-xs text-gray-500 mt-1">{{ $h['old'] ?: '—' }} → {{ $h['new'] ?: '—' }}</div>
+                                @endif
+                                @if($h['notes'])
+                                    <div class="text-xs text-gray-700 mt-1">{{ $h['notes'] }}</div>
+                                @endif
+                                <div class="text-[11px] text-gray-400 mt-1">Par {{ $h['by'] }}</div>
+                            </div>
+                        @empty
+                            <div class="text-sm text-gray-500">Aucun historique pour cette soumission.</div>
+                        @endforelse
+                    </div>
                 </div>
             </div>
         </div>

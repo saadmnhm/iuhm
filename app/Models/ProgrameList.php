@@ -25,6 +25,7 @@ class ProgrameList extends Model
         'max_age',
         'allowed_address_id',
         'allowed_location_ids',
+        'candidature_types',
         'form_attached_id',
         'sort_order',
         'is_active',
@@ -34,6 +35,7 @@ class ProgrameList extends Model
     protected $casts = [
         'is_active' => 'boolean',
         'allowed_location_ids' => 'array',
+        'candidature_types' => 'array',
     ];
 
     protected static function booted(): void
@@ -62,7 +64,7 @@ class ProgrameList extends Model
     public function formulaires(): BelongsToMany
     {
         return $this->belongsToMany(DynamicForm::class, 'programe_formulaire', 'programe_id', 'formulaire_id')
-                    ->withPivot('order', 'status', 'is_required')
+                    ->withPivot('order', 'status', 'is_required', 'unlock_on_status')
                     ->withTimestamps()
                     ->orderByPivot('order');
     }

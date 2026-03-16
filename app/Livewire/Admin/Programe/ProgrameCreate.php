@@ -23,6 +23,8 @@ class ProgrameCreate extends Component
     public $max_age = null;
     public $allowed_address_id = [];
     public $allowed_location_ids = [];
+    public $candidature_types = [];
+    public string $newCandidatureType = '';
     public $form_attached_id = null;
     public $sort_order = 0;
     public $is_active = true;
@@ -44,6 +46,7 @@ class ProgrameCreate extends Component
             'max_age' => 'required|integer|min:0|gte:min_age',
             'allowed_address_id' => 'nullable|array',
             'allowed_location_ids' => 'nullable|array',
+            'candidature_types' => 'nullable|array',
             'form_attached_id' => 'nullable|integer',
             'sort_order' => 'nullable|integer',
             'is_active' => 'boolean',
@@ -71,6 +74,10 @@ class ProgrameCreate extends Component
             $this->allowed_location_ids = is_array($list->allowed_location_ids)
                 ? $list->allowed_location_ids
                 : (json_decode($list->allowed_location_ids ?? '[]', true) ?? []);
+
+            $this->candidature_types = is_array($list->candidature_types)
+                ? $list->candidature_types
+                : (json_decode($list->candidature_types ?? '[]', true) ?? []);
             
             $this->form_attached_id = $list->form_attached_id;
             $this->sort_order = $list->sort_order;
@@ -117,6 +124,7 @@ class ProgrameCreate extends Component
                 'max_age' => $this->max_age,
                 'allowed_address_id' => json_encode($this->allowed_address_id ?? []),
                 'allowed_location_ids' => array_values(array_unique(array_map('intval', $this->allowed_location_ids ?? []))),
+                'candidature_types' => array_values(array_unique(array_filter(array_map('trim', $this->candidature_types ?? [])))),
                 'form_attached_id' => $this->form_attached_id,
                 'sort_order' => $this->sort_order ?? 0,
                 'is_active' => $this->is_active,
@@ -199,6 +207,30 @@ class ProgrameCreate extends Component
         $this->allowed_location_ids = collect($this->allowed_location_ids)
             ->map(fn ($x) => (int) $x)
             ->reject(fn ($x) => $x === $id)
+            ->values()
+            ->toArray();
+    }
+
+    public function addCandidatureType(): void
+    {
+        $value = trim($this->newCandidatureType);
+        if ($value === '') {
+            return;
+        }
+
+        $types = collect($this->candidature_types)->map(fn ($t) => trim((string) $t))->filter()->values();
+        if (!$types->contains($value)) {
+            $types->push($value);
+        }
+
+        $this->candidature_types = $types->values()->toArray();
+        $this->newCandidatureType = '';
+    }
+
+    public function removeCandidatureType(string $type): void
+    {
+        $this->candidature_types = collect($this->candidature_types)
+            ->reject(fn ($t) => trim((string) $t) === trim($type))
             ->values()
             ->toArray();
     }

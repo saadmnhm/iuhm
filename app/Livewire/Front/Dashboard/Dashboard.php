@@ -9,7 +9,9 @@ use App\Services\ProjectEligibilityService;
 use App\Models\Candidat;
 use App\Models\ProgrameList;
 use App\Models\DynamicFormSubmission;
+use App\Models\CandidatFormulaireOrder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 
@@ -45,19 +47,37 @@ class Dashboard extends Component
 
     protected function loadDynamicSubmissions()
     {
-        $this->dynamicSubmissions = DynamicFormSubmission::with(['form', 'programe'])
+        $submissionRows = DynamicFormSubmission::with(['form', 'programe'])
             ->where('candidat_id', $this->candidat->id)
             ->orderByDesc('updated_at')
+            ->get();
+
+        $projectIds = $submissionRows->pluck('programe_id')->filter()->unique()->values();
+        $formIds = $submissionRows->pluck('dynamic_form_id')->filter()->unique()->values();
+
+        $pivotOrders = DB::table('programe_formulaire')
+            ->whereIn('programe_id', $projectIds)
+            ->whereIn('formulaire_id', $formIds)
+            ->select('programe_id', 'formulaire_id', 'order')
             ->get()
-            ->map(function ($sub) {
-                // Get order from pivot table if project-based
+            ->keyBy(fn ($row) => $row->programe_id . '-' . $row->formulaire_id);
+
+        $customOrders = CandidatFormulaireOrder::where('candidat_id', $this->candidat->id)
+            ->whereIn('programe_id', $projectIds)
+            ->whereIn('formulaire_id', $formIds)
+            ->get()
+            ->keyBy(fn ($row) => $row->programe_id . '-' . $row->formulaire_id);
+
+        $this->dynamicSubmissions = $submissionRows
+            ->map(function ($sub) use ($pivotOrders, $customOrders) {
                 $order = 1;
                 if ($sub->programe_id && $sub->programe) {
-                    $pivot = \Illuminate\Support\Facades\DB::table('programe_formulaire')
-                        ->where('programe_id', $sub->programe_id)
-                        ->where('formulaire_id', $sub->dynamic_form_id)
-                        ->first();
-                    $order = $pivot->order ?? 1;
+                    $key = $sub->programe_id . '-' . $sub->dynamic_form_id;
+                    if ($customOrders->has($key)) {
+                        $order = (int) $customOrders->get($key)->order;
+                    } elseif ($pivotOrders->has($key)) {
+                        $order = (int) $pivotOrders->get($key)->order;
+                    }
                 }
 
                 return [
