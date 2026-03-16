@@ -32,7 +32,9 @@
                                 {{ strtoupper(substr($candidat->nom, 0, 1)) }}{{ strtoupper(substr($candidat->prenom, 0, 1)) }}
                             </div>
                         @endif
-                        <h1 class="text-2xl font-bold text-gray-900">{{ $candidat->nom }} {{ $candidat->prenom }}</h1>
+                        <a href="{{ route('admin.candidats.show', $candidat->id) }}" class="text-indigo-600 hover:text-indigo-800">
+                            <h1 class="text-2xl hover:underline font-bold text-gray-900">{{ $candidat->nom }} {{ $candidat->prenom }}</h1>
+                        </a>
                 </div>
                 <div class="flex flex-wrap items-center gap-3 mt-2 text-sm text-gray-600">
                     <span class="flex items-center gap-1"><i class="ri-mail-line text-gray-400"></i> {{ $candidat->email }}</span>
@@ -58,52 +60,51 @@
                             <i class="ri-menu-line"></i> Actions candidat
                             <i class="ri-arrow-down-s-line"></i>
                         </button>
-                        <div x-show="open" @click.away="open = false" x-cloak
-                             class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 p-2 z-40">
+                        <div x-show="open" @click.away="open = false" x-cloak  class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 p-2 z-40">
+                           
                             <a href="{{ route('admin.candidats.edit', $candidat->id) }}" class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
                                 <i class="ri-sort-asc mr-1"></i>ordre des formulaires
                             </a>
-                            <button type="button" wire:click="openFicheModal" @click="open = false"
-                                    class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
-                                <i class="ri-profile-line mr-1"></i> Fiche de renseignement
-                            </button>
+
                             <button type="button" wire:click="openEvaluationModal" @click="open = false"
                                     class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
                                 <i class="ri-survey-line mr-1"></i> Grille d'évaluation
                             </button>
+
                             <a href="{{ route('admin.candidat.export-all', $candidat->id) }}" target="_blank"
                                class="block px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
                                 <i class="ri-file-pdf-line mr-1"></i> Export PDF complet
                             </a>
+                            
                         </div>
                     </div>
 
                     <div class="flex items-center gap-3 shrink-0">
                         {{-- Candidat-level reviewer badge --}}
-                        @if(!$candidat->reviewer)
+                        @if(!$candidatSubmissions->reviewer)
                         <button wire:click="openReviewModal()"
                                 class="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-lg border border-indigo-200 transition">
                             <i class="ri-user-star-line"></i> Assigner révision
                         </button>
                         @else 
                         @php
-                            $crBadge = match($candidat->review_status) {
+                            $crBadge = match($candidatSubmissions->review_status) {
                                 'in_review' => 'bg-purple-100 text-purple-800 border-purple-200',
                                 'approved'  => 'bg-green-100 text-green-800 border-green-200',
                                 'rejected'  => 'bg-red-100 text-red-800 border-red-200',
                                 default     => 'bg-gray-100 text-gray-700 border-gray-200',
                             };
-                            $crLabel = match($candidat->review_status) {
+                            $crLabel = match($candidatSubmissions->review_status) {
                                 'in_review' => 'En révision',
                                 'approved'  => 'Approuvé',
                                 'rejected'  => 'Rejeté',
-                                default     => ucfirst($candidat->review_status ?? ''),
+                                default     => ucfirst($candidatSubmissions->review_status ?? ''),
                             };
                         @endphp
                         
                         <span wire:click="openReviewModal()" class="inline-flex items-center gap-1 px-3 py-2 cursor-pointer text-xs font-semibold rounded-lg border {{ $crBadge }}">
                             <i class="ri-user-star-fill"></i>
-                            {{ $candidat->reviewer->name }}
+                            {{ $candidatSubmissions->reviewer->name }}
                             @if($crLabel) &nbsp;·&nbsp; {{ $crLabel }} @endif
                         </span>
                         @endif
@@ -447,33 +448,7 @@
     </div>
     @endif
 
-    {{-- Fiche modal --}}
-    @if($showFicheModal)
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4" wire:click.self="$set('showFicheModal', false)">
-        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"></div>
-        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl z-10 overflow-hidden">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                <h2 class="text-lg font-bold text-gray-800"><i class="ri-profile-line mr-1"></i> Fiche de renseignement</h2>
-                <button wire:click="$set('showFicheModal', false)" class="text-gray-400 hover:text-gray-600"><i class="ri-close-line text-xl"></i></button>
-            </div>
-            <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                <div class="bg-gray-50 rounded-lg p-3"><span class="text-gray-500 block">Nom</span><strong>{{ $candidat->nom }}</strong></div>
-                <div class="bg-gray-50 rounded-lg p-3"><span class="text-gray-500 block">Prénom</span><strong>{{ $candidat->prenom }}</strong></div>
-                <div class="bg-gray-50 rounded-lg p-3"><span class="text-gray-500 block">Email</span><strong>{{ $candidat->email }}</strong></div>
-                <div class="bg-gray-50 rounded-lg p-3"><span class="text-gray-500 block">Téléphone</span><strong>{{ $candidat->phone ?: '—' }}</strong></div>
-                <div class="bg-gray-50 rounded-lg p-3"><span class="text-gray-500 block">Adresse</span><strong>{{ $candidat->address ?: '—' }}</strong></div>
-                <div class="bg-gray-50 rounded-lg p-3"><span class="text-gray-500 block">Statut</span><strong>{{ $candidat->is_active ? 'Actif' : 'Inactif' }}</strong></div>
-                <div class="bg-gray-50 rounded-lg p-3 md:col-span-2">
-                    <span class="text-gray-500 block">Classement des formations</span>
-                    <div class="text-gray-800 whitespace-pre-line">{{ $candidat->formation_ranking ?: 'Non renseigné' }}</div>
-                </div>
-            </div>
-            <div class="px-6 py-4 border-t border-gray-100 bg-gray-50 text-right">
-                <button wire:click="$set('showFicheModal', false)" class="px-4 py-2 bg-gray-700 hover:bg-gray-800 text-white rounded-lg text-sm">Fermer</button>
-            </div>
-        </div>
-    </div>
-    @endif
+
 
     {{-- Evaluation modal --}}
     @if($showEvaluationModal)

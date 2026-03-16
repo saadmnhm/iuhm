@@ -35,6 +35,7 @@ class ProjectSubmissions extends Component
     {
         // Total submissions for this project
         $totalSubmissions = DynamicFormSubmission::where('programe_id', $this->projectId)->count();
+
         
         // Completed submissions
         $completedSubmissions = DynamicFormSubmission::where('programe_id', $this->projectId)
@@ -138,6 +139,8 @@ class ProjectSubmissions extends Component
     {
         // Get submissions grouped by candidat_id (primary) and user_id (fallback)
         $submissions = DynamicFormSubmission::where('programe_id', $this->projectId)->where('is_submitted', true);
+
+
         
         // Apply status filter
         if ($this->filterStatus !== 'all') {

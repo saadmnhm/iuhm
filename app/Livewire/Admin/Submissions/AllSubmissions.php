@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Submissions;
 use App\Models\DynamicFormSubmission;
 use App\Models\DynamicForm;
 use App\Models\ProgrameList;
+use App\Models\ProjectSubmission;
 use App\Models\User;
 use App\Models\Candidat;
 use Livewire\Component;
@@ -155,6 +156,7 @@ class AllSubmissions extends Component
         $programmes  = ProgrameList::orderBy('project_name')->get(['id', 'project_name']);
         $formulaires = DynamicForm::orderBy('title')->get(['id', 'title']);
         $admins      = User::whereIn('role', ['admin', 'super_admin'])->orderBy('name')->get(['id', 'name']);
+        $project_submissions = ProjectSubmission::with(['candidat', 'reviewer'])->get();
         $addresses   = Candidat::whereNotNull('address')
                            ->select('address')->distinct()->orderBy('address')->pluck('address');
 
@@ -173,7 +175,7 @@ class AllSubmissions extends Component
         ];
 
         return view('livewire.admin.submissions.all-submissions', compact(
-            'submissions', 'programmes', 'formulaires', 'admins', 'addresses', 'stats'
+            'submissions', 'programmes', 'formulaires', 'admins', 'addresses', 'stats','project_submissions'
         ))->layout('layouts.admin', ['header' => 'Toutes les Soumissions']);
     }
 }

@@ -25,7 +25,7 @@ class Aside extends Component
             return;
         }
         
-        if (!$this->candidat->phone || !$this->candidat->selected_prefecture || !$this->candidat->age) {
+        if (!$this->candidat->phone || !$this->candidat->selected_prefecture || !$this->candidat->date_naissance || !$this->candidat->niveau_etude || !$this->candidat->specialite || !$this->candidat->gender || !$this->candidat->address_detail) {
             $this->showCompleteProfileModal = true;
         }
     }

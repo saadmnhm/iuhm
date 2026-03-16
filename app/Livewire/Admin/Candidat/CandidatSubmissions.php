@@ -11,6 +11,7 @@ use App\Models\DynamicFormSubmission;
 use App\Models\DynamicForm;
 use App\Models\CandidatFormulaireOrder;
 use App\Models\CandidatEvaluationGrid;
+use App\Models\ProjectSubmission;
 use App\Models\User;
 use App\Services\FormSubmissionService;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +22,7 @@ class CandidatSubmissions extends Component
 
     public $candidat;
     public $candidatId;
+    public $candidatSubmissions;
     public $projectId;
     public $project;
     public $statistics = [];
@@ -88,6 +90,16 @@ class CandidatSubmissions extends Component
         $this->project   = $this->projectId
             ? ProgrameList::with('formulaires')->findOrFail($this->projectId)
             : null;
+
+        $this->candidatSubmissions = ProjectSubmission::firstOrCreate(
+            [
+                'candidat_id' => $this->candidatId,
+                'programe_id' => $this->projectId,
+            ],
+            [
+                'review_status' => 'in_review',
+            ]
+        );
         
         // Legacy form submissions
         $formService = app(FormSubmissionService::class);
@@ -195,9 +207,9 @@ class CandidatSubmissions extends Component
 
     public function openReviewModal(): void
     {
-        $this->reviewerId      = $this->candidat->reviewed_by ?? auth()->id();
-        $this->reviewStatus    = $this->candidat->review_status ?? 'in_review';
-        $this->reviewNotes     = $this->candidat->review_notes ?? '';
+        $this->reviewerId      = $this->candidatSubmissions->reviewed_by ?? auth()->id();
+        $this->reviewStatus    = $this->candidatSubmissions->review_status ?? 'in_review';
+        $this->reviewNotes     = $this->candidatSubmissions->review_notes ?? '';
         $this->showReviewModal = true;
     }
 
@@ -208,10 +220,10 @@ class CandidatSubmissions extends Component
             'reviewerId'   => 'required|exists:users,id',
         ]);
 
-        $oldStatus = $this->candidat->review_status;
-        $oldReviewer = $this->candidat->reviewed_by;
+        $oldStatus = $this->candidatSubmissions->review_status;
+        $oldReviewer = $this->candidatSubmissions->reviewed_by;
 
-        $this->candidat->update([
+        $this->candidatSubmissions->update([
             'reviewed_by'   => $this->reviewerId,
             'reviewed_at'   => now(),
             'review_notes'  => $this->reviewNotes ?: null,

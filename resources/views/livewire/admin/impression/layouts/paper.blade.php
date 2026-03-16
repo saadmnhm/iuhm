@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title ?? 'Impression' }}</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" integrity="sha512-XcIsjKMcuVe0Ucj/xgIXQnytNwBttJbNjltBV18IOnru2lDPe9KRRyvCXw6Y5H415vbBLRm8+q6fmLUU7DfO6Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />    <style>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" integrity="sha512-XcIsjKMcuVe0Ucj/xgIXQnytNwBttJbNjltBV18IOnru2lDPe9KRRyvCXw6Y5H415vbBLRm8+q6fmLUU7DfO6Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />    <style>
         :root {
             --paper-width: 210mm;
         }
@@ -15,7 +16,7 @@
             margin: 0;
             padding: 24px;
             background: #e9ecef;
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: "Manrope", sans-serif;
         }
 
         .print-wrap {
@@ -31,9 +32,11 @@
             min-height: calc(297mm - 20mm);
             background: #fff;
             border-radius: 6px;
-            box-shadow: 0 8px 24px rgba(0,0,0,.18);
             position: relative;
             overflow: hidden;
+            padding: 20px 20px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08);
+            border-top: 4px solid var(--rust);
         }
 
         .paper-content {
@@ -57,26 +60,6 @@
             height: 55px;
             font-size: 32px;
         }
-        .page {
-        background: var(--cream);
-        width: 760px;
-        padding: 50px 60px 60px;
-        box-shadow: 0 8px 40px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08);
-        position: relative;
-        border-top: 4px solid var(--rust);
-        }
-
-        /* Decorative corner marks */
-        .page::before, .page::after {
-        content: '';
-        position: absolute;
-        width: 18px; height: 18px;
-        border-color: var(--gold);
-        border-style: solid;
-        }
-        .page::before { top: 12px; left: 12px; border-width: 2px 0 0 2px; }
-        .page::after  { bottom: 12px; right: 12px; border-width: 0 2px 2px 0; }
-
         .print-cta:hover {
             background: #1d4ed8;
         }
@@ -115,11 +98,9 @@
     <div class="print-wrap">
         <main class="paper">
             <section class="paper-content">
-                <div class="page">
 
                     {!! $printHtml !!}
 
-                </div>
             </section>
         </main>
     </div>
