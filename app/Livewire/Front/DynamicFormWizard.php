@@ -17,7 +17,7 @@ class DynamicFormWizard extends Component
     public ?int $submissionId = null;
     public bool $isReadOnly = false;
 
-    // All field answers stored as key => value
+    // All field answers stored as field_id => value
     public array $answers = [];
 
     // All table data stored as table_key => [row_index => [column_key => value]]
@@ -89,9 +89,11 @@ class DynamicFormWizard extends Component
         $submission = DynamicFormSubmission::with(['answers', 'tableAnswers'])->find($this->submissionId);
         if (!$submission) return;
 
-        // Load field answers
+        // Load field answers keyed by stable field id to avoid key collisions across steps.
         foreach ($submission->answers as $answer) {
-            $this->answers[$answer->field_key] = $answer->value;
+            if ($answer->dynamic_form_field_id) {
+                $this->answers[$answer->dynamic_form_field_id] = $answer->value;
+            }
         }
 
         // Load table answers
@@ -108,6 +110,20 @@ class DynamicFormWizard extends Component
                         $maxRow = max(array_keys($this->tableData[$table->table_key])) + 1;
                     }
                     $this->tableRowCounts[$table->table_key] = max($maxRow, $table->min_rows);
+                }
+
+                // Restore _radio selection from saved column values
+                $radioColKeys = $table->columns->where('input_type', 'radio')->pluck('column_key');
+                if ($radioColKeys->isNotEmpty() && isset($this->tableData[$table->table_key])) {
+                    foreach ($this->tableData[$table->table_key] as $ri => &$rowData) {
+                        foreach ($radioColKeys as $colKey) {
+                            if (!empty($rowData[$colKey])) {
+                                $rowData['_radio'] = $colKey;
+                                break;
+                            }
+                        }
+                    }
+                    unset($rowData);
                 }
             }
         }
@@ -205,7 +221,7 @@ class DynamicFormWizard extends Component
         $rules = [];
         foreach ($currentStep->fields as $field) {
             if ($field->is_required && !in_array($field->type, ['heading', 'paragraph'])) {
-                $rules['answers.' . $field->field_key] = 'required';
+                $rules['answers.' . $field->id] = 'required';
             }
         }
 
@@ -239,25 +255,26 @@ class DynamicFormWizard extends Component
 
             $this->submissionId = $submission->id;
 
-            // Save field answers
-            foreach ($this->answers as $key => $value) {
-                $fieldId = null;
-                foreach ($form->steps as $s) {
-                    foreach ($s->fields as $f) {
-                        if ($f->field_key === $key) {
-                            $fieldId = $f->id;
-                            break 2;
-                        }
-                    }
+            // Build a fast lookup map for the current form fields.
+            $fieldsById = $form->steps
+                ->flatMap(fn($s) => $s->fields)
+                ->keyBy('id');
+
+            // Save field answers keyed by dynamic_form_field_id.
+            foreach ($this->answers as $fieldId => $value) {
+                $fieldId = (int) $fieldId;
+                $field = $fieldsById->get($fieldId);
+                if (!$field) {
+                    continue;
                 }
 
                 DynamicFormAnswer::updateOrCreate(
                     [
                         'dynamic_form_submission_id' => $submission->id,
-                        'field_key' => $key,
+                        'dynamic_form_field_id' => $fieldId,
                     ],
                     [
-                        'dynamic_form_field_id' => $fieldId,
+                        'field_key' => $field->field_key,
                         'value' => $value,
                     ]
                 );
@@ -267,17 +284,28 @@ class DynamicFormWizard extends Component
             DynamicFormTableAnswer::where('dynamic_form_submission_id', $submission->id)->delete();
             foreach ($this->tableData as $tableKey => $rows) {
                 $tableId = null;
+                $radioColKeys = collect();
                 foreach ($form->steps as $s) {
                     foreach ($s->tables as $t) {
                         if ($t->table_key === $tableKey) {
                             $tableId = $t->id;
+                            $radioColKeys = $t->columns->where('input_type', 'radio')->pluck('column_key');
                             break 2;
                         }
                     }
                 }
 
                 foreach ($rows as $rowIndex => $rowData) {
+                    $selectedRadio = $rowData['_radio'] ?? null;
+
                     foreach ($rowData as $colKey => $val) {
+                        if ($colKey === '_radio') {
+                            continue;
+                        }
+                        if ($radioColKeys->contains($colKey)) {
+                            continue;
+                        }
+
                         if ($val !== '' && $val !== null) {
                             DynamicFormTableAnswer::create([
                                 'dynamic_form_submission_id' => $submission->id,
@@ -288,6 +316,18 @@ class DynamicFormWizard extends Component
                                 'value' => $val,
                             ]);
                         }
+                    }
+
+                    // Save only the selected radio column as 1.
+                    if ($selectedRadio && $radioColKeys->contains($selectedRadio)) {
+                        DynamicFormTableAnswer::create([
+                            'dynamic_form_submission_id' => $submission->id,
+                            'dynamic_form_table_id' => $tableId,
+                            'table_key' => $tableKey,
+                            'row_index' => $rowIndex,
+                            'column_key' => $selectedRadio,
+                            'value' => '1',
+                        ]);
                     }
                 }
             }
@@ -310,7 +350,7 @@ class DynamicFormWizard extends Component
         foreach ($form->steps as $formStep) {
             foreach ($formStep->fields as $field) {
                 if ($field->is_required && !in_array($field->type, ['heading', 'paragraph'])) {
-                    $rules['answers.' . $field->field_key] = 'required';
+                    $rules['answers.' . $field->id] = 'required';
                 }
             }
         }
@@ -347,11 +387,14 @@ class DynamicFormWizard extends Component
     {
         $form = $this->getForm();
         $currentStep = $form->steps->firstWhere('step_number', $this->step);
+        $layoutTitle = str_starts_with(app()->getLocale(), 'ar') && filled($form->title_ar)
+            ? $form->title_ar
+            : $form->title;
 
         return view('livewire.front.dynamic_form.wizard', [
             'form' => $form,
             'currentStep' => $currentStep,
             'totalSteps' => $form->steps->count(),
-        ])->layout('layouts.app', ['title' => $form->title]);
+        ])->layout('layouts.app', ['title' => $layoutTitle]);
     }
 }

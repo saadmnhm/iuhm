@@ -95,6 +95,7 @@ class FormulaireBuilder extends Component
         'sort_order' => 0,
     ];
     public string $newColOption = '';
+    public bool $tableRequiresRadioColumn = false;
 
     // Fixed row editing
     public bool $showRowModal = false;
@@ -574,6 +575,9 @@ class FormulaireBuilder extends Component
     public function openColumnModal($tableId, $columnId = null)
     {
         $this->editingTableId = $tableId;
+        $this->tableRequiresRadioColumn = DynamicFormTableColumn::where('dynamic_form_table_id', $tableId)
+            ->where('input_type', 'radio')
+            ->exists();
 
         if ($columnId) {
             $col = DynamicFormTableColumn::findOrFail($columnId);
@@ -595,7 +599,7 @@ class FormulaireBuilder extends Component
                 'header' => '',
                 'header_ar' => '',
                 'column_key' => '',
-                'input_type' => 'text',
+                'input_type' => $this->tableRequiresRadioColumn ? 'radio' : 'text',
                 'options' => [],
                 'is_totaled' => false,
                 'width' => '',
@@ -605,6 +609,13 @@ class FormulaireBuilder extends Component
 
         $this->newColOption = '';
         $this->showColumnModal = true;
+    }
+
+    public function updatedColumnFormInputType()
+    {
+        if ($this->tableRequiresRadioColumn && $this->columnForm['input_type'] !== 'radio') {
+            $this->columnForm['input_type'] = 'radio';
+        }
     }
 
     public function updatedColumnFormHeader()
@@ -635,6 +646,23 @@ class FormulaireBuilder extends Component
             'columnForm.column_key' => 'required|string|max:255',
             'columnForm.input_type' => 'required|in:text,number,checkbox,select,readonly,label,radio',
         ]);
+
+        $existingTypes = DynamicFormTableColumn::where('dynamic_form_table_id', $this->editingTableId)
+            ->when($this->columnForm['id'], fn($q) => $q->where('id', '!=', $this->columnForm['id']))
+            ->pluck('input_type');
+
+        $hasRadio = $existingTypes->contains('radio');
+        $hasNonRadio = $existingTypes->contains(fn($type) => $type !== 'radio');
+
+        if ($hasRadio && $this->columnForm['input_type'] !== 'radio') {
+            $this->addError('columnForm.input_type', 'Ce tableau contient déjà une colonne radio. Toutes les colonnes doivent être de type radio.');
+            return;
+        }
+
+        if ($this->columnForm['input_type'] === 'radio' && $hasNonRadio) {
+            $this->addError('columnForm.input_type', 'Ce tableau contient déjà des colonnes non-radio. Supprimez-les ou utilisez uniquement des colonnes radio.');
+            return;
+        }
 
         $data = [
             'dynamic_form_table_id' => $this->editingTableId,

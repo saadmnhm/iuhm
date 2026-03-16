@@ -25,7 +25,7 @@ class ProjectFormulaireView extends Component
     public $showIntroduction = true;
     public $isReadOnly = false;
 
-    // Answers stored by field_key (matching DynamicFormWizard pattern)
+    // Answers stored by field id (matching DynamicFormWizard pattern)
     public array $answers = [];
 
     // Table data stored by table_key => [row_index => [column_key => value]]
@@ -200,7 +200,9 @@ class ProjectFormulaireView extends Component
         if (!$submission) return;
 
         foreach ($submission->answers as $answer) {
-            $this->answers[$answer->field_key] = $answer->value;
+            if ($answer->dynamic_form_field_id) {
+                $this->answers[$answer->dynamic_form_field_id] = $answer->value;
+            }
         }
 
         foreach ($submission->tableAnswers as $ta) {
@@ -332,7 +334,7 @@ class ProjectFormulaireView extends Component
         $rules = [];
         foreach ($currentStepData->fields as $field) {
             if ($field->is_required && !in_array($field->type, ['heading', 'paragraph'])) {
-                $rules['answers.' . $field->field_key] = 'required';
+                $rules['answers.' . $field->id] = 'required';
             }
         }
 
@@ -366,25 +368,25 @@ class ProjectFormulaireView extends Component
 
             $this->submissionId = $submission->id;
 
-            // Save field answers by field_key
-            foreach ($this->answers as $key => $value) {
-                $fieldId = null;
-                foreach ($this->formulaire->steps as $s) {
-                    foreach ($s->fields as $f) {
-                        if ($f->field_key === $key) {
-                            $fieldId = $f->id;
-                            break 2;
-                        }
-                    }
+            $fieldsById = $this->formulaire->steps
+                ->flatMap(fn($s) => $s->fields)
+                ->keyBy('id');
+
+            // Save field answers by dynamic_form_field_id.
+            foreach ($this->answers as $fieldId => $value) {
+                $fieldId = (int) $fieldId;
+                $field = $fieldsById->get($fieldId);
+                if (!$field) {
+                    continue;
                 }
 
                 DynamicFormAnswer::updateOrCreate(
                     [
                         'dynamic_form_submission_id' => $submission->id,
-                        'field_key' => $key,
+                        'dynamic_form_field_id' => $fieldId,
                     ],
                     [
-                        'dynamic_form_field_id' => $fieldId,
+                        'field_key' => $field->field_key,
                         'value' => $value,
                     ]
                 );
@@ -460,7 +462,7 @@ class ProjectFormulaireView extends Component
         foreach ($this->formulaire->steps as $formStep) {
             foreach ($formStep->fields as $field) {
                 if ($field->is_required && !in_array($field->type, ['heading', 'paragraph'])) {
-                    $rules['answers.' . $field->field_key] = 'required';
+                    $rules['answers.' . $field->id] = 'required';
                 }
             }
         }
@@ -496,6 +498,9 @@ class ProjectFormulaireView extends Component
     {
         $currentStepData = null;
         $totalSteps = $this->formulaire->steps->count();
+        $formTitle = str_starts_with(app()->getLocale(), 'ar') && filled($this->formulaire->title_ar)
+            ? $this->formulaire->title_ar
+            : $this->formulaire->title;
 
         if (!$this->showIntroduction) {
             $currentStepData = $this->formulaire->steps->firstWhere('step_number', $this->currentStep);
@@ -505,6 +510,6 @@ class ProjectFormulaireView extends Component
             'currentStepData' => $currentStepData,
             'totalSteps' => $totalSteps,
             'form' => $this->formulaire,
-        ])->layout('layouts.app', ['title' => $this->project->project_name . ' - ' . $this->formulaire->title]);
+        ])->layout('layouts.app', ['title' => $this->project->project_name . ' - ' . $formTitle]);
     }
 }
