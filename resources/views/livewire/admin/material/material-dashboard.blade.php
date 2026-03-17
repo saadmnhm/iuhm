@@ -91,7 +91,7 @@
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition overflow-hidden">
                     {{-- Photo --}}
                     @if($m->primaryPhoto)
-                    <img src="{{ asset('storage/' . $m->primaryPhoto->file_path) }}" alt="{{ $m->name }}" class="w-full h-40 object-cover">
+                    <img src="{{ asset('uploads/' . $m->primaryPhoto->file_path) }}" alt="{{ $m->name }}" class="w-full h-40 object-cover">
                     @else
                     <div class="w-full h-40 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
                         <i class="ri-archive-line text-4xl text-gray-300"></i>

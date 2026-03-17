@@ -118,7 +118,7 @@
             @if($existingPhoto)
             <div>
                 <label class="block text-xs font-semibold text-gray-700 mb-2">Photo actuelle</label>
-                <img src="{{ asset('storage/' . $existingPhoto) }}" alt="Photo" class="w-24 h-24 rounded-lg object-cover border border-gray-200">
+                <img src="{{ asset('uploads/' . $existingPhoto) }}" alt="Photo" class="w-24 h-24 rounded-lg object-cover border border-gray-200">
             </div>
             @endif
 

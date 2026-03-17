@@ -15,6 +15,7 @@ class CandidatProjectAgreement extends Model
         'agreed_at',
         'agreed_ip',
         'project_idea',
+        'how_knew',
     ];
 
     protected $casts = [

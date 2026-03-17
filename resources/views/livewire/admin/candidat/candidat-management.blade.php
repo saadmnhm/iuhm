@@ -72,11 +72,20 @@
 
     <!-- Users Cards -->
     <div>
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
-            <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-                <h3 class="text-lg font-semibold text-gray-900">All Users</h3>
-                @if(Auth::user()->isSuperAdmin() || Auth::user()->isAdmin())
-                <button wire:click="openCreateModal" class="px-4 py-2 bg-green-logo text-white rounded-lg transition">
+
+        <div x-data="{ advanced: false }" class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-4" >
+
+            {{-- Row 1: Main filters --}}
+            <div class="flex flex-wrap items-center gap-3">
+
+                {{-- Search input --}}
+                <div class="flex-1 min-w-[220px] relative">
+                    <i class="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                    <input wire:model.live="search" type="text" placeholder="Nom, email, matricule, formulaire..." class="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-lg leading-5 bg-gray-50 placeholder-gray-400  sm:text-sm ">
+                </div>
+
+                {{-- btn new candidat --}}
+                <button wire:click="openCreateModal" class="px-4 py-2 bg-green-logo text-white rounded-lg transition sm:w-auto flex justify-center">
                     <span class="flex items-center gap-2">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -84,105 +93,154 @@
                         Nouveau Candidat
                     </span>
                 </button>
-                @endif
+
+                {{-- Advanced filters toggle --}}
+                <button @click="advanced = !advanced"
+                        class="flex items-center gap-1.5 px-3.5 py-2.5 text-sm font-medium border rounded-lg transition">
+                    <i class="ri-equalizer-line"></i>
+                    Filtres avancés
+                    <i x-show="!advanced" class="ri-arrow-down-s-line text-sm"></i>
+                    <i x-show="advanced" class="ri-arrow-up-s-line text-sm"></i>
+                </button>
+
             </div>
 
+            {{-- Advanced / secondary filters (collapsible) --}}
+            <div x-show="advanced"
+                x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 -translate-y-1"
+                x-transition:enter-end="opacity-100 translate-y-0"
+                class="mt-3 pt-3 border-t border-gray-100">
+                <div class="flex flex-wrap items-center gap-3">
+                    <div>
+                        <select wire:model.live="matriculeFilter" class="border rounded-lg text-sm py-2 px-3 outline-none bg-white transition
+                               border-gray-300">
+                            <option value="all">Tous</option>
+                            <option value="with">Avec Matricule</option>
+                            <option value="without">Sans Matricule</option>
+                        </select>
+                    </div>
+                    <div>
+                        <select wire:model.live="projectFilter" class="border rounded-lg text-sm py-2 px-3 outline-none transition border-gray-300">
+                            <option value="all">Tous les projets</option>
+                            @foreach($programes ?? [] as $programe)
+                                <option value="{{ $programe->id }}">{{ $programe->project_name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-gray-500 flex items-center gap-1 whitespace-nowrap"><i class="ri-calendar-line text-sm"></i> Ajouté le</span>
+                        <input wire:model.live="dateJoinFilter" type="date" class="border rounded-lg text-sm py-2 px-3 outline-none transition border-gray-300">
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-gray-500 flex items-center gap-1 whitespace-nowrap"><i class="ri-calendar-line text-sm"></i> Du</span>
+                        <input wire:model.live="dateFromFilter" type="date" class="border rounded-lg text-sm py-2 px-3 outline-none transition border-gray-300">
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-gray-500 flex items-center gap-1 whitespace-nowrap"><i class="ri-calendar-line text-sm"></i> Au</span>
+                        <input wire:model.live="dateToFilter" type="date" class="border rounded-lg text-sm py-2 px-3 outline-none transition border-gray-300">
+                    </div>
+                    <button wire:click="Reinitialiser" class="px-3.5 py-2.5 bg-red-100 hover:bg-red-200  text-red-700 text-sm font-medium rounded-lg transition">
+                        <i class="ri-refresh-line"></i> Réinitialiser
+                    </button>
+                </div>
+            </div>
         </div>
 
         <!-- Cards Grid -->
-<div class="overflow-hidden rounded-xl border border-gray-100 shadow-sm bg-white">
-    <table class="min-w-full divide-y divide-gray-100">
-        <thead class="bg-gray-50">
-            <tr>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Candidat</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Matricule</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Joined</th>
-                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-100 bg-white">
-            @forelse($candidats as $candidat)
-            <tr class="hover:bg-gray-50 transition-colors duration-150">
-                <!-- Avatar + Name -->
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-green-logo flex items-center justify-center text-white text-sm font-semibold shrink-0">
-                            @if($candidat->profile_image)
-                                <img src="{{ asset('uploads/' . $candidat->profile_image) }}" alt="Profile" class="w-full h-full rounded-full object-cover">
+        <div class="overflow-hidden rounded-xl border border-gray-100 shadow-sm bg-white">
+            <table class="min-w-full divide-y divide-gray-100">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Candidat</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Matricule</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Joined</th>
+                        <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 bg-white">
+                    @forelse($candidats as $candidat)
+                    <tr class="hover:bg-gray-50 transition-colors duration-150">
+                        <!-- Avatar + Name -->
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-green-logo flex items-center justify-center text-white text-sm font-semibold shrink-0">
+                                    @if($candidat->profile_image)
+                                        <img src="{{ asset('uploads/' . $candidat->profile_image) }}" alt="Profile" class="w-full h-full rounded-full object-cover">
+                                    @else
+                                        <i class="ri-user-line"></i>
+                                    @endif
+                                </div>
+                                <span class="text-sm font-semibold text-gray-900">{{ $candidat->nom }} {{ $candidat->prenom }}</span>
+                            </div>
+                        </td>
+
+                        <!-- Email -->
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ $candidat->email }}
+                        </td>
+
+                        <!-- Matricule -->
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            @if($candidat->matricule)
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs rounded-full font-medium">
+                                    <i class="ri-hashtag"></i> {{ $candidat->matricule }}
+                                </span>
                             @else
-                                <i class="ri-user-line"></i>
+                                <span class="text-gray-400 text-xs">—</span>
                             @endif
-                        </div>
-                        <span class="text-sm font-semibold text-gray-900">{{ $candidat->nom }} {{ $candidat->prenom }}</span>
-                    </div>
-                </td>
+                        </td>
 
-                <!-- Email -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {{ $candidat->email }}
-                </td>
+                        <!-- Status -->
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            @if(!($candidat->is_active ?? true))
+                                <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">Disabled</span>
+                            @else
+                                <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Active</span>
+                            @endif
+                        </td>
 
-                <!-- Matricule -->
-                <td class="px-6 py-4 whitespace-nowrap">
-                    @if($candidat->matricule)
-                        <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs rounded-full font-medium">
-                            <i class="ri-hashtag"></i> {{ $candidat->matricule }}
-                        </span>
-                    @else
-                        <span class="text-gray-400 text-xs">—</span>
-                    @endif
-                </td>
+                        <!-- Joined Date -->
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center gap-1.5 text-sm text-gray-500">
+                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                {{ $candidat->created_at->format('M d, Y') }}
+                            </div>
+                        </td>
 
-                <!-- Status -->
-                <td class="px-6 py-4 whitespace-nowrap">
-                    @if(!($candidat->is_active ?? true))
-                        <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800">Disabled</span>
-                    @else
-                        <span class="px-2.5 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">Active</span>
-                    @endif
-                </td>
-
-                <!-- Joined Date -->
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="flex items-center gap-1.5 text-sm text-gray-500">
-                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                        </svg>
-                        {{ $candidat->created_at->format('M d, Y') }}
-                    </div>
-                </td>
-
-                <!-- Actions -->
-                <td class="px-6 py-4 whitespace-nowrap text-right">
-                    <div class="flex items-center justify-end gap-2">
-                        <a href="{{ route('admin.candidats.show', $candidat->id) }}"
-                           class="px-4 py-1.5 bg-gray-600 hover:bg-gray-700 text-white text-xs font-medium rounded-lg transition-colors duration-200">
-                            View
-                        </a>
-                        @if(Auth::user()->isSuperAdmin() || Auth::user()->isAdmin())
-                        <button wire:click="openDeleteModal({{ $candidat->id }})"
-                            class="px-4 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg transition-colors duration-200">
-                            Delete
-                        </button>
-                        @endif
-                    </div>
-                </td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="6" class="px-6 py-16 text-center">
-                    <svg class="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
-                    </svg>
-                    <p class="text-gray-500 text-sm">No candidats found</p>
-                </td>
-            </tr>
-            @endforelse
-        </tbody>
-    </table>
-</div>
+                        <!-- Actions -->
+                        <td class="px-6 py-4 whitespace-nowrap text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                <a href="{{ route('admin.candidats.show', $candidat->id) }}"
+                                class="px-4 py-1.5 bg-gray-600 hover:bg-gray-700 text-white text-xs font-medium rounded-lg transition-colors duration-200">
+                                    View
+                                </a>
+                                @if(Auth::user()->isSuperAdmin() || Auth::user()->isAdmin())
+                                <button wire:click="openDeleteModal({{ $candidat->id }})"
+                                    class="px-4 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-lg transition-colors duration-200">
+                                    Delete
+                                </button>
+                                @endif
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="6" class="px-6 py-16 text-center">
+                            <svg class="w-12 h-12 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                            </svg>
+                            <p class="text-gray-500 text-sm">No candidats found</p>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
 
         <!-- Pagination -->
         <div class="mt-6">

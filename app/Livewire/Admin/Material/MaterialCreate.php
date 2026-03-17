@@ -78,7 +78,7 @@ class MaterialCreate extends Component
 
         if ($this->photos) {
             foreach ($this->photos as $idx => $photo) {
-                $path = $photo->store('materials/' . $material->id, 'public');
+                $path = $photo->store('materials/' . $material->id, 'uploads');
                 MaterialAttachment::create([
                     'material_id' => $material->id,
                     'file_path' => $path,

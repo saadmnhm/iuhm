@@ -21,7 +21,7 @@
                 @if($material->attachments->count() > 0)
                 <div class="grid grid-cols-3 gap-1">
                     @foreach($material->attachments as $att)
-                    <img src="{{ asset('storage/' . $att->file_path) }}" alt="{{ $att->file_name }}" class="w-full h-48 object-cover {{ $loop->first ? 'col-span-3 h-64' : '' }}">
+                    <img src="{{ asset('uploads/' . $att->file_path) }}" alt="{{ $att->file_name }}" class="w-full h-48 object-cover {{ $loop->first ? 'col-span-3 h-64' : '' }}">
                     @endforeach
                 </div>
                 @else

@@ -8,8 +8,10 @@ use App\Models\ProgrameList;
 use App\Models\DynamicForm;
 use App\Models\Candidat;
 use Livewire\WithPagination;
+use Livewire\WithFileUploads;
 
 class ProgrameEdit extends Component{
+    use WithPagination, WithFileUploads;
 
     public $programeId;
     public $project_name;
@@ -28,6 +30,10 @@ class ProgrameEdit extends Component{
     public $locationRegionFilter = '';
     public $locationCityFilter = '';
     public $locationSearch = '';
+
+    public $logo1;
+    public $logo2;
+    public $logo3;
     
     // Formulaire management
     public $showFormulaireModal = false;
@@ -212,11 +218,14 @@ class ProgrameEdit extends Component{
             'allowed_address_id' => 'nullable|array',
             'allowed_location_ids' => 'nullable|array',
             'candidature_types' => 'nullable|array',
+            'logo1' => 'nullable|image|max:2048',
+            'logo2' => 'nullable|image|max:2048',
+            'logo3' => 'nullable|image|max:2048',
         ]);
 
         $programe = ProgrameList::findOrFail($this->programeId);
         
-        $programe->update([
+        $data = [
             'project_name' => $this->project_name,
             'status' => $this->status,
             'description' => $this->description,
@@ -228,7 +237,19 @@ class ProgrameEdit extends Component{
             'allowed_address_id' => json_encode($this->allowed_address_id),
             'allowed_location_ids' => array_values(array_unique(array_map('intval', $this->allowed_location_ids ?? []))),
             'candidature_types' => array_values(array_unique(array_filter(array_map('trim', $this->candidature_types ?? [])))),
-        ]);
+        ];
+
+        if ($this->logo1) {
+            $data['logo1'] = $this->logo1->store('project-logos', 'uploads');
+        }
+        if ($this->logo2) {
+            $data['logo2'] = $this->logo2->store('project-logos', 'uploads');
+        }
+        if ($this->logo3) {
+            $data['logo3'] = $this->logo3->store('project-logos', 'uploads');
+        }
+
+        $programe->update($data);
 
         AdminActivityLog::log(
             'programme_updated',

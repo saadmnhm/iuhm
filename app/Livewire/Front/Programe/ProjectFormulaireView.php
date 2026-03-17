@@ -522,9 +522,19 @@ class ProjectFormulaireView extends Component
             $currentStepData = $this->formulaire->steps->firstWhere('step_number', $this->currentStep);
         }
 
+        $projectId = request()->integer('project_id');
+        $project = null;
+
+        if ($this->existingSubmission?->programe) {
+            $project = $this->existingSubmission->programe;
+        } elseif ($projectId > 0) {
+            $project = ProgrameList::find($projectId);
+        }
+
         return view('livewire.front.programe.project-formulaire-view', [
             'currentStepData' => $currentStepData,
             'totalSteps' => $totalSteps,
+            'project' => $project,
             'form' => $this->formulaire,
         ])->layout('layouts.app', ['title' => $this->project->project_name . ' - ' . $formTitle]);
     }

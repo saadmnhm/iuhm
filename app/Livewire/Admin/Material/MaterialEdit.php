@@ -66,7 +66,7 @@ class MaterialEdit extends Component
     {
         $att = MaterialAttachment::find($attachmentId);
         if ($att) {
-            \Storage::disk('public')->delete($att->file_path);
+            \Storage::disk('uploads')->delete($att->file_path);
             $att->delete();
             $this->existingPhotos = array_filter($this->existingPhotos, fn($a) => $a['id'] != $attachmentId);
         }
@@ -99,7 +99,7 @@ class MaterialEdit extends Component
 
         if ($this->newPhotos) {
             foreach ($this->newPhotos as $photo) {
-                $path = $photo->store('materials/' . $m->id, 'public');
+                $path = $photo->store('materials/' . $m->id, 'uploads');
                 MaterialAttachment::create([
                     'material_id' => $m->id,
                     'file_path' => $path,

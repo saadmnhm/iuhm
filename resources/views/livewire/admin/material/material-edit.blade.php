@@ -108,7 +108,7 @@
                 <div class="flex flex-wrap gap-3">
                     @foreach($existingPhotos as $photo)
                     <div class="relative group">
-                        <img src="{{ asset('storage/' . $photo['file_path']) }}" class="w-24 h-24 object-cover rounded-lg border border-gray-200">
+                        <img src="{{ asset('uploads/' . $photo['file_path']) }}" class="w-24 h-24 object-cover rounded-lg border border-gray-200">
                         <button type="button" wire:click="removePhoto({{ $photo['id'] }})" wire:confirm="Supprimer cette photo ?"
                                 class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
                             <i class="ri-close-line"></i>

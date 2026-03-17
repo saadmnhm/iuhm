@@ -16,7 +16,7 @@ class ProjectSubmission extends Model
         'reviewed_by',
         'reviewed_at',
         'review_notes',
-        'last_activity',
+        'last_activity', 'require_formation_review', 'formation_review_rating', 'formation_review_feedback',
     ];
 
     protected $casts = [

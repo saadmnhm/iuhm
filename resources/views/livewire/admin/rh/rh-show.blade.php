@@ -21,7 +21,7 @@
         <div class="px-6 py-5 bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-indigo-100">
             <div class="flex items-center gap-4">
                 @if($employee->photo_path)
-                <img src="{{ asset('storage/' . $employee->photo_path) }}" class="w-20 h-20 rounded-full object-cover border-4 border-white shadow">
+                <img src="{{ asset('uploads/' . $employee->photo_path) }}" class="w-20 h-20 rounded-full object-cover border-4 border-white shadow">
                 @else
                 <div class="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center text-2xl font-bold shadow">
                     {{ strtoupper(substr($employee->nom, 0, 1)) }}{{ strtoupper(substr($employee->prenom, 0, 1)) }}

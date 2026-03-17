@@ -6,12 +6,15 @@ use App\Models\ProgrameList;
 use App\Models\AdminActivityLog;
 use App\Models\MoroccoLocation;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
 
 class ProgrameCreate extends Component
 {
+    use WithFileUploads;
+
     public ?int $programeId = null;
     public $project_name = '';
     public $description = '';
@@ -34,6 +37,10 @@ class ProgrameCreate extends Component
     public $locationCityFilter = '';
     public $locationSearch = '';
 
+    public $logo1;
+    public $logo2;
+    public $logo3;
+
     protected function rules()
     {
         return [
@@ -50,6 +57,9 @@ class ProgrameCreate extends Component
             'form_attached_id' => 'nullable|integer',
             'sort_order' => 'nullable|integer',
             'is_active' => 'boolean',
+            'logo1' => $this->programeId ? 'nullable|image|max:2048' : 'required|image|max:2048',
+            'logo2' => 'nullable|image|max:2048',
+            'logo3' => 'nullable|image|max:2048',
             'created_by' => 'nullable|integer|exists:users,id',
         ];
     }
@@ -130,6 +140,16 @@ class ProgrameCreate extends Component
                 'is_active' => $this->is_active,
                 'created_by' => $created_by,
             ];
+
+            if ($this->logo1) {
+                $data['logo1'] = $this->logo1->store('project-logos', 'uploads');
+            }
+            if ($this->logo2) {
+                $data['logo2'] = $this->logo2->store('project-logos', 'uploads');
+            }
+            if ($this->logo3) {
+                $data['logo3'] = $this->logo3->store('project-logos', 'uploads');
+            }
 
             \Log::info('Data to save:', $data);
 

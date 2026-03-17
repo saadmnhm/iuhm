@@ -16,6 +16,9 @@ class Dashboard extends Component
 
     public function render()
     {
+
+        $matricule_null = Candidat::whereNull('matricule')->count();
+
         $latestSubmission = DynamicFormSubmission::latest()->first();
         $this->projectId = $latestSubmission?->programe_id;
 
@@ -71,16 +74,15 @@ class Dashboard extends Component
         }
             
         // submissions per  project id
-        // foreach ($projectSubmissions as $project) {
         //     echo "<pre>";
-        //     print_r($project->candidat);
+        //     print_r($matricule_null);
         //     echo "</pre>";
-        // }
 
         return view('livewire.admin.dashboard', [
             'statistics' => $statistics,
             'chartData' => $chartData,
             'userSubmissions' => $projectSubmissions,
+            'matricule_null' => $matricule_null,
             'admins' => User::whereIn('role', ['admin', 'super_admin'])->orderBy('name')->get(['id', 'name']),
         ])->layout('layouts.admin', ['header' => 'Dashboard']);
     }

@@ -69,7 +69,7 @@ class RhCreate extends Component
         $emp = RhEmployee::create($data);
 
         if ($this->photo) {
-            $path = $this->photo->store('rh/employees/' . $emp->id, 'public');
+            $path = $this->photo->store('rh/employees/' . $emp->id, 'uploads');
             $emp->update(['photo_path' => $path]);
         }
 

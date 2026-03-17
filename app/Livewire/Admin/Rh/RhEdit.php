@@ -94,7 +94,7 @@ class RhEdit extends Component
         ];
 
         if ($this->photo) {
-            $path = $this->photo->store('rh/employees/' . $emp->id, 'public');
+            $path = $this->photo->store('rh/employees/' . $emp->id, 'uploads');
             $data['photo_path'] = $path;
         }
 

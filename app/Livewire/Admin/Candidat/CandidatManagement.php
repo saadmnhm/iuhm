@@ -8,6 +8,7 @@ use App\Models\Candidat;
 use App\Models\AdminActivityLog;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\Url;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -16,8 +17,27 @@ class CandidatManagement extends Component
 {
     use WithPagination;
 
+    #[Url]
     public $search = '';
+    
+    #[Url]
     public $roleFilter = 'all';
+    
+    #[Url]
+    public $matriculeFilter = 'all';
+    
+    #[Url]
+    public $dateJoinFilter = '';
+    
+    #[Url]
+    public $dateFromFilter = '';
+    
+    #[Url]
+    public $dateToFilter = '';
+    
+    #[Url]
+    public $projectFilter = 'all';
+
     public $showCreateModal = false;
     public $showEditModal = false;
     public $showDeleteModal = false;
@@ -67,6 +87,31 @@ class CandidatManagement extends Component
     }
 
     public function updatingRoleFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingMatriculeFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingDateJoinFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingDateFromFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingDateToFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingProjectFilter()
     {
         $this->resetPage();
     }
@@ -302,6 +347,11 @@ class CandidatManagement extends Component
         $this->reset(['nom', 'prenom', 'email', 'password', 'candidatId', 'address_id', 'address_custom']);
     }
 
+    public function Reinitialiser(){
+        $this->reset(['search', 'roleFilter', 'matriculeFilter', 'dateJoinFilter', 'dateFromFilter', 'dateToFilter', 'projectFilter']);
+        $this->resetPage();
+    }
+
     public function render()
     {
         $query = Candidat::query();
@@ -320,6 +370,31 @@ class CandidatManagement extends Component
             $query->where('role', $this->roleFilter);
         }
 
+        
+        if ($this->matriculeFilter === 'with') {
+            $query->whereNotNull('matricule');
+        } elseif ($this->matriculeFilter === 'without') {
+            $query->whereNull('matricule');
+        }
+
+        if ($this->dateJoinFilter) {
+            $query->whereDate('created_at', $this->dateJoinFilter);
+        }
+
+        if ($this->dateFromFilter) {
+            $query->whereDate('created_at', '>=', $this->dateFromFilter);
+        }
+
+        if ($this->dateToFilter) {
+            $query->whereDate('created_at', '<=', $this->dateToFilter);
+        }
+
+        if ($this->projectFilter !== 'all') {
+            $query->whereHas('projectSubmissions', function ($q) {
+                $q->where('programe_id', $this->projectFilter);
+            });
+        }
+
         $candidats = $query->latest()->paginate(10);
 
         $statistics = [
@@ -334,6 +409,7 @@ class CandidatManagement extends Component
             'candidats'  => $candidats,
             'statistics' => $statistics,
             'addresses'  => Address::orderBy('city')->orderBy('address_line1')->get(),
+            'programes'  => \App\Models\ProgrameList::all(),
         ])->layout('layouts.admin', ['header' => 'Bénéficiaires Management']);
     }
 

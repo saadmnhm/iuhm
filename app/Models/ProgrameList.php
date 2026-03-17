@@ -30,6 +30,9 @@ class ProgrameList extends Model
         'sort_order',
         'is_active',
         'created_by',
+        'logo1',
+        'logo2',
+        'logo3',
     ];
 
     protected $casts = [

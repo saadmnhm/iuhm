@@ -40,6 +40,37 @@
                 </div>
             </div>
 
+            <!-- Logos Section -->
+            <div class="mt-6 mb-6">
+                <h3 class="text-md font-medium text-gray-800 mb-3">Project Logos</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Logo 1</label>
+                        <input type="file" wire:model="logo1" accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                        @error('logo1') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                        @if ($logo1) 
+                            <img src="{{ $logo1->temporaryUrl() }}" class="mt-2 h-20 object-contain rounded"> 
+                        @endif
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Logo 2</label>
+                        <input type="file" wire:model="logo2" accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                        @error('logo2') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                        @if ($logo2) 
+                            <img src="{{ $logo2->temporaryUrl() }}" class="mt-2 h-20 object-contain rounded"> 
+                        @endif
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Logo 3</label>
+                        <input type="file" wire:model="logo3" accept="image/*" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                        @error('logo3') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                        @if ($logo3) 
+                            <img src="{{ $logo3->temporaryUrl() }}" class="mt-2 h-20 object-contain rounded"> 
+                        @endif
+                    </div>
+                </div>
+            </div>
+
             <!-- Icon Picker -->
             <div class="mt-6" x-data="{
                 open: false,

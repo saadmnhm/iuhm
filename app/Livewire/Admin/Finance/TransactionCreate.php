@@ -73,7 +73,7 @@ class TransactionCreate extends Component
         // Save attachments
         if ($this->attachments) {
             foreach ($this->attachments as $file) {
-                $path = $file->store('finance/transactions/' . $transaction->id, 'public');
+                $path = $file->store('finance/transactions/' . $transaction->id, 'uploads');
                 FinanceAttachment::create([
                     'transaction_id' => $transaction->id,
                     'file_path' => $path,

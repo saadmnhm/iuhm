@@ -16,6 +16,11 @@ class ProjectDetail extends Component
     public $project;
     public $formulaires = [];
     public $currentFormulaireIndex = null;
+    public $projectSubmission;
+    public $showReviewModal = false;
+    public $reviewRating = null;
+    public $reviewFeedback = '';
+
     protected ProjectEligibilityService $eligibilityService;
 
     public function boot(ProjectEligibilityService $eligibilityService): void
@@ -38,6 +43,10 @@ class ProjectDetail extends Component
 
         $candidat = Auth::guard('candidat')->user();
         if ($candidat) {
+            $this->projectSubmission = \App\Models\ProjectSubmission::where('candidat_id', $candidat->id)
+                ->where('programe_id', $this->projectId)
+                ->first();
+
             $check = $this->eligibilityService->evaluate($candidat, $this->project);
             if (!$check['eligible']) {
                 session()->flash('error', 'Vous ne pouvez pas accéder à ce projet: ' . implode(' ', $check['reasons']));
@@ -153,6 +162,11 @@ class ProjectDetail extends Component
     
     public function startFormulaire($index)
     {
+        if ($this->projectSubmission && $this->projectSubmission->require_formation_review && !$this->projectSubmission->formation_review_rating) {
+            session()->flash('error', __('Veuillez remplir l\'avis de formation avant de continuer.'));
+            return;
+        }
+
         if (isset($this->formulaires[$index])) {
             $formulaire = $this->formulaires[$index];
 
@@ -169,6 +183,23 @@ class ProjectDetail extends Component
         }
     }
     
+    public function submitReview()
+    {
+        $this->validate([
+            'reviewRating' => 'required|integer|min:1|max:5',
+            'reviewFeedback' => 'nullable|string|max:1000'
+        ]);
+
+        if ($this->projectSubmission) {
+            $this->projectSubmission->update([
+                'formation_review_rating' => $this->reviewRating,
+                'formation_review_feedback' => $this->reviewFeedback,
+            ]);
+            $this->showReviewModal = false;
+            session()->flash('success', __('Merci pour votre évaluation !'));
+        }
+    }
+
     public function render()
     {
         return view('livewire.front.programe.project-detail')

@@ -13,6 +13,7 @@ class ProjectConditionAgreement extends Component
     public ?ProgrameList $project = null;
     public bool $acceptConditions = false;
     public string $projectIdea = '';
+    public string $howKnew = '';
 
     public function mount($id): void
     {
@@ -25,10 +26,13 @@ class ProjectConditionAgreement extends Component
         $this->validate([
             'acceptConditions' => 'accepted',
             'projectIdea' => 'required|string|min:20|max:4000',
+            'howKnew' => 'required|string|min:5|max:1000',
         ], [
             'acceptConditions.accepted' => 'Vous devez accepter les conditions pour continuer.',
-            'projectIdea.required' => 'Veuillez saisir l\'idée de votre projet.',
-            'projectIdea.min' => 'L\'idée doit contenir au moins 20 caractères.',
+            'projectIdea.required' => 'Veuillez saisir l\'idÃ©e de votre projet.',
+            'projectIdea.min' => 'L\'idÃ©e doit contenir au moins 20 caractÃ¨res.',
+            'howKnew.required' => 'Veuillez préciser comment vous avez connu ce projet/organisme.',
+            'howKnew.min' => 'Veuillez détailler un peu plus comment vous nous avez connus.',
         ]);
 
         $candidatId = Auth::guard('candidat')->id();
@@ -42,6 +46,7 @@ class ProjectConditionAgreement extends Component
                 'agreed_at' => now(),
                 'agreed_ip' => request()->ip(),
                 'project_idea' => $this->projectIdea,
+                'how_knew' => $this->howKnew,
             ]
         );
 

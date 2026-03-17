@@ -68,13 +68,41 @@
 
                             <button type="button" wire:click="openEvaluationModal" @click="open = false"
                                     class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
-                                <i class="ri-survey-line mr-1"></i> Grille d'évaluation
-                            </button>
+                                  <i class="ri-survey-line mr-1"></i> Grille d'évaluation
+                              </button>
+                              
+                              @if($projectId)
+                              <a href="{{ route('admin.project.print.evaluation', ['id' => $candidat->id, 'projectId' => $projectId]) }}" target="_blank"
+                                 class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700 block">
+                                  <i class="ri-printer-line mr-1"></i> Imprimer Grille
+                              </a>
+                              @endif
+
+                              @if($candidatSubmissions)
+                              <button type="button" wire:click="toggleFormationReview" @click="open = false"
+                                      class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-sm {{ $candidatSubmissions->require_formation_review ? 'text-green-600 font-bold' : 'text-gray-700' }}">
+                                  <i class="ri-feedback-line mr-1"></i> 
+                                  {{ $candidatSubmissions->require_formation_review ? '✓ Avis de formation demandé' : 'Demander avis de formation' }}
+                              </button>
+                              @endif
 
                             <a href="{{ route('admin.candidat.export-all', $candidat->id) }}" target="_blank"
                                class="block px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
-                                <i class="ri-file-pdf-line mr-1"></i> Export PDF complet
+                                <i class="ri-file-pdf-line mr-1"></i> Export PDF (Global)
                             </a>
+                            
+                            @if($projectId)
+                            <hr class="my-1 border-gray-200">
+                            <a href="{{ route('admin.project.print.folder', ['id' => $candidat->id, 'projectId' => $projectId]) }}" target="_blank" class="block px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
+                                <i class="ri-folder-zip-line mr-1"></i> Dossier Complet (Projet)
+                            </a>
+                            <a href="{{ route('admin.project.print.fiche', ['id' => $candidat->id, 'projectId' => $projectId]) }}" target="_blank" class="block px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
+                                <i class="ri-file-user-line mr-1"></i> Fiche d'inscription
+                            </a>
+                            <a href="{{ route('admin.project.print.agreement', ['id' => $candidat->id, 'projectId' => $projectId]) }}" target="_blank" class="block px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
+                                <i class="ri-file-paper-2-line mr-1"></i> Engagement
+                            </a>
+                            @endif
                             
                         </div>
                     </div>
@@ -227,7 +255,11 @@
                            class="flex items-center justify-center gap-2 w-full px-4 py-2 text-white text-sm font-semibold rounded-lg transition hover:opacity-90"
                            style="background-color: {{ $accentColor }};">
                             <i class="ri-eye-line"></i> Voir les détails
-                        </a>
+                        </a>                          
+                          <a href="{{ route('admin.formulaire.print.submission', $sub['submission_id']) }}" target="_blank"
+                             class="flex items-center justify-center gap-2 w-full px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold rounded-lg transition">
+                              <i class="ri-printer-line"></i> Imprimer form
+                          </a>
                         <button type="button" wire:click="openWorkflowModal({{ $sub['submission_id'] }})"
                                 class="w-full px-4 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-sm font-semibold rounded-lg border border-indigo-200 transition">
                             <i class="ri-route-line mr-1"></i> Gérer étapes / statut

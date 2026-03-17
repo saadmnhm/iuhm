@@ -47,6 +47,14 @@
                         @enderror
                     </div>
 
+                    <div class="mt-4">
+                        <label class="form-label fw-semibold">Comment avez-vous connu ce projet / organisme ? *</label>
+                        <textarea wire:model="howKnew" rows="2" class="form-control" placeholder="Réseaux sociaux, amis, affichage, etc..."></textarea>
+                        @error('howKnew')
+                            <div class="text-danger small mt-1">{{ $message }}</div>
+                        @enderror
+                    </div>
+
                     <div class="d-flex gap-2 mt-4">
                         <a href="{{ route('user.project.detail', $projectId) }}" class="btn btn-light border">Retour</a>
                         <button wire:click="agreeAndContinue" class="btn btn-success">

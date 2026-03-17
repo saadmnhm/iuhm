@@ -55,7 +55,7 @@ class TransactionEdit extends Component
     {
         $att = FinanceAttachment::find($attachmentId);
         if ($att) {
-            \Storage::disk('public')->delete($att->file_path);
+            \Storage::disk('uploads')->delete($att->file_path);
             $att->delete();
             $this->existingAttachments = array_filter($this->existingAttachments, fn($a) => $a['id'] != $attachmentId);
         }
@@ -80,7 +80,7 @@ class TransactionEdit extends Component
 
         if ($this->newAttachments) {
             foreach ($this->newAttachments as $file) {
-                $path = $file->store('finance/transactions/' . $t->id, 'public');
+                $path = $file->store('finance/transactions/' . $t->id, 'uploads');
                 FinanceAttachment::create([
                     'transaction_id' => $t->id,
                     'file_path' => $path,

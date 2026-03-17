@@ -84,14 +84,14 @@
                     @foreach($transaction->attachments as $att)
                     <div class="border border-gray-200 rounded-lg p-3 hover:shadow-md transition">
                         @if(str_starts_with($att->mime_type, 'image/'))
-                        <img src="{{ asset('storage/' . $att->file_path) }}" alt="{{ $att->file_name }}" class="w-full h-32 object-cover rounded-lg mb-2">
+                        <img src="{{ asset('uploads/' . $att->file_path) }}" alt="{{ $att->file_name }}" class="w-full h-32 object-cover rounded-lg mb-2">
                         @else
                         <div class="flex items-center justify-center h-32 bg-gray-50 rounded-lg mb-2">
                             <i class="ri-file-text-line text-4xl text-gray-400"></i>
                         </div>
                         @endif
                         <p class="text-xs font-medium text-gray-700 truncate">{{ $att->file_name }}</p>
-                        <a href="{{ asset('storage/' . $att->file_path) }}" target="_blank" download class="text-xs text-indigo-600 hover:text-indigo-800">
+                        <a href="{{ asset('uploads/' . $att->file_path) }}" target="_blank" download class="text-xs text-indigo-600 hover:text-indigo-800">
                             <i class="ri-download-line mr-1"></i> Télécharger
                         </a>
                     </div>

@@ -7,6 +7,7 @@ use App\Models\DynamicFormSubmission;
 use App\Models\DynamicFormAnswer;
 use App\Models\DynamicFormTableAnswer;
 use App\Models\ProjectSubmission;
+use App\Models\ProgrameList;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -407,12 +408,22 @@ class DynamicFormWizard extends Component
     {
         $form = $this->getForm();
         $currentStep = $form->steps->firstWhere('step_number', $this->step);
+        $projectId = request()->integer('project_id');
+        $project = null;
+
+        if ($this->existingSubmission?->programe) {
+            $project = $this->existingSubmission->programe;
+        } elseif ($projectId > 0) {
+            $project = ProgrameList::find($projectId);
+        }
+
         $layoutTitle = str_starts_with(app()->getLocale(), 'ar') && filled($form->title_ar)
             ? $form->title_ar
             : $form->title;
 
         return view('livewire.front.dynamic_form.wizard', [
             'form' => $form,
+            'project' => $project,
             'currentStep' => $currentStep,
             'totalSteps' => $form->steps->count(),
         ])->layout('layouts.app', ['title' => $layoutTitle]);

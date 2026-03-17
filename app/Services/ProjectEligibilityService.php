@@ -35,7 +35,7 @@ class ProjectEligibilityService
             if (!$candidat->morocco_location_id) {
                 $reasons[] = 'Votre localisation (région / ville / préfecture) est manquante.';
             } elseif (!$allowedLocationIds->contains((int) $candidat->morocco_location_id)) {
-                $reasons[] = 'Votre ville/préfecture ne fait pas partie des zones autorisées pour ce projet.';
+                $reasons[] = 'ville/préfecture ne fait pas partie des zones autorisées pour ce projet.';
             }
         }
 

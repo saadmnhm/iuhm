@@ -399,6 +399,20 @@ class CandidatSubmissions extends Component
         $this->showFicheModal = true;
     }
 
+    public function toggleFormationReview(): void
+    {
+        if ($this->candidatSubmissions) {
+            $this->candidatSubmissions->update([
+                'require_formation_review' => !$this->candidatSubmissions->require_formation_review
+            ]);
+            $this->candidatSubmissions->refresh();
+            
+            $status = $this->candidatSubmissions->require_formation_review ? 'activée' : 'désactivée';
+            session()->flash('message', "La demande d'avis de formation a été $status.");
+            $this->dispatch('close-modal');
+        }
+    }
+
     public function openEvaluationModal(): void
     {
         $latest = CandidatEvaluationGrid::where('candidat_id', $this->candidatId)

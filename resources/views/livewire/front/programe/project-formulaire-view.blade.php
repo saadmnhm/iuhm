@@ -426,11 +426,19 @@
         {{-- Footer --}}
         <div class="wizard-footer-content mt-5">
             <div class="wizard-logo-footer">
-                <img src="{{ asset('assets/site/images/iuhm_logo.png') }}" alt="iuhm-logo-footer">
-                <img src="{{ asset('assets/site/images/indh_logo.png') }}" alt="indh-logo-footer">
-                <img src="{{ asset('assets/site/images/logo_zettat.png') }}" alt="zettat-logo-footer">
+                @if(isset($project) && $project->logo1)
+                    <img src="{{ asset('uploads/' . $project->logo1) }}" alt="logo1-footer">
+                @endif
+
+                @if(isset($project) && $project->logo2)
+                    <img src="{{ asset('uploads/' . $project->logo2) }}" alt="logo2-footer">
+                @endif
+
+                @if(isset($project) && $project->logo3)
+                    <img src="{{ asset('uploads/' . $project->logo3) }}" alt="logo3-footer">
+                @endif
             </div>
-            <p class="text-center mt-5">&copy; {{ date('Y') }} {{ $tr('Tous droits réservés par', 'جميع الحقوق محفوظة لدى') }} <a href="https://www.iuhm.org" target="_blank" style="color: {{ $form->color ?? '#2f5496' }};">Initiative Urbaine Hay Mohammadi</a></p>
+            <p class="text-center mt-5">&copy; {{ date('Y') }} {{ $tr('Tous droits réservés par', 'جميع الحقوق محفوظة لدى') }} <a href="https://www.iuhm.org" target="_blank" style="color: {{ $form->color }};">initiative urbaine hay mohammadi</a></p>
         </div>
 
         <script>

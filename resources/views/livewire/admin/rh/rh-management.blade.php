@@ -82,7 +82,7 @@
                 <div class="flex items-start justify-between mb-3">
                     <div class="flex items-center gap-3">
                         @if($emp->photo_path)
-                        <img src="{{ asset('storage/' . $emp->photo_path) }}" class="w-12 h-12 rounded-full object-cover border-2 border-white shadow">
+                        <img src="{{ asset('uploads/' . $emp->photo_path) }}" class="w-12 h-12 rounded-full object-cover border-2 border-white shadow">
                         @else
                         <div class="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center text-lg font-bold shadow">
                             {{ strtoupper(substr($emp->nom, 0, 1)) }}{{ strtoupper(substr($emp->prenom, 0, 1)) }}

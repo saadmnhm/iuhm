@@ -288,7 +288,23 @@
 
       <td>
         <div class="logo-block">
-          <img src="{{asset('assets/site/images/iuhm_logo.png')}}" alt="Logo IUHM ">
+                  @if(isset($project) && $project->logo1)
+            <img src="{{ asset('uploads/' . $project->logo1) }}" alt="Logo 1" style="max-height: 50px;">
+        @elseif(isset($programe) && $programe->logo1)
+            <img src="{{ asset('uploads/' . $programe->logo1) }}" alt="Logo 1" style="max-height: 50px;">
+        @else
+            <img src="{{asset('assets/site/images/iuhm_logo.png')}}" alt="Logo IUHM " style="max-height: 50px;">
+        @endif
+        @if(isset($project) && $project->logo2)
+            <img src="{{ asset('uploads/' . $project->logo2) }}" alt="Logo 2" style="max-height: 50px; margin-left:10px;">
+        @elseif(isset($programe) && $programe->logo2)
+            <img src="{{ asset('uploads/' . $programe->logo2) }}" alt="Logo 2" style="max-height: 50px; margin-left:10px;">
+        @endif
+        @if(isset($project) && $project->logo3)
+            <img src="{{ asset('uploads/' . $project->logo3) }}" alt="Logo 3" style="max-height: 50px; margin-left:10px;">
+        @elseif(isset($programe) && $programe->logo3)
+            <img src="{{ asset('uploads/' . $programe->logo3) }}" alt="Logo 3" style="max-height: 50px; margin-left:10px;">
+        @endif
         </div>
       </td>
 
