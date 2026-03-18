@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" integrity="sha512-XcIsjKMcuVe0Ucj/xgIXQnytNwBttJbNjltBV18IOnru2lDPe9KRRyvCXw6Y5H415vbBLRm8+q6fmLUU7DfO6Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />    <style>
         :root {
             --paper-width: 210mm;
+            --paper-height: 297mm;
         }
 
         * { box-sizing: border-box; }
@@ -27,18 +28,17 @@
         }
 
         .paper {
-            width: 100%;
-            max-width: var(--paper-width);
-            min-height: calc(297mm - 20mm);
+            width: var(--paper-width);
+            height: var(--paper-height);
             background: #fff;
-            border-radius: 6px;
             position: relative;
-            overflow: hidden;
-            padding: 20px 20px;
-            box-shadow: 0 8px 40px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08);
-            border-top: 4px solid var(--rust);
         }
-
+        .a4-page{
+            width: 210mm;
+            height: 297mm;
+            background: #fff;
+            position: relative;
+        }
         .paper-content {
             padding: 0;
         }
@@ -50,7 +50,6 @@
             z-index: 1000;
             border: 0;
             border-radius: 999px;
-            /* padding: 10px 16px; */
             background: #2563eb;
             color: #fff;
             font-weight: 700;
@@ -63,7 +62,24 @@
         .print-cta:hover {
             background: #1d4ed8;
         }
-
+        .footer-logos {
+            position: absolute;
+            left: 20mm;
+            right: 20mm;
+            bottom: 3mm;
+            text-align: center;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+        }
+        .footer-logos img {
+            max-height: 50px;
+            max-width: 100px;
+            object-fit: contain;
+        }
         @media print {
             body {
                 background: #fff;
@@ -74,16 +90,6 @@
                 min-height: auto;
                 display: block;
             }
-
-            .paper {
-                max-width: none;
-                width: auto;
-                min-height: auto;
-                border-radius: 0;
-                box-shadow: none;
-                overflow: visible;
-            }
-
             .print-cta {
                 display: none !important;
             }
@@ -97,11 +103,9 @@
 
     <div class="print-wrap">
         <main class="paper">
-            <section class="paper-content">
 
                     {!! $printHtml !!}
 
-            </section>
         </main>
     </div>
 </body>

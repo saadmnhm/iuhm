@@ -4,7 +4,7 @@
     $displayLabel = fn ($fr, $ar = null) => $isArabic && filled($ar) ? $ar : $fr;
 @endphp
 
-<div @if($isArabic) dir="rtl" @endif>
+<div x-data="{ showSubmitConfirm: false }" @if($isArabic) dir="rtl" @endif>
     <div class="parent-steps container">
 
         {{-- Read-Only Banner --}}
@@ -416,10 +416,58 @@
                 @endif
 
                 @if($currentStep == $totalSteps && !$isReadOnly)
-                    <button wire:click="submit" class="navigation-btn btn-submit w-100 w-md-auto">
+                    <button type="button" @click="showSubmitConfirm = true" class="navigation-btn btn-submit w-100 w-md-auto">
                         {{ $tr('Soumettre', 'إرسال') }} <i class="ri-send-plane-fill me-1 ms-1"></i>
                     </button>
                 @endif
+            </div>
+        @endif
+
+        @if(!$isReadOnly)
+            <div x-show="showSubmitConfirm"
+                 x-cloak
+                 x-transition:enter="ease-out duration-200"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="ease-in duration-150"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="fixed inset-0 z-50 flex items-center justify-center p-3">
+                <div class="absolute inset-0 bg-black/55" @click="showSubmitConfirm = false"></div>
+
+                <div x-show="showSubmitConfirm"
+                     x-transition:enter="ease-out duration-200"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="ease-in duration-150"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95"
+                     class="relative bg-white rounded-4 shadow-xl w-full" style="max-width: 520px;"
+                     @click.stop>
+                    <div class="px-4 px-md-5 py-4 border-bottom d-flex align-items-center justify-content-between">
+                        <h5 class="mb-0 fw-bold" style="color: #1f2937;">
+                            <i class="ri-shield-check-line me-2" style="color: {{ $form->color ?? '#2f5496' }};"></i>
+                            {{ $tr('Confirmer l\'envoi', 'تأكيد الإرسال') }}
+                        </h5>
+                        <button type="button" class="btn-close" @click="showSubmitConfirm = false"></button>
+                    </div>
+
+                    <div class="px-4 px-md-5 py-4 text-secondary" style="line-height: 1.7;">
+                        {{ $tr('Vous allez soumettre ce formulaire. Après envoi, vous ne pourrez plus modifier vos réponses.', 'أنت على وشك إرسال هذه الاستمارة. بعد الإرسال لن تتمكن من تعديل إجاباتك.') }}
+                    </div>
+
+                    <div class="px-4 px-md-5 py-3 bg-light border-top d-flex flex-column flex-md-row justify-content-end gap-2">
+                        <button type="button" class="btn btn-outline-secondary" @click="showSubmitConfirm = false">
+                            {{ $tr('Annuler', 'إلغاء') }}
+                        </button>
+                        <button type="button"
+                                class="btn text-white"
+                                style="background-color: {{ $form->color ?? '#2f5496' }};"
+                                @click="$wire.submit(); showSubmitConfirm = false">
+                            <i class="ri-send-plane-fill me-1"></i> {{ $tr('Oui, soumettre', 'نعم، إرسال') }}
+                        </button>
+                    </div>
+                </div>
             </div>
         @endif
 

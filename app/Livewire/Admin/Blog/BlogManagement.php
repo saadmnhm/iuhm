@@ -33,7 +33,7 @@ class BlogManagement extends Component
             'title_ar'     => 'nullable|string|max:255',
             'excerpt'      => 'nullable|string|max:500',
             'content'      => 'required|string',
-            'newImage'     => 'nullable|image|max:2048',
+            'newImage'     => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
             'category'     => 'nullable|string|max:100',
             'tags_input'   => 'nullable|string|max:500',
             'is_published' => 'boolean',

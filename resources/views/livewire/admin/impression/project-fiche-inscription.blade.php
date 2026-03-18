@@ -1,104 +1,193 @@
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-    font-family: Arial, sans-serif;
-    background: #fdfdfd;
-    padding: 20px;
-    font-size: 14px;
-}
-.a4-page {
-    width: 210mm;
-    min-height: 297mm;
-    background: white;
-    margin: 0 auto 20px auto;
-    padding: 20mm;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+ *{
+
+    --label-color: #679bcc;
+  
+ }
+
+  /* ── HEADER ── */
+
+  .logo-block img{
+    width: 125px;
     position: relative;
-    page-break-after: always;
-}
-@media print {
-    body { padding: 0; background: none; }
-    .a4-page { margin: 0; padding: 20mm; box-shadow: none; border: none; }
-    .no-print { display: none; }
-}
-
-/* Header Sections */
-.header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 15px; }
-.header h1 { font-size: 22px; text-transform: uppercase; margin-bottom: 15px; }
-.header p { margin-bottom: 5px; color: #555; font-size: 14px; }
-
-/* Content sections */
-.section { margin-bottom: 25px; }
-.section h2 { font-size: 18px; margin-bottom: 10px; color: #8B0000; border-bottom: 1px dotted #8B0000; padding-bottom: 5px; }
-.info-row { display: flex; margin-bottom: 8px; border-bottom: 1px solid #f0f0f0; padding-bottom: 4px; }
-.info-label { font-weight: bold; width: 200px; color: #333; }
-.info-value { flex: 1; color: #000; }
-
-/* Footers */
-.footer-logos {
-    position: absolute;
-    bottom: 20mm;
-    left: 20mm;
-    right: 20mm;
-    text-align: center;
-    border-top: 1px solid #eee;
-    padding-top: 10px;
+    left: 97%;
+  }
+  .title-block {
+    margin: 10px 0;
     display: flex;
     justify-content: center;
-    gap: 20px;
-    align-items: center;
-}
-.footer-logos img {
-    max-height: 60px;
-    max-width: 120px;
-    object-fit: contain;
-}
+  }
+
+  .title-box {
+    padding: 3px 5px;
+    border: 1px solid #679bcc;
+  }
+
+  .title-box h1 {
+    font-size: 15px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin: 5px 0;
+    color: var(--label-color);
+  }
+
+  .photo-slot{
+    width: 110px;
+    height: 111px;
+    border-radius: 76px;
+    overflow: hidden;
+    margin-right: 50px;
+
+  }
+
+
+  /* ── FORM FIELDS ── */
+  .form-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 15px 85px;
+  }
+
+  .field-row {
+    display: flex;
+    align-items: stretch;
+    min-height: 42px;
+  }
+
+  .field-row:last-child { border-bottom: none; }
+
+  .label-fr {
+    min-width: 160px;
+    padding: 10px 0 8px;
+    font-size: 13.5px;
+    font-weight: 600;
+    align-content: center;
+    color: var(--label-color);
+  }
+  .content{
+    padding: 10px 0px;
+  }
+
+  .field-input {
+    flex: 1;
+    margin: 19px 10px;
+    font-size: 14px;
+    text-align: center;
+    font-weight: 600;
+    color: #33396f;
+  }
+  .label-ar {
+    min-width: 140px;
+    padding: 10px 0 8px;
+    font-size: 15px;
+    color: var(--label-color);
+    text-align: right;
+    direction: rtl;
+    font-weight: 600;
+    align-content: center;
+  }
+
+
 </style>
 
-<div class="a4-page">
-    <div class="header">
-        <h1>Fiche d'Inscription - Projet</h1>
-        <p>Projet: {{ $project->name }}</p>
-        <p>Date d'inscription: {{ $agreement->created_at->format('d/m/Y') }}</p>
+<div class="content">
+  
+  <table width="100%" class="header-table">
+    <tr>
+
+      <td>
+        <div class="logo-block">
+            <img src="{{asset('assets/site/images/iuhm_logo.png')}}" alt="Logo IUHM ">
+        </div>
+      </td>
+
+      <td style="text-align: right;">
+        <img src="{{ asset('uploads/' . $candidat->profile_image) }}" alt="Photo" class="photo-slot"/>
+      </td>
+      
+    </tr>
+  </table>
+
+  <div class="title-block">
+    <div class="title-box">
+      <h1>Fiche de Renseignement</h1>
+    </div>
+  </div>
+  <!-- FORM FIELDS -->
+  <div class="form-body">
+
+    <div class="field-row">
+      <div class="label-fr">Nom <span class="colon">:</span></div>
+      <p class="field-input">{{ $candidat->nom }}</p>
+      <div class="label-ar"> النسب :</div>
+    </div>
+
+    <div class="field-row">
+      <div class="label-fr">Prénom <span class="colon">:</span></div>
+      <p class="field-input">{{ $candidat->prenom }}</p>
+      <div class="label-ar"> الاسم :</div>
+    </div>
+
+    <div class="field-row">
+      <div class="label-fr">CIN <span class="colon">:</span></div>
+      <p class="field-input">{{ $candidat->cin }}</p>
+      <div class="label-ar"> رقم البطاقة الوطنية :</div>
+    </div>
+
+    <div class="field-row">
+      <div class="label-fr">Sexe <span class="colon">:</span></div>
+      <p class="field-input">{{ $candidat->gender }}</p>
+      <div class="label-ar"> الجنس :</div>
+    </div>
+
+    <div class="field-row">
+      <div class="label-fr">Date de naissance <span class="colon">:</span></div>
+      <p class="field-input">{{ $candidat->date_naissance->format('d/m/Y') }}</p>
+      <div class="label-ar"> تاريخ الازدياد :</div>
+    </div>
+
+    <div class="field-row">
+      <div class="label-fr">Téléphone <span class="colon">:</span></div>
+      <p class="field-input">{{ $candidat->phone }}</p>
+      <div class="label-ar"> الهاتف :</div>
+    </div>
+
+    <div class="field-row">
+      <div class="label-fr">Adresse <span class="colon">:</span></div>
+      <p class="field-input">{{ $candidat->selected_region }} , {{ $candidat->selected_city }} , {{ $candidat->selected_prefecture }} , {{ $candidat->address_detail }}</p>
+      <div class="label-ar"> العنوان :</div>
+    </div>
+
+    <div class="field-row">
+      <div class="label-fr">Niveau d'étude <span class="colon">:</span></div>
+      <p class="field-input">{{ $candidat->niveau_etude }}</p>
+      <div class="label-ar">المستوى الدراسي :</div>
+    </div>
+
+    <div class="field-row">
+      <div class="label-fr">Spécialité <span class="colon">:</span></div>
+      <p class="field-input">{{ $candidat->specialite }}</p>
+      <div class="label-ar"> التخصص :</div>
     </div>
 
     <div class="section">
-        <h2>IDEE DE PROJET</h2>
-        <div class="info-row" style="display:block;">
-            <div class="info-value" style="margin-top: 10px; font-style: italic; background:#f9f9f9; padding: 10px; border: 1px dashed #ccc;">
-                {{ $agreement->project_idea ?? 'Aucune idÃ©e de projet renseignÃ©e.' }}
-            </div>
-        </div>
+            <div class="label-fr">Comment vous avez su l'initiative urbaine et ce programme ?<span class="colon">:</span></div>
+            <div class="label-ar">كيف تعرفت على بالمبادرة الحضرية وهذا البرنامج؟ :</div>
+        <p class="field-input">{{ $agreement->how_knew ?? 'Non spÃ©cifiÃ©.' }}</p>
     </div>
 
     <div class="section">
-        <h2>INFORMATIONS PERSONNELLES</h2>
-        <div class="info-row">
-            <span class="info-label">Nom et PrÃ©nom :</span>
-            <span class="info-value">{{ strtoupper($candidat->nom) }} {{ ucfirst($candidat->prenom) }}</span>
+        <div class="field-row" style="justify-content: space-between;">
+                <div class="label-fr">IDEE DE PROJET <span class="colon">:</span></div>
+                <div class="label-ar"> فكرة المشروع :</div>
         </div>
-        <div class="info-row">
-            <span class="info-label">CIN :</span>
-            <span class="info-value">{{ $candidat->cin }}</span>
-        </div>
-        <div class="info-row">
-            <span class="info-label">TÃ©lÃ©phone :</span>
-            <span class="info-value">{{ $candidat->phone }}</span>
-        </div>
-        <div class="info-row">
-            <span class="info-label">Email :</span>
-            <span class="info-value">{{ $candidat->email }}</span>
-        </div>
+        <p class="field-input" style="margin: 0;">{{ $agreement->project_idea ?? 'Aucune idÃ©e de projet renseignÃ©e.' }}</p>
     </div>
 
-    <div class="section">
-        <h2>COMMENT NOUS AVEZ-VOUS CONNU ?</h2>
-        <div class="info-row" style="display:block;">
-            <div class="info-value" style="margin-top: 10px; background:#f9f9f9; padding: 10px; border: 1px dotted #ccc;">
-                {{ $agreement->how_knew ?? 'Non spÃ©cifiÃ©.' }}
-            </div>
-        </div>
-    </div>
+  </div>
+
 
     <div class="footer-logos">
         @if($project->logo1)
@@ -112,3 +201,18 @@ body {
         @endif
     </div>
 </div>
+
+
+
+<script>
+  function previewPhoto(event, input) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const img = document.getElementById('photo-preview');
+    img.src = URL.createObjectURL(file);
+    img.style.display = 'block';
+    input.previousElementSibling.style.display = 'none';
+  }
+</script>
+
+

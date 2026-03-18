@@ -25,6 +25,7 @@ class CandidatSubmissions extends Component
     public $candidatSubmissions;
     public $projectId;
     public $project;
+    public $is_evaluated;
     public $statistics = [];
     public $submissions = [];
     public $dynamicSubmissions;
@@ -42,12 +43,6 @@ class CandidatSubmissions extends Component
     // Fiche modal
     public bool $showFicheModal = false;
 
-    // Evaluation grid modal
-    public bool $showEvaluationModal = false;
-    public int $motivationScore = 0;
-    public int $profileScore = 0;
-    public int $viabilityScore = 0;
-    public string $evaluationComment = '';
     public string $formationRanking = '';
 
     // Submission workflow modal
@@ -413,44 +408,6 @@ class CandidatSubmissions extends Component
         }
     }
 
-    public function openEvaluationModal(): void
-    {
-        $latest = CandidatEvaluationGrid::where('candidat_id', $this->candidatId)
-            ->where('project_id', $this->projectId)
-            ->latest()
-            ->first();
-
-        $this->motivationScore = (int) ($latest->motivation_score ?? 0);
-        $this->profileScore = (int) ($latest->profile_score ?? 0);
-        $this->viabilityScore = (int) ($latest->viability_score ?? 0);
-        $this->evaluationComment = (string) ($latest->comment ?? '');
-        $this->showEvaluationModal = true;
-    }
-
-    public function saveEvaluationGrid(): void
-    {
-        $this->validate([
-            'motivationScore' => 'required|integer|min:0|max:20',
-            'profileScore' => 'required|integer|min:0|max:20',
-            'viabilityScore' => 'required|integer|min:0|max:20',
-            'evaluationComment' => 'nullable|string|max:4000',
-        ]);
-
-        CandidatEvaluationGrid::create([
-            'candidat_id' => $this->candidatId,
-            'project_id' => $this->projectId,
-            'admin_id' => auth()->id(),
-            'motivation_score' => $this->motivationScore,
-            'profile_score' => $this->profileScore,
-            'viability_score' => $this->viabilityScore,
-            'total_score' => $this->motivationScore + $this->profileScore + $this->viabilityScore,
-            'comment' => $this->evaluationComment ?: null,
-        ]);
-
-        $this->showEvaluationModal = false;
-        session()->flash('success', 'Grille d\'évaluation enregistrée avec succès.');
-    }
-
     public function saveCandidatSettings(): void
     {
         $this->validate([
@@ -633,9 +590,17 @@ class CandidatSubmissions extends Component
 
     public function render()
     {
+        $is_evaluated = CandidatEvaluationGrid::where('candidat_id', $this->candidatId)
+            ->where('project_id', $this->projectId)
+            ->exists();
+
+        $this->is_evaluated = $is_evaluated;
+
+
         return view('livewire.admin.programe.candidat.candidat-submissions')
             ->layout('layouts.admin', [
                 'header' => 'Soumissions de ' . $this->candidat->nom . ' ' . $this->candidat->prenom . ($this->project ? " - {$this->project->project_name}" : ''),
-            ]);
+                'is_evaluated' => $is_evaluated,
+                ]);
     }
 }

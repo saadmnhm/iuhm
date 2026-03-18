@@ -62,20 +62,22 @@
                         </button>
                         <div x-show="open" @click.away="open = false" x-cloak  class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 p-2 z-40">
                            
-                            <a href="{{ route('admin.candidats.edit', $candidat->id) }}" class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
+                            <a href="{{ route('admin.candidats.edit', $candidat->id) }}" class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700 block">
                                 <i class="ri-sort-asc mr-1"></i>ordre des formulaires
                             </a>
 
-                            <button type="button" wire:click="openEvaluationModal" @click="open = false"
-                                    class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
-                                  <i class="ri-survey-line mr-1"></i> Grille d'évaluation
-                              </button>
+                                @if($projectId)
+                                <a href="{{ route('admin.candidat.evaluation.create', ['id' => $candidat->id, 'projectId' => $projectId]) }}"
+                                   class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700 block">
+                                    <i class="ri-survey-line mr-1"></i> Grille d'évaluation
+                                </a>
+                                @endif
                               
-                              @if($projectId)
-                              <a href="{{ route('admin.project.print.evaluation', ['id' => $candidat->id, 'projectId' => $projectId]) }}" target="_blank"
-                                 class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700 block">
-                                  <i class="ri-printer-line mr-1"></i> Imprimer Grille
-                              </a>
+                              @if($is_evaluated)
+                                <a href="{{ route('admin.project.print.evaluation', ['id' => $candidat->id, 'projectId' => $projectId]) }}" target="_blank"
+                                    class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700 block">
+                                    <i class="ri-printer-line mr-1"></i> Imprimer Grille
+                                </a>
                               @endif
 
                               @if($candidatSubmissions)
@@ -86,11 +88,6 @@
                               </button>
                               @endif
 
-                            <a href="{{ route('admin.candidat.export-all', $candidat->id) }}" target="_blank"
-                               class="block px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
-                                <i class="ri-file-pdf-line mr-1"></i> Export PDF (Global)
-                            </a>
-                            
                             @if($projectId)
                             <hr class="my-1 border-gray-200">
                             <a href="{{ route('admin.project.print.folder', ['id' => $candidat->id, 'projectId' => $projectId]) }}" target="_blank" class="block px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
@@ -110,7 +107,7 @@
                     <div class="flex items-center gap-3 shrink-0">
                         {{-- Candidat-level reviewer badge --}}
                         @if(!$candidatSubmissions->reviewer)
-                        <button wire:click="openReviewModal()"
+                        <button type="button" wire:click.prevent="openReviewModal"
                                 class="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-lg border border-indigo-200 transition">
                             <i class="ri-user-star-line"></i> Assigner révision
                         </button>
@@ -130,11 +127,11 @@
                             };
                         @endphp
                         
-                        <span wire:click="openReviewModal()" class="inline-flex items-center gap-1 px-3 py-2 cursor-pointer text-xs font-semibold rounded-lg border {{ $crBadge }}">
+                        <button type="button" wire:click.prevent="openReviewModal" class="inline-flex items-center gap-1 px-3 py-2 cursor-pointer text-xs font-semibold rounded-lg border {{ $crBadge }}">
                             <i class="ri-user-star-fill"></i>
                             {{ $candidatSubmissions->reviewer->name }}
                             @if($crLabel) &nbsp;·&nbsp; {{ $crLabel }} @endif
-                        </span>
+                        </button>
                         @endif
                         <!-- <a href="{{ route('admin.candidats.index') }}"
                         class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-indigo-600 transition">
@@ -356,180 +353,125 @@
         </div>
     </div>
     <!-- ═══════════════════════════ REVIEW MODAL ═══════════════════════════ -->
-    @if($showReviewModal)
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4" wire:click.self="$set('showReviewModal', false)">
-        {{-- Backdrop --}}
-        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"></div>
+    <div x-data="{ open: @entangle('showReviewModal').live }" x-cloak>
+        <div
+            x-show="open"
+            x-transition:enter="ease-out duration-200"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="ease-in duration-150"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 z-50 flex items-center justify-center p-4"
+        >
+            <div class="absolute inset-0 bg-black/50" @click="open = false"></div>
 
-        {{-- Modal panel --}}
-        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl z-10 overflow-hidden">
-            {{-- Modal header --}}
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-linear-to-r f">
-                <h2 class="text-lg font-bold text-green-800 flex items-center gap-2">
-                    <i class="ri-user-star-line text-green-600 text-xl"></i>
-                    Assigner une révision
-                </h2>
-                <button wire:click="$set('showReviewModal', false)"
-                        class="text-gray-400 hover:text-gray-600 transition text-xl leading-none">
-                    <i class="ri-close-line"></i>
-                </button>
-            </div>
-
-            {{-- Modal body --}}
-            <div class="px-6 py-5 space-y-5 max-h-[70vh] overflow-y-auto">
-                {{-- Admin card selector --}}
-                <div>
-                    @php $selfAdmin = ['id' => auth()->id(), 'name' => auth()->user()->name, 'role' => auth()->user()->role ?? 'admin']; @endphp
-                    <div class="grid grid-cols-3 gap-3">
-                        {{-- "Moi-même" card --}}
-                        <div wire:click="$set('reviewerId', {{ auth()->id() }})"
-                             class="cursor-pointer rounded-xl border-2 p-3 text-center transition-all hover:shadow-md
-                                    {{ $reviewerId == auth()->id() ? 'border-green-500  shadow-md' : 'border-gray-200 hover:border-indigo-300' }}">
-                            <div class="w-12 h-12 rounded-full bg-linear-to-br from-green-500 to-emerald-600 text-white flex items-center justify-center text-lg font-bold mx-auto mb-2 shadow">
-                                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                            </div>
-                            <p class="text-xs font-semibold text-gray-800 truncate">{{ auth()->user()->name }}</p>
-                            <span class="inline-block mt-1 px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full font-medium">Moi-même</span>
-                            @if($reviewerId == auth()->id())
-                            <div class="mt-1"><i class="ri-checkbox-circle-fill text-green-600 text-base"></i></div>
-                            @endif
+            <div
+                x-show="open"
+                x-transition:enter="ease-out duration-200"
+                x-transition:enter-start="opacity-0 scale-95"
+                x-transition:enter-end="opacity-100 scale-100"
+                x-transition:leave="ease-in duration-150"
+                x-transition:leave-start="opacity-100 scale-100"
+                x-transition:leave-end="opacity-0 scale-95"
+                class="relative bg-white rounded-2xl shadow-xl w-full max-w-3xl mx-4 z-10 overflow-hidden"
+                @click.stop
+            >
+                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                            <i class="ri-user-star-line text-indigo-600"></i>
                         </div>
+                        <h3 class="text-lg font-semibold text-gray-900">Assigner un reviewer</h3>
+                    </div>
+                    <button @click="open = false" class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <i class="ri-close-line text-xl"></i>
+                    </button>
+                </div>
 
-                        {{-- Other admins --}}
-                        @foreach($admins as $admin)
-                            @if($admin['id'] != auth()->id())
-                            @php
-                                $colors = ['from-blue-500 to-cyan-500','from-green-500 to-emerald-500','from-orange-500 to-amber-500','from-pink-500 to-rose-500','from-violet-500 to-purple-500','from-teal-500 to-green-500'];
-                                $colorClass = $colors[$loop->index % count($colors)];
-                            @endphp
-                            <div wire:click="$set('reviewerId', {{ $admin['id'] }})"
-                                 class="cursor-pointer rounded-xl border-2 p-3 text-center transition-all hover:shadow-md
-                                        {{ $reviewerId == $admin['id'] ? 'border-green-500 bg-green-50 shadow-md' : 'border-gray-200 hover:border-indigo-300' }}">
-                                <div class="w-12 h-12 rounded-full bg-linear-to-br {{ $colorClass }} text-white flex items-center justify-center text-lg font-bold mx-auto mb-2 shadow">
-                                    {{ strtoupper(substr($admin['name'], 0, 1)) }}
+                <div class="px-6 py-5 space-y-5 max-h-[72vh] overflow-y-auto">
+                    <div>
+                        <p class="text-sm font-semibold text-gray-700 mb-3">Choisir un administrateur</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            <button type="button" wire:click="$set('reviewerId', {{ auth()->id() }})"
+                                class="rounded-xl border-2 p-3 text-left transition-all hover:shadow-md {{ $reviewerId == auth()->id() ? 'border-indigo-500 bg-indigo-50 shadow-sm' : 'border-gray-200 hover:border-indigo-300' }}">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold">
+                                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-gray-800">{{ auth()->user()->name }}</p>
+                                        <span class="inline-block mt-1 px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs rounded-full font-medium">Moi-même</span>
+                                    </div>
                                 </div>
-                                <p class="text-xs font-semibold text-gray-800 truncate">{{ $admin['name'] }}</p>
-                                <span class="inline-block mt-1 px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full font-medium">
-                                    {{ ucfirst($admin['role'] ?? 'Admin') }}
-                                </span>
-                                @if($reviewerId == $admin['id'])
-                                <div class="mt-1"><i class="ri-checkbox-circle-fill text-green-600 text-base"></i></div>
+                            </button>
+
+                            @foreach($admins as $admin)
+                                @if($admin['id'] != auth()->id())
+                                    <button type="button" wire:click="$set('reviewerId', {{ $admin['id'] }})"
+                                        class="rounded-xl border-2 p-3 text-left transition-all hover:shadow-md {{ $reviewerId == $admin['id'] ? 'border-indigo-500 bg-indigo-50 shadow-sm' : 'border-gray-200 hover:border-indigo-300' }}">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-full bg-gray-800 text-white flex items-center justify-center font-bold">
+                                                {{ strtoupper(substr($admin['name'], 0, 1)) }}
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-semibold text-gray-800">{{ $admin['name'] }}</p>
+                                                <span class="inline-block mt-1 px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full font-medium">{{ ucfirst($admin['role'] ?? 'Admin') }}</span>
+                                            </div>
+                                        </div>
+                                    </button>
                                 @endif
-                            </div>
-                            @endif
-                        @endforeach
+                            @endforeach
+                        </div>
+                        @error('reviewerId') <p class="text-red-500 text-xs mt-2">{{ $message }}</p> @enderror
                     </div>
-                    @error('reviewerId') <p class="text-red-500 text-xs mt-2">{{ $message }}</p> @enderror
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Nouveau statut</label>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach(['in_review' => ['En révision','bg-purple-100 text-purple-800 border-purple-300','ri-eye-line'], 'approved' => ['Approuvé','bg-green-100 text-green-800 border-green-300','ri-check-line'], 'rejected' => ['Rejeté','bg-red-100 text-red-800 border-red-300','ri-close-line']] as $val => $meta)
+                                <button type="button" wire:click="$set('reviewStatus', '{{ $val }}')"
+                                    class="flex items-center gap-1.5 px-4 py-2 rounded-lg border-2 text-sm font-semibold transition-all {{ $reviewStatus === $val ? $meta[1].' border-current shadow' : 'border-gray-200 text-gray-600 hover:border-gray-300' }}">
+                                    <i class="{{ $meta[2] }}"></i> {{ $meta[0] }}
+                                </button>
+                            @endforeach
+                        </div>
+                        @error('reviewStatus') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Notes (optionnel)</label>
+                        <textarea wire:model="reviewNotes" rows="3"
+                            placeholder="Ajouter des notes de révision..."
+                            class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none transition resize-none"></textarea>
+                    </div>
                 </div>
 
-                {{-- Status selector --}}
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">
-                        <i class="ri-checkbox-circle-line mr-1 text-indigo-500"></i> Nouveau statut
-                    </label>
-                    <div class="flex flex-wrap gap-2">
-                        @foreach(['in_review' => ['En révision','bg-purple-100 text-purple-800 border-purple-300','ri-eye-line'], 'approved' => ['Approuvé','bg-green-100 text-green-800 border-green-300','ri-check-line'], 'rejected' => ['Rejeté','bg-red-100 text-red-800 border-red-300','ri-close-line']] as $val => $meta)
-                        <button type="button" wire:click="$set('reviewStatus', '{{ $val }}')"
-                                class="flex items-center gap-1.5 px-4 py-2 rounded-lg border-2 text-sm font-semibold transition-all
-                                       {{ $reviewStatus === $val ? $meta[1].' border-current shadow' : 'border-gray-200 text-gray-600 hover:border-gray-300' }}">
-                            <i class="{{ $meta[2] }}"></i> {{ $meta[0] }}
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-6 py-4 bg-gray-50 border-t border-gray-100">
+                    @if($reviewerId)
+                        <p class="text-xs text-gray-600">
+                            Reviewer sélectionné:
+                            <span class="font-semibold text-gray-900">{{ collect($admins)->firstWhere('id', $reviewerId)['name'] ?? auth()->user()->name }}</span>
+                        </p>
+                    @else
+                        <p class="text-xs text-gray-400">Sélectionnez un administrateur pour continuer.</p>
+                    @endif
+
+                    <div class="flex items-center gap-2 justify-end">
+                        <button type="button" @click="open = false"
+                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                            Annuler
                         </button>
-                        @endforeach
+                        <button wire:click="submitReview" wire:loading.attr="disabled"
+                            class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors disabled:opacity-60">
+                            <i wire:loading wire:target="submitReview" class="ri-loader-4-line animate-spin"></i>
+                            <span>Enregistrer</span>
+                        </button>
                     </div>
-                    @error('reviewStatus') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                </div>
-
-                {{-- Notes --}}
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">
-                        <i class="ri-sticky-note-line mr-1 text-indigo-500"></i> Notes (optionnel)
-                    </label>
-                    <textarea wire:model="reviewNotes" rows="3"
-                              placeholder="Ajouter des notes de révision…"
-                              class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none transition resize-none"></textarea>
-                </div>
-            </div>
-
-            {{-- Modal footer --}}
-            <div class="flex items-center justify-between px-6 py-4 border-t border-gray-100 bg-gray-50">
-                @if($reviewerId)
-                <p class="text-xs text-indigo-600 flex items-center gap-1">
-                    <i class="ri-user-check-line"></i>
-                    Sélectionné : <strong class="ml-1">{{ collect($admins)->firstWhere('id', $reviewerId)['name'] ?? auth()->user()->name }}</strong>
-                </p>
-                @else
-                <p class="text-xs text-gray-400">Sélectionnez un responsable ci-dessus</p>
-                @endif
-                <div class="flex items-center gap-3">
-                    <button wire:click="$set('showReviewModal', false)"
-                            class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-800 bg-white border border-gray-300 rounded-lg transition hover:bg-gray-50">
-                        Annuler
-                    </button>
-                    <button wire:click="submitReview" wire:loading.attr="disabled"
-                            class="px-5 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg shadow transition disabled:opacity-60">
-                        <span wire:loading.remove wire:target="submitReview">
-                            <i class="ri-save-line mr-1"></i> Confirmer
-                        </span>
-                        <span wire:loading wire:target="submitReview">
-                            <i class="ri-loader-4-line animate-spin mr-1"></i> Enregistrement…
-                        </span>
-                    </button>
                 </div>
             </div>
         </div>
     </div>
-    @endif
-
-
-
-    {{-- Evaluation modal --}}
-    @if($showEvaluationModal)
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4" wire:click.self="$set('showEvaluationModal', false)">
-        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"></div>
-        <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl z-10 overflow-hidden">
-            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                <h2 class="text-lg font-bold text-gray-800"><i class="ri-survey-line mr-1"></i> Grille d'évaluation candidat</h2>
-                <button wire:click="$set('showEvaluationModal', false)" class="text-gray-400 hover:text-gray-600"><i class="ri-close-line text-xl"></i></button>
-            </div>
-
-            <div class="p-6 space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                        <label class="text-sm font-semibold text-gray-700">Motivation (0-20)</label>
-                        <input type="number" min="0" max="20" wire:model="motivationScore" class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
-                        @error('motivationScore') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
-                    </div>
-                    <div>
-                        <label class="text-sm font-semibold text-gray-700">Profil (0-20)</label>
-                        <input type="number" min="0" max="20" wire:model="profileScore" class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
-                        @error('profileScore') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
-                    </div>
-                    <div>
-                        <label class="text-sm font-semibold text-gray-700">Viabilité (0-20)</label>
-                        <input type="number" min="0" max="20" wire:model="viabilityScore" class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
-                        @error('viabilityScore') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
-                    </div>
-                </div>
-
-                <div class="bg-indigo-50 border border-indigo-100 rounded-lg p-3 text-sm text-indigo-800">
-                    Score total: <strong>{{ (int)$motivationScore + (int)$profileScore + (int)$viabilityScore }}</strong> / 60
-                </div>
-
-                <div>
-                    <label class="text-sm font-semibold text-gray-700">Commentaire</label>
-                    <textarea wire:model="evaluationComment" rows="4" class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" placeholder="Observations de l'évaluateur..."></textarea>
-                    @error('evaluationComment') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
-                </div>
-            </div>
-
-            <div class="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-2">
-                <button wire:click="$set('showEvaluationModal', false)" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm">Annuler</button>
-                <button wire:click="saveEvaluationGrid" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm">Enregistrer</button>
-            </div>
-        </div>
-    </div>
-    @endif
-
     {{-- Workflow modal --}}
     @if($showWorkflowModal)
     <div class="fixed inset-0 z-50 flex items-center justify-center p-4" wire:click.self="$set('showWorkflowModal', false)">

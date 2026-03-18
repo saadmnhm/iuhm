@@ -74,6 +74,7 @@ class Settings extends Component
     {
         $validated = $this->validate([
             'profile_image'       => 'nullable|string',
+            'new_profile_image'   => 'nullable|file|mimes:jpg,jpeg,png,webp|max:5120',
             'nom'                 => 'required|string|max:255',
             'prenom'              => 'required|string|max:255',
             'cin'                 => ['required', 'string', Rule::unique('candidat', 'cin')->ignore($this->candidat->id)],
@@ -87,6 +88,8 @@ class Settings extends Component
             'selected_city'       => 'required|string|max:255',
             'selected_prefecture' => 'required|string|max:255',
             'address_detail'      => 'required|string|max:500',
+        ], [
+            'new_profile_image.mimes' => 'Image invalide. Formats acceptes: JPG, JPEG, PNG, WEBP.',
         ]);
 
         $age = Carbon::parse($validated['date_naissance'])->age;

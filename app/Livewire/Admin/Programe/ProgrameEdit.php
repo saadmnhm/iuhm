@@ -218,9 +218,9 @@ class ProgrameEdit extends Component{
             'allowed_address_id' => 'nullable|array',
             'allowed_location_ids' => 'nullable|array',
             'candidature_types' => 'nullable|array',
-            'logo1' => 'nullable|image|max:2048',
-            'logo2' => 'nullable|image|max:2048',
-            'logo3' => 'nullable|image|max:2048',
+            'logo1' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
+            'logo2' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
+            'logo3' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         $programe = ProgrameList::findOrFail($this->programeId);

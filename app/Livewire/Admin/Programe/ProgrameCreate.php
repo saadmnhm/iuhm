@@ -57,9 +57,9 @@ class ProgrameCreate extends Component
             'form_attached_id' => 'nullable|integer',
             'sort_order' => 'nullable|integer',
             'is_active' => 'boolean',
-            'logo1' => $this->programeId ? 'nullable|image|max:2048' : 'required|image|max:2048',
-            'logo2' => 'nullable|image|max:2048',
-            'logo3' => 'nullable|image|max:2048',
+            'logo1' => $this->programeId ? 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048' : 'required|file|mimes:jpg,jpeg,png,webp|max:2048',
+            'logo2' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
+            'logo3' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
             'created_by' => 'nullable|integer|exists:users,id',
         ];
     }

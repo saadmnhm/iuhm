@@ -37,7 +37,7 @@ class RhCreate extends Component
             'date_naissance' => 'nullable|date',
             'status'       => 'required|in:active,inactive,en_conge,quitte',
             'notes'        => 'nullable|string|max:1000',
-            'photo'        => 'nullable|image|max:5120',
+            'photo'        => 'nullable|file|mimes:jpg,jpeg,png,webp|max:5120',
         ];
     }
 

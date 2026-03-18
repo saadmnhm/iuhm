@@ -1,82 +1,190 @@
+
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-    font-family: Arial, sans-serif;
-    background: #fdfdfd;
-    padding: 20px;
-    font-size: 14px;
-    line-height: 1.6;
-}
-.a4-page {
-    width: 210mm;
-    min-height: 297mm;
-    background: white;
-    margin: 0 auto 20px auto;
-    padding: 20mm;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    position: relative;
-    page-break-after: always;
-}
-@media print {
-    body { padding: 0; background: none; }
-    .a4-page { margin: 0; padding: 20mm; box-shadow: none; border: none; }
-    .no-print { display: none; }
+    background: #f5f5f5;
+    margin: 0;
+    direction: rtl;
 }
 
-/* Header Sections */
-.header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 15px; }
-.header h1 { font-size: 20px; text-transform: uppercase; margin-bottom: 10px; }
-.header p { margin-bottom: 5px; color: #555; font-size: 14px; }
+.page {
+    padding: 15px 55px;
+}
 
-/* Footers */
-.footer-logos {
-    position: absolute;
-    bottom: 20mm;
-    left: 20mm;
-    right: 20mm;
+.header {
     text-align: center;
-    border-top: 1px solid #eee;
-    padding-top: 10px;
+    margin-bottom: 5px;
+}
+
+.header img {
+    width: 80px;
+}
+
+.date {
+    font-size: 14px;
+    margin-bottom: 10px;
+    position: absolute;
+    top: 50px;
+}
+
+h1 {
+    text-align: center;
+    font-size: 18px;
+    text-decoration: underline;
+    margin: 0px 0;
+    color: #1f3864;
+}
+
+.section-title {
+    font-weight: bold;
+    text-decoration: underline;
+    margin: 5px 0 5px;
+    text-align: center;
+    color:  #1f3864;
+}
+
+p {
+    line-height: 1.4;
+    font-size: 16px;
+    margin: 0px;
+}
+
+.info {
+    margin-top: 5px;
+}
+
+.info-row {
     display: flex;
-    justify-content: center;
-    gap: 20px;
-    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5px;
 }
-.footer-logos img {
-    max-height: 60px;
-    max-width: 120px;
-    object-fit: contain;
+
+.label {
+    min-width: 150px;
+    font-size: 17px;
+    font-weight: 600;
 }
+
+.line {
+    flex: 1;
+    margin-right: 10px;
+    font-weight: 600;
+    text-align: center;
+    font-family: "Manrope", sans-serif;
+}
+
+.list {
+    margin-top: 10px;
+    padding-right: 20px;
+}
+
+.list li {
+    margin-bottom: 5px;
+}
+
+.checkbox {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.checkbox span {
+    margin-left: 20px;
+}
+
+.signature {
+    margin-top: 15px;
+    text-align: left;
+    font-weight: 800;
+    font-size: 17px;
+}
+
+
 </style>
 
-<div class="a4-page">
+
+<div class="page">
+
+    <div class="date">
+        التاريخ : {{$agreement->created_at->format('Y-m-d')}}
+    </div>
+
     <div class="header">
-        <h1>Engagement d'adhÃ©sion aux conditions du Projet</h1>
-        <p>Projet: {{ $project->name }}</p>
-        <p>Le: {{ $agreement->created_at->format('d/m/Y') }}</p>
+        <img src="{{asset('assets/site/images/iuhm_logo.png')}}" alt="Logo IUHM ">
+        <h1>التزام المستفيد(ة)</h1>
     </div>
 
-    <div class="content" style="margin-bottom: 20px;">
-        <p>Je soussignÃ©(e) :</p>
-        <ul style="list-style:none; padding-left: 20px; margin-top:10px;">
-            <li><strong>Nom et PrÃ©nom :</strong> {{ $candidat->nom }} {{ $candidat->prenom }}</li>
-            <li><strong>CIN :</strong> {{ $candidat->cin }}</li>
-        </ul>
-        
-        <p style="margin-top:20px;">
-            Je reconnais avoir pris connaissance des conditions de participation au projet "{{ $project->name }}".
-            Je m'engage Ã  respecter les termes Ã©tablis et Ã  fournir toutes les informations nÃ©cessaires Ã  la rÃ©alisation de ce projet.
-        </p>
+    <p><strong>البرنامج : </strong> دعم ريادة الأعمال للشباب</p>
+    <p><strong>الجمعية : </strong> المبادرة الحضرية</p>
+    <p><strong>المكان : </strong> منصة الشباب حي المحمدي</p>
+    <p><strong>البرنامج بدعم من : </strong> المبادرة الوطنية للتنمية البشرية</p>
 
-        <p style="margin-top:20px;">
-            <strong>Comment m'avez-vous connu :</strong> <br>
-            {{ $agreement->how_knew ?? 'Non rÃ©pondu' }}
-        </p>
+    <div class="section-title">هدف الوثيقة</div>
+    <p>
+        تهدف هذه الوثيقة إلى توضيح التزام المستفيد بالمشاركة في أنشطة التكوين والمواكبة المحددة
+        في إطار برنامج دعم ريادة الأعمال للشباب، الذي تشرف عليه جمعية المبادرة الحضرية،
+        بدعم من المبادرة الوطنية للتنمية البشرية.
+    </p>
+
+    <div class="section-title">التزامات المستفيد</div>
+    <p>أنا الموقع أدناه</p>
+    <div class="info">
+        <div class="info-row">
+            <div class="label">الاسم الكامل : </div>
+            <div class="line">{{$candidat->nom}} {{$candidat->prenom}} </div>
+        </div>
+        <div class="info-row">
+            <div class="label">رقم البطاقة الوطنية : </div>
+            <div class="line">{{$candidat->cin}}</div>
+        </div>
+        <div class="info-row">
+            <div class="label">العنوان : </div>
+            <div class="line">{{$candidat->address}}</div>
+        </div>
+        <div class="info-row">
+            <div class="label">رقم الهاتف : </div>
+            <div class="line">{{$candidat->phone}}</div>
+        </div>
+        <div class="info-row">
+            <div class="label">تاريخ الازدياد : </div>
+            <div class="line">{{$candidat->date_naissance->format('d/m/Y')}}</div>
+        </div>
+    </div>
+    <p>تعّهد بما يلي</p>
+    <ul class="list">
+        <li>المشاركة الفعالة في جميع جلسات التكوين والمواكبة المحددة في إطار البرنامج</li>
+        <li>احترام الجدول الزمني الذي وضعته الجمعية، مع ضمان الحضور والانضباط</li>
+        <li>توثيق الساعات التدريبية من خلال التوقيع على ورقة الحضور</li>
+        <li>تطبيق المعارف المكتسبة لتطوير مشروعه الريادي</li>
+        <li>إبلاغ الجمعية في حالة وجود عائق أو صعوبة</li>
+    </ul>
+
+    <div class="section-title">التزامات جمعية المبادرة الحضرية</div>
+
+    <ul class="list">
+        <li>ضمان مواكبة المستفيدين قبل وبعد إنشاء مشاريعهم</li>
+        <li>تقديم تكوينات تهدف إلى تعزيز القدرات الريادية للمشاركين</li>
+        <li>توفير بيئة مالئمة للمواكبة والتوجيه <strong>دون االلتزام بتقديم موارد أو تمويل</strong></li>
+    </ul>
+
+    <div class="section-title">تفويض التقاط الصور واستخدامها</div>
+
+    <p>
+        من خلال توقيعي على هذه الوثيقة، أوافق على السماح للجمعية باستخدام صوري
+        أو تسجيلات فيديو لأغراض غير تجارية.
+    </p>
+
+    <div class="checkbox">
+        <span><input type="checkbox" name="agreement" id="agreement" disabled> غير موافق</span>
+        <span><input type="checkbox" name="agreement" id="agreement" checked disabled> موافق</span>
     </div>
 
-    <div class="signature" style="text-align: right; margin-top:50px; padding-right: 50px;">
-        <p><strong>Signature du candidat :</strong></p>
-        <div style="height: 60px; width: 150px; border-bottom: 1px dashed #000; margin-left: auto; margin-top: 20px;"></div>
+    <div class="section-title">التوقيع والمصادقة</div>
+
+    <p>
+        أقر بأنني اطلعت على جميع التزاماتي وأتعهد بالوفاء بها، كما أؤكد أن المعلومات صحيحة.
+    </p>
+
+    <div class="signature">
+        توقيع المستفيد
     </div>
 
     <div class="footer-logos">
@@ -90,4 +198,5 @@ body {
             <img src="{{ asset('uploads/' . $project->logo3) }}" alt="Logo 3">
         @endif
     </div>
+
 </div>
