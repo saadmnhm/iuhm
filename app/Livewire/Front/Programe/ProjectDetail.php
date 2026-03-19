@@ -7,6 +7,7 @@ use App\Models\ProgrameList;
 use App\Models\DynamicFormSubmission;
 use App\Models\CandidatFormulaireOrder;
 use App\Models\CandidatProjectAgreement;
+use App\Models\ProjectSubmission;
 use Illuminate\Support\Facades\Auth;
 use App\Services\ProjectEligibilityService;
 
@@ -17,9 +18,6 @@ class ProjectDetail extends Component
     public $formulaires = [];
     public $currentFormulaireIndex = null;
     public $projectSubmission;
-    public $showReviewModal = false;
-    public $reviewRating = null;
-    public $reviewFeedback = '';
 
     protected ProjectEligibilityService $eligibilityService;
 
@@ -46,6 +44,9 @@ class ProjectDetail extends Component
             $this->projectSubmission = \App\Models\ProjectSubmission::where('candidat_id', $candidat->id)
                 ->where('programe_id', $this->projectId)
                 ->first();
+
+            ProjectSubmission::syncFinishedStatusFor((int) $candidat->id, (int) $this->projectId);
+            $this->projectSubmission?->refresh();
 
             $check = $this->eligibilityService->evaluate($candidat, $this->project);
             if (!$check['eligible']) {
@@ -183,23 +184,6 @@ class ProjectDetail extends Component
         }
     }
     
-    public function submitReview()
-    {
-        $this->validate([
-            'reviewRating' => 'required|integer|min:1|max:5',
-            'reviewFeedback' => 'nullable|string|max:1000'
-        ]);
-
-        if ($this->projectSubmission) {
-            $this->projectSubmission->update([
-                'formation_review_rating' => $this->reviewRating,
-                'formation_review_feedback' => $this->reviewFeedback,
-            ]);
-            $this->showReviewModal = false;
-            session()->flash('success', __('Merci pour votre évaluation !'));
-        }
-    }
-
     public function render()
     {
         return view('livewire.front.programe.project-detail')

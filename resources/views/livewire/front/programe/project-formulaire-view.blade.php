@@ -206,6 +206,8 @@
 
                                 @elseif($field->type === 'file')
                                     <input type="file" id="field_{{ $field->id }}"
+                                        wire:model="answers.{{ $field->id }}"
+                                        multiple
                                         class="form-control"
                                         @if($isReadOnly) disabled @endif>
                                 @endif
@@ -392,7 +394,7 @@
             @endif
 
             {{-- Navigation Buttons --}}
-            <div class="navigation-buttons mt-4 d-flex flex-wrap justify-content-center gap-2 gap-md-3">
+            <div class="navigation-buttons mt-4 d-flex justify-content-center gap-2 gap-md-3">
                 @if($currentStep > 1)
                     <button wire:click="previousStep" class="navigation-btn btn-back w-100 w-md-auto">
                         <i class="ri-arrow-left-circle-fill me-1 ms-1"></i> {{ $tr('Précédent', 'السابق') }}
@@ -409,7 +411,7 @@
                     </button>
                 @endif
 
-                @if(!$isReadOnly && $currentStep < $totalSteps)
+                @if(!$isReadOnly)
                     <button wire:click="saveProgress" class="navigation-btn w-100 w-md-auto" style="background-color: #28a745;">
                         <i class="ri-save-line me-1 ms-1"></i> {{ $tr('Sauvegarder', 'حفظ') }}
                     </button>
@@ -432,7 +434,8 @@
                  x-transition:leave="ease-in duration-150"
                  x-transition:leave-start="opacity-100"
                  x-transition:leave-end="opacity-0"
-                 class="fixed inset-0 z-50 flex items-center justify-center p-3">
+                 class="fixed inset-0 z-50 flex items-center justify-center p-3"
+                 style="z-index: 9999;">
                 <div class="absolute inset-0 bg-black/55" @click="showSubmitConfirm = false"></div>
 
                 <div x-show="showSubmitConfirm"
@@ -456,7 +459,7 @@
                         {{ $tr('Vous allez soumettre ce formulaire. Après envoi, vous ne pourrez plus modifier vos réponses.', 'أنت على وشك إرسال هذه الاستمارة. بعد الإرسال لن تتمكن من تعديل إجاباتك.') }}
                     </div>
 
-                    <div class="px-4 px-md-5 py-3 bg-light border-top d-flex flex-column flex-md-row justify-content-end gap-2">
+                    <div class="px-4 rounded-b-xl px-md-5 py-3 bg-light border-top d-flex flex-column flex-md-row justify-content-end gap-2">
                         <button type="button" class="btn btn-outline-secondary" @click="showSubmitConfirm = false">
                             {{ $tr('Annuler', 'إلغاء') }}
                         </button>

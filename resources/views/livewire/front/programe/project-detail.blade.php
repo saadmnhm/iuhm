@@ -52,9 +52,10 @@
                 {{ $tr('L\'administration a demandé votre avis sur la formation. Veuillez remplir ce formulaire pour continuer vos soumissions.', 'طلبت الإدارة رأيك في التكوين. يرجى ملء هذا النموذج لمتابعة تقديماتك.') }}
             </p>
         </div>
-        <button wire:click="$set('showReviewModal', true)" class="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-semibold rounded-lg transition whitespace-nowrap">
+        <a href="{{ route('user.project.review', ['id' => $project->id]) }}"
+           class="inline-flex items-center px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-semibold rounded-lg transition whitespace-nowrap">
             <i class="ri-feedback-line mr-1"></i> {{ $tr('Donner mon avis', 'إعطاء رأيي') }}
-        </button>
+        </a>
     </div>
     @endif
 
@@ -273,40 +274,4 @@
     </div>
 
 </div>
-
-@if($showReviewModal)
-<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900 bg-opacity-50">
-    <div class="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-            <h3 class="text-lg font-bold text-gray-900">{{ $tr("Avis de Formation", "رأي التكوين") }}</h3>
-            <button wire:click="$set('showReviewModal', false)" class="text-gray-400 hover:text-gray-600"><i class="ri-close-line text-xl"></i></button>
-        </div>
-        <div class="p-6">
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">{{ $tr("Note (sur 5)", "التقييم (من 5)") }} <span class="text-red-500">*</span></label>
-                <div class="flex gap-2">
-                    @for($i=1; $i<=5; $i++)
-                        <button type="button" wire:click="$set('reviewRating', {{ $i }})"
-                            class="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all {{ $reviewRating >= $i ? 'border-yellow-400 bg-yellow-400 text-white' : 'border-gray-200 text-gray-400 hover:border-yellow-200' }}">
-                            <i class="ri-star-fill text-lg"></i>
-                        </button>
-                    @endfor
-                </div>
-                @error('reviewRating') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
-            </div>
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">{{ $tr("Commentaire / Feedback", "تعليق / ملاحظات") }}</label>
-                <textarea wire:model="reviewFeedback" rows="4" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" placeholder="{{ $tr('Partagez votre avis sur la formation...', 'شارك رأيك حول التكوين...') }}"></textarea>
-                @error('reviewFeedback') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
-            </div>
-            <div class="flex justify-end gap-3 mt-6">
-                <button type="button" wire:click="$set('showReviewModal', false)" class="px-4 py-2 text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg">{{ $tr("Annuler", "إلغاء") }}</button>
-                <button type="button" wire:click="submitReview" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg shadow-sm">
-                    {{ $tr("Enregistrer l'avis", "حفظ الرأي") }}
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-@endif
 </div>

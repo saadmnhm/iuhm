@@ -150,6 +150,8 @@
 
                             @elseif($field->type === 'file')
                                 <input type="file" id="field_{{ $field->id }}"
+                                    wire:model="answers.{{ $field->id }}"
+                                    multiple
                                     class="form-control"
                                     @if($isReadOnly) disabled @endif>
                             @endif

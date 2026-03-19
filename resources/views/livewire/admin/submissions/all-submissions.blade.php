@@ -259,14 +259,30 @@
     </div>
     @endif
 
-    {{-- ══ Submissions Table ══ --}}
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 ">
+        <div class="flex border-b border-gray-100">
+            <button wire:click="$set('tab', 'formulaire')"
+                    class="flex-1 py-3 text-center text-sm font-semibold transition {{ $tab === 'formulaire' ? 'text-green-700 border-b-2 border-green-600 bg-green-50/50' : 'text-gray-500 hover:text-gray-700' }}">
+                <i class="ri-file-list-3-line mr-1"></i> Soumissions par formulaire
+            </button>
+            <button wire:click="$set('tab', 'project')"
+                    class="flex-1 py-3 text-center text-sm font-semibold transition {{ $tab === 'project' ? 'text-green-700 border-b-2 border-green-600 bg-green-50/50' : 'text-gray-500 hover:text-gray-700' }}">
+                <i class="ri-folder-3-line mr-1"></i> Soumissions par projet
+            </button>
+        </div>
+    </div>
+
+    {{-- ══ Formulaire Submissions Table ══ --}}
+    @if($tab === 'formulaire')
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 relative">
+
+    
 
         {{-- Loading overlay --}}
         <div wire:loading
              class="absolute inset-0 bg-white/70 backdrop-blur-[2px] flex items-center justify-center z-20 rounded-xl">
             <div class="flex flex-col items-center gap-2">
-                <div class="w-8 h-8 border-[3px] border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                <div class="w-8 h-8 border-[3px] border-green-500 border-t-transparent rounded-full animate-spin"></div>
                 <span class="text-sm font-medium text-gray-500">Chargement...</span>
             </div>
         </div>
@@ -333,9 +349,9 @@
 
 
                      
-                        {{-- Statut — interactive change popover --}}
+                        {{-- Responsable --}}
                                 <td  class="px-4 py-3.5">
-                                    {{ $project_submissions->where('candidat_id', $sub->candidat_id)->where('programe_id', $sub->programe_id)->first()?->reviewer?->name ?? 'Non assigné' }}
+                                    {{ $sub->projectSubmission?->reviewer?->name ?? 'Non assigné' }}
                                 </td>
 
                         {{-- Date cell --}}
@@ -391,9 +407,126 @@
             </table>
     </div>
 
-    {{-- Pagination --}}
-    <div class="mt-6">
+    {{-- Formulaire Pagination --}}
+    <div class="mt-4">
         {{ $submissions->links() }}
     </div>
+
+    {{-- ══ Project Submissions Table ══ --}}
+    @php
+        $projectStatusColors = [
+            'pending'   => 'bg-gray-100 text-gray-700',
+            'in_review' => 'bg-amber-100 text-amber-800',
+            'approved'  => 'bg-green-100 text-green-800',
+            'rejected'  => 'bg-red-100 text-red-800',
+        ];
+
+        $projectStatusLabels = [
+            'pending'   => 'En attente',
+            'in_review' => 'En révision',
+            'approved'  => 'Approuvé',
+            'rejected'  => 'Rejeté',
+        ];
+    @endphp
+
+    @else
+    <div class="bg-white rounded-xl  shadow-sm border border-gray-100 ">
+
+        <table class="w-full">
+            <thead class="bg-gray-50 border-b border-gray-100">
+                <tr>
+                    <th class="px-4 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Candidat</th>
+                    <th class="px-4 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Projet</th>
+                    <th class="px-4 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Statut Projet</th>
+                    <th class="px-4 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Responsable</th>
+                    <th class="px-4 py-3.5 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Dernière activité</th>
+                    <th class="px-4 py-3.5 text-center text-xs font-semibold text-gray-500 uppercase tracking-wide">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($projectSubmissions as $projectSub)
+                @php
+                    $projectRowUrl = $projectSub->candidat ? route('admin.candidat.submissions', ['id' => $projectSub->candidat_id, 'projectId' => $projectSub->programe_id]) : null;
+                @endphp
+                <tr class="{{ $projectRowUrl ? 'cursor-pointer hover:bg-indigo-50/40' : 'hover:bg-gray-50' }} transition-colors duration-100"
+                    @if($projectRowUrl) onclick="window.location='{{ $projectRowUrl }}'" @endif>
+
+                    <td class="px-4 py-3.5">
+                        @if($projectSub->candidat)
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 shadow-sm">
+                                @if($projectSub->candidat->profile_image)
+                                    <img src="{{ asset('uploads/' . $projectSub->candidat->profile_image) }}" alt="{{ $projectSub->candidat->nom }} {{ $projectSub->candidat->prenom }}" class="w-full h-full object-cover rounded-full">
+                                @else
+                                    {{ strtoupper(substr($projectSub->candidat->nom ?? '', 0, 1)) }}{{ strtoupper(substr($projectSub->candidat->prenom ?? '', 0, 1)) }}
+                                @endif
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-gray-900 leading-tight">{{ $projectSub->candidat->nom }} {{ $projectSub->candidat->prenom }}</p>
+                                <p class="text-xs text-gray-400 leading-tight mt-0.5">{{ $projectSub->candidat->email }}</p>
+                                @if($projectSub->candidat->matricule)
+                                <span class="inline-block mt-1 px-1.5 py-px bg-indigo-100 text-indigo-600 text-xs rounded font-medium">{{ $projectSub->candidat->matricule }}</span>
+                                @endif
+                            </div>
+                        </div>
+                        @else
+                        <span class="text-sm text-gray-400 italic">Candidat supprimé</span>
+                        @endif
+                    </td>
+
+                    <td class="px-4 py-3.5">
+                        <span class="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full">
+                            <i class="ri-folder-3-line text-blue-400 text-xs"></i>
+                            {{ Str::limit($projectSub->project->project_name ?? 'N/A', 28) }}
+                        </span>
+                    </td>
+
+                    <td class="px-4 py-3.5">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {{ $projectStatusColors[$projectSub->review_status] ?? 'bg-gray-100 text-gray-700' }}">
+                            {{ $projectStatusLabels[$projectSub->review_status] ?? $projectSub->review_status }}
+                        </span>
+                    </td>
+
+                    <td class="px-4 py-3.5">
+                        <span class="text-sm text-gray-700">{{ $projectSub->reviewer?->name ?? 'Non assigné' }}</span>
+                    </td>
+
+                    <td class="px-4 py-3.5">
+                        @php
+                            $activityDate = $projectSub->last_activity ?? $projectSub->updated_at;
+                        @endphp
+                        <div class="text-sm text-gray-700">{{ $activityDate?->format('d/m/Y') ?? 'N/A' }}</div>
+                        <div class="text-xs text-gray-400 mt-0.5">{{ $activityDate?->diffForHumans() ?? '-' }}</div>
+                    </td>
+
+                    <td onclick="event.stopPropagation()" class="px-4 py-3.5 text-center">
+                        @if($projectSub->candidat)
+                        <a href="{{ route('admin.candidat.submissions', ['id' => $projectSub->candidat_id, 'projectId' => $projectSub->programe_id]) }}"
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition">
+                            <i class="ri-eye-line"></i>
+                            Voir
+                        </a>
+                        @endif
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="6" class="px-4 py-12 text-center">
+                        <i class="ri-folder-open-line text-4xl text-gray-300 block mb-3"></i>
+                        <p class="text-gray-700 font-semibold mb-1">Aucune soumission projet trouvée</p>
+                        <p class="text-sm text-gray-400">Ajustez les filtres pour afficher des résultats.</p>
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+
+    {{-- Project Pagination --}}
+    <div class="mt-4">
+        {{ $projectSubmissions->links() }}
+    </div>
+
+    @endif
 
 </div>

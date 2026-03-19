@@ -13,10 +13,15 @@ use App\Models\CandidatProjectAgreement;
 use App\Models\ProjectSubmission;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use App\Services\ProjectEligibilityService;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Livewire\WithFileUploads;
 
 class ProjectFormulaireView extends Component
 {
+    use WithFileUploads;
+
     public $projectId;
     public $formulaireSlug;
     public $order;
@@ -392,6 +397,11 @@ class ProjectFormulaireView extends Component
                     continue;
                 }
 
+                $answerValue = $value;
+                if ($field->type === 'file') {
+                    $answerValue = $this->prepareFileAnswerValue($submission->id, $fieldId, $field->label, $value, $candidatId, (int) $this->formulaire->id);
+                }
+
                 DynamicFormAnswer::updateOrCreate(
                     [
                         'dynamic_form_submission_id' => $submission->id,
@@ -399,7 +409,7 @@ class ProjectFormulaireView extends Component
                     ],
                     [
                         'field_key' => $field->field_key,
-                        'value' => $value,
+                        'value' => $answerValue,
                     ]
                 );
             }
@@ -460,6 +470,54 @@ class ProjectFormulaireView extends Component
         }
     }
 
+    protected function prepareFileAnswerValue(
+        int $submissionId,
+        int $fieldId,
+        string $fieldLabel,
+        mixed $value,
+        int $candidatId,
+        int $formId
+    ): ?string {
+        $uploaded = [];
+
+        if ($value instanceof TemporaryUploadedFile) {
+            $uploaded = [$value];
+        } elseif (is_array($value)) {
+            foreach ($value as $item) {
+                if ($item instanceof TemporaryUploadedFile) {
+                    $uploaded[] = $item;
+                }
+            }
+        }
+
+        if (!empty($uploaded)) {
+            $candidat = Auth::guard('candidat')->user();
+            $candidatSlug = Str::slug(trim(($candidat->nom ?? '') . ' ' . ($candidat->prenom ?? '')) ?: 'candidat-' . $candidatId);
+            $fieldSlug = Str::slug($fieldLabel ?: ('field-' . $fieldId));
+            $dir = 'dynamic-forms/' . $formId . '/candidat-' . $candidatId . '/submission-' . $submissionId;
+            $paths = [];
+
+            foreach ($uploaded as $index => $file) {
+                $ext = strtolower($file->getClientOriginalExtension() ?: 'bin');
+                $name = $candidatSlug . '_' . $fieldSlug . '_' . now()->format('Ymd_His_u') . '_' . ($index + 1) . '.' . $ext;
+                $paths[] = $file->storeAs($dir, $name, 'uploads');
+            }
+
+            return json_encode($paths, JSON_UNESCAPED_SLASHES);
+        }
+
+        $existing = DynamicFormAnswer::query()
+            ->where('dynamic_form_submission_id', $submissionId)
+            ->where('dynamic_form_field_id', $fieldId)
+            ->value('value');
+
+        if (is_string($value) && trim($value) !== '') {
+            return $value;
+        }
+
+        return $existing;
+    }
+
     public function submit()
     {
         if ($this->isReadOnly) return;
@@ -498,6 +556,11 @@ class ProjectFormulaireView extends Component
             ProjectSubmission::where('id', $submission->project_submission_id)->update([
                 'last_activity' => now(),
             ]);
+
+            ProjectSubmission::syncFinishedStatusFor(
+                (int) $submission->candidat_id,
+                (int) $submission->programe_id
+            );
         }
 
         session()->flash('message', 'Formulaire submitted successfully!');

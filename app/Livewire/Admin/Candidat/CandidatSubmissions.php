@@ -522,6 +522,8 @@ class CandidatSubmissions extends Component
         }
 
         $this->loadFormData();
+        ProjectSubmission::syncFinishedStatusFor((int) $submission->candidat_id, (int) $submission->programe_id);
+        $this->candidatSubmissions->refresh();
         $this->openWorkflowModal($submission->id);
         session()->flash('success', 'Étapes / statut mis à jour.');
     }
@@ -581,12 +583,16 @@ class CandidatSubmissions extends Component
         );
 
         $this->loadFormData();
+        ProjectSubmission::syncFinishedStatusFor((int) $submission->candidat_id, (int) $submission->programe_id);
+        $this->candidatSubmissions->refresh();
         if ($this->showWorkflowModal && $this->workflowSubmissionId === $submissionId) {
             $this->openWorkflowModal($submissionId);
         }
 
         session()->flash('success', 'Formulaire validé: le candidat peut passer au suivant.');
     }
+
+
 
     public function render()
     {

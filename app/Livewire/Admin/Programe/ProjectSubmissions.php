@@ -134,6 +134,7 @@ class ProjectSubmissions extends Component
         $this->calculateStatistics();
         session()->flash('message', 'Submission deleted successfully.');
     }
+
     
     public function render()
     {

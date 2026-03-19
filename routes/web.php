@@ -138,6 +138,7 @@ Route::prefix('user')->name('user.')->group(function () {
         Route::get('/projects', \App\Livewire\Front\Programe\ProjectList::class)->name('projects.list');
         Route::get('/projects/{id}/conditions', \App\Livewire\Front\Programe\ProjectConditionAgreement::class)->name('project.conditions');
         Route::get('/projects/{id}', \App\Livewire\Front\Programe\ProjectDetail::class)->name('project.detail');
+        Route::get('/projects/{id}/review', \App\Livewire\Front\Programe\ProjectFormationReview::class)->name('project.review');
         Route::get('/projects/{projectId}/candidat/{id}/print/folder', [\App\Http\Controllers\Admin\PrintController::class, 'printFolder'])->name('project.print.folder');
         Route::get('/projects/{projectId}/candidat/{id}/print/review', [\App\Http\Controllers\Admin\PrintController::class, 'projectReview'])->name('project.print.review');
         Route::get('/projects/{projectId}/formulaire/{formulaireSlug}/{order}', \App\Livewire\Front\Programe\ProjectFormulaireView::class)->name('project.formulaire');

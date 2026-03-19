@@ -67,7 +67,33 @@
                     @else
                         <div>
                             <label class="text-sm font-medium text-gray-600">{{ $field->label }}</label>
-                            <p class="text-gray-900">{{ $submission->getAnswer($field->field_key) ?: 'N/A' }}</p>
+                            @php
+                                $rawAnswer = $submission->getAnswer($field->field_key);
+                            @endphp
+
+                            @if($field->type === 'file' && $rawAnswer)
+                                @php
+                                    $decoded = json_decode($rawAnswer, true);
+                                    $filePaths = is_array($decoded)
+                                        ? collect($decoded)->filter(fn ($p) => is_string($p) && trim($p) !== '')->values()->all()
+                                        : [trim((string) $rawAnswer)];
+                                @endphp
+                                <div class="space-y-1 mt-1">
+                                    @foreach($filePaths as $path)
+                                        @php
+                                            $cleanPath = ltrim(str_starts_with($path, 'uploads/') ? substr($path, 8) : $path, '/');
+                                        @endphp
+                                        <a href="{{ route('uploads.show', ['path' => $cleanPath]) }}"
+                                           target="_blank"
+                                           class="inline-flex items-center gap-2 text-sm text-indigo-700 hover:text-indigo-900 hover:underline">
+                                            <i class="ri-attachment-2"></i>
+                                            {{ basename($cleanPath) }}
+                                        </a>
+                                    @endforeach
+                                </div>
+                            @else
+                                <p class="text-gray-900">{{ $rawAnswer ?: 'N/A' }}</p>
+                            @endif
                         </div>
                     @endif
                 @endforeach

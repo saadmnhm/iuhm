@@ -24,28 +24,45 @@ class AllSubmissions extends Component
     public $addressFilter = 'all';
     public $dateFrom = '';
     public $dateTo = '';
+    public $tab = 'formulaire';
 
     protected $paginationTheme = 'tailwind';
 
-    public function updatingSearch() { $this->resetPage(); }
-    public function updatingStatusFilter() { $this->resetPage(); }
-    public function updatingProgrameFilter() { $this->resetPage(); }
-    public function updatingFormulaireFilter() { $this->resetPage(); }
-    public function updatingResponsableFilter() { $this->resetPage(); }
-    public function updatingGenderFilter() { $this->resetPage(); }
-    public function updatingAddressFilter() { $this->resetPage(); }
+    protected function resetAllPages(): void
+    {
+        $this->resetPage();
+        $this->resetPage('projectPage');
+    }
+
+    public function updatingSearch() { $this->resetAllPages(); }
+    public function updatingStatusFilter() { $this->resetAllPages(); }
+    public function updatingProgrameFilter() { $this->resetAllPages(); }
+    public function updatingFormulaireFilter() { $this->resetAllPages(); }
+    public function updatingResponsableFilter() { $this->resetAllPages(); }
+    public function updatingGenderFilter() { $this->resetAllPages(); }
+    public function updatingAddressFilter() { $this->resetAllPages(); }
+    public function updatingDateFrom() { $this->resetAllPages(); }
+    public function updatingDateTo() { $this->resetAllPages(); }
+
+    public function updatingTab($value): void
+    {
+        if (!in_array($value, ['formulaire', 'project'], true)) {
+            $this->tab = 'formulaire';
+        }
+        $this->resetAllPages();
+    }
 
     public function resetFilters(): void
     {
         $this->reset(['search', 'statusFilter', 'programeFilter', 'formulaireFilter', 'responsableFilter', 'genderFilter', 'addressFilter', 'dateFrom', 'dateTo']);
-        $this->resetPage();
+        $this->resetAllPages();
     }
 
     /** Click a stat card to toggle/set the status filter */
     public function filterByStatus(string $status): void
     {
         $this->statusFilter = ($this->statusFilter === $status && $status !== 'all') ? 'all' : $status;
-        $this->resetPage();
+        $this->resetAllPages();
     }
 
     /** Clear a single active filter chip */
@@ -64,7 +81,7 @@ class AllSubmissions extends Component
         ];
         if (array_key_exists($field, $defaults)) {
             $this->$field = $defaults[$field];
-            $this->resetPage();
+            $this->resetAllPages();
         }
     }
 
@@ -89,7 +106,7 @@ class AllSubmissions extends Component
 
     public function render()
     {
-        $query = DynamicFormSubmission::with(['candidat', 'form', 'programe', 'reviewer']);
+        $query = DynamicFormSubmission::with(['candidat', 'form', 'programe', 'reviewer', 'projectSubmission.reviewer']);
 
         // Search
         if ($this->search) {
@@ -153,10 +170,71 @@ class AllSubmissions extends Component
 
         $submissions = $query->latest()->where('is_submitted', true)->paginate(15);
 
+        $projectQuery = ProjectSubmission::with(['candidat', 'project', 'reviewer']);
+
+        if ($this->search) {
+            $projectQuery->where(function ($q) {
+                $q->whereHas('candidat', function ($c) {
+                    $c->where('nom', 'like', "%{$this->search}%")
+                      ->orWhere('prenom', 'like', "%{$this->search}%")
+                      ->orWhere('email', 'like', "%{$this->search}%")
+                      ->orWhere('matricule', 'like', "%{$this->search}%");
+                })->orWhereHas('project', function ($p) {
+                    $p->where('project_name', 'like', "%{$this->search}%");
+                });
+            });
+        }
+
+        if ($this->statusFilter !== 'all') {
+            $projectStatusMap = [
+                'submitted' => 'pending',
+                'in_review' => 'in_review',
+                'approved' => 'approved',
+                'rejected' => 'rejected',
+            ];
+
+            if (isset($projectStatusMap[$this->statusFilter])) {
+                $projectQuery->where('review_status', $projectStatusMap[$this->statusFilter]);
+            }
+        }
+
+        if ($this->programeFilter !== 'all') {
+            $projectQuery->where('programe_id', $this->programeFilter);
+        }
+
+        if ($this->responsableFilter !== 'all') {
+            if ($this->responsableFilter === 'none') {
+                $projectQuery->whereNull('reviewed_by');
+            } else {
+                $projectQuery->where('reviewed_by', $this->responsableFilter);
+            }
+        }
+
+        if ($this->genderFilter !== 'all') {
+            $projectQuery->whereHas('candidat', function ($q) {
+                $q->where('gender', $this->genderFilter);
+            });
+        }
+
+        if ($this->addressFilter !== 'all') {
+            $projectQuery->whereHas('candidat', function ($q) {
+                $q->where('address', $this->addressFilter);
+            });
+        }
+
+        if ($this->dateFrom) {
+            $projectQuery->whereDate('created_at', '>=', $this->dateFrom);
+        }
+
+        if ($this->dateTo) {
+            $projectQuery->whereDate('created_at', '<=', $this->dateTo);
+        }
+
+        $projectSubmissions = $projectQuery->latest()->paginate(15, ['*'], 'projectPage');
+
         $programmes  = ProgrameList::orderBy('project_name')->get(['id', 'project_name']);
         $formulaires = DynamicForm::orderBy('title')->get(['id', 'title']);
         $admins      = User::whereIn('role', ['admin', 'super_admin'])->orderBy('name')->get(['id', 'name']);
-        $project_submissions = ProjectSubmission::with(['candidat', 'reviewer'])->get();
         $addresses   = Candidat::whereNotNull('address')
                            ->select('address')->distinct()->orderBy('address')->pluck('address');
 
@@ -175,7 +253,7 @@ class AllSubmissions extends Component
         ];
 
         return view('livewire.admin.submissions.all-submissions', compact(
-            'submissions', 'programmes', 'formulaires', 'admins', 'addresses', 'stats','project_submissions'
+            'submissions', 'projectSubmissions', 'programmes', 'formulaires', 'admins', 'addresses', 'stats'
         ))->layout('layouts.admin', ['header' => 'Toutes les Soumissions']);
     }
 }
