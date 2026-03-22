@@ -199,7 +199,7 @@
                             wire:click="openLocationModal"
                             class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-left hover:border-blue-500 hover:bg-blue-50 transition">
                         <i class="ri-map-pin-line mr-1"></i>
-                        Select locations from database
+                        Select locations
                     </button>
 
                     
@@ -210,79 +210,79 @@
 
         </div>
 
-@if($showLocationModal)
-<div class="fixed inset-0 z-50  bg-black/60 p-4" x-data x-show="true" style="    background: #00000085;">
-    <div class="flex min-h-full items-start justify-center py-6 md:py-10">
-        <div class="w-full max-w-6xl bg-white rounded-2xl shadow-2xl max-h-[90vh] overflow-hidden flex flex-col" @click.away="$wire.closeLocationModal()">
+        @if($showLocationModal)
+        <div class="fixed inset-0 z-50  bg-black/60 p-4" x-data x-show="true" style="    background: #00000085;">
+            <div class="flex min-h-full items-start justify-center py-6 md:py-10">
+                <div class="w-full max-w-6xl bg-white rounded-2xl shadow-2xl max-h-[90vh] overflow-hidden flex flex-col" @click.away="$wire.closeLocationModal()">
 
-            <div class="px-6 py-4 border-b flex items-center justify-between shrink-0">
-                <div>
-                    <h3 class="text-lg font-semibold text-gray-800">Select Eligible Locations</h3>
-                    <p class="text-sm text-gray-500 mt-1">Use filters and search to manage large location lists easily. ({{ $locations->count() }}) result(s)</p>
-                </div>
-                <button type="button" wire:click="closeLocationModal" class="text-gray-400 hover:text-gray-600 transition">
-                    <i class="ri-close-line text-2xl"></i>
-                </button>
-            </div>
-
-            <div class="px-6 py-4 border-b bg-gray-50 shrink-0">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <select wire:model.live="locationRegionFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:outline-none bg-white">
-                        <option value="">All regions</option>
-                        @foreach($regions as $region)
-                            <option value="{{ $region }}">{{ $region }}</option>
-                        @endforeach
-                    </select>
-
-                    <select wire:model.live="locationCityFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:outline-none bg-white">
-                        <option value="">All cities</option>
-                        @foreach($cities as $city)
-                            <option value="{{ $city }}">{{ $city }}</option>
-                        @endforeach
-                    </select>
-
-                    <input type="text" wire:model.live.debounce.300ms="locationSearch" placeholder="Search region, city, prefecture..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:outline-none bg-white">
-                </div>
-            </div>
-
-            <div class="flex-1 overflow-y-auto p-6">
-                <div class="xl:col-span-2 min-h-0 flex flex-col border border-gray-200 rounded-2xl">
-                    <div class="flex-1 overflow-y-auto min-h-80 max-h-[55vh] xl:max-h-full px-4 py-3">
-
-                        {{-- Grid layout with 4 columns --}}
-                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                            @forelse($locations as $location)
-                                <label class="flex items-start gap-2 p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-gray-50 transition">
-                                    <input type="checkbox"
-                                        wire:model.live="allowed_location_ids"
-                                        value="{{ $location->id }}"
-                                        class="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-1 focus:ring-blue-500 shrink-0">
-                                    <div class="min-w-0 text-sm text-gray-700">
-                                        <div class="font-medium text-gray-800">{{ $location->prefecture }}</div>
-                                        <div class="text-gray-500 text-xs mt-0.5 wrap-break-word">{{ $location->city }} · {{ $location->region }}</div>
-                                    </div>
-                                </label>
-                            @empty
-                                <div class="col-span-4 h-full flex items-center justify-center p-6 text-gray-500 text-center">
-                                    No locations found.
-                                </div>
-                            @endforelse
+                    <div class="px-6 py-4 border-b flex items-center justify-between shrink-0">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800">Select Eligible Locations</h3>
+                            <p class="text-sm text-gray-500 mt-1">Use filters and search to manage large location lists easily. ({{ $locations->count() }}) result(s)</p>
                         </div>
+                        <button type="button" wire:click="closeLocationModal" class="text-gray-400 hover:text-gray-600 transition">
+                            <i class="ri-close-line text-2xl"></i>
+                        </button>
+                    </div>
 
+                    <div class="px-6 py-4 border-b bg-gray-50 shrink-0">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <select wire:model.live="locationRegionFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:outline-none bg-white">
+                                <option value="">All regions</option>
+                                @foreach($regions as $region)
+                                    <option value="{{ $region }}">{{ $region }}</option>
+                                @endforeach
+                            </select>
+
+                            <select wire:model.live="locationCityFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:outline-none bg-white">
+                                <option value="">All cities</option>
+                                @foreach($cities as $city)
+                                    <option value="{{ $city }}">{{ $city }}</option>
+                                @endforeach
+                            </select>
+
+                            <input type="text" wire:model.live.debounce.300ms="locationSearch" placeholder="Search region, city, prefecture..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:outline-none bg-white">
+                        </div>
+                    </div>
+
+                    <div class="flex-1 overflow-y-auto p-6">
+                        <div class="xl:col-span-2 min-h-0 flex flex-col border border-gray-200 rounded-2xl">
+                            <div class="flex-1 overflow-y-auto min-h-80 max-h-[55vh] xl:max-h-full px-4 py-3">
+
+                                {{-- Grid layout with 4 columns --}}
+                                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                    @forelse($locations as $location)
+                                        <label class="flex items-start gap-2 p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                                            <input type="checkbox"
+                                                wire:model.live="allowed_location_ids"
+                                                value="{{ $location->id }}"
+                                                class="mt-1 w-4 h-4 rounded text-blue-600 focus:ring-1 focus:ring-blue-500 shrink-0">
+                                            <div class="min-w-0 text-sm text-gray-700">
+                                                <div class="font-medium text-gray-800">{{ $location->prefecture }}</div>
+                                                <div class="text-gray-500 text-xs mt-0.5 wrap-break-word">{{ $location->city }} · {{ $location->region }}</div>
+                                            </div>
+                                        </label>
+                                    @empty
+                                        <div class="col-span-4 h-full flex items-center justify-center p-6 text-gray-500 text-center">
+                                            No locations found.
+                                        </div>
+                                    @endforelse
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="px-6 py-4 border-t bg-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shrink-0">
+                        <span class="text-sm text-blue-700 font-medium">{{ count($allowed_location_ids ?? []) }} location(s) selected</span>
+                        <button type="button" wire:click="closeLocationModal" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition self-start sm:self-auto">
+                            Done
+                        </button>
                     </div>
                 </div>
             </div>
-
-            <div class="px-6 py-4 border-t bg-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shrink-0">
-                <span class="text-sm text-blue-700 font-medium">{{ count($allowed_location_ids ?? []) }} location(s) selected</span>
-                <button type="button" wire:click="closeLocationModal" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition self-start sm:self-auto">
-                    Done
-                </button>
-            </div>
         </div>
-    </div>
-</div>
-@endif
+        @endif
 
         <!-- SECTION 3: Form Fields (Champs) -->
         <div class="mb-10">

@@ -15,6 +15,7 @@ class ProjectFormationReview extends Component
 
     public ?int $reviewRating = null;
     public string $reviewFeedback = '';
+    public array $answers = [];
 
     public function mount($id): void
     {
@@ -36,6 +37,7 @@ class ProjectFormationReview extends Component
 
         $this->reviewRating = $this->projectSubmission->formation_review_rating;
         $this->reviewFeedback = (string) ($this->projectSubmission->formation_review_feedback ?? '');
+        $this->answers = $this->projectSubmission->formation_review_answers ?? [];
     }
 
     public function saveReview()
@@ -43,6 +45,17 @@ class ProjectFormationReview extends Component
         $this->validate([
             'reviewRating' => 'required|integer|min:1|max:5',
             'reviewFeedback' => 'nullable|string|max:3000',
+            'answers' => 'required|array',
+            'answers.q1' => 'required|integer|min:1|max:3',
+            'answers.q2' => 'required|integer|min:1|max:3',
+            'answers.q3' => 'required|integer|min:1|max:3',
+            'answers.q4' => 'required|integer|min:1|max:3',
+            'answers.q5' => 'required|integer|min:1|max:3',
+            'answers.q6' => 'required|integer|min:1|max:3',
+            'answers.q7' => 'required|integer|min:1|max:3',
+            'answers.q8' => 'required|integer|min:1|max:3',
+        ], [
+            'answers.*.required' => __('Veuillez répondre à toutes les questions.')
         ]);
 
         $candidat = Auth::guard('candidat')->user();
@@ -51,6 +64,7 @@ class ProjectFormationReview extends Component
         $this->projectSubmission->update([
             'formation_review_rating' => $this->reviewRating,
             'formation_review_feedback' => $this->reviewFeedback,
+            'formation_review_answers' => $this->answers,
             'last_activity' => now(),
         ]);
 

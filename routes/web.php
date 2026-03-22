@@ -35,6 +35,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/candidats/{id}', \App\Livewire\Admin\Candidat\ShowCandidat::class)->name('candidats.show')->middleware('module:candidats');
         Route::get('/candidats/{id}/edit', \App\Livewire\Admin\Candidat\EditCandidat::class)->name('candidats.edit')->middleware('module:candidats');
         Route::get('/candidats/{id}/print/fiche_inscription', [PrintController::class, 'fiche_inscription'])->name('candidats.print.fiche_inscription')->middleware('module:candidats');
+        Route::get('/candidats/{id}/project/{projectId}/print/avis_formation', [PrintController::class, 'avisformation'])->name('project.print.avis_formation')->middleware('module:candidats');
         Route::get('/candidats/{id}/project/{projectId}/print/fiche_inscription', [PrintController::class, 'projectFicheInscription'])->name('project.print.fiche')->middleware('module:candidats');
         Route::get('/candidats/{id}/project/{projectId}/print/agreement', [PrintController::class, 'projectAgreement'])->name('project.print.agreement')->middleware('module:candidats');
         Route::get('/candidats/{id}/project/{projectId}/print/evaluation', [PrintController::class, 'projectEvaluation'])->name('project.print.evaluation')->middleware('module:candidats');
@@ -139,8 +140,6 @@ Route::prefix('user')->name('user.')->group(function () {
         Route::get('/projects/{id}/conditions', \App\Livewire\Front\Programe\ProjectConditionAgreement::class)->name('project.conditions');
         Route::get('/projects/{id}', \App\Livewire\Front\Programe\ProjectDetail::class)->name('project.detail');
         Route::get('/projects/{id}/review', \App\Livewire\Front\Programe\ProjectFormationReview::class)->name('project.review');
-        Route::get('/projects/{projectId}/candidat/{id}/print/folder', [\App\Http\Controllers\Admin\PrintController::class, 'printFolder'])->name('project.print.folder');
-        Route::get('/projects/{projectId}/candidat/{id}/print/review', [\App\Http\Controllers\Admin\PrintController::class, 'projectReview'])->name('project.print.review');
         Route::get('/projects/{projectId}/formulaire/{formulaireSlug}/{order}', \App\Livewire\Front\Programe\ProjectFormulaireView::class)->name('project.formulaire');
         Route::get('/blog', \App\Livewire\Front\Blog\BlogList::class)->name('blog');
         Route::get('/blog/{slug}', \App\Livewire\Front\Blog\BlogShow::class)->name('blog.show');

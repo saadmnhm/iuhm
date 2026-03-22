@@ -50,6 +50,19 @@ class PrintController extends Controller
         ]);
     }
 
+    public function avisformation(Request $request, int $id, int $projectId){
+        $candidat = \App\Models\Candidat::findOrFail($id);
+        $project = \App\Models\ProgrameList::findOrFail($projectId);
+        $submission = \App\Models\ProjectSubmission::where('candidat_id', $id)
+            ->where('programe_id', $projectId)
+            ->firstOrFail();
+        $association = \App\Models\AssociationParameter::getByCategory('general');
+
+        return $this->renderPrintTemplate($request,'livewire.admin.impression.avis-formation', compact('candidat', 'project', 'submission', 'association'),
+            "avis-formation-{$candidat->nom}-{$candidat->prenom}.pdf"
+        );
+    }
+
     public function fiche_inscription(Request $request, int $id){
         $candidat = \App\Models\Candidat::with(['moroccoLocation'])->findOrFail($id);
         $association = \App\Models\AssociationParameter::getByCategory('general');

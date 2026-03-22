@@ -137,7 +137,7 @@ p {
         </div>
         <div class="info-row">
             <div class="label">العنوان : </div>
-            <div class="line">{{$candidat->address}}</div>
+            <div class="line">{{ $candidat->selected_region }} , {{ $candidat->selected_city }} , {{ $candidat->selected_prefecture }} , {{ $candidat->address_detail }}</div>
         </div>
         <div class="info-row">
             <div class="label">رقم الهاتف : </div>

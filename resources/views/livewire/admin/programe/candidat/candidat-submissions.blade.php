@@ -79,14 +79,15 @@
                                     <i class="ri-printer-line mr-1"></i> Imprimer Grille
                                 </a>
                               @endif
-
-                              @if($candidatSubmissions)
+                                
+                              @if($candidatSubmissions && $candidatSubmissions->formation_review_rating == null )
                               <button type="button" wire:click="toggleFormationReview" @click="open = false"
                                       class="w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-sm {{ $candidatSubmissions->require_formation_review ? 'text-green-600 font-bold' : 'text-gray-700' }}">
                                   <i class="ri-feedback-line mr-1"></i> 
                                   {{ $candidatSubmissions->require_formation_review ? '✓ Avis de formation demandé' : 'Demander avis de formation' }}
                               </button>
                               @endif
+
 
                             @if($projectId)
                             <hr class="my-1 border-gray-200">
@@ -99,6 +100,11 @@
                             <a href="{{ route('admin.project.print.agreement', ['id' => $candidat->id, 'projectId' => $projectId]) }}" target="_blank" class="block px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
                                 <i class="ri-file-paper-2-line mr-1"></i> Engagement
                             </a>
+                            @if(!$candidatSubmissions->formation_review_rating == null)
+                            <a href="{{ route('admin.project.print.avis_formation', ['id' => $candidat->id, 'projectId' => $projectId]) }}" target="_blank" class="block px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
+                                  <i class="ri-file-paper-2-line mr-1"></i> Fiche d'avis de formation
+                            </a>
+                              @endif
                             @endif
                             
                         </div>

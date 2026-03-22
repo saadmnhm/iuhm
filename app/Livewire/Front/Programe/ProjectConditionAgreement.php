@@ -25,12 +25,12 @@ class ProjectConditionAgreement extends Component
     {
         $this->validate([
             'acceptConditions' => 'accepted',
-            'projectIdea' => 'required|string|min:20|max:4000',
+            'projectIdea' => 'required|string|min:10|max:4000',
             'howKnew' => 'required|string|min:5|max:1000',
         ], [
             'acceptConditions.accepted' => 'Vous devez accepter les conditions pour continuer.',
-            'projectIdea.required' => 'Veuillez saisir l\'idÃ©e de votre projet.',
-            'projectIdea.min' => 'L\'idÃ©e doit contenir au moins 20 caractÃ¨res.',
+            'projectIdea.required' => 'Veuillez saisir l\'idée de votre projet.',
+            'projectIdea.min' => 'L\'idée doit contenir au moins 10 caractères.',
             'howKnew.required' => 'Veuillez préciser comment vous avez connu ce projet/organisme.',
             'howKnew.min' => 'Veuillez détailler un peu plus comment vous nous avez connus.',
         ]);
@@ -56,7 +56,8 @@ class ProjectConditionAgreement extends Component
 
     public function render()
     {
-        return view('livewire.front.programe.project-condition-agreement')
-            ->layout('layouts.app', ['title' => 'Conditions du projet']);
+        return view('livewire.front.programe.project-condition-agreement', [
+            'candidat' => Auth::guard('candidat')->user()
+        ])->layout('layouts.app', ['title' => 'Conditions du projet']);
     }
 }

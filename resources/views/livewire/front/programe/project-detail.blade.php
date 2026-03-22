@@ -34,14 +34,7 @@
         <a href="" class="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 transition">
             <i class="ri-arrow-left-s-line"></i> {{ $tr('Retour aux programmes', 'العودة إلى البرامج') }}
         </a>
-        <div class="flex gap-2">
-            @if($projectSubmission && $projectSubmission->formation_review_rating)
-            <a href="{{ route('user.project.print.review', ['id' => auth()->guard('candidat')->id(), 'projectId' => $project->id]) }}" target="_blank"
-               class="inline-flex items-center gap-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-semibold rounded-lg shadow-sm transition">
-                <i class="ri-printer-line"></i> {{ $tr('Avis de formation', 'رأي التكوين') }}
-            </a>
-            @endif
-        </div>
+      
     </div>
 
     @if($projectSubmission && $projectSubmission->require_formation_review && !$projectSubmission->formation_review_rating)

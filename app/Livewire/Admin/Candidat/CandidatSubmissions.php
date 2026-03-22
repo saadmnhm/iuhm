@@ -603,6 +603,7 @@ class CandidatSubmissions extends Component
         $this->is_evaluated = $is_evaluated;
 
 
+
         return view('livewire.admin.programe.candidat.candidat-submissions')
             ->layout('layouts.admin', [
                 'header' => 'Soumissions de ' . $this->candidat->nom . ' ' . $this->candidat->prenom . ($this->project ? " - {$this->project->project_name}" : ''),

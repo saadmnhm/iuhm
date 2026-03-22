@@ -18,11 +18,12 @@ class ProjectSubmission extends Model
         'reviewed_by',
         'reviewed_at',
         'review_notes',
-        'last_activity', 'require_formation_review', 'formation_review_rating', 'formation_review_feedback', 'formation_review_files',
+        'last_activity', 'require_formation_review', 'formation_review_rating', 'formation_review_feedback', 'formation_review_files', 'formation_review_answers',
     ];
 
     protected $casts = [
         'is_finished' => 'boolean',
+        'formation_review_answers' => 'array',
         'formation_review_files' => 'array',
         'reviewed_at' => 'datetime',
         'last_activity' => 'datetime',

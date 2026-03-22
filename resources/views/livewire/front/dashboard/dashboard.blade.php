@@ -145,7 +145,7 @@
                             </li>
                             <li class="d-flex align-items-start gap-2">
                                 <i class="ri-map-pin-user-line mt-1 text-success"></i>
-                                <div>{{ $tr('Adresse', 'العنوان') }}: <strong>{{ $candidat->address ?: $tr('Non renseignée', 'غير مذكور') }}</strong></div>
+                                <div>{{ $tr('Adresse', 'العنوان') }}: <strong>{{ collect([ $candidat->selected_region, $candidat->selected_city, $candidat->selected_prefecture, $candidat->address_detail ])->filter()->join(', ') ?: ($isArabic ? 'غير متوفر' : 'Non renseigné') }} </strong></div>
                             </li>
                             <li class="d-flex align-items-start gap-2">
                                 <i class="ri-folder-chart-line mt-1 text-info"></i>
