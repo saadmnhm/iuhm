@@ -9,6 +9,7 @@ use App\Models\DynamicFormTable;
 use App\Models\DynamicFormTableColumn;
 use App\Models\DynamicFormTableRow;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
 class FormulaireBuilder extends Component
@@ -61,6 +62,7 @@ class FormulaireBuilder extends Component
         'placeholder' => '',
         'help_text' => '',
         'options' => [],
+        'allow_multiple_files' => false,
         'is_required' => false,
         'is_full_width' => true,
         'sort_order' => 0,
@@ -162,57 +164,62 @@ class FormulaireBuilder extends Component
 
     public function saveSettings()
     {
-        // Auto-generate slug from title if empty (safety net for debounce timing)
-        if (empty(trim($this->slug)) && !empty(trim($this->title))) {
-            $this->slug = Str::slug($this->title);
-        }
+        try {
+            // Auto-generate slug from title if empty (safety net for debounce timing)
+            if (empty(trim($this->slug)) && !empty(trim($this->title))) {
+                $this->slug = Str::slug($this->title);
+            }
 
-        $this->validate([
-            'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:dynamic_forms,slug,' . ($this->formId ?? 'NULL'),
-            'icon' => 'required|string',
-            'color' => 'required|string',
-            'bg_color' => 'required|string',
-        ]);
-
-        $data = [
-            'title' => $this->title,
-            'title_ar' => $this->title_ar ?: null,
-            'introduction' => $this->introduction ?: null,
-            'introduction_ar' => $this->introduction_ar ?: null,
-            'slug' => $this->slug,
-            'icon' => $this->icon,
-            'color' => $this->color,
-            'bg_color' => $this->bg_color,
-            'is_active' => $this->is_active,
-            'has_steps' => $this->has_steps,
-            'has_introduction' => $this->has_introduction,
-            'introduction_title' => $this->introduction_title ?: null,
-            'introduction_title_ar' => $this->introduction_title_ar ?: null,
-            'introduction_content' => $this->introduction_content ?: null,
-            'introduction_content_ar' => $this->introduction_content_ar ?: null,
-        ];
-
-        if ($this->formId) {
-            DynamicForm::findOrFail($this->formId)->update($data);
-            $this->dispatch('alert', type: 'success', title: 'Sauvegardé', message: 'Paramètres du formulaire sauvegardés.');
-        } else {
-            $form = DynamicForm::create($data);
-            $this->formId = $form->id;
-
-            // Create default first step
-            $step = DynamicFormStep::create([
-                'dynamic_form_id' => $this->formId,
-                'title' => 'Étape 1',
-                'step_number' => 1,
-                'sort_order' => 1,
+            $this->validate([
+                'title' => 'required|string|max:255',
+                'slug' => 'required|string|max:255|unique:dynamic_forms,slug,' . ($this->formId ?? 'NULL'),
+                'icon' => 'required|string',
+                'color' => 'required|string',
+                'bg_color' => 'required|string',
             ]);
-            $this->activeStepId = $step->id;
-            
-            $this->dispatch('alert', type: 'success', title: 'Créé', message: 'Formulaire créé avec succès!');
-            
-            // Redirect to edit page
-            return redirect()->route('admin.formulaires.edit', $this->formId);
+
+            $data = [
+                'title' => $this->title,
+                'title_ar' => $this->title_ar ?: null,
+                'introduction' => $this->introduction ?: null,
+                'introduction_ar' => $this->introduction_ar ?: null,
+                'slug' => $this->slug,
+                'icon' => $this->icon,
+                'color' => $this->color,
+                'bg_color' => $this->bg_color,
+                'is_active' => $this->is_active,
+                'has_steps' => $this->has_steps,
+                'has_introduction' => $this->has_introduction,
+                'introduction_title' => $this->introduction_title ?: null,
+                'introduction_title_ar' => $this->introduction_title_ar ?: null,
+                'introduction_content' => $this->introduction_content ?: null,
+                'introduction_content_ar' => $this->introduction_content_ar ?: null,
+            ];
+
+            if ($this->formId) {
+                DynamicForm::findOrFail($this->formId)->update($data);
+                $this->dispatch('alert', type: 'success', title: 'Sauvegardé', message: 'Paramètres du formulaire sauvegardés.');
+            } else {
+                $form = DynamicForm::create($data);
+                $this->formId = $form->id;
+
+                // Create default first step
+                $step = DynamicFormStep::create([
+                    'dynamic_form_id' => $this->formId,
+                    'title' => 'Étape 1',
+                    'step_number' => 1,
+                    'sort_order' => 1,
+                ]);
+                $this->activeStepId = $step->id;
+                
+                $this->dispatch('alert', type: 'success', title: 'Créé', message: 'Formulaire créé avec succès!');
+                
+                // Redirect to edit page
+                return redirect()->route('admin.formulaires.edit', $this->formId);
+            }
+        } catch (ValidationException $e) {
+            $this->dispatch('alert', type: 'error', title: 'Erreur', message: 'Veuillez remplir tous les champs obligatoires.');
+            throw $e;
         }
     }
     
@@ -386,6 +393,7 @@ class FormulaireBuilder extends Component
                 'placeholder' => $field->placeholder ?? '',
                 'help_text' => $field->help_text ?? '',
                 'options' => $field->options ?? [],
+                'allow_multiple_files' => (bool) ($field->allow_multiple_files ?? false),
                 'is_required' => $field->is_required,
                 'is_full_width' => $field->is_full_width,
                 'sort_order' => $field->sort_order,
@@ -401,6 +409,7 @@ class FormulaireBuilder extends Component
                 'placeholder' => '',
                 'help_text' => '',
                 'options' => [],
+                'allow_multiple_files' => false,
                 'is_required' => false,
                 'is_full_width' => true,
                 'sort_order' => $maxSort + 1,
@@ -434,34 +443,44 @@ class FormulaireBuilder extends Component
 
     public function saveField()
     {
-        $this->validate([
-            'fieldForm.label' => 'required|string|max:255',
-            'fieldForm.field_key' => 'required|string|max:255',
-            'fieldForm.type' => 'required|in:text,textarea,number,email,date,select,radio,checkbox,file,heading,paragraph',
-        ]);
+        try {
+            $this->validate([
+                'fieldForm.label' => 'required|string|max:255',
+                'fieldForm.field_key' => 'required|string|max:255',
+                'fieldForm.type' => 'required|in:text,textarea,number,email,date,select,radio,checkbox,file,heading,paragraph',
+            ]);
 
-        $data = [
-            'dynamic_form_step_id' => $this->activeStepId,
-            'label' => $this->fieldForm['label'],
-            'label_ar' => $this->fieldForm['label_ar'] ?: null,
-            'field_key' => $this->fieldForm['field_key'],
-            'type' => $this->fieldForm['type'],
-            'placeholder' => $this->fieldForm['placeholder'] ?: null,
-            'help_text' => $this->fieldForm['help_text'] ?: null,
-            'options' => !empty($this->fieldForm['options']) ? $this->fieldForm['options'] : null,
-            'is_required' => $this->fieldForm['is_required'],
-            'is_full_width' => $this->fieldForm['is_full_width'],
-            'sort_order' => $this->fieldForm['sort_order'],
-        ];
+            $data = [
+                'dynamic_form_step_id' => $this->activeStepId,
+                'label' => $this->fieldForm['label'],
+                'label_ar' => $this->fieldForm['label_ar'] ?: null,
+                'field_key' => $this->fieldForm['field_key'],
+                'type' => $this->fieldForm['type'],
+                'placeholder' => $this->fieldForm['placeholder'] ?: null,
+                'help_text' => $this->fieldForm['help_text'] ?: null,
+                'options' => !empty($this->fieldForm['options']) ? $this->fieldForm['options'] : null,
+                'allow_multiple_files' => (bool) ($this->fieldForm['allow_multiple_files'] ?? false),
+                'is_required' => $this->fieldForm['is_required'],
+                'is_full_width' => $this->fieldForm['is_full_width'],
+                'sort_order' => $this->fieldForm['sort_order'],
+            ];
 
-        if ($this->fieldForm['id']) {
-            DynamicFormField::findOrFail($this->fieldForm['id'])->update($data);
-        } else {
-            DynamicFormField::create($data);
+            if ($this->fieldForm['type'] !== 'file') {
+                $data['allow_multiple_files'] = false;
+            }
+
+            if ($this->fieldForm['id']) {
+                DynamicFormField::findOrFail($this->fieldForm['id'])->update($data);
+            } else {
+                DynamicFormField::create($data);
+            }
+
+            $this->showFieldModal = false;
+            $this->dispatch('alert', type: 'success', title: 'Sauvegardé', message: 'Question sauvegardée.');
+        } catch (ValidationException $e) {
+            $this->dispatch('alert', type: 'error', title: 'Erreur', message: 'Veuillez remplir les champs obligatoires de la question.');
+            throw $e;
         }
-
-        $this->showFieldModal = false;
-        $this->dispatch('alert', type: 'success', title: 'Sauvegardé', message: 'Question sauvegardée.');
     }
 
     public function deleteField($fieldId)
@@ -536,32 +555,37 @@ class FormulaireBuilder extends Component
 
     public function saveTable()
     {
-        $this->validate([
-            'tableForm.title' => 'required|string|max:255',
-            'tableForm.table_key' => 'required|string|max:255',
-        ]);
+        try {
+            $this->validate([
+                'tableForm.title' => 'required|string|max:255',
+                'tableForm.table_key' => 'required|string|max:255',
+            ]);
 
-        $data = [
-            'dynamic_form_step_id' => $this->activeStepId,
-            'title' => $this->tableForm['title'],
-            'title_ar' => $this->tableForm['title_ar'] ?: null,
-            'table_key' => $this->tableForm['table_key'],
-            'has_dynamic_rows' => $this->tableForm['has_dynamic_rows'],
-            'has_total_row' => $this->tableForm['has_total_row'],
-            'min_rows' => $this->tableForm['min_rows'],
-            'max_rows' => $this->tableForm['max_rows'],
-            'sort_order' => $this->tableForm['sort_order'],
-        ];
+            $data = [
+                'dynamic_form_step_id' => $this->activeStepId,
+                'title' => $this->tableForm['title'],
+                'title_ar' => $this->tableForm['title_ar'] ?: null,
+                'table_key' => $this->tableForm['table_key'],
+                'has_dynamic_rows' => $this->tableForm['has_dynamic_rows'],
+                'has_total_row' => $this->tableForm['has_total_row'],
+                'min_rows' => $this->tableForm['min_rows'],
+                'max_rows' => $this->tableForm['max_rows'],
+                'sort_order' => $this->tableForm['sort_order'],
+            ];
 
-        if ($this->tableForm['id']) {
-            DynamicFormTable::findOrFail($this->tableForm['id'])->update($data);
-        } else {
-            $table = DynamicFormTable::create($data);
-            $this->editingTableId = $table->id;
+            if ($this->tableForm['id']) {
+                DynamicFormTable::findOrFail($this->tableForm['id'])->update($data);
+            } else {
+                $table = DynamicFormTable::create($data);
+                $this->editingTableId = $table->id;
+            }
+
+            $this->showTableModal = false;
+            $this->dispatch('alert', type: 'success', title: 'Sauvegardé', message: 'Tableau sauvegardé.');
+        } catch (ValidationException $e) {
+            $this->dispatch('alert', type: 'error', title: 'Erreur', message: 'Veuillez remplir les champs obligatoires du tableau.');
+            throw $e;
         }
-
-        $this->showTableModal = false;
-        $this->dispatch('alert', type: 'success', title: 'Sauvegardé', message: 'Tableau sauvegardé.');
     }
 
     public function deleteTable($tableId)
@@ -747,8 +771,6 @@ class FormulaireBuilder extends Component
         DynamicFormTableRow::findOrFail($rowId)->delete();
         $this->dispatch('alert', type: 'success', title: 'Supprimé', message: 'Ligne supprimée.');
     }
-
-    // ============ RENDER ============
 
     public function render()
     {

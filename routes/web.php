@@ -96,7 +96,19 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/programe/candidat/{id}/project/{projectId}/evaluation', \App\Livewire\Admin\Candidat\CandidatEvaluationCreate::class)->name('candidat.evaluation.create')->middleware('module:programmes');
         Route::get('/programe/candidat/{candidatId}/submission/{id}/export-pdf', [\App\Http\Controllers\Admin\CandidatExportController::class, 'exportSingle'])->name('candidat.submission.export')->middleware('module:candidats');
         Route::get('/programe/candidat/{id}/export-all-pdf', [\App\Http\Controllers\Admin\CandidatExportController::class, 'exportAll'])->name('candidat.export-all')->middleware('module:candidats');
+Route::get('/uploads/{path}/download', function ($path) {
+    if (!Auth::guard('web')->check() && !Auth::guard('candidat')->check()) {
+        abort(403);
+    }
 
+    $filePath = base_path('uploads/' . $path);
+
+    if (!file_exists($filePath)) {
+        abort(404);
+    }
+
+    return response()->download($filePath, basename($filePath));
+})->where('path', '.*')->name('uploads.download');
         
         Route::get('/projects_view', App\Livewire\Admin\Project\ProjectView::class)->name('projects_view');
 
@@ -202,16 +214,30 @@ Route::get('/lang/{locale}', function ($locale) {
     return back();
 })->name('lang.switch');
 
+Route::get('/uploads/{path}/download', function ($path) {
+    if (!Auth::guard('web')->check() && !Auth::guard('candidat')->check()) {
+        abort(403);
+    }
+
+    $filePath = base_path('uploads/' . $path);
+
+    if (!file_exists($filePath)) {
+        abort(404);
+    }
+
+    return response()->download($filePath, basename($filePath));
+})->where('path', '.*')->name('uploads.download');
+
 Route::get('/uploads/{path}', function ($path) {
     if (!Auth::guard('web')->check() && !Auth::guard('candidat')->check()) {
         abort(403);
     }
 
     $filePath = base_path('uploads/' . $path);
-    
+
     if (!file_exists($filePath)) {
         abort(404);
     }
-    
+
     return response()->file($filePath);
 })->where('path', '.*')->name('uploads.show');

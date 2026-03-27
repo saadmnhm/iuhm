@@ -170,7 +170,7 @@
                         </td>
                         <td class="px-4 py-3 text-gray-500 text-xs">{{ $userSub->last_activity ? \Carbon\Carbon::parse($userSub->last_activity)->format('d/m/Y H:i') : 'N/A' }}</td>
                         <td class="px-4 py-3 text-center">
-                            <a href="{{ route('admin.candidat.submissions', $userSub->person_id) }}"
+                            <a href="{{ route('admin.candidat.submissions', ['id' => $userSub->person_id, 'projectId' => $project->id]) }}"
                                 class="inline-flex items-center px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 transition text-xs font-medium">
                                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

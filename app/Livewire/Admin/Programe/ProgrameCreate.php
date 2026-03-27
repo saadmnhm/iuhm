@@ -36,6 +36,8 @@ class ProgrameCreate extends Component
     public $locationRegionFilter = '';
     public $locationCityFilter = '';
     public $locationSearch = '';
+    public bool $showSuccessModal = false;
+    public ?int $successProjectId = null;
 
     public $logo1;
     public $logo2;
@@ -165,8 +167,8 @@ class ProgrameCreate extends Component
                     $project->id
                 );
 
-                session()->flash('success', 'Project updated successfully!');
-                return redirect()->route('admin.programe.edit', $this->programeId);
+                $this->successProjectId = $project->id;
+                $this->showSuccessModal = true;
             } else {
                 $project = ProgrameList::create($data);
                 \Log::info('Project created', ['id' => $project->id]);
@@ -178,8 +180,8 @@ class ProgrameCreate extends Component
                     $project->id
                 );
 
-                session()->flash('success', 'Projet créé! Vous pouvez maintenant attacher des formulaires.');
-                return redirect()->route('admin.programe.edit', $project->id);
+                $this->successProjectId = $project->id;
+                $this->showSuccessModal = true;
             }
             
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -210,6 +212,15 @@ class ProgrameCreate extends Component
         $this->locationCityFilter = '';
         $this->locationSearch = '';
         $this->showLocationModal = true;
+    }
+
+    public function redirectAfterSuccess()
+    {
+        if ($this->successProjectId) {
+            return redirect()->route('admin.programe.edit', $this->successProjectId);
+        }
+
+        return redirect()->route('admin.programe');
     }
 
     public function closeLocationModal(): void

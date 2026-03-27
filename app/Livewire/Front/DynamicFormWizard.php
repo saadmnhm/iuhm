@@ -11,6 +11,7 @@ use App\Models\ProgrameList;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
@@ -227,7 +228,7 @@ class DynamicFormWizard extends Component
 
         $rules = [];
         foreach ($currentStep->fields as $field) {
-            if ($field->is_required && !in_array($field->type, ['heading', 'paragraph'])) {
+            if ($field->is_required && !in_array($field->type, ['heading', 'paragraph', 'file'])) {
                 $rules['answers.' . $field->id] = 'required';
             }
         }
@@ -236,6 +237,78 @@ class DynamicFormWizard extends Component
             $this->validate($rules, [
                 'required' => 'Ce champ est obligatoire.',
             ]);
+        }
+
+        $this->validateFileAnswersForFields($currentStep->fields);
+    }
+
+    protected function validateFileAnswersForFields($fields): void
+    {
+        $allowedExtensions = ['pdf', 'xls', 'xlsx', 'csv', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $maxFileSizeBytes = 10 * 1024 * 1024; // 10 MB
+        $errors = [];
+
+        foreach ($fields as $field) {
+            if (($field->type ?? null) !== 'file') {
+                continue;
+            }
+
+            $value = $this->answers[$field->id] ?? null;
+            $uploaded = [];
+
+            if ($value instanceof TemporaryUploadedFile) {
+                $uploaded = [$value];
+            } elseif (is_array($value)) {
+                foreach ($value as $item) {
+                    if ($item instanceof TemporaryUploadedFile) {
+                        $uploaded[] = $item;
+                    }
+                }
+            }
+
+            $hasExistingPath = is_string($value) && trim($value) !== '';
+            if (is_array($value) && !$hasExistingPath) {
+                foreach ($value as $item) {
+                    if (is_string($item) && trim($item) !== '') {
+                        $hasExistingPath = true;
+                        break;
+                    }
+                }
+            }
+
+            $hasAnyValue = $hasExistingPath || !empty($uploaded);
+            $attribute = 'answers.' . $field->id;
+
+            if ($field->is_required && !$hasAnyValue) {
+                $errors[$attribute] = 'Ce champ est obligatoire.';
+                continue;
+            }
+
+            if (empty($uploaded)) {
+                continue;
+            }
+
+            if (!$field->allow_multiple_files && count($uploaded) > 1) {
+                $errors[$attribute] = 'Un seul fichier est autorisé pour ce champ.';
+                continue;
+            }
+
+            foreach ($uploaded as $file) {
+                $ext = strtolower($file->getClientOriginalExtension() ?: '');
+                if (!in_array($ext, $allowedExtensions, true)) {
+                    $errors[$attribute] = 'Formats autorisés: PDF, Excel, document et image uniquement.';
+                    break;
+                }
+
+                if (($file->getSize() ?? 0) > $maxFileSizeBytes) {
+                    $errors[$attribute] = 'Chaque fichier doit être de 10 Mo maximum.';
+                    break;
+                }
+            }
+        }
+
+        if (!empty($errors)) {
+            throw ValidationException::withMessages($errors);
         }
     }
 
@@ -296,7 +369,15 @@ class DynamicFormWizard extends Component
 
                 $answerValue = $value;
                 if ($field->type === 'file') {
-                    $answerValue = $this->prepareFileAnswerValue($submission->id, $fieldId, $field->label, $value, $candidatId, $form->id);
+                    $answerValue = $this->prepareFileAnswerValue(
+                        $submission->id,
+                        $fieldId,
+                        $field->label,
+                        $value,
+                        $candidatId,
+                        $form->id,
+                        (bool) ($field->allow_multiple_files ?? false)
+                    );
                 }
 
                 DynamicFormAnswer::updateOrCreate(
@@ -377,7 +458,8 @@ class DynamicFormWizard extends Component
         string $fieldLabel,
         mixed $value,
         int $candidatId,
-        int $formId
+        int $formId,
+        bool $allowMultiple
     ): ?string {
         $uploaded = [];
 
@@ -404,6 +486,10 @@ class DynamicFormWizard extends Component
                 $paths[] = $file->storeAs($dir, $name, 'uploads');
             }
 
+            if (!$allowMultiple) {
+                return $paths[0] ?? null;
+            }
+
             return json_encode($paths, JSON_UNESCAPED_SLASHES);
         }
 
@@ -428,7 +514,7 @@ class DynamicFormWizard extends Component
         $rules = [];
         foreach ($form->steps as $formStep) {
             foreach ($formStep->fields as $field) {
-                if ($field->is_required && !in_array($field->type, ['heading', 'paragraph'])) {
+                if ($field->is_required && !in_array($field->type, ['heading', 'paragraph', 'file'])) {
                     $rules['answers.' . $field->id] = 'required';
                 }
             }
@@ -439,6 +525,9 @@ class DynamicFormWizard extends Component
                 'required' => 'Ce champ est obligatoire.',
             ]);
         }
+
+        $allFields = $form->steps->flatMap(fn($step) => $step->fields);
+        $this->validateFileAnswersForFields($allFields);
 
         $this->saveAsDraft();
 

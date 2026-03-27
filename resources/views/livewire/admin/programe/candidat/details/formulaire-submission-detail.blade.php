@@ -83,12 +83,20 @@
                                         @php
                                             $cleanPath = ltrim(str_starts_with($path, 'uploads/') ? substr($path, 8) : $path, '/');
                                         @endphp
-                                        <a href="{{ route('uploads.show', ['path' => $cleanPath]) }}"
-                                           target="_blank"
-                                           class="inline-flex items-center gap-2 text-sm text-indigo-700 hover:text-indigo-900 hover:underline">
-                                            <i class="ri-attachment-2"></i>
-                                            {{ basename($cleanPath) }}
-                                        </a>
+                                        <div class="flex items-center gap-3 flex-wrap">
+                                            <a href="{{ route('uploads.show', ['path' => $cleanPath]) }}"
+                                               target="_blank"
+                                               class="inline-flex items-center gap-2 text-sm text-indigo-700 hover:text-indigo-900 hover:underline">
+                                                <i class="ri-eye-line"></i>
+                                                Voir
+                                            </a>
+                                            <a href="{{ route('uploads.download', ['path' => $cleanPath]) }}"
+                                               class="inline-flex items-center gap-2 text-sm text-emerald-700 hover:text-emerald-900 hover:underline">
+                                                <i class="ri-download-2-line"></i>
+                                                Télécharger
+                                            </a>
+                                            <span class="text-xs text-gray-500">{{ basename($cleanPath) }}</span>
+                                        </div>
                                     @endforeach
                                 </div>
                             @else

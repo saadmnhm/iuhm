@@ -874,6 +874,17 @@
                         </div>
                     @endif
 
+                    @if($fieldForm['type'] === 'file')
+                        <div>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" wire:model="fieldForm.allow_multiple_files"
+                                    class="w-4 h-4 text-green-600 rounded focus:ring-green-500">
+                                <span class="text-sm text-gray-700">Autoriser plusieurs fichiers</span>
+                            </label>
+                            <p class="text-xs text-gray-500 mt-1">Si activé, le candidat peut téléverser plusieurs fichiers pour cette question.</p>
+                        </div>
+                    @endif
+
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Ordre</label>

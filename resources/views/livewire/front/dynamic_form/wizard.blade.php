@@ -151,9 +151,61 @@
                             @elseif($field->type === 'file')
                                 <input type="file" id="field_{{ $field->id }}"
                                     wire:model="answers.{{ $field->id }}"
-                                    multiple
+                                    @if($field->allow_multiple_files) multiple @endif
+                                    accept=".pdf,.xls,.xlsx,.csv,.doc,.docx,.jpg,.jpeg,.png,.gif,.webp"
                                     class="form-control"
                                     @if($isReadOnly) disabled @endif>
+
+                                <p class="instructions" style="font-size: 13px; margin-top: 6px;">
+                                    {{ $field->allow_multiple_files ? 'Vous pouvez sélectionner plusieurs fichiers.' : 'Un seul fichier autorisé.' }}
+                                    Types autorisés: PDF, Excel, DOC, images. Taille max: 10MB/fichier.
+                                </p>
+
+                                @php
+                                    $rawFileValue = $answers[$field->id] ?? null;
+                                    $existingPaths = [];
+
+                                    if (is_string($rawFileValue) && trim($rawFileValue) !== '') {
+                                        $decoded = json_decode($rawFileValue, true);
+                                        if (is_array($decoded)) {
+                                            $existingPaths = collect($decoded)
+                                                ->filter(fn ($p) => is_string($p) && trim($p) !== '')
+                                                ->values()
+                                                ->all();
+                                        } else {
+                                            $existingPaths = [trim($rawFileValue)];
+                                        }
+                                    } elseif (is_array($rawFileValue)) {
+                                        $existingPaths = collect($rawFileValue)
+                                            ->filter(fn ($p) => is_string($p) && trim($p) !== '')
+                                            ->values()
+                                            ->all();
+                                    }
+                                @endphp
+
+                                @if(!empty($existingPaths))
+                                    <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
+                                        @foreach($existingPaths as $path)
+                                            @php
+                                                $cleanPath = ltrim(str_starts_with($path, 'uploads/') ? substr($path, 8) : $path, '/');
+                                            @endphp
+                                            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                                                <a href="{{ route('uploads.show', ['path' => $cleanPath]) }}"
+                                                    target="_blank"
+                                                    style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #1d4ed8; text-decoration: none;">
+                                                    <i class="ri-eye-line"></i>
+                                                    <span>Voir</span>
+                                                </a>
+                                                <a href="{{ route('uploads.download', ['path' => $cleanPath]) }}"
+                                                    style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #0f766e; text-decoration: none;">
+                                                    <i class="ri-download-2-line"></i>
+                                                    <span>Télécharger</span>
+                                                </a>
+                                                <span style="font-size: 12px; color: #6b7280;">{{ basename($cleanPath) }}</span>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endif
                             @endif
 
                             @if($field->help_text)

@@ -14,6 +14,7 @@ use App\Models\ProjectSubmission;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use App\Services\ProjectEligibilityService;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
@@ -339,7 +340,7 @@ class ProjectFormulaireView extends Component
 
         $rules = [];
         foreach ($currentStepData->fields as $field) {
-            if ($field->is_required && !in_array($field->type, ['heading', 'paragraph'])) {
+            if ($field->is_required && !in_array($field->type, ['heading', 'paragraph', 'file'])) {
                 $rules['answers.' . $field->id] = 'required';
             }
         }
@@ -348,6 +349,78 @@ class ProjectFormulaireView extends Component
             $this->validate($rules, [
                 'required' => 'This field is required.',
             ]);
+        }
+
+        $this->validateFileAnswersForFields($currentStepData->fields);
+    }
+
+    protected function validateFileAnswersForFields($fields): void
+    {
+        $allowedExtensions = ['pdf', 'xls', 'xlsx', 'csv', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $maxFileSizeBytes = 10 * 1024 * 1024; // 10 MB
+        $errors = [];
+
+        foreach ($fields as $field) {
+            if (($field->type ?? null) !== 'file') {
+                continue;
+            }
+
+            $value = $this->answers[$field->id] ?? null;
+            $uploaded = [];
+
+            if ($value instanceof TemporaryUploadedFile) {
+                $uploaded = [$value];
+            } elseif (is_array($value)) {
+                foreach ($value as $item) {
+                    if ($item instanceof TemporaryUploadedFile) {
+                        $uploaded[] = $item;
+                    }
+                }
+            }
+
+            $hasExistingPath = is_string($value) && trim($value) !== '';
+            if (is_array($value) && !$hasExistingPath) {
+                foreach ($value as $item) {
+                    if (is_string($item) && trim($item) !== '') {
+                        $hasExistingPath = true;
+                        break;
+                    }
+                }
+            }
+
+            $hasAnyValue = $hasExistingPath || !empty($uploaded);
+            $attribute = 'answers.' . $field->id;
+
+            if ($field->is_required && !$hasAnyValue) {
+                $errors[$attribute] = 'This field is required.';
+                continue;
+            }
+
+            if (empty($uploaded)) {
+                continue;
+            }
+
+            if (!$field->allow_multiple_files && count($uploaded) > 1) {
+                $errors[$attribute] = 'Only one file is allowed for this field.';
+                continue;
+            }
+
+            foreach ($uploaded as $file) {
+                $ext = strtolower($file->getClientOriginalExtension() ?: '');
+                if (!in_array($ext, $allowedExtensions, true)) {
+                    $errors[$attribute] = 'Allowed file types: pdf, excel, document, and image files only.';
+                    break;
+                }
+
+                if (($file->getSize() ?? 0) > $maxFileSizeBytes) {
+                    $errors[$attribute] = 'Each file must be 10 MB or less.';
+                    break;
+                }
+            }
+        }
+
+        if (!empty($errors)) {
+            throw ValidationException::withMessages($errors);
         }
     }
 
@@ -399,7 +472,15 @@ class ProjectFormulaireView extends Component
 
                 $answerValue = $value;
                 if ($field->type === 'file') {
-                    $answerValue = $this->prepareFileAnswerValue($submission->id, $fieldId, $field->label, $value, $candidatId, (int) $this->formulaire->id);
+                    $answerValue = $this->prepareFileAnswerValue(
+                        $submission->id,
+                        $fieldId,
+                        $field->label,
+                        $value,
+                        $candidatId,
+                        (int) $this->formulaire->id,
+                        (bool) ($field->allow_multiple_files ?? false)
+                    );
                 }
 
                 DynamicFormAnswer::updateOrCreate(
@@ -476,7 +557,8 @@ class ProjectFormulaireView extends Component
         string $fieldLabel,
         mixed $value,
         int $candidatId,
-        int $formId
+        int $formId,
+        bool $allowMultiple
     ): ?string {
         $uploaded = [];
 
@@ -501,6 +583,10 @@ class ProjectFormulaireView extends Component
                 $ext = strtolower($file->getClientOriginalExtension() ?: 'bin');
                 $name = $candidatSlug . '_' . $fieldSlug . '_' . now()->format('Ymd_His_u') . '_' . ($index + 1) . '.' . $ext;
                 $paths[] = $file->storeAs($dir, $name, 'uploads');
+            }
+
+            if (!$allowMultiple) {
+                return $paths[0] ?? null;
             }
 
             return json_encode($paths, JSON_UNESCAPED_SLASHES);
@@ -531,7 +617,7 @@ class ProjectFormulaireView extends Component
         $rules = [];
         foreach ($this->formulaire->steps as $formStep) {
             foreach ($formStep->fields as $field) {
-                if ($field->is_required && !in_array($field->type, ['heading', 'paragraph'])) {
+                if ($field->is_required && !in_array($field->type, ['heading', 'paragraph', 'file'])) {
                     $rules['answers.' . $field->id] = 'required';
                 }
             }
@@ -542,6 +628,9 @@ class ProjectFormulaireView extends Component
                 'required' => 'This field is required.',
             ]);
         }
+
+        $allFields = $this->formulaire->steps->flatMap(fn($step) => $step->fields);
+        $this->validateFileAnswersForFields($allFields);
 
         $this->saveAsDraft();
 

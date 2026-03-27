@@ -30,6 +30,7 @@ class ProgrameEdit extends Component{
     public $locationRegionFilter = '';
     public $locationCityFilter = '';
     public $locationSearch = '';
+    public bool $showSuccessModal = false;
 
     public $logo1;
     public $logo2;
@@ -258,8 +259,11 @@ class ProgrameEdit extends Component{
             $programe->id
         );
 
-        session()->flash('message', 'Programme mis à jour avec succès!');
-        
+        $this->showSuccessModal = true;
+    }
+
+    public function redirectAfterSuccess()
+    {
         return redirect()->route('admin.programe');
     }
 

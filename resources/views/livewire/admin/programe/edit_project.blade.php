@@ -488,4 +488,49 @@
         </div>
 
     </form>
+
+    <div x-data="{ open: @entangle('showSuccessModal') }" x-cloak>
+        <div
+            x-show="open"
+            x-transition:enter="ease-out duration-200"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="ease-in duration-150"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 z-50 flex items-center justify-center"
+        >
+            <div class="absolute inset-0 bg-black/50"></div>
+
+            <div
+                x-show="open"
+                x-transition:enter="ease-out duration-200"
+                x-transition:enter-start="opacity-0 scale-95"
+                x-transition:enter-end="opacity-100 scale-100"
+                x-transition:leave="ease-in duration-150"
+                x-transition:leave-start="opacity-100 scale-100"
+                x-transition:leave-end="opacity-0 scale-95"
+                class="relative bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 z-10 overflow-hidden"
+            >
+                <div class="flex items-center gap-3 px-6 py-4 border-b border-gray-100">
+                    <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900">Projet modifié avec succès</h3>
+                </div>
+
+                <div class="p-6">
+                    <p class="text-sm text-gray-600">Les modifications ont été enregistrées avec succès.</p>
+                    <div class="mt-6 flex justify-end">
+                        <button wire:click="redirectAfterSuccess"
+                            class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                            Continuer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
