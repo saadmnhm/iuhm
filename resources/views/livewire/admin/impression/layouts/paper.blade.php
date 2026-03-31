@@ -32,6 +32,7 @@
             height: var(--paper-height);
             background: #fff;
             position: relative;
+            margin: 0 auto;
         }
         .a4-page{
             width: 210mm;
@@ -84,6 +85,10 @@
             body {
                 background: #fff;
                 padding: 0;
+            }
+
+            .paper {
+                margin: 0 auto !important;
             }
 
             .print-wrap {

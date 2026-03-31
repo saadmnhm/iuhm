@@ -13,11 +13,18 @@ class CandidatEvaluationGrid extends Model
         'candidat_id',
         'project_id',
         'admin_id',
+        'date_entretien',
+        'criteria_notes',
         'motivation_score',
         'profile_score',
         'viability_score',
         'total_score',
         'comment',
+    ];
+
+    protected $casts = [
+        'date_entretien' => 'date',
+        'criteria_notes' => 'array',
     ];
 
     public function candidat()

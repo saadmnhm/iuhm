@@ -102,8 +102,10 @@ class PrintController extends Controller
         $candidat = \App\Models\Candidat::findOrFail($id);
         $project = \App\Models\ProgrameList::findOrFail($projectId);
         $association = \App\Models\AssociationParameter::getByCategory('general');
-        $evaluation = \App\Models\CandidatEvaluationGrid::where('candidat_id', $id)
+        $evaluation = \App\Models\CandidatEvaluationGrid::with('admin')
+            ->where('candidat_id', $id)
             ->where('project_id', $projectId)
+            ->latest('id')
             ->firstOrFail();
 
         return $this->renderPrintTemplate($request,'livewire.admin.impression.project-evaluation', compact('candidat', 'project', 'evaluation', 'association'),
@@ -150,7 +152,7 @@ class PrintController extends Controller
             ->where('project_id', $projectId)
             ->first();
 
-        $submissions = \App\Models\DynamicFormSubmission::with(['form', 'answers.field'])
+        $submissions = \App\Models\DynamicFormSubmission::with(['form', 'candidat', 'programe', 'answers.field'])
             ->where('candidat_id', $id)
             ->where('programe_id', $projectId)
             ->get();
@@ -159,7 +161,13 @@ class PrintController extends Controller
             ->where('programe_id', $projectId)
             ->first();
 
-        return $this->renderPrintTemplate($request,'livewire.admin.impression.project-folder', compact('candidat', 'project', 'agreement', 'submissions', 'projectSubmission', 'association'),
+        $evaluation = \App\Models\CandidatEvaluationGrid::with('admin')
+            ->where('candidat_id', $id)
+            ->where('project_id', $projectId)
+            ->latest('id')
+            ->first();
+
+        return $this->renderPrintTemplate($request,'livewire.admin.impression.project-folder', compact('candidat', 'project', 'agreement', 'submissions', 'projectSubmission', 'evaluation', 'association'),
             "dossier-complet-{$project->slug}-{$candidat->nom}-{$candidat->prenom}.pdf"
         );
     }

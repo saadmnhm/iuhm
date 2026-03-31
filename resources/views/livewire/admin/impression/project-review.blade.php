@@ -42,9 +42,9 @@ body {
     </div>
 
     <div class="section">
-        <h2>Évaluation du candidat</h2>
-        
-        <p class="rating-p">Note attribuée : {{ $submission->formation_review_rating ?? 'Non spécifiée' }} / 5</p>
+        <h2>Evaluation du candidat</h2>
+
+        <p class="rating-p">Note attribuee : {{ $submission->formation_review_rating ?? 'Non specifiee' }} / 5</p>
 
         <h3>Commentaire / Feedback :</h3>
         <div class="review-box">

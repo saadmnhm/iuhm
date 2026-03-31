@@ -117,7 +117,7 @@
             </td>
             <td style="width: 60%;" class="header-title">
                 <h1>استمارة تقييم التكوين</h1>
-                <p>{{ $project->project_name }}</p>
+                <p>{{ $project->project_name ?? $project->name }}</p>
             </td>
             <td style="width: 20%;"></td>
         </tr>
@@ -140,7 +140,7 @@
 
     @php
         $answers = is_array($submission->formation_review_answers) ? $submission->formation_review_answers : json_decode($submission->formation_review_answers ?? '{}', true) ?? [];
-        
+
         $getAnswerText = function($qKey) use ($answers) {
             $val = $answers[$qKey] ?? null;
             if ($val == 1) return 'غير راضٍ';
@@ -209,7 +209,7 @@
     </table>
 
     <div class="rating-section">
-        التقييم العام للتكوين: 
+        التقييم العام للتكوين:
         <span style="font-size: 18px; color: #1f3864;">{{ $submission->formation_review_rating ?: '-' }} / 5</span>
     </div>
 
