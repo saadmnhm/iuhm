@@ -107,16 +107,16 @@ class FrontAuthController extends Controller
         $validated = $request->validate([
             'nom'          => 'required|string|max:255',
             'prenom'       => 'required|string|max:255',
-            'cin'          => 'required|digits_between:4,30|unique:candidat,cin',
-            'date_naissance' => 'required|date|before:today',
-            'niveau_etude' => 'required|string|max:255',
-            'specialite'   => 'required|string|max:255',
+            'cin'          => 'nullable|digits_between:4,30|unique:candidat,cin',
+            'date_naissance' => 'nullable|date|before:today',
+            'niveau_etude' => 'nullable|string|max:255',
+            'specialite'   => 'nullable|string|max:255',
             'email'        => 'required|email|unique:candidat,email',
             'password'     => 'required|min:6',
-            'address_id'   => 'required|string',
+            'address_id'   => 'nullable|string',
             'address_other'=> 'nullable|string|max:500|required_if:address_id,other',
-            'phone'        => 'required|digits_between:8,20',
-            'gender'       => 'required|in:homme,femme',
+            'phone'        => 'nullable|digits_between:8,20',
+            'gender'       => 'nullable|in:homme,femme',
         ]);
 
         $address = null;
@@ -129,16 +129,16 @@ class FrontAuthController extends Controller
         $candidat = Candidat::create([
             'nom'      => $validated['nom'],
             'prenom'   => $validated['prenom'],
-            'cin'      => $validated['cin'],
+            'cin'      => $validated['cin'] ?? null,
             'login'    => $validated['email'],
             'email'    => $validated['email'],
             'password' => Hash::make($validated['password']),
             'address'  => $address,
-            'phone'    => $validated['phone'],
-            'gender'   => $validated['gender'],
-            'date_naissance' => $validated['date_naissance'],
-            'niveau_etude' => $validated['niveau_etude'],
-            'specialite' => $validated['specialite'],
+            'phone'    => $validated['phone'] ?? null,
+            'gender'   => $validated['gender'] ?? null,
+            'date_naissance' => $validated['date_naissance'] ?? null,
+            'niveau_etude' => $validated['niveau_etude'] ?? null,
+            'specialite' => $validated['specialite'] ?? null,
             'is_active'=> true,
         ]);
 
