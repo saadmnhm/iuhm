@@ -9,7 +9,7 @@
     <style>
         body {
             background: #f6f5f7;
-            font-family: sans-serif;
+            font-family: "Manrope", sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;

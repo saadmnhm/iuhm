@@ -14,6 +14,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
+
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
@@ -40,7 +42,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-[#FBF8FD] ">
     <div class="flex min-h-screen">
         <!-- Sidebar -->
         @include('livewire.admin.aside')

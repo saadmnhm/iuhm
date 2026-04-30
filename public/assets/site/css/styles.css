@@ -1,6 +1,6 @@
 body{
     background-color: #f8f9fa;
-    font-family: "Roboto", sans-serif;
+    font-family: "Manrope", sans-serif;
 }
 .disc{
     display: list-item;
@@ -81,7 +81,7 @@ header{
     text-align: center;
     color: #2f5496;
     h1{
-          font-family: "EB Garamond", serif !important;
+          font-family: "Manrope", sans-serif;
           font-size: 3.5rem;
 
     }
