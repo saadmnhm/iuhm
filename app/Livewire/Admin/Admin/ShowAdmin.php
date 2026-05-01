@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Livewire\Admin\User;
+namespace App\Livewire\Admin\Admin;
 
 use App\Models\User;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 
 #[Layout('layouts.admin', ['header' => 'View Admin Details'])]
-class ShowUser extends Component
+class ShowAdmin extends Component
 {
     public $user;
 

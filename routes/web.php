@@ -31,7 +31,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 
         Route::get('/users', \App\Livewire\Admin\User\UserManagement::class)->name('users.index')->middleware('module:users');
-        Route::get('/candidats', \App\Livewire\Admin\Candidat\CandidatManagement::class)->name('candidats.index')->middleware('module:candidats');
         Route::get('/candidats/{id}', \App\Livewire\Admin\Candidat\ShowCandidat::class)->name('candidats.show')->middleware('module:candidats');
         Route::get('/candidats/{id}/edit', \App\Livewire\Admin\Candidat\EditCandidat::class)->name('candidats.edit')->middleware('module:candidats');
         Route::get('/candidats/{id}/print/fiche_inscription', [PrintController::class, 'fiche_inscription'])->name('candidats.print.fiche_inscription')->middleware('module:candidats');
@@ -42,9 +41,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/candidats/{id}/project/{projectId}/print/review', [PrintController::class, 'projectReview'])->name('project.print.review')->middleware('module:candidats');
         Route::get('/candidats/{id}/project/{projectId}/print/folder', [PrintController::class, 'printFolder'])->name('project.print.folder')->middleware('module:candidats');
         Route::get('/formulaire/submission/{id}/print', [PrintController::class, 'printFormulaire'])->name('formulaire.print.submission')->middleware('module:candidats');
-        Route::get('/users/create', \App\Livewire\Admin\User\CreateUser::class)->name('users.create')->middleware('module:users');
-        Route::get('/users/{id}', \App\Livewire\Admin\User\ShowUser::class)->name('users.show')->middleware('module:users');
-        Route::get('/users/{id}/edit', \App\Livewire\Admin\User\EditUser::class)->name('users.edit')->middleware('module:users');
+        Route::get('/users/create', \App\Livewire\Admin\Admin\CreateAdmin::class)->name('users.create')->middleware('module:users');
+        Route::get('/users/{id}', \App\Livewire\Admin\Admin\ShowAdmin::class)->name('users.show')->middleware('module:users');
+        Route::get('/users/{id}/edit', \App\Livewire\Admin\Admin\EditAdmin::class)->name('users.edit')->middleware('module:users');
         Route::get('/addresses', \App\Livewire\Admin\Address\AddressManager::class)->name('addresses.index')->middleware('module:addresses');
         Route::get('/activity-logs', \App\Livewire\Admin\Logs\ActivityLogs::class)->name('activity.logs')->middleware('module:activity_logs');
         Route::get('/dev-tools', \App\Livewire\Admin\Tools\DevTools::class)->name('dev.tools')->middleware('module:dev_tools');

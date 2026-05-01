@@ -80,7 +80,10 @@ class User extends Authenticatable implements MustVerifyEmail
         // Custom roles: check DB (cached)
         return \App\Models\Role::hasAdminAccess($this->role);
     }
-
+    public function candidat()
+    {
+        return $this->hasOne(Candidat::class);
+    }
     public function isActive(): bool
     {
         return $this->is_active ?? true;

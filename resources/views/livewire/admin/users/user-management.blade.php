@@ -1,184 +1,341 @@
-<div>
+<div x-data="{ tab: 'users' }" x-cloak>
+    <!-- Page Header -->
+     @php
+     
+        // echo '<pre>';
+        // print_r($candidat);
+        // echo '</pre>';
+        // exit;
+
+     @endphp
+    <div class="mb-8">
+        <div class="text-m font-bold text-[#066E1B] uppercase tracking-wide mb-2">SYSTEM CONFIGURATION</div>
+        <div class="flex justify-between items-start mb-6">
+            <div>
+                <h1 class="text-[36px] font-bold text-[#04103A]">Gestion des accès utilisateur</h1>
+                <p class="text-gray-600 text-[18px] mt-2">Gérer les hiérarchies organisationnelles en créant des autorisations granulaires pour les membres de l'équipe au sein de l'écosystème Initiative Urbaine</p>
+            </div>
+            @if(Auth::user()->isSuperAdmin() || Auth::user()->isAdmin())
+            <button wire:click="openCreateModal" class="w-65 h-12.5 text-center p-2 content-center bg-[#1B264F] text-white text-[16px] font-normal rounded-full hover:bg-gray-800 transition">
+                <i class="ri-shield-user-line text-[19px] relative right-1" ></i> Créer un utilisateur
+            </button>
+            @endif
+        </div>
+    </div>
+
     @if (session()->has('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6">
-            {{ session('success') }}
+        <div 
+            x-data="{ show: true }" 
+            x-init="setTimeout(() => show = false, 3000)" 
+            x-show="show"
+            x-transition
+            class="fixed top-5 right-5 z-50"
+        >
+            <div class="flex items-center gap-3 bg-green-500 text-white px-5 py-3 rounded-xl shadow-lg">
+                <i class="ri-checkbox-circle-fill text-xl"></i>
+                <span>{{ session('success') }}</span>
+                <button @click="show = false" class="ml-2 text-white hover:opacity-70">
+                    ✕
+                </button>
+            </div>
         </div>
     @endif
 
     @if (session()->has('error'))
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
-            {{ session('error') }}
+        <div 
+            x-data="{ show: true }" 
+            x-init="setTimeout(() => show = false, 3000)" 
+            x-show="show"
+            x-transition
+            class="fixed top-5 right-5 z-50"
+        >
+            <div class="flex items-center gap-3 bg-red-500 text-white px-5 py-3 rounded-xl shadow-lg">
+                <i class="ri-error-warning-fill text-xl"></i>
+                <span>{{ session('error') }}</span>
+                <button @click="show = false" class="ml-2 text-white hover:opacity-70">
+                    ✕
+                </button>
+            </div>
         </div>
     @endif
 
     <!-- Statistics Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-gray-500 text-sm font-medium">Total Admin</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ $statistics['total_users'] }}</p>
-                </div>
-                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
-                    </svg>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        @foreach($stat_section as $stat)
+            <div class="bg-white rounded-[30px] shadow-sm h-32 p-6 border border-gray-100">
+                <div class="flex justify-between  items-start">
+                    <div>
+                        <p class="text-gray-500 text-[18px] font-bold ">{{ $stat['label'] }}</p>
+                        <p class="text-3xl font-bold text-[#04103A] mt-5">{{ $stat['value'] }}</p>
+                    </div>
+                    <div class="w-12 h-12 bg-[#9af89330] rounded-lg flex items-center justify-center">
+                        <i class="{{ $stat['icon'] }} text-[#066E1B] text-[21px]"></i>
+                    </div>
                 </div>
             </div>
-        </div>
+        @endforeach
 
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-gray-500 text-sm font-medium">Super Admins</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ $statistics['super_admins'] }}</p>
-                </div>
-                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                    </svg>
-                </div>
-            </div>
-        </div>
 
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-gray-500 text-sm font-medium">Admins</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ $statistics['admins'] }}</p>
-                </div>
-                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-            <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-gray-500 text-sm font-medium">Regular Users</p>
-                    <p class="text-3xl font-bold text-gray-900 mt-2">{{ $statistics['regular_users'] }}</p>
-                </div>
-                <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                    <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                    </svg>
-                </div>
-            </div>
-        </div>
     </div>
 
-    <!-- Users Cards -->
+    <!-- Users Table -->
     <div>
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6">
-            <div class="px-6 py-4 border-b border-gray-100 flex flex-wrap items-center gap-3">
-                <h3 class="text-lg font-semibold text-gray-900 mr-auto">All Admin</h3>
-
-                {{-- Search --}}
-                <div class="relative">
-                    <i class="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-                    <input type="text" wire:model.live="search" placeholder="Rechercher..."
-                           class="pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-400 outline-none w-52">
-                </div>
-
-                {{-- Role filter --}}
-                <select wire:model.live="roleFilter" class="border border-gray-300 rounded-lg text-sm py-2 px-3">
-                    <option value="all">Tous les rôles</option>
-                    @foreach($allRoles as $r)
-                    <option value="{{ $r->name }}">{{ $r->label }}</option>
-                    @endforeach
-                </select>
-
-                @if(Auth::user()->isSuperAdmin())
-                <a href="{{ route('admin.roles.index') }}"
-                   class=" px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 text-center">
-                    <i class="ri-shield-user-line"></i> Gérer les Rôles
-                </a>
-                @endif
-
-                @if(Auth::user()->isSuperAdmin() || Auth::user()->isAdmin())
-                <a href="{{ route('admin.users.create') }}" class="flex items-center gap-2 px-4 py-2 bg-green-logo text-white text-sm font-semibold rounded-lg transition">
-                    <i class="ri-user-add-line"></i> Créer une Admin
-                </a>
-                @endif
+        <!-- Tabs -->
+        <div class="mb-10 rounded-t-xl border-gray-100">
+            <div class="flex border-b border-gray-100 px-6">
+                <button @click.prevent="tab = 'users'" x-bind:class="tab === 'users' ? 'px-6 py-4 text-[18px] font-bold text-[#172554] border-b-2 border-green-600' : 'px-6 py-4 text-[18px] font-bold text-[#172554] border-b-2 border-transparent hover:text-gray-700'">
+                    Liste des utilisateurs IUHM
+                </button>
+                <button @click.prevent="tab = 'beneficiaries'" x-bind:class="tab === 'beneficiaries' ? 'px-6 py-4 text-[18px] font-bold text-[#172554] border-b-2 border-green-600' : 'px-6 py-4 text-[18px] font-bold text-[#172554] border-b-2 border-transparent hover:text-gray-700'">
+                    Liste des Bénéficiaires
+                </button>
+                <button @click.prevent="tab = 'logs'" x-bind:class="tab === 'logs' ? 'px-6 py-4 text-[18px] font-bold text-[#172554] border-b-2 border-green-600' : 'px-6 py-4 text-[18px] font-bold text-[#172554] border-b-2 border-transparent hover:text-gray-700'">
+                    Logs d'audit
+                </button>
             </div>
-
         </div>
 
-        <!-- Cards Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            @forelse($users as $user)
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200">
-                <div class="p-6">
-                    <!-- User Avatar and Info -->
-                    <div class="flex items-center mb-4 pb-4 border-b border-gray-100">
-                        <div class="w-14 h-14 rounded-full bg-green-logo flex items-center justify-center text-white text-xl font-semibold mr-4">
-                            {{ strtoupper(substr($user->name, 0, 1)) }}
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="text-base font-semibold text-gray-900 truncate">{{ $user->name }}</div>
-                            <div class="text-sm text-gray-500 truncate">{{ $user->email }}</div>
-                        </div>
-                    </div>
+        <div x-show="tab === 'users'" class="space-y-4">
+            <div class=" rounded-b-xl overflow-hidden ">
+                <div class="px-6 py-4 flex justify-between gap-3">
+                    <select wire:model.live="adminRoleFilter" class="h-11 border border-gray-300 rounded-full text-sm py-2 px-4 bg-white">
+                        <option value="all">Tous les rôles</option>
+                        @foreach($allRoles as $role)
+                            <option value="{{ $role->name }}">{{ $role->label }}</option>
+                        @endforeach
+                    </select>
 
-                    <!-- Role Badge -->
-                    <div class="mb-4">
-                        @php
-                            $roleModel = $allRoles->firstWhere('name', $user->role);
-                            $cls = \App\Models\Role::colorClasses($roleModel?->color ?? 'gray');
-                        @endphp
-                        <span class="px-3 py-1 text-xs font-medium rounded-full {{ $cls['badge'] }}">
-                            {{ $roleModel?->label ?? ucfirst(str_replace('_', ' ', $user->role)) }}
-                        </span>
-                        @if(!($user->is_active ?? true))
-                        <span class="px-3 py-1 text-xs font-medium rounded-full bg-red-100 text-red-800 ml-2">
-                            Disabled
-                        </span>
-                        @endif
-                    </div>
-
-                    <!-- Join Date -->
-                    <div class="flex items-center text-sm text-gray-500 mb-4">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                        </svg>
-                        Joined {{ $user->created_at->format('M d, Y') }}
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="flex gap-2">
-                        <a href="{{ route('admin.users.show', $user->id) }}" 
-                           class="flex-1 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 text-center">
-                            View
-                        </a>
-                        @if(Auth::user()->isSuperAdmin())
-                        <button wire:click="openDeleteModal({{ $user->id }})"
-                            class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 text-center">
-                            Delete
-                        </button>
-                        @endif
+                    <div class="group relative w-10 hover:w-72 focus-within:w-72 overflow-hidden transition-all duration-300">
+                        <i class="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                           <input type="text"
+                               wire:model.live="adminSearch"
+                               placeholder="Rechercher un administrateur..."
+                               class="h-11 w-full pl-10 pr-4 border border-gray-300 rounded-full text-sm   outline-none bg-white">
                     </div>
                 </div>
-            </div>
-            @empty
-            <div class="col-span-full">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
-                    <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
-                    </svg>
-                    <p class="text-gray-500">No users found</p>
+
+                <div class="px-6 py-4 flex items-center justify-between gap-3 text-sm text-gray-600">
+                    <div>
+                        Affichage de {{ $users->firstItem() ?? 0 }} à {{ $users->lastItem() ?? 0 }} sur {{ $users->total() }} utilisateurs
+                    </div>
+                    <div>{{ $users->links('vendor.pagination.circle') }}</div>
+                </div>
+
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-[#04103A] border-b border-gray-100">
+                            <th class="px-6 py-5 text-left text-xs font-semibold text-white uppercase rounded-tl-[10px]">ID</th>
+                            <th class="px-6 py-5 text-left text-xs font-semibold text-white uppercase" width="10%">E-MAIL</th>
+                            <th class="px-6 py-5 text-left text-xs font-semibold text-white uppercase">PRÉNOM</th>
+                            <th class="px-6 py-5 text-left text-xs font-semibold text-white uppercase">CRÉATION/MISE À JOUR</th>
+                            <th class="px-6 py-5 text-left text-xs font-semibold text-white uppercase">RÔLE</th>
+                            <th class="px-6 py-5 text-left text-xs font-semibold text-white uppercase">STATUT</th>
+                            <th class="px-6 py-5 text-center text-xs font-semibold text-white uppercase rounded-tr-[10px]">ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        @if($users->count() > 0)
+                            @foreach($users as $user)
+                                <tr class="hover:bg-gray-200 bg-gray-100 transition-colors font-bold" style="border-bottom: 10px solid #fbf8fd;">
+                                    <td class="px-6 py-4 text-sm text-[#04103A]">{{ $user->id }}</td>
+                                    <td class="px-6 py-4 text-sm text-[#04103A]">{{ $user->email }}</td>
+                                    <td class="px-6 py-4 text-sm text-[#04103A]">
+                                        <div>{{ $user->name }}</div>
+                                        <div class="text-xs text-[#04103A] mt-1">{{ $user->first_name ?? $user->name }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-[#04103A]">
+                                        <div>{{ $user->created_at->format('d/m/Y') }}</div>
+                                        <div class="text-xs text-[#04103A] mt-1">{{ $user->updated_at->format('d/m/Y') }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-[#04103A]">
+                                        @php
+                                            $roleModel = $allRoles->firstWhere('name', $user->role);
+                                            $cls = \App\Models\Role::colorClasses($roleModel?->color ?? 'gray');
+                                        @endphp
+                                        <span class="px-3 py-1 text-xs rounded-full {{ $cls['badge'] }}">
+                                            {{ $roleModel?->label ?? ucfirst(str_replace('_', ' ', $user->role)) }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-[#04103A]">
+                                        @if($user->is_active ?? true)
+                                            <span class="inline-flex items-center gap-2">
+                                                <span class="w-2 h-2 bg-green-600 rounded-full"></span>
+                                                <span class="text-green-600">Active</span>
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center gap-2">
+                                                <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+                                                <span class="text-gray-500">Deactivated</span>
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-center">
+                                        <div class="flex justify-center gap-2">
+                                            <button wire:click="openEditModal({{ $user->id }}, 'admin')"
+                                               class="p-2 text-gray-600 hover:text-[#04103A] hover:bg-gray-100 rounded-lg transition"
+                                               title="Edit">
+                                                <i class="ri-pencil-line"></i>
+                                            </button>
+                                            @if(Auth::user()->isSuperAdmin())
+                                                <button wire:click="openDeleteModal({{ $user->id }})"
+                                                    class="p-2 text-red-600 hover:text-red-900 hover:bg-red-100 rounded-lg transition"
+                                                    title="Delete">
+                                                    <i class="ri-delete-bin-line"></i>
+                                                </button>
+                                            @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            @else
+                            <tr>
+                                <td colspan="6">
+                                    <div class="p-12 text-center">
+                                        <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                        </svg>
+                                        <p class="text-gray-500">Aucun utilisateur trouvé</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endif
+                        </tbody>
+                    </table>
+
+
+                <div class="px-6 py-4 flex items-center justify-between gap-3 text-sm text-gray-600">
+                    <div>
+                        Affichage de {{ $users->firstItem() ?? 0 }} à {{ $users->lastItem() ?? 0 }} sur {{ $users->total() }} utilisateurs
+                    </div>
+                    <div>{{ $users->links('vendor.pagination.circle') }}</div>
                 </div>
             </div>
-            @endforelse
         </div>
 
-        <!-- Pagination -->
-        <div class="mt-6">
-            {{ $users->links() }}
+        <div x-show="tab === 'beneficiaries'" class="space-y-4">
+            <div class=" rounded-b-xl overflow-hidden ">
+                <div class="px-6 py-4 flex justify-between gap-3">
+
+
+                    <select wire:model.live="candidatStatusFilter" class="h-11 border border-gray-300 rounded-full text-sm py-2 px-4 bg-white">
+                        <option value="all">Tous les statuts</option>
+                        <option value="active">Actif</option>
+                        <option value="inactive">Désactivé</option>
+                    </select>
+
+                    <div class="group relative w-10 hover:w-72 focus-within:w-72 overflow-hidden transition-all duration-300">
+                        <i class="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                           <input type="text"
+                               wire:model.live="candidatSearch"
+                               placeholder="Rechercher un bénéficiaire..."
+                               class="h-11 w-full pl-10 pr-4 border border-gray-300 rounded-full text-sm  outline-none bg-white">
+                    </div>
+                </div>
+
+                <div class="px-6 py-4 flex items-center justify-between gap-3 text-sm text-gray-600">
+                    <div>
+                        Affichage de {{ $candidat->firstItem() ?? 0 }} à {{ $candidat->lastItem() ?? 0 }} sur {{ $candidat->total() }} bénéficiaires
+                    </div>
+                    <div>{{ $candidat->links('vendor.pagination.circle') }}</div>
+                </div>
+
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-[#04103A] border-b border-gray-100">
+                            <th class="px-6 py-5 text-left text-xs font-semibold text-white uppercase rounded-tl-[10px]">ID</th>
+                            <th class="px-6 py-5 text-left text-xs font-semibold text-white uppercase" width="10%">E-MAIL</th>
+                            <th class="px-6 py-5 text-left text-xs font-semibold text-white uppercase">PRÉNOM</th>
+                            <th class="px-6 py-5 text-left text-xs font-semibold text-white uppercase">CRÉATION/MISE À JOUR</th>
+                            <th class="px-6 py-5 text-left text-xs font-semibold text-white uppercase">MATRICULE</th>
+                            <th class="px-6 py-5 text-left text-xs font-semibold text-white uppercase">STATUT</th>
+                            <th class="px-6 py-5 text-center text-xs font-semibold text-white uppercase rounded-tr-[10px]">ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        @if($candidat->count() > 0)
+                            @foreach($candidat as $item)
+                                <tr class="hover:bg-gray-200 bg-gray-100 transition-colors text-[#04103A] font-bold" style="border-bottom: 15px solid #fbf8fd;">
+                                    <td class="px-6 py-4 text-sm">{{ $item->id }}</td>
+                                    <td class="px-6 py-4 text-sm">{{ $item->email }}</td>
+                                    <td class="px-6 py-4 text-sm">
+                                        <div>{{ $item->nom }}</div>
+                                        <div class="text-xs mt-1">{{ $item->prenom }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm">
+                                        <div>{{ $item->created_at->format('d/m/Y') }}</div>
+                                        <div class="text-xs mt-1">{{ $item->updated_at->format('d/m/Y') }}</div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm">
+                                        {{ $item->matricule ?? 'N/A' }}
+                                    </td>
+                                    <td class="px-6 py-4 text-sm">
+                                        @if($item->is_active ?? true)
+                                            <span class="inline-flex items-center gap-2">
+                                                <span class="w-2 h-2 bg-green-600 rounded-full"></span>
+                                                <span class="text-green-600">Active</span>
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center gap-2">
+                                                <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
+                                                <span class="text-gray-500">Deactivated</span>
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-center">
+                                        <div class="flex justify-center gap-2">
+                                             <button wire:click="openEditModal({{ $item->id }}, 'candidat')"
+                                               class="p-2 text-gray-600 hover:text-[#04103A] hover:bg-gray-100 rounded-lg transition"
+                                               title="Edit">
+                                                <i class="ri-pencil-line"></i>
+                                            </button>
+                                            </button>
+                                            @if(Auth::user()->isSuperAdmin())
+                                                <button wire:click="openDeleteModal({{ $item->id }})"
+                                                    class="p-2 text-red-600 hover:text-red-900 hover:bg-red-100 rounded-lg transition"
+                                                    title="Delete">
+                                                    <i class="ri-delete-bin-line"></i>
+                                                </button>
+                                            @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            @else
+                            <tr>
+                                <td colspan="6">
+                                    <div class="p-12 text-center">
+                                        <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                        </svg>
+                                        <p class="text-gray-500">Aucun bénéficiaire trouvé</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            @endif
+
+                        </tbody>
+                    </table>
+
+                <div class="px-6 py-4 flex items-center justify-between gap-3 text-sm text-gray-600">
+                    <div>
+                        Affichage de {{ $candidat->firstItem() ?? 0 }} à {{ $candidat->lastItem() ?? 0 }} sur {{ $candidat->total() }} bénéficiaires
+                    </div>
+                    <div>{{ $candidat->links('vendor.pagination.circle') }}</div>
+                </div>
+            </div>
         </div>
+
+        <div x-show="tab === 'logs'" class="border border-gray-100 rounded-b-xl bg-white p-6">
+            <div class="text-gray-700">
+                <h3 class="text-lg font-semibold mb-2">Logs d'audit</h3>
+                <p class="text-sm text-gray-500">Contenu des logs d'audit disponible ici (coming soon).</p>
+            </div>
+        </div>
+
     </div>
+
+    {{-- include cleaned modal to avoid duplicates and ensure correct bindings --}}
+    @include('livewire.admin.users.user-management-modal-clean')
 
     <!-- Delete Confirmation Modal -->
     <div x-data="{ open: @entangle('showDeleteModal').live }" x-cloak>
@@ -216,7 +373,7 @@
                                       d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                             </svg>
                         </div>
-                        <h3 class="text-lg font-semibold text-gray-900">Delete Admin</h3>
+                        <h3 class="text-lg font-semibold text-[#04103A]">Delete Admin</h3>
                     </div>
                     <button @click="open = false" class="text-gray-400 hover:text-gray-600 transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -229,7 +386,7 @@
                 <div class="px-6 py-5">
                     <p class="text-gray-600 text-sm">
                         Are you sure you want to delete
-                        <span class="font-semibold text-gray-900">{{ $selectedUser?->name ?? 'this user' }}</span>?
+                        <span class="font-semibold text-[#04103A]">{{ $selectedUser?->name ?? 'this user' }}</span>?
                         This action is permanent and cannot be undone.
                     </p>
                 </div>
@@ -238,7 +395,7 @@
                 <div class="flex justify-end gap-3 px-6 py-4 bg-gray-50 border-t border-gray-100">
                     <button
                         @click="open = false"
-                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-200 transition-colors"
                     >
                         Cancel
                     </button>

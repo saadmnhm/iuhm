@@ -126,4 +126,9 @@ class Candidat extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(SupportTicket::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

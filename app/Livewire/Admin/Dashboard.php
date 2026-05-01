@@ -73,10 +73,12 @@ class Dashboard extends Component
             $chartData[] = $monthlyData[$i] ?? 0;
         }
             
-        // submissions per  project id
-        //     echo "<pre>";
-        //     print_r($matricule_null);
-        //     echo "</pre>";
+        $menu = [
+            ['label' => 'Admin Console', 'icon' => 'ri-dashboard-line', 'route' =>  route('admin.users.index')],
+            ['label' => 'Gestion des Projets', 'icon' => 'ri-network-line', 'route' => route('admin.programe')],
+            ['label' => 'Gestion des Submissions', 'icon' => 'ri-briefcase-line', 'route' => route('admin.all.submissions')],
+            ['label' => 'Other', 'icon' => 'ri-list-check-2', 'route' => '#'],
+        ];
 
         return view('livewire.admin.dashboard', [
             'statistics' => $statistics,
@@ -84,6 +86,7 @@ class Dashboard extends Component
             'userSubmissions' => $projectSubmissions,
             'matricule_null' => $matricule_null,
             'admins' => User::whereIn('role', ['admin', 'super_admin'])->orderBy('name')->get(['id', 'name']),
+            'menu' => $menu,
         ])->layout('layouts.admin', ['header' => 'Dashboard']);
     }
     

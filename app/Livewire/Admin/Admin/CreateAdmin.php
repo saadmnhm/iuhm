@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Admin\User;
+namespace App\Livewire\Admin\Admin;
 
 use App\Models\Role;
 use App\Models\User;
@@ -9,7 +9,7 @@ use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Hash;
 
 #[Layout('layouts.admin', ['header' => 'Create Admin'])]
-class CreateUser extends Component
+class CreateAdmin extends Component
 {
     public $name;
     public $email;
