@@ -129,7 +129,7 @@
                             
                             {{-- Label --}}
                             <span class="text-sm font-medium text-gray-600">
-                                {{ $is_active ? 'Uncheck to create a disabled account' : 'Désactivé' }}
+                                {{ $is_active ? 'Uncheck to create a disabled account' : 'Check to create a enabled account' }}
                             </span>
 
 

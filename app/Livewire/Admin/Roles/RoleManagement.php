@@ -5,12 +5,23 @@ namespace App\Livewire\Admin\Roles;
 use App\Models\AdminActivityLog;
 use App\Models\Role;
 use App\Models\RolePermission;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Livewire\Component;
+use Livewire\WithPagination;
 use Illuminate\Support\Str;
 
 class RoleManagement extends Component
 {
+    use WithPagination;
+
+    // ── Page state ────────────────────────────────────────────────────────────
+    public string $tab = 'roles';
+    public string $logsSearch = '';
+    public string $logsActionFilter = 'all';
+    public string $logsDateFrom = '';
+    public string $logsDateTo = '';
+
     // ── Create / Edit modal ───────────────────────────────────────────────────
     public bool    $showRoleModal   = false;
     public ?int    $editingRoleId   = null;
@@ -19,6 +30,14 @@ class RoleManagement extends Component
     public string  $roleLabel       = '';
     public string  $roleColor       = 'blue';
     public bool    $canAccessAdmin  = true;
+    public int     $roleModalStep   = 1;
+    public array   $roleWizardPerms = [];
+
+    // ── Delete modal ─────────────────────────────────────────────────────────
+    public bool    $showDeleteModal    = false;
+    public ?int    $deletingRoleId     = null;
+    public string  $deletingRoleLabel  = '';
+    public bool    $deletingRoleSystem = false;
 
     // ── Permissions modal ─────────────────────────────────────────────────────
     public bool    $showPermsModal    = false;
@@ -35,43 +54,98 @@ class RoleManagement extends Component
 
     // ── Role CRUD ─────────────────────────────────────────────────────────────
 
+    public function updatingLogsSearch(): void
+    {
+        $this->resetPage('logsPage');
+    }
+
+    public function updatingLogsActionFilter(): void
+    {
+        $this->resetPage('logsPage');
+    }
+
+    public function updatingLogsDateFrom(): void
+    {
+        $this->resetPage('logsPage');
+    }
+
+    public function updatingLogsDateTo(): void
+    {
+        $this->resetPage('logsPage');
+    }
+
+    public function updatingTab(): void
+    {
+        $this->resetPage('rolesPage');
+        $this->resetPage('logsPage');
+    }
+
+    public function setTab(string $tab): void
+    {
+        $this->tab = $tab;
+    }
+
     public function openCreate(): void
     {
-        $this->reset(['editingRoleId', 'roleName', 'roleLabel', 'successMsg', 'errorMsg']);
+        $this->reset(['editingRoleId', 'roleName', 'roleLabel', 'successMsg', 'errorMsg', 'roleWizardPerms']);
+        $this->resetValidation();
         $this->editingIsSystem = false;
         $this->roleColor       = 'blue';
         $this->canAccessAdmin  = true;
+        $this->roleModalStep   = 1;
         $this->showRoleModal   = true;
     }
 
     public function updatedRoleLabel(): void
     {
-        // Auto-generate technical name from label using underscores
-        $slug = Str::slug($this->roleLabel, '_');
-        $this->roleName = $slug;
+        if ($this->editingIsSystem && $this->editingRoleId) {
+            return;
+        }
+
+        $this->roleName = Str::slug($this->roleLabel, '_');
     }
 
     public function openEdit(int $id): void
     {
-        $role = Role::findOrFail($id);
+        $role = Role::with('permissions')->findOrFail($id);
         $this->editingRoleId   = $id;
         $this->editingIsSystem = $role->is_system;
         $this->roleName        = $role->name;
         $this->roleLabel       = $role->label;
         $this->roleColor       = $role->color;
         $this->canAccessAdmin  = $role->can_access_admin;
+        $this->roleWizardPerms = $role->permissions->pluck('module_key')->toArray();
+        $this->roleModalStep   = 1;
         $this->successMsg      = $this->errorMsg = null;
+        $this->resetValidation();
         $this->showRoleModal   = true;
     }
 
-    public function saveRole(): void
+    public function nextRoleStep(): void
     {
-        // Ensure technical name is generated if empty
+        if ($this->roleModalStep === 1) {
+            $this->prepareTechnicalName();
+            $this->validateRoleWizardStep();
+            $this->roleModalStep = 2;
+            return;
+        }
+
+        if ($this->roleModalStep === 2) {
+            $this->roleModalStep = 3;
+        }
+    }
+
+    public function previousRoleStep(): void
+    {
+        $this->roleModalStep = max(1, $this->roleModalStep - 1);
+    }
+
+    private function prepareTechnicalName(): void
+    {
         if (empty(trim($this->roleName)) && !empty(trim($this->roleLabel))) {
             $this->roleName = Str::slug($this->roleLabel, '_');
         }
 
-        // Make roleName unique if necessary
         $original = $this->roleName;
         $i = 1;
         while (Role::where('name', $this->roleName)
@@ -80,7 +154,10 @@ class RoleManagement extends Component
             $this->roleName = $original . '_' . $i;
             $i++;
         }
+    }
 
+    private function validateRoleWizardStep(): void
+    {
         $uniqueRule = 'unique:roles,name' . ($this->editingRoleId ? ",{$this->editingRoleId}" : '');
         $this->validate([
             'roleName'  => ['required', 'regex:/^[a-z0-9_]+$/', 'max:50', $uniqueRule],
@@ -92,37 +169,83 @@ class RoleManagement extends Component
             'roleName.unique'   => 'Ce nom de rôle existe déjà.',
             'roleLabel.required'=> "Le nom d'affichage est obligatoire.",
         ]);
-
-        if ($this->editingRoleId) {
-            $role = Role::findOrFail($this->editingRoleId);
-            $data = ['label' => $this->roleLabel, 'color' => $this->roleColor, 'can_access_admin' => $this->canAccessAdmin];
-            if (!$role->is_system) {
-                $data['name'] = $this->roleName;
-            }
-            $role->update($data);
-            Role::clearPermissionCache($role->name);
-            AdminActivityLog::log('role_updated', "Rôle modifié: {$role->label}", Role::class, $role->id);
-        } else {
-            $role = Role::create([
-                'name'             => $this->roleName,
-                'label'            => $this->roleLabel,
-                'color'            => $this->roleColor,
-                'can_access_admin' => $this->canAccessAdmin,
-                'is_system'        => false,
-            ]);
-            AdminActivityLog::log('role_created', "Nouveau rôle créé: {$role->label}", Role::class, $role->id);
-        }
-
-        $this->showRoleModal = false;
-        $this->successMsg    = 'Rôle enregistré avec succès.';
     }
 
-    public function deleteRole(int $id): void
+    public function saveRole(): void
+    {
+        $this->prepareTechnicalName();
+        $this->validateRoleWizardStep();
+
+        DB::transaction(function () {
+            if ($this->editingRoleId) {
+                $role = Role::with('permissions')->findOrFail($this->editingRoleId);
+                $previousName = $role->name;
+                $data = ['label' => $this->roleLabel, 'color' => $this->roleColor, 'can_access_admin' => $this->canAccessAdmin];
+
+                if (!$role->is_system) {
+                    $data['name'] = $this->roleName;
+                }
+
+                $role->update($data);
+
+                if (!$role->is_system && $previousName !== $this->roleName) {
+                    RolePermission::withTrashed()->where('role_name', $previousName)->update(['role_name' => $this->roleName]);
+                    Role::clearPermissionCache($previousName);
+                }
+
+                RolePermission::withTrashed()->where('role_name', $this->roleName)->forceDelete();
+                foreach ($this->roleWizardPerms as $key) {
+                    RolePermission::create(['role_name' => $this->roleName, 'module_key' => $key]);
+                }
+
+                Role::clearPermissionCache($this->roleName);
+                AdminActivityLog::log('role_updated', "Rôle modifié: {$role->label}", Role::class, $role->id);
+            } else {
+                $role = Role::create([
+                    'name'             => $this->roleName,
+                    'label'            => $this->roleLabel,
+                    'color'            => $this->roleColor,
+                    'can_access_admin' => $this->canAccessAdmin,
+                    'is_system'        => false,
+                ]);
+
+                foreach ($this->roleWizardPerms as $key) {
+                    RolePermission::create(['role_name' => $this->roleName, 'module_key' => $key]);
+                }
+
+                Role::clearPermissionCache($this->roleName);
+                AdminActivityLog::log('role_created', "Nouveau rôle créé: {$role->label}", Role::class, $role->id);
+            }
+        });
+
+        $this->showRoleModal = false;
+        $this->roleModalStep = 1;
+        $this->successMsg    = 'Rôle enregistré avec succès.';
+        $this->errorMsg      = null;
+    }
+
+    public function openDeleteModal(int $id): void
     {
         $role = Role::findOrFail($id);
+        $this->deletingRoleId     = $role->id;
+        $this->deletingRoleLabel  = $role->label;
+        $this->deletingRoleSystem = $role->is_system;
+        $this->showDeleteModal    = true;
+        $this->errorMsg           = null;
+        $this->successMsg         = null;
+    }
+
+    public function deleteRole(): void
+    {
+        if (!$this->deletingRoleId) {
+            return;
+        }
+
+        $role = Role::findOrFail($this->deletingRoleId);
 
         if ($role->is_system) {
             $this->errorMsg = 'Impossible de supprimer un rôle système.';
+            $this->showDeleteModal = false;
             return;
         }
 
@@ -131,9 +254,13 @@ class RoleManagement extends Component
         Role::clearPermissionCache($role->name);
         $role->delete();
 
-        AdminActivityLog::log('role_deleted', "Rôle supprimé: {$label}", Role::class, $id);
-        $this->successMsg = "Rôle \"{$label}\" supprimé.";
-        $this->errorMsg   = null;
+        AdminActivityLog::log('role_deleted', "Rôle supprimé: {$label}", Role::class, $role->id);
+        $this->showDeleteModal    = false;
+        $this->deletingRoleId     = null;
+        $this->deletingRoleLabel  = '';
+        $this->deletingRoleSystem = false;
+        $this->successMsg         = "Rôle \"{$label}\" supprimé.";
+        $this->errorMsg           = null;
     }
 
     // ── Permissions ───────────────────────────────────────────────────────────
@@ -171,8 +298,47 @@ class RoleManagement extends Component
 
     public function render(): View
     {
+        $roles = Role::withCount('permissions')
+            ->with('permissions')
+            ->orderByDesc('is_system')
+            ->orderBy('name')
+            ->paginate(10, ['*'], 'rolesPage');
+
+        $logs = null;
+
+        if ($this->tab === 'logs') {
+            $logsQuery = AdminActivityLog::with('user')->latest();
+
+            if ($this->logsSearch !== '') {
+                $logsQuery->where(function ($query) {
+                    $query->where('description', 'like', '%' . $this->logsSearch . '%')
+                        ->orWhere('action', 'like', '%' . $this->logsSearch . '%')
+                        ->orWhereHas('user', function ($userQuery) {
+                            $userQuery->where('name', 'like', '%' . $this->logsSearch . '%')
+                                ->orWhere('email', 'like', '%' . $this->logsSearch . '%');
+                        });
+                });
+            }
+
+            if ($this->logsActionFilter !== 'all') {
+                $logsQuery->where('action', $this->logsActionFilter);
+            }
+
+            if ($this->logsDateFrom !== '') {
+                $logsQuery->whereDate('created_at', '>=', $this->logsDateFrom);
+            }
+
+            if ($this->logsDateTo !== '') {
+                $logsQuery->whereDate('created_at', '<=', $this->logsDateTo);
+            }
+
+            $logs = $logsQuery->paginate(10, ['*'], 'logsPage');
+        }
+
         return view('livewire.admin.roles.role-management', [
-            'roles'      => Role::withCount('permissions')->orderByDesc('is_system')->orderBy('name')->get(),
+            'roles'      => $roles,
+            'logs'       => $logs,
+            'actions'    => AdminActivityLog::select('action')->groupBy('action')->pluck('action'),
             'allModules' => config('modules.definitions', []),
         ])->layout('layouts.admin', ['header' => 'Gestion des Rôles']);
     }
