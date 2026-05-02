@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Candidat;
 
+use App\Models\Role;
 use App\Models\Candidat;
 use App\Models\ProgrameList;
 use App\Models\DynamicFormSubmission;
@@ -39,7 +40,9 @@ class EditCandidat extends Component
 
     public function mount($id)
     {
-        if (!auth()->user()->isSuperAdmin()) {
+        $currentUser = auth()->user();
+
+        if (!(Role::isDevelopmentAccessLocked() && Role::canBypassDevelopmentLock($currentUser->role)) && !$currentUser->isSuperAdmin()) {
             session()->flash('error', 'Only super admins can edit candidats.');
             return redirect()->route('admin.users.index');
         }
@@ -91,7 +94,9 @@ class EditCandidat extends Component
 
     public function updateCandidat()
     {
-        if (!auth()->user()->isSuperAdmin()) {
+        $currentUser = auth()->user();
+
+        if (!(Role::isDevelopmentAccessLocked() && Role::canBypassDevelopmentLock($currentUser->role)) && !$currentUser->isSuperAdmin()) {
             session()->flash('error', 'Only super admins can edit candidats.');
             return redirect()->route('admin.candidats.index');
         }

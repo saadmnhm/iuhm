@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Candidat;
 
+use App\Models\Role;
 use App\Models\Candidat;
 use App\Models\AdminActivityLog;
 use App\Models\DynamicFormSubmission;
@@ -92,7 +93,9 @@ class ShowCandidat extends Component
 
     public function toggleStatus()
     {
-        if (!auth()->user()->isSuperAdmin()) {
+        $currentUser = auth()->user();
+
+        if (!(Role::isDevelopmentAccessLocked() && Role::canBypassDevelopmentLock($currentUser->role)) && !$currentUser->isSuperAdmin()) {
             session()->flash('error', 'Only super admins can change user status.');
             return;
         }

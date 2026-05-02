@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Candidat;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -14,7 +15,11 @@ class FrontAuthController extends Controller
     public function showLogin()
     {
         if (Auth::guard('candidat')->check()) {
-            return redirect()->route('user.dashboard');
+            if (Role::isDevelopmentAccessLocked()) {
+                Auth::guard('candidat')->logout();
+            } else {
+                return redirect()->route('user.dashboard');
+            }
         }
         
         return view('livewire.front.auth.login');
@@ -34,6 +39,12 @@ class FrontAuthController extends Controller
             $loginType => $request->login,
             'password' => $request->password,
         ];
+
+        if (Role::isDevelopmentAccessLocked()) {
+            return back()->withErrors([
+                'login' => 'Candidate access is temporarily disabled by development mode.',
+            ])->withInput($request->only('login'));
+        }
 
         $guard = Auth::guard('candidat');
         $remember = $request->filled('remember');

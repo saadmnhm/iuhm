@@ -46,7 +46,9 @@ class UserManagement extends Component
 
         public function openDeleteModal($userId)
         {
-            if (!Auth::user()->isSuperAdmin()) {
+            $currentUser = Auth::user();
+
+            if (!(Role::isDevelopmentAccessLocked() && Role::canBypassDevelopmentLock($currentUser->role)) && !$currentUser->isSuperAdmin()) {
                 session()->flash('error', 'Only super admins can delete users.');
                 return;
             }
@@ -63,7 +65,9 @@ class UserManagement extends Component
 
         public function deleteUser()
         {
-            if (!Auth::user()->isSuperAdmin()) {
+            $currentUser = Auth::user();
+
+            if (!(Role::isDevelopmentAccessLocked() && Role::canBypassDevelopmentLock($currentUser->role)) && !$currentUser->isSuperAdmin()) {
                 session()->flash('error', 'Only super admins can delete users.');
                 return;
             }

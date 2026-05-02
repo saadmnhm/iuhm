@@ -79,6 +79,104 @@ class Role extends Model
         }
     }
 
+    /**
+     * Return the current development access lock settings.
+     * super_admin is always kept as a safety bypass.
+     */
+    public static function developmentAccessSettings(): array
+    {
+        return Cache::remember('dev_access.settings', 3600, function () {
+            $allowedRoles = static::decodeAccessRoles(
+                AssociationParameter::get('dev_access_allowed_roles', '["super_admin"]')
+            );
+
+            if (!in_array('super_admin', $allowedRoles, true)) {
+                array_unshift($allowedRoles, 'super_admin');
+            }
+
+            return [
+                'enabled' => filter_var(AssociationParameter::get('dev_access_lock_enabled', '0'), FILTER_VALIDATE_BOOLEAN),
+                'allowed_roles' => array_values(array_unique($allowedRoles)),
+            ];
+        });
+    }
+
+    public static function isDevelopmentAccessLocked(): bool
+    {
+        return (bool) static::developmentAccessSettings()['enabled'];
+    }
+
+    public static function developmentAccessAllowedRoles(): array
+    {
+        return static::developmentAccessSettings()['allowed_roles'];
+    }
+
+    public static function canBypassDevelopmentLock(?string $roleName): bool
+    {
+        if (!$roleName) {
+            return false;
+        }
+
+        if ($roleName === 'super_admin') {
+            return true;
+        }
+
+        return in_array($roleName, static::developmentAccessAllowedRoles(), true);
+    }
+
+    public static function setDevelopmentAccessSettings(bool $enabled, array $allowedRoles): void
+    {
+        $allowedRoles = array_values(array_unique(array_filter($allowedRoles)));
+
+        if (!in_array('super_admin', $allowedRoles, true)) {
+            $allowedRoles[] = 'super_admin';
+        }
+
+        AssociationParameter::updateOrCreate(
+            ['key' => 'dev_access_lock_enabled'],
+            [
+                'category' => 'security',
+                'label' => 'Development access lock',
+                'value' => $enabled ? '1' : '0',
+                'type' => 'boolean',
+                'sort_order' => 10,
+                'updated_by' => auth()->id(),
+            ]
+        );
+
+        AssociationParameter::updateOrCreate(
+            ['key' => 'dev_access_allowed_roles'],
+            [
+                'category' => 'security',
+                'label' => 'Allowed roles for development access',
+                'value' => json_encode($allowedRoles, JSON_UNESCAPED_UNICODE),
+                'type' => 'textarea',
+                'sort_order' => 11,
+                'updated_by' => auth()->id(),
+            ]
+        );
+
+        Cache::forget('dev_access.settings');
+    }
+
+    protected static function decodeAccessRoles(mixed $value): array
+    {
+        if (is_array($value)) {
+            return array_values(array_filter($value));
+        }
+
+        if (!is_string($value) || trim($value) === '') {
+            return [];
+        }
+
+        $decoded = json_decode($value, true);
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+            return array_values(array_filter($decoded));
+        }
+
+        return array_values(array_filter(array_map('trim', explode(',', $value))));
+    }
+
     // ─── UI Helpers ───────────────────────────────────────────────────────────
 
     /**

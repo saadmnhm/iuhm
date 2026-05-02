@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -10,8 +11,18 @@ class AuthController extends Controller
 {
     public function showLogin()
     {
-        if (Auth::check() && Auth::user()->isAdmin()) {
-            return redirect()->route('admin.dashboard');
+        if (Auth::check()) {
+            $user = Auth::user();
+
+            if (Role::isDevelopmentAccessLocked()) {
+                if (Role::canBypassDevelopmentLock($user->role)) {
+                    return redirect()->route('admin.dashboard');
+                }
+
+                Auth::logout();
+            } elseif ($user->isAdmin()) {
+                return redirect()->route('admin.dashboard');
+            }
         }
         
         return view('livewire.admin.auth.login');
@@ -34,7 +45,14 @@ class AuthController extends Controller
                 ])->withInput($request->only('email'));
             }
 
-            if ($user->isAdmin()) {
+            if (Role::isDevelopmentAccessLocked() && !Role::canBypassDevelopmentLock($user->role)) {
+                Auth::logout();
+                return back()->withErrors([
+                    'email' => 'Admin access is temporarily disabled by development mode.',
+                ])->withInput($request->only('email'));
+            }
+
+            if ($user->isAdmin() || Role::canBypassDevelopmentLock($user->role)) {
                 // Update tracking information
                 $user->updateTrackingInfo();
                 

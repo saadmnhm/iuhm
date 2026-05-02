@@ -9,9 +9,17 @@
     </div>
     @endif
 
+    @if($accessMessage)
+    <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)"
+         class="mb-4 flex items-center gap-3 bg-sky-50 border border-sky-200 text-sky-800 rounded-lg px-4 py-3">
+        <i class="ri-shield-check-line text-sky-500 text-xl"></i>
+        <span class="font-medium">{{ $accessMessage }}</span>
+    </div>
+    @endif
+
     {{-- Tab navigation --}}
     <div class="flex gap-1 bg-white rounded-xl shadow-sm border border-gray-100 p-1 mb-6">
-        @foreach(['cache' => ['ri-database-2-line', 'Cache'], 'system' => ['ri-information-line', 'System'], 'modules' => ['ri-puzzle-line', 'Modules'], 'routes' => ['ri-route-line', 'Routes']] as $tab => $meta)
+        @foreach(['cache' => ['ri-database-2-line', 'Cache'], 'access' => ['ri-shield-keyhole-line', 'Access'], 'system' => ['ri-information-line', 'System'], 'modules' => ['ri-puzzle-line', 'Modules'], 'routes' => ['ri-route-line', 'Routes']] as $tab => $meta)
         <button wire:click="$set('activeTab', '{{ $tab }}')"
                 class="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg text-sm font-semibold transition
                        {{ $activeTab === $tab ? 'bg-indigo-600 text-white shadow' : 'text-gray-600 hover:bg-gray-50' }}">
@@ -70,6 +78,73 @@
             <button wire:click="clearCache('all')" class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg shadow transition">
                 <i class="ri-refresh-line mr-1"></i> Clear ALL Cache
             </button>
+        </div>
+    </div>
+    @endif
+
+    {{-- ═══ ACCESS TAB ═══ --}}
+    @if($activeTab === 'access')
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 lg:col-span-1">
+            <div class="flex items-center justify-between mb-3">
+                <h4 class="text-sm font-semibold text-gray-700">Dev Access Lock</h4>
+                <span class="w-3 h-3 rounded-full {{ $devAccessEnabled ? 'bg-rose-500' : 'bg-gray-300' }}"></span>
+            </div>
+            <p class="text-xs text-gray-500 leading-5 mb-4">
+                When enabled, admin and candidat login are blocked for everyone except the roles selected below.
+            </p>
+            <button wire:click="toggleDevAccessLock"
+                    class="w-full px-3 py-2 {{ $devAccessEnabled ? 'bg-rose-50 hover:bg-rose-100 text-rose-700 border-rose-200' : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200' }} text-xs font-semibold rounded-lg border transition">
+                <i class="ri-shield-keyhole-line mr-1"></i>
+                {{ $devAccessEnabled ? 'Disable lock' : 'Enable lock' }}
+            </button>
+
+            <div class="mt-4 rounded-lg border border-gray-100 bg-gray-50 p-4">
+                <div class="text-[11px] font-bold uppercase tracking-[0.18em] text-gray-400 mb-2">Safety bypass</div>
+                <p class="text-sm text-gray-700">super_admin is always allowed so you cannot lock yourself out permanently.</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 lg:col-span-2">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h4 class="text-sm font-semibold text-gray-700">Allowed roles</h4>
+                    <p class="text-xs text-gray-500 mt-1">Select every role that should keep access while the lock is enabled.</p>
+                </div>
+                <span class="px-3 py-1 bg-indigo-100 text-indigo-700 text-xs font-semibold rounded-full">{{ count($devAccessRoles) }} selected</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                @foreach($availableAccessRoles as $role)
+                @php
+                    $isSuperAdmin = $role['name'] === 'super_admin';
+                    $isSelected = in_array($role['name'], $devAccessRoles, true);
+                @endphp
+                <label class="flex items-start gap-3 rounded-xl border p-3 transition {{ $isSelected ? 'border-indigo-400 bg-indigo-50 shadow-sm' : 'border-gray-200 hover:border-indigo-300 hover:bg-indigo-50/30' }} {{ $isSuperAdmin ? 'opacity-90' : 'cursor-pointer' }}">
+                    <input type="checkbox"
+                           wire:model="devAccessRoles"
+                           value="{{ $role['name'] }}"
+                           @disabled($isSuperAdmin)
+                           @checked($isSuperAdmin || $isSelected)
+                           class="mt-1 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-400">
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-semibold text-gray-800">{{ $role['label'] }}</span>
+                            @if($isSuperAdmin)
+                            <span class="px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.14em] rounded-full bg-gray-100 text-gray-500">Always allowed</span>
+                            @endif
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">{{ $role['name'] }}</p>
+                    </div>
+                </label>
+                @endforeach
+            </div>
+
+            <div class="mt-5 flex justify-end">
+                <button wire:click="saveDevAccessSettings" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg shadow transition">
+                    <i class="ri-save-line mr-1"></i> Save access rules
+                </button>
+            </div>
         </div>
     </div>
     @endif

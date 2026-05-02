@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Admin\Tools;
 
+use App\Models\Role;
 use Livewire\Component;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
@@ -12,6 +12,46 @@ class DevTools extends Component
 {
     public string $activeTab = 'cache';
     public string $clearMessage = '';
+    public string $accessMessage = '';
+    public bool $devAccessEnabled = false;
+    public array $devAccessRoles = [];
+    public array $availableAccessRoles = [];
+
+    public function mount(): void
+    {
+        $this->loadDevAccessSettings();
+    }
+
+    protected function loadDevAccessSettings(): void
+    {
+        $this->availableAccessRoles = Role::orderBy('label')
+            ->get(['name', 'label', 'is_system'])
+            ->map(fn (Role $role) => [
+                'name' => $role->name,
+                'label' => $role->label,
+                'is_system' => (bool) $role->is_system,
+            ])
+            ->toArray();
+
+        $this->devAccessEnabled = Role::isDevelopmentAccessLocked();
+        $this->devAccessRoles = Role::developmentAccessAllowedRoles();
+    }
+
+    public function toggleDevAccessLock(): void
+    {
+        $this->devAccessEnabled = ! $this->devAccessEnabled;
+        $this->saveDevAccessSettings();
+    }
+
+    public function saveDevAccessSettings(): void
+    {
+        Role::setDevelopmentAccessSettings($this->devAccessEnabled, $this->devAccessRoles);
+        $this->accessMessage = $this->devAccessEnabled
+            ? 'Development access lock enabled.'
+            : 'Development access lock disabled.';
+
+        $this->loadDevAccessSettings();
+    }
 
     public function clearCache(string $type): void
     {

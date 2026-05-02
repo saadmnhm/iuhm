@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Admin;
 
+use App\Models\Role;
 use App\Models\User;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
@@ -18,7 +19,9 @@ class ShowAdmin extends Component
 
     public function toggleStatus()
     {
-        if (!auth()->user()->isSuperAdmin()) {
+        $currentUser = auth()->user();
+
+        if (!(Role::isDevelopmentAccessLocked() && Role::canBypassDevelopmentLock($currentUser->role)) && !$currentUser->isSuperAdmin()) {
             session()->flash('error', 'Only super admins can change user status.');
             return;
         }

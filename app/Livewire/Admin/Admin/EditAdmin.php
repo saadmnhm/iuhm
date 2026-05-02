@@ -20,7 +20,9 @@ class EditAdmin extends Component
 
     public function mount($id)
     {
-        if (!auth()->user()->isSuperAdmin()) {
+        $currentUser = auth()->user();
+
+        if (!(Role::isDevelopmentAccessLocked() && Role::canBypassDevelopmentLock($currentUser->role)) && !$currentUser->isSuperAdmin()) {
             session()->flash('error', 'Only super admins can edit users.');
             return redirect()->route('admin.users.index');
         }
@@ -51,7 +53,9 @@ class EditAdmin extends Component
 
     public function updateUser()
     {
-        if (!auth()->user()->isSuperAdmin()) {
+        $currentUser = auth()->user();
+
+        if (!(Role::isDevelopmentAccessLocked() && Role::canBypassDevelopmentLock($currentUser->role)) && !$currentUser->isSuperAdmin()) {
             session()->flash('error', 'Only super admins can edit users.');
             return redirect()->route('admin.users.index');
         }

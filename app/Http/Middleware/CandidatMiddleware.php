@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Role;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +20,16 @@ class CandidatMiddleware
         }
 
         $candidat = Auth::guard('candidat')->user();
+
+        if (Role::isDevelopmentAccessLocked()) {
+            Auth::guard('candidat')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('user.login')->withErrors([
+                'login' => 'Candidate access is temporarily disabled by development mode.',
+            ]);
+        }
 
         if (!$candidat->is_active) {
             Auth::guard('candidat')->logout();

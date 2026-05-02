@@ -31,7 +31,11 @@ class CreateAdmin extends Component
 
     public function createUser()
     {
-        if (!auth()->user()->isSuperAdmin() && !auth()->user()->isAdmin()) {
+        $currentUser = auth()->user();
+
+        if (Role::isDevelopmentAccessLocked() && Role::canBypassDevelopmentLock($currentUser->role)) {
+            // Whitelisted dev-access roles may manage users while the lock is active.
+        } elseif (!$currentUser->isSuperAdmin() && !$currentUser->isAdmin()) {
             session()->flash('error', 'You do not have permission to create users.');
             return redirect()->route('admin.users.index');
         }

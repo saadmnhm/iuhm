@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Role;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,6 +22,12 @@ class ModuleAccess
             abort(403, "Vous n'avez pas accès à ce module.");
         }
 
+        $user = Auth::user();
+
+        if (Role::isDevelopmentAccessLocked() && Role::canBypassDevelopmentLock($user->role)) {
+            return $next($request);
+        }
+
         // Always allow a user to view/edit their own profile,
         // even if they don't have the "users" module permission.
         if ($module === 'users') {
@@ -30,7 +37,7 @@ class ModuleAccess
             }
         }
 
-        if (!\App\Models\Role::canAccess(Auth::user()->role, $module)) {
+        if (!Role::canAccess($user->role, $module)) {
             abort(403, "Vous n'avez pas accès au module : {$module}.");
         }
 
