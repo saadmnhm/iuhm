@@ -30,7 +30,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         
 
 
-        Route::get('/users', \App\Livewire\Admin\User\UserManagement::class)->name('users.index')->middleware('module:users');
+        // Redirect old admin top-level paths to new console-prefixed paths
+        Route::permanentRedirect('users', 'console/users');
+        Route::permanentRedirect('roles', 'console/roles');
+        Route::permanentRedirect('addresses', 'console/addresses');
+        Route::permanentRedirect('formulaires', 'console/formulaires');
+
+        Route::get('/console/users', \App\Livewire\Admin\User\UserManagement::class)->name('users.index')->middleware('module:users');
         Route::get('/candidats/{id}', \App\Livewire\Admin\Candidat\ShowCandidat::class)->name('candidats.show')->middleware('module:candidats');
         Route::get('/candidats/{id}/edit', \App\Livewire\Admin\Candidat\EditCandidat::class)->name('candidats.edit')->middleware('module:candidats');
         Route::get('/candidats/{id}/print/fiche_inscription', [PrintController::class, 'fiche_inscription'])->name('candidats.print.fiche_inscription')->middleware('module:candidats');
@@ -41,10 +47,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/candidats/{id}/project/{projectId}/print/review', [PrintController::class, 'projectReview'])->name('project.print.review')->middleware('module:candidats');
         Route::get('/candidats/{id}/project/{projectId}/print/folder', [PrintController::class, 'printFolder'])->name('project.print.folder')->middleware('module:candidats');
         Route::get('/formulaire/submission/{id}/print', [PrintController::class, 'printFormulaire'])->name('formulaire.print.submission')->middleware('module:candidats');
-        Route::get('/users/create', \App\Livewire\Admin\Admin\CreateAdmin::class)->name('users.create')->middleware('module:users');
-        Route::get('/users/{id}', \App\Livewire\Admin\Admin\ShowAdmin::class)->name('users.show')->middleware('module:users');
-        Route::get('/users/{id}/edit', \App\Livewire\Admin\Admin\EditAdmin::class)->name('users.edit')->middleware('module:users');
-        Route::get('/addresses', \App\Livewire\Admin\Address\AddressManager::class)->name('addresses.index')->middleware('module:addresses');
+        Route::get('/console/users/create', \App\Livewire\Admin\Admin\CreateAdmin::class)->name('users.create')->middleware('module:users');
+        Route::get('/console/users/{id}', \App\Livewire\Admin\Admin\ShowAdmin::class)->name('users.show')->middleware('module:users');
+        Route::get('/console/users/{id}/edit', \App\Livewire\Admin\Admin\EditAdmin::class)->name('users.edit')->middleware('module:users');
+        Route::get('/console/addresses', \App\Livewire\Admin\Address\AddressManager::class)->name('addresses.index')->middleware('module:addresses');
         Route::get('/activity-logs', \App\Livewire\Admin\Logs\ActivityLogs::class)->name('activity.logs')->middleware('module:activity_logs');
         Route::get('/dev-tools', \App\Livewire\Admin\Tools\DevTools::class)->name('dev.tools')->middleware('module:dev_tools');
         Route::get('/rh', \App\Livewire\Admin\Rh\RhManagement::class)->name('rh.index')->middleware('module:rh');
@@ -71,7 +77,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/material/{id}', \App\Livewire\Admin\Material\MaterialShow::class)->name('material.show')->middleware('module:material');
         Route::get('/material/{id}/print/fiche', [PrintController::class, 'materialFiche'])->name('material.print.fiche')->middleware('module:material');
         Route::get('/material/print/inventory', [PrintController::class, 'materialInventory'])->name('material.print.inventory')->middleware('module:material');
-        Route::get('/roles', \App\Livewire\Admin\Roles\RoleManagement::class)->name('roles.index')->middleware('module:gestion_roles');
+        Route::get('/console/roles', \App\Livewire\Admin\Roles\RoleManagement::class)->name('roles.index')->middleware('module:gestion_roles');
         Route::get('/my-submissions', \App\Livewire\Admin\Submissions\MyAssignedSubmissions::class)->name('my.submissions')->middleware('module:my_submissions');
         Route::get('/all-submissions', \App\Livewire\Admin\Submissions\AllSubmissions::class)->name('all.submissions')->middleware('module:all_submissions');
         Route::get('/association-parameters', \App\Livewire\Admin\Settings\AssociationParameters::class)->name('association.parameters')->middleware('module:association_parameters');
@@ -112,10 +118,10 @@ Route::get('/uploads/{path}/download', function ($path) {
         Route::get('/projects_view', App\Livewire\Admin\Project\ProjectView::class)->name('projects_view');
 
         // Dynamic Form Builder (Referential)
-        Route::get('/formulaires', \App\Livewire\Admin\Formulaire\FormulaireList::class)->name('formulaires.index')->middleware('module:formulaires');
-        Route::get('/formulaires/create', \App\Livewire\Admin\Formulaire\FormulaireBuilder::class)->name('formulaires.create')->middleware('module:formulaires');
-        Route::get('/formulaires/{id}/edit', \App\Livewire\Admin\Formulaire\FormulaireBuilder::class)->name('formulaires.edit')->middleware('module:formulaires');
-        Route::get('/formulaires/submissions/{id}', \App\Livewire\Admin\Formulaire\FormulaireSubmissionDetail::class)->name('formulaires.submission.detail')->middleware('module:formulaires');
+        Route::get('/console/formulaires', \App\Livewire\Admin\Formulaire\FormulaireList::class)->name('formulaires.index')->middleware('module:formulaires');
+        Route::get('/console/formulaires/create', \App\Livewire\Admin\Formulaire\FormulaireBuilder::class)->name('formulaires.create')->middleware('module:formulaires');
+        Route::get('/console/formulaires/{id}/edit', \App\Livewire\Admin\Formulaire\FormulaireBuilder::class)->name('formulaires.edit')->middleware('module:formulaires');
+        Route::get('/console/formulaires/submissions/{id}', \App\Livewire\Admin\Formulaire\FormulaireSubmissionDetail::class)->name('formulaires.submission.detail')->middleware('module:formulaires');
 
     });
 });

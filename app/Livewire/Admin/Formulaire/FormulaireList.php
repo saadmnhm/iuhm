@@ -13,6 +13,7 @@ class FormulaireList extends Component
 
     public string $search = '';
     public string $filterStatus = '';
+    public string $activeTab = 'list'; // list, audit-logs
 
     public function updatingSearch()
     {
@@ -114,8 +115,14 @@ class FormulaireList extends Component
             ->orderBy('sort_order')
             ->paginate(10);
 
+        $auditLogs = AdminActivityLog::where('subject_type', DynamicForm::class)
+            ->with('user')
+            ->latest()
+            ->paginate(15, ['*'], 'audit_page');
+
         return view('livewire.admin.formulaire.formulaire-list', [
             'forms' => $forms,
+            'auditLogs' => $auditLogs,
         ])->layout('layouts.admin', ['header' => 'Gestion des Formulaires']);
     }
 }

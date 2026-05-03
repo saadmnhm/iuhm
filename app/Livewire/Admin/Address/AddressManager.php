@@ -22,6 +22,15 @@ class AddressManager extends Component
     
     // Search
     public $search = '';
+    // Filters
+    public $regionFilter = 'all';
+    public $cityFilter = 'all';
+    public $prefectureFilter = 'all';
+
+    // Options for selects
+    public $regions = [];
+    public $cities = [];
+    public $prefectures = [];
     
     protected $rules = [
         'region' => 'required|string|max:150',
@@ -31,6 +40,27 @@ class AddressManager extends Component
 
     public function updatingSearch()
     {
+        $this->resetPage();
+    }
+
+    public function updatingRegionFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingCityFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingPrefectureFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function applyFilters()
+    {
+        // noop — triggers re-render with current filter values
         $this->resetPage();
     }
 
@@ -128,11 +158,28 @@ class AddressManager extends Component
 
     public function render()
     {
-        $addresses = MoroccoLocation::query()->when($this->search, function($query) {
-            $query->where('region', 'like', '%' . $this->search . '%')
+        $query = MoroccoLocation::query()
+            ->when($this->search, function($q) {
+                $q->where('region', 'like', '%' . $this->search . '%')
                   ->orWhere('city', 'like', '%' . $this->search . '%')
                   ->orWhere('prefecture', 'like', '%' . $this->search . '%');
-        })->orderBy('region')->orderBy('city')->orderBy('prefecture')->paginate(10);
+            })
+            ->when($this->regionFilter && $this->regionFilter !== 'all', function($q) {
+                $q->where('region', $this->regionFilter);
+            })
+            ->when($this->cityFilter && $this->cityFilter !== 'all', function($q) {
+                $q->where('city', $this->cityFilter);
+            })
+            ->when($this->prefectureFilter && $this->prefectureFilter !== 'all', function($q) {
+                $q->where('prefecture', $this->prefectureFilter);
+            });
+
+        $addresses = $query->orderBy('region')->orderBy('city')->orderBy('prefecture')->paginate(10);
+
+        // Build select options
+        $this->regions = MoroccoLocation::query()->select('region')->distinct()->orderBy('region')->pluck('region')->toArray();
+        $this->cities = MoroccoLocation::query()->when($this->regionFilter && $this->regionFilter !== 'all', fn($q) => $q->where('region', $this->regionFilter))->select('city')->distinct()->orderBy('city')->pluck('city')->toArray();
+        $this->prefectures = MoroccoLocation::query()->when($this->regionFilter && $this->regionFilter !== 'all', fn($q) => $q->where('region', $this->regionFilter))->when($this->cityFilter && $this->cityFilter !== 'all', fn($q) => $q->where('city', $this->cityFilter))->select('prefecture')->distinct()->orderBy('prefecture')->pluck('prefecture')->toArray();
 
         return view('livewire.admin.tools.address-manager', compact('addresses'))->layout('layouts.admin', [
                 'header' => 'Manage Morocco Locations'

@@ -29,10 +29,8 @@ class UserManagement extends Component
     public $isEditingUser = false; // True when editing, false when creating
     public $userId;
     public $editId = null; // ID of user being edited
-    public $name;
     public $nom = ''; // For candidat
     public $prenom = ''; // For candidat
-    public $first_name = '';
     public $email;
     public $password;
     public $password_confirmation = '';
@@ -82,7 +80,7 @@ class UserManagement extends Component
 
             AdminActivityLog::log(
                 'user_deleted',
-                "Deleted user: {$user->name} ({$user->email})",
+                "Deleted user: {$user->nom} {$user->prenom} ({$user->email})",
                 User::class,
                 $user->id
             );
@@ -143,10 +141,8 @@ class UserManagement extends Component
 
         private function resetFormFields(): void
         {
-            $this->name = '';
             $this->nom = '';
             $this->prenom = '';
-            $this->first_name = '';
             $this->email = '';
             $this->password = '';
             $this->password_confirmation = '';
@@ -166,8 +162,8 @@ class UserManagement extends Component
             if ($type === 'admin') {
                 $user = User::find($id);
                 if ($user) {
-                    $this->name = $user->name;
-                    $this->first_name = $user->first_name ?? '';
+                    $this->nom = $user->nom;
+                    $this->prenom = $user->prenom;
                     $this->email = $user->email;
                     $this->phone = $user->phone ?? '';
                     $this->role = $user->role;
@@ -178,7 +174,6 @@ class UserManagement extends Component
                 if ($candidat) {
                     $this->nom = $candidat->nom;
                     $this->prenom = $candidat->prenom;
-                    $this->name = $candidat->nom;
                     $this->email = $candidat->email;
                     $this->phone = $candidat->phone;
                     $this->is_active = (bool) $candidat->is_active;
@@ -213,19 +208,19 @@ class UserManagement extends Component
         private function updateAdminUser(): void
         {
             $validated = $this->validate([
-                'name' => 'required|string|max:255',
-                'first_name' => 'nullable|string|max:255',
+                'nom' => 'required|string|max:255',
+                'prenom' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email,' . $this->editId,
                 'phone' => 'nullable|string|max:20',
-                'role' => 'required|exists:roles,name',
+                'role' => 'required|exists:roles,nom',
                 'is_active' => 'sometimes|boolean',
             ]);
 
             try {
                 $user = User::findOrFail($this->editId);
                 $user->update([
-                    'name' => $validated['name'],
-                    'first_name' => $validated['first_name'],
+                    'nom' => $validated['nom'],
+                    'prenom' => $validated['prenom'],
                     'email' => $validated['email'],
                     'phone' => $validated['phone'] ?? $user->phone,
                     'role' => $validated['role'],
@@ -238,7 +233,7 @@ class UserManagement extends Component
 
                 AdminActivityLog::log(
                     'user_updated',
-                    "Updated user: {$user->name}",
+                    "Updated user: {$user->nom} {$user->prenom} ({$user->email})",
                     User::class,
                     $user->id
                 );
@@ -284,17 +279,17 @@ class UserManagement extends Component
         private function createAdminUser(): void
         {
             $validated = $this->validate([
-                'name' => 'required|string|max:255',
-                'first_name' => 'nullable|string|max:255',
+                'nom' => 'required|string|max:255',
+                'prenom' => 'nullable|string|max:255',
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required|string|min:6|confirmed',
-                'role' => 'required|exists:roles,name',
+                'role' => 'required|exists:roles,nom',
             ]);
 
             try {
                 User::create([
-                    'name' => $validated['name'],
-                    'first_name' => $validated['first_name'],
+                    'nom' => $validated['nom'],
+                    'prenom' => $validated['prenom'],
                     'email' => $validated['email'],
                     'password' => Hash::make($validated['password']),
                     'role' => $validated['role'],
@@ -311,7 +306,8 @@ class UserManagement extends Component
         private function createCandidatUser(): void
         {
             $validated = $this->validate([
-                'name' => 'required|string|max:255',
+                'nom' => 'required|string|max:255',
+                'prenom' => 'required|string|max:255',
                 'email' => 'required|email|unique:candidats,email',
                 'phone' => 'required|string|max:20',
                 'password' => 'required|string|min:6|confirmed',
@@ -319,8 +315,8 @@ class UserManagement extends Component
 
             try {
                 Candidat::create([
-                    'nom' => $validated['name'],
-                    'prenom' => '',
+                    'nom' => $validated['nom'],
+                    'prenom' => $validated['prenom'],
                     'email' => $validated['email'],
                     'phone' => $validated['phone'],
                     'password' => Hash::make($validated['password']),
@@ -341,7 +337,8 @@ class UserManagement extends Component
 
             if ($this->adminSearch !== '') {
                 $queryAdmin->where(function ($q) {
-                                        $q->where('name', 'like', '%' . $this->adminSearch . '%')
+                                        $q->where('nom', 'like', '%' . $this->adminSearch . '%')
+                                            ->orWhere('prenom', 'like', '%' . $this->adminSearch . '%')
                                             ->orWhere('email', 'like', '%' . $this->adminSearch . '%');
                 });
             }
@@ -374,10 +371,9 @@ class UserManagement extends Component
 
 
         $statistics = [
-            'total_users'   => User::count(),
-            'admins'        => User::where('role', 'admin')->count(),
-            'super_admins'  => User::where('role', 'super_admin')->count(),
-            'regular_users' => User::where('role', 'user')->count(),
+            'total_users'   => User::count() + Candidat::count(),
+            'admins'        => User::count(),
+            'total_candidats' => Candidat::count(),
         ];
 
         $stat_section = [
@@ -392,8 +388,8 @@ class UserManagement extends Component
                 'icon'  => 'ri-building-line',
             ],
             [
-                'label' => 'Super Admins',
-                'value' => $statistics['super_admins'],
+                'label' => 'Candidats',
+                'value' => $statistics['total_candidats'],
                 'icon'  => 'ri-user-community-line',
             ],
         ];

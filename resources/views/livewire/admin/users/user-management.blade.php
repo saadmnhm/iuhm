@@ -1,6 +1,7 @@
 <div x-data="{ tab: 'users' }" x-cloak>
     <!-- Page Header -->
      @php
+    $currentUser = Auth::id() ? \App\Models\User::find(Auth::id()) : null;
      
         // echo '<pre>';
         // print_r($candidat);
@@ -15,7 +16,7 @@
                 <h1 class="text-[36px] font-bold text-[#04103A]">Gestion des accès utilisateur</h1>
                 <p class="text-gray-600 text-[18px] mt-2">Gérer les hiérarchies organisationnelles en créant des autorisations granulaires pour les membres de l'équipe au sein de l'écosystème Initiative Urbaine</p>
             </div>
-            @if(Auth::user()->isSuperAdmin() || Auth::user()->isAdmin())
+            @if($currentUser && in_array($currentUser->role, ['admin', 'super_admin'], true))
             <button wire:click="openCreateModal" class="w-65 h-12.5 text-center p-2 content-center bg-[#1B264F] text-white text-[16px] font-normal rounded-full hover:bg-gray-800 transition">
                 <i class="ri-shield-user-line text-[19px] relative right-1" ></i> Créer un utilisateur
             </button>
@@ -140,8 +141,8 @@
                                     <td class="px-6 py-4 text-sm text-[#04103A]">{{ $user->id }}</td>
                                     <td class="px-6 py-4 text-sm text-[#04103A]">{{ $user->email }}</td>
                                     <td class="px-6 py-4 text-sm text-[#04103A]">
-                                        <div>{{ $user->name }}</div>
-                                        <div class="text-xs text-[#04103A] mt-1">{{ $user->first_name ?? $user->name }}</div>
+                                        <div>{{ $user->nom }}</div>
+                                        <div class="text-xs text-[#04103A] mt-1">{{ $user->prenom ?? $user->nom }}</div>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-[#04103A]">
                                         <div>{{ $user->created_at->format('d/m/Y') }}</div>
@@ -176,7 +177,7 @@
                                                title="Edit">
                                                 <i class="ri-pencil-line"></i>
                                             </button>
-                                            @if(Auth::user()->isSuperAdmin())
+                                            @if($currentUser && $currentUser->role === 'super_admin')
                                                 <button wire:click="openDeleteModal({{ $user->id }})"
                                                     class="p-2 text-red-600 hover:text-red-900 hover:bg-red-100 rounded-lg transition"
                                                     title="Delete">
@@ -189,7 +190,7 @@
                             @endforeach
                             @else
                             <tr>
-                                <td colspan="6">
+                                <td colspan="7">
                                     <div class="p-12 text-center">
                                         <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
@@ -288,8 +289,7 @@
                                                title="Edit">
                                                 <i class="ri-pencil-line"></i>
                                             </button>
-                                            </button>
-                                            @if(Auth::user()->isSuperAdmin())
+                                            @if($currentUser && $currentUser->role === 'super_admin')
                                                 <button wire:click="openDeleteModal({{ $item->id }})"
                                                     class="p-2 text-red-600 hover:text-red-900 hover:bg-red-100 rounded-lg transition"
                                                     title="Delete">
@@ -302,7 +302,7 @@
                             @endforeach
                             @else
                             <tr>
-                                <td colspan="6">
+                                <td colspan="7">
                                     <div class="p-12 text-center">
                                         <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
@@ -386,7 +386,7 @@
                 <div class="px-6 py-5">
                     <p class="text-gray-600 text-sm">
                         Are you sure you want to delete
-                        <span class="font-semibold text-[#04103A]">{{ $selectedUser?->name ?? 'this user' }}</span>?
+                        <span class="font-semibold text-[#04103A]">{{ trim(($selectedUser?->nom ?? '') . ' ' . ($selectedUser?->prenom ?? '')) ?: ($selectedUser?->name ?? 'this user') }}</span>?
                         This action is permanent and cannot be undone.
                     </p>
                 </div>

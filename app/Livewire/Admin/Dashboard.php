@@ -85,7 +85,7 @@ class Dashboard extends Component
             'chartData' => $chartData,
             'userSubmissions' => $projectSubmissions,
             'matricule_null' => $matricule_null,
-            'admins' => User::whereIn('role', ['admin', 'super_admin'])->orderBy('name')->get(['id', 'name']),
+            'admins' => User::whereIn('role', ['admin', 'super_admin'])->orderBy('nom')->get(['id', 'nom']),
             'menu' => $menu,
         ])->layout('layouts.admin', ['header' => 'Dashboard']);
     }

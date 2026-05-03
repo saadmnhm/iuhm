@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Hash;
 #[Layout('layouts.admin', ['header' => 'Create Admin'])]
 class CreateAdmin extends Component
 {
-    public $name;
+    public $nom;
+    public $prenom;
     public $email;
     public $password;
     public $password_confirmation;
@@ -21,10 +22,11 @@ class CreateAdmin extends Component
     protected function rules()
     {
         return [
-            'name' => 'required|string|max:255',
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
-            'role' => ['required', 'string', 'in:' . implode(',', Role::pluck('name')->toArray())],
+            'role' => ['required', 'string', 'in:' . implode(',', Role::pluck('nom')->toArray())],
             'is_active' => 'boolean',
         ];
     }
@@ -43,7 +45,8 @@ class CreateAdmin extends Component
         $this->validate();
 
         $user = User::create([
-            'name' => $this->name,
+            'nom' => $this->nom,
+            'prenom' => $this->prenom,
             'email' => $this->email,
             'password' => Hash::make($this->password),
             'role' => $this->role,

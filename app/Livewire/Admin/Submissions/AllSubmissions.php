@@ -234,7 +234,7 @@ class AllSubmissions extends Component
 
         $programmes  = ProgrameList::orderBy('project_name')->get(['id', 'project_name']);
         $formulaires = DynamicForm::orderBy('title')->get(['id', 'title']);
-        $admins      = User::whereIn('role', ['admin', 'super_admin'])->orderBy('name')->get(['id', 'name']);
+        $admins      = User::whereIn('role', ['admin', 'super_admin'])->orderBy('nom')->get(['id', 'nom', 'prenom']);
         $addresses   = Candidat::whereNotNull('address')
                            ->select('address')->distinct()->orderBy('address')->pluck('address');
 

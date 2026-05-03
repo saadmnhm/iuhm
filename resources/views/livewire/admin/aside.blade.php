@@ -14,9 +14,25 @@
                 </svg>
                 <span>Dashboard</span>
             </a>
+            @if(request()->is('admin/console/*'))
+                    @canmodule('users')
+                    <a href="{{ route('admin.users.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.users*') ? 'bg-gray-100 font-medium' : '' }}"><i class="ri-admin-line mr-1"></i>Gestion Admin</a>
+                    @endcanmodule
+                    @canmodule('addresses')
+                    <a href="{{ route('admin.addresses.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.addresses*') ? 'bg-gray-100 font-medium' : '' }}"><i class="ri-map-pin-line mr-1"></i>Addresses</a>
+                    @endcanmodule
+                    @canmodule('formulaires')
+                    <a href="{{ route('admin.formulaires.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.formulaires*') ? 'bg-gray-100 font-medium' : '' }}">
+                        <i class="ri-file-list-3-line mr-1"></i> Formulaires
+                    </a>
+                    @endcanmodule
+                    @canmodule('addresses')
+                    <a href="{{ route('admin.addresses.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.addresses*') ? 'bg-gray-100 font-medium' : '' }}"><i class="ri-map-pin-line mr-1"></i>Addresses</a>
+                    @endcanmodule
+            @endif
 
 
-
+<!-- 
             <div x-data="{ open: false }">
                 <button @click="open = !open" class="flex w-full items-center justify-between gap-3 px-4 py-3 rounded-lg transition hover:bg-gray-100">
                     <div class="flex items-center gap-3">
@@ -209,7 +225,7 @@
                     @endcanmodule
 
                 </div>
-            </div>
+            </div> -->
 
         </nav>
     </aside>

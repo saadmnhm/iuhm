@@ -52,11 +52,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-semibold text-[#04103A] mb-2">Nom</label>
-                            <input type="text" wire:model="name" placeholder="Entrez le nom" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
+                            <input type="text" wire:model="nom" placeholder="Entrez le nom" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-[#04103A] mb-2">Prénom</label>
-                            <input type="text" wire:model="first_name" placeholder="Entrez le prénom" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
+                            <input type="text" wire:model="prenom" placeholder="Entrez le prénom" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
                         </div>
                     </div>
                     @endif

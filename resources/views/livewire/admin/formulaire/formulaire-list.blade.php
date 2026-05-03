@@ -1,141 +1,162 @@
-<div>
-    <!-- Header Section -->
-    <div class="flex items-center justify-between mb-6">
-        <div>
-            <h2 class="text-2xl font-bold text-gray-800">Gestion des Formulaires</h2>
-            <p class="text-gray-500 text-sm mt-1">Créez et gérez vos formulaires dynamiques</p>
+<div class="">
+    <div class="px-6 pb-6 pt-8 sm:px-8 sm:pb-8 sm:pt-10">
+        <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+            <div class="max-w-2xl">
+                <p class="text-[11px] font-extrabold uppercase tracking-[0.28em] text-emerald-700">System Configuration</p>
+                <h2 class="mt-3 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">Gestion des Formulaires</h2>
+                <p class="mt-3 text-sm leading-6 text-slate-600 sm:text-base">
+                    Gérer les formulaires en configurant les champs, les règles de validation et les parcours de saisie afin d'optimiser la collecte et la structuration des données au sein de l'écosystème Initiative Urbaine
+                </p>
+            </div>
+
+            <a href="{{ route('admin.formulaires.create') }}" class="inline-flex items-center gap-2 self-start rounded-full bg-[#0f1d57] px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(15,23,42,0.22)] transition hover:bg-[#14256f]">
+                <span class="flex h-6 w-6 items-center justify-center rounded-full border border-white/25 bg-white/10">
+                    <i class="ri-add-line text-sm"></i>
+                </span>
+                Créer un Formulaires
+            </a>
         </div>
-        <a href="{{ route('admin.formulaires.create') }}"
-            class="flex items-center gap-2 px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg transition shadow-sm">
-            <i class="ri-add-line text-lg"></i>
-            <span>Nouveau Formulaire</span>
-        </a>
-    </div>
 
-    <!-- Filters -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
-        <div class="flex flex-wrap items-center gap-4">
-            <div class="flex-1 min-w-[250px]">
-                <div class="relative">
-                    <i class="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" wire:model.live.debounce.300ms="search" placeholder="Rechercher un formulaire..."
-                        class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-sm">
-                </div>
+        <!-- Tabs Navigation -->
+        <div class="mt-8 border-b border-slate-200 bg-white rounded-t-[22px] overflow-hidden">
+            <div class="flex gap-0 px-6">
+                <button wire:click="$set('activeTab', 'list')" class="px-4 py-4 text-sm font-semibold transition border-b-2 {{ $activeTab === 'list' ? 'border-[#0f1d57] text-[#0f1d57]' : 'border-transparent text-slate-600 hover:text-slate-800' }}">
+                    <i class="ri-list-check-2 mr-2"></i>Formulaires ({{ $forms->total() }})
+                </button>
+                <button wire:click="$set('activeTab', 'audit-logs')" class="px-4 py-4 text-sm font-semibold transition border-b-2 {{ $activeTab === 'audit-logs' ? 'border-[#0f1d57] text-[#0f1d57]' : 'border-transparent text-slate-600 hover:text-slate-800' }}">
+                    <i class="ri-history-line mr-2"></i>Journaux d'audit ({{ $auditLogs->total() }})
+                </button>
             </div>
-            <select wire:model.live="filterStatus"
-                class="px-4 py-2.5 rounded-lg border border-gray-200 focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-sm">
-                <option value="">Tous les statuts</option>
-                <option value="active">Actif</option>
-                <option value="inactive">Inactif</option>
-            </select>
         </div>
-    </div>
 
-    <!-- Forms Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        @forelse($forms as $form)
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition group">
-                <!-- Card Header with Color -->
-                <div class="p-4 flex items-center gap-4" style="background-color: {{ $form->bg_color }}; border-bottom: 3px solid {{ $form->color }};">
-                    <div class="w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl"
-                        style="background-color: {{ $form->color }};">
-                        <i class="{{ $form->icon }}"></i>
+        <!-- List Tab -->
+        @if($activeTab === 'list')
+        <div class="overflow-hidden rounded-b-[22px] border border-slate-200 border-t-0 bg-white shadow-[0_18px_40px_rgba(15,23,42,0.06)]">
+            <div class="border-b border-slate-200 bg-slate-50 p-5">
+                <div class="flex gap-3">
+                    <div class="relative flex-1">
+                        <i class="ri-search-line pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" wire:model.live.debounce="search" placeholder="Rechercher un formulaire..." class="w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-sm outline-none focus:border-[#0f1d57] focus:ring-4 focus:ring-[#0f1d57]/10">
                     </div>
-                    <div class="flex-1">
-                        <h3 class="font-semibold text-gray-800 text-lg">{{ $form->title }}</h3>
-                        @if($form->title_ar)
-                            <p class="text-gray-500 text-sm" dir="rtl">{{ $form->title_ar }}</p>
-                        @endif
-                    </div>
-                    <div>
-                        @if($form->is_active)
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                <span class="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5"></span>Actif
-                            </span>
-                        @else
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
-                                <span class="w-1.5 h-1.5 rounded-full bg-gray-400 mr-1.5"></span>Inactif
-                            </span>
-                        @endif
-                    </div>
-                </div>
-
-                <!-- Card Body -->
-                <div class="p-4">
-                    @if($form->introduction)
-                        <p class="text-gray-500 text-sm mb-3 line-clamp-2">{{ Str::limit($form->introduction, 100) }}</p>
-                    @endif
-
-                    <div class="flex items-center gap-4 text-sm text-gray-500 mb-4">
-                        <div class="flex items-center gap-1">
-                            <i class="ri-list-ordered text-gray-400"></i>
-                            <span>{{ $form->steps_count }} étapes</span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <i class="ri-inbox-line text-gray-400"></i>
-                            <span>{{ $form->submissions_count }} soumissions</span>
-                        </div>
-                    </div>
-
-                    <!-- Actions -->
-                    <div class="flex items-center justify-between border-t border-gray-100 pt-3">
-                        <div class="flex items-center gap-2">
-
-                            <!-- <a href="{{ route('admin.formulaires.submission.detail', $form->id) }}"
-                                class="px-3 py-1.5 text-sm text-purple-600 hover:bg-purple-50 rounded-lg transition flex items-center gap-1">
-                                <i class="ri-eye-line"></i> Soumissions
-                            </a> -->
-                        </div>
-
-                        <div class="flex items-center gap-1 relative" x-data="{ open: false }">
-                            <button @click="open = !open" class="p-1.5 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-50">
-                                <i class="ri-more-2-fill"></i>
-                            </button>
-                            <div x-show="open" @click.away="open = false" x-transition
-                                class="absolute right-4 mt-32 w-44 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
-                                <button wire:click="toggleActive({{ $form->id }})"
-                                    class="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                                    <i class="{{ $form->is_active ? 'ri-toggle-fill text-green-500' : 'ri-toggle-line text-gray-400' }}"></i>
-                                    {{ $form->is_active ? 'Désactiver' : 'Activer' }}
-                                </button>
-                                <a href="{{ route('admin.formulaires.edit', $form->id) }}"
-                                    class="px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition flex items-center gap-1">
-                                    <i class="ri-edit-line"></i> Modifier
-                                </a>
-                                <button wire:click="duplicateForm({{ $form->id }})"
-                                    class="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                                    <i class="ri-file-copy-line text-blue-500"></i> Dupliquer
-                                </button>
-                                <div class="border-t border-gray-100 my-1"></div>
-                                <button wire:click="deleteForm({{ $form->id }})"
-                                    wire:confirm="Êtes-vous sûr de vouloir supprimer ce formulaire ?"
-                                    class="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50">
-                                    <i class="ri-delete-bin-line"></i> Supprimer
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    <select wire:model.live="filterStatus" class="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#0f1d57] focus:ring-4 focus:ring-[#0f1d57]/10">
+                        <option value="">Tous les statuts</option>
+                        <option value="active">Actif</option>
+                        <option value="inactive">Inactif</option>
+                    </select>
                 </div>
             </div>
-        @empty
-            <div class="col-span-full">
-                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
-                    <div class="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                        <i class="ri-file-list-3-line text-3xl text-gray-400"></i>
-                    </div>
-                    <h3 class="text-lg font-semibold text-gray-700 mb-2">Aucun formulaire</h3>
-                    <p class="text-gray-500 mb-4">Commencez par créer votre premier formulaire dynamique</p>
-                    <a href="{{ route('admin.formulaires.create') }}"
-                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-lg transition">
-                        <i class="ri-add-line"></i> Créer un formulaire
-                    </a>
-                </div>
-            </div>
-        @endforelse
-    </div>
 
-    <!-- Pagination -->
-    <div class="mt-6">
-        {{ $forms->links() }}
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-200">
+                    <thead class="bg-[#0f1d57] text-white">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.16em]">TITRE DU FORMULAIRE</th>
+                            <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.16em]">DESCRIPTION</th>
+                            <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.16em]">ETAPES</th>
+                            <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.16em]">STATUS</th>
+                            <th class="px-6 py-4 text-center text-[11px] font-bold uppercase tracking-[0.16em]">ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 bg-slate-50/50">
+                        @forelse($forms as $form)
+                        <tr class="transition hover:bg-white">
+                            <td class="px-6 py-6 text-[16px] font-semibold text-[#45464E]">{{ $form->title }}</td>
+                            <td class="px-6 py-6 text-[14px] text-[#04103A]">{{ Str::limit($form->introduction, 60) }}</td>
+                            <td class="px-6 py-6 text-[16px] text-[#04103A]">{{ $form->steps_count ?? 0 }}</td>
+                            <td class="px-6 py-6">
+                                <span class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold ring-1 {{ $form->is_active ? 'bg-emerald-100 text-emerald-700 ring-emerald-200' : 'bg-slate-200 text-slate-500 ring-slate-200' }}">
+                                    <span class="h-1.5 w-1.5 rounded-full {{ $form->is_active ? 'bg-emerald-500' : 'bg-slate-400' }}"></span>
+                                    {{ $form->is_active ? 'Active' : 'Deactivated' }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-6">
+                                <div class="flex items-center justify-center gap-2 text-[#0f1d57]">
+                                    <a href="{{ route('admin.formulaires.edit', $form->id) }}" class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#0f1d57]/5 transition hover:bg-[#0f1d57] hover:text-white" title="Modifier">
+                                        <i class="ri-edit-2-line text-base"></i>
+                                    </a>
+                                    <button type="button" wire:click="deleteForm({{ $form->id }})" wire:confirm="Êtes-vous sûr de vouloir supprimer ce formulaire ?" class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-rose-50 text-rose-600 transition hover:bg-rose-600 hover:text-white" title="Supprimer">
+                                        <i class="ri-delete-bin-2-fill text-base"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="5" class="px-6 py-16 text-center text-sm text-slate-500">Aucun formulaire trouvé.</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="flex flex-col gap-4 border-t border-slate-200 bg-white px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+                <p class="text-sm text-slate-500">
+                    Affichage de {{ $forms->firstItem() ?? 0 }} à {{ $forms->lastItem() ?? 0 }} sur {{ $forms->total() }} formulaires
+                </p>
+                <div>{{ $forms->links('vendor.pagination.circle') }}</div>
+            </div>
+        </div>
+        @endif
+
+        <!-- Audit Logs Tab -->
+        @if($activeTab === 'audit-logs')
+        <div class="overflow-hidden rounded-b-[22px] border border-slate-200 border-t-0 bg-white shadow-[0_18px_40px_rgba(15,23,42,0.06)]">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-200">
+                    <thead class="bg-[#0f1d57] text-white">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.16em]">UTILISATEUR</th>
+                            <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.16em]">ACTION</th>
+                            <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.16em]">DESCRIPTION</th>
+                            <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.16em]">DATE</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 bg-slate-50/50">
+                        @forelse($auditLogs as $log)
+                        <tr class="transition hover:bg-white">
+                            <td class="px-6 py-4 text-sm text-slate-700">
+                                <div class="flex items-center gap-2">
+                                    <div class="h-8 w-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-xs font-semibold">
+                                        {{ substr($log->user?->nom ?? 'A', 0, 1) }}
+                                    </div>
+                                    <div>
+                                        <p class="font-medium">{{ $log->user?->nom ?? 'System' }}</p>
+                                        <p class="text-xs text-slate-500">{{ $log->user?->email ?? 'N/A' }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-sm">
+                                <span class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold
+                                    @if($log->action === 'formulaire_created') bg-blue-100 text-blue-700
+                                    @elseif($log->action === 'formulaire_updated') bg-amber-100 text-amber-700
+                                    @elseif($log->action === 'formulaire_deleted') bg-rose-100 text-rose-700
+                                    @elseif($log->action === 'formulaire_toggled') bg-purple-100 text-purple-700
+                                    @elseif($log->action === 'formulaire_duplicated') bg-cyan-100 text-cyan-700
+                                    @else bg-slate-100 text-slate-700
+                                    @endif">
+                                    <i class="ri-circle-fill text-[0.375rem]"></i>
+                                    {{ str_replace('_', ' ', ucfirst($log->action)) }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-slate-700">{{ $log->description }}</td>
+                            <td class="px-6 py-4 text-sm text-slate-600">{{ $log->created_at->diffForHumans() }}</td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="4" class="px-6 py-16 text-center text-sm text-slate-500">Aucun journal d'audit.</td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="flex flex-col gap-4 border-t border-slate-200 bg-white px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+                <p class="text-sm text-slate-500">
+                    Affichage de {{ $auditLogs->firstItem() ?? 0 }} à {{ $auditLogs->lastItem() ?? 0 }} sur {{ $auditLogs->total() }} journaux
+                </p>
+                <div>{{ $auditLogs->links('vendor.pagination.circle') }}</div>
+            </div>
+        </div>
+        @endif
     </div>
 </div>

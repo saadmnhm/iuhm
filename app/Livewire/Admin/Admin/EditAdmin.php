@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\Hash;
 class EditAdmin extends Component
 {
     public $userId;
-    public $name;
+    public $nom;
+    public $prenom;
     public $email;
     public $password;
     public $role;
@@ -29,7 +30,8 @@ class EditAdmin extends Component
 
         $user = User::findOrFail($id);
         $this->userId = $user->id;
-        $this->name = $user->name;
+        $this->nom = $user->nom;
+        $this->prenom = $user->prenom;
         $this->email = $user->email;
         $this->role = $user->role;
         $this->is_active = $user->is_active ?? true;
@@ -38,9 +40,10 @@ class EditAdmin extends Component
     protected function rules()
     {
         $rules = [
-            'name' => 'required|string|max:255',
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $this->userId,
-            'role' => ['required', 'string', 'in:' . implode(',', Role::pluck('name')->toArray())],
+            'role' => ['required', 'string', 'in:' . implode(',', Role::pluck('nom')->toArray())],
             'is_active' => 'boolean',
         ];
 
@@ -65,7 +68,8 @@ class EditAdmin extends Component
         $user = User::findOrFail($this->userId);
 
         $data = [
-            'name' => $this->name,
+            'nom' => $this->nom,
+            'prenom' => $this->prenom,
             'email' => $this->email,
             'role' => $this->role,
             'is_active' => $this->is_active,

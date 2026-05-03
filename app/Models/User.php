@@ -65,6 +65,18 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
+    public function getNameAttribute(): string
+    {
+        $fullName = trim(($this->nom ?? '') . ' ' . ($this->prenom ?? ''));
+
+        return $fullName !== '' ? $fullName : '';
+    }
+
+    public function getFirstNameAttribute(): string
+    {
+        return (string) ($this->prenom ?? '');
+    }
+
     public function isSuperAdmin(): bool
     {
         return $this->role === 'super_admin';

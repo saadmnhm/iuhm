@@ -26,6 +26,7 @@ class FormulaireBuilder extends Component
     public string $bg_color = '#ffffff';
     public bool $is_active = true;
     public bool $has_steps = true;
+    public string $versionTab = 'fr'; // fr, ar
     
     // Introduction page
     public bool $has_introduction = false;
@@ -49,6 +50,11 @@ class FormulaireBuilder extends Component
     public function selectIcon($iconClass)
     {
         $this->icon = $iconClass;
+    }
+
+    public function cancelCreate()
+    {
+        return redirect()->route('admin.formulaires.index');
     }
 
     // Field editing modal
