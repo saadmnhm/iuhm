@@ -92,16 +92,25 @@
                                 <option value="admin">Administrateur</option>
                                 <option value="candidat">Bénéficiaire</option>
                             </select>
+                            @error('userTypeCreate')
+                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div x-show="form.userType === 'admin'" x-cloak class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-semibold text-[#04103A] mb-2">Nom</label>
                                 <input type="text" x-model="form.nom" wire:model.defer="nom" placeholder="Entrez le nom" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
+                                @error('nom')
+                                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-[#04103A] mb-2">Prénom</label>
                                 <input type="text" x-model="form.prenom" wire:model.defer="prenom" placeholder="Entrez le prénom" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
+                                @error('prenom')
+                                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
@@ -109,16 +118,25 @@
                             <div>
                                 <label class="block text-sm font-semibold text-[#04103A] mb-2">Nom</label>
                                 <input type="text" x-model="form.nom" wire:model.defer="nom" placeholder="Entrez le nom" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
+                                @error('nom')
+                                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-[#04103A] mb-2">Prénom</label>
                                 <input type="text" x-model="form.prenom" wire:model.defer="prenom" placeholder="Entrez le prénom" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
+                                @error('prenom')
+                                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
                         <div>
                             <label class="block text-sm font-semibold text-[#04103A] mb-2">E-mail *</label>
                             <input type="email" x-model="form.email" wire:model.defer="email" placeholder="example@urbanunity.com" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
+                            @error('email')
+                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div x-show="form.userType === 'admin'" x-cloak>
@@ -128,21 +146,33 @@
                                     <option value="{{ $roleItem['name'] }}">{{ $roleItem['label'] }}</option>
                                 @endforeach
                             </select>
+                            @error('role')
+                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div>
                             <label class="block text-sm font-semibold text-[#04103A] mb-2">Téléphone *</label>
                             <input type="tel" x-model="form.phone" wire:model.defer="phone" placeholder="Entrez le numéro de téléphone" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
+                            @error('phone')
+                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-semibold text-[#04103A] mb-2">Mot de passe <span x-text="mode === 'create' ? '*' : '(optionnel)'"></span></label>
                                 <input type="password" x-model="form.password" wire:model.defer="password" placeholder="•••••••" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
+                                @error('password')
+                                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                             <div>
                                 <label class="block text-sm font-semibold text-[#04103A] mb-2">Confirmer mot de passe <span x-text="mode === 'create' ? '*' : ''"></span></label>
                                 <input type="password" x-model="form.password_confirmation" wire:model.defer="password_confirmation" placeholder="•••••••" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
+                                @error('password_confirmation')
+                                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
@@ -171,11 +201,11 @@
                             Annuler
                         </button>
                         <button type="button"
-                            wire:click="createUser"
+                            @click="$wire.submitUser(form)"
                             wire:loading.attr="disabled"
                             class="gap-2 px-4 py-2 h-12.5 text-center rounded-full w-37.5 text-sm font-semibold text-white bg-[#1B264F] hover:bg-[#0f1a3a] transition-colors disabled:opacity-60"
                         >
-                            <svg wire:loading wire:target="createUser" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                            <svg wire:loading wire:target="submitUser" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
                             </svg>

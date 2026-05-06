@@ -9,6 +9,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 use App\Models\AdminActivityLog;
 use Illuminate\Support\Str;
 
@@ -22,10 +23,7 @@ class UserManagement extends Component
     public string $adminRoleFilter = 'all';
     public string $candidatSearch = '';
     public string $candidatStatusFilter = 'all';
-    public $showCreateModal = false;
-    public $showEditModal = false;
     public $showDeleteModal = false;
-    public $showShowModal = false;
     
     public $userTypeCreate = 'admin'; // 'admin' or 'candidat'
     public $editingUserType = null; // 'admin' or 'candidat' when editing
@@ -44,6 +42,7 @@ class UserManagement extends Component
     public array $allRoles = [];
     public array $statistics = [];
     public array $stat_section = [];
+    public bool $usersHasPhoneColumn = false;
     
     protected $paginationTheme = 'tailwind';
 
@@ -58,6 +57,7 @@ class UserManagement extends Component
 
         $this->currentUserId = Auth::id();
         $this->currentUserRole = $currentUser?->role ?? '';
+        $this->usersHasPhoneColumn = Schema::hasColumn('users', 'phone');
 
         $this->allRoles = Role::orderByDesc('is_system')
             ->orderBy('label')
@@ -151,12 +151,9 @@ class UserManagement extends Component
             $this->refreshStatistics();
         }
 
-        public function closeModals()
+        private function resetUiState(): void
         {
-            $this->showCreateModal = false;
-            $this->showEditModal = false;
             $this->showDeleteModal = false;
-            $this->showShowModal = false;
             $this->isEditingUser = false;
             $this->editingUserType = null;
             $this->userTypeCreate = 'admin';
@@ -185,20 +182,10 @@ class UserManagement extends Component
             $this->resetPage('candidatsPage');
         }
 
-        public function openCreateModal(): void
-        {
-            $this->isEditingUser = false;
-            $this->editingUserType = null;
-            $this->showCreateModal = true;
-                $this->userTypeCreate = 'admin';
-                $this->role = 'admin';
-            $this->resetFormFields();
-        }
-
         public function closeCreateModal(): void
         {
             $this->dispatch('user-modal-close');
-            $this->closeModals();
+            $this->resetUiState();
         }
 
         private function resetFormFields(): void
@@ -214,34 +201,6 @@ class UserManagement extends Component
             $this->editId = null;
         }
 
-        public function openEditModal($id, $type = 'admin'): void
-        {
-            $this->resetFormFields();
-            $this->editId = $id;
-            $this->isEditingUser = true;
-            $this->editingUserType = $type;
-            $this->showCreateModal = true;
-        }
-
-        public function populateFormFromData(array $data): void
-        {
-            $this->resetFormFields();
-            $this->editId = $data['id'] ?? null;
-            $this->isEditingUser = true;
-
-            $userType = $data['userType'] ?? 'admin';
-            $this->editingUserType = $userType;
-
-            // Populate form fields from pre-loaded data (no DB query needed)
-            $this->nom = $data['nom'] ?? '';
-            $this->prenom = $data['prenom'] ?? '';
-            $this->email = $data['email'] ?? '';
-            $this->phone = $data['phone'] ?? '';
-            $this->role = $data['role'] ?? 'admin';
-            $this->is_active = (bool) ($data['is_active'] ?? true);
-            $this->showCreateModal = true;
-        }
-
         public function createUser(): void
         {
             if ($this->editId !== null) {
@@ -255,6 +214,33 @@ class UserManagement extends Component
             }
         }
 
+        public function submitUser(array $data): void
+        {
+            $this->resetErrorBag();
+
+            $this->editId = isset($data['id']) && $data['id'] !== '' ? (int) $data['id'] : null;
+            $this->isEditingUser = $this->editId !== null;
+
+            $userType = (string) ($data['userType'] ?? 'admin');
+            if (!in_array($userType, ['admin', 'candidat'], true)) {
+                $userType = 'admin';
+            }
+
+            $this->editingUserType = $this->isEditingUser ? $userType : null;
+            $this->userTypeCreate = $this->isEditingUser ? 'admin' : $userType;
+
+            $this->nom = (string) ($data['nom'] ?? '');
+            $this->prenom = (string) ($data['prenom'] ?? '');
+            $this->email = (string) ($data['email'] ?? '');
+            $this->phone = (string) ($data['phone'] ?? '');
+            $this->role = (string) ($data['role'] ?? 'admin');
+            $this->password = (string) ($data['password'] ?? '');
+            $this->password_confirmation = (string) ($data['password_confirmation'] ?? '');
+            $this->is_active = (bool) ($data['is_active'] ?? true);
+
+            $this->createUser();
+        }
+
         private function updateUser(): void
         {
             if ($this->editingUserType === 'admin') {
@@ -266,25 +252,35 @@ class UserManagement extends Component
 
         private function updateAdminUser(): void
         {
-            $validated = $this->validate([
+            $rules = [
                 'nom' => 'required|string|max:255',
                 'prenom' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email,' . $this->editId,
-                'phone' => 'nullable|string|max:20',
                 'role' => 'required|exists:roles,name',
                 'is_active' => 'sometimes|boolean',
-            ]);
+            ];
+
+            if ($this->usersHasPhoneColumn) {
+                $rules['phone'] = 'nullable|string|max:20';
+            }
+
+            $validated = $this->validate($rules);
 
             try {
                 $user = User::findOrFail($this->editId);
-                $user->update([
+                $payload = [
                     'nom' => $validated['nom'],
                     'prenom' => $validated['prenom'],
                     'email' => $validated['email'],
-                    'phone' => $validated['phone'] ?? $user->phone,
                     'role' => $validated['role'],
                     'is_active' => (bool) $this->is_active,
-                ]);
+                ];
+
+                if ($this->usersHasPhoneColumn) {
+                    $payload['phone'] = $validated['phone'] ?? $user->phone;
+                }
+
+                $user->update($payload);
 
                 if ($this->password) {
                     $user->update(['password' => Hash::make($this->password)]);
@@ -310,7 +306,7 @@ class UserManagement extends Component
             $validated = $this->validate([
                 'nom' => 'required|string|max:255',
                 'prenom' => 'required|string|max:255',
-                'email' => 'required|email|unique:candidats,email,' . $this->editId,
+                'email' => 'required|email|unique:candidat,email,' . $this->editId,
                 'phone' => 'required|string|max:20',
                 'is_active' => 'sometimes|boolean',
             ]);
@@ -370,7 +366,7 @@ class UserManagement extends Component
             $validated = $this->validate([
                 'nom' => 'required|string|max:255',
                 'prenom' => 'required|string|max:255',
-                'email' => 'required|email|unique:candidats,email',
+                'email' => 'required|email|unique:candidat,email',
                 'phone' => 'required|string|max:20',
                 'password' => 'required|string|min:6|confirmed',
             ]);
