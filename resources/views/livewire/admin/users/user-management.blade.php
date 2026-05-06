@@ -8,7 +8,7 @@
                 <p class="text-gray-600 text-[18px] mt-2">Gérer les hiérarchies organisationnelles en créant des autorisations granulaires pour les membres de l'équipe au sein de l'écosystème Initiative Urbaine</p>
             </div>
             @if(in_array($currentUserRole, ['admin', 'super_admin'], true))
-            <button wire:click="openCreateModal" class="w-65 h-12.5 text-center p-2 content-center bg-[#1B264F] text-white text-[16px] font-normal rounded-full hover:bg-gray-800 transition">
+            <button type="button" @click="$dispatch('user-modal-open', { mode: 'create', userType: 'admin' })" class="w-65 h-12.5 text-center p-2 content-center bg-[#1B264F] text-white text-[16px] font-normal rounded-full hover:bg-gray-800 transition">
                 <i class="ri-shield-user-line text-[19px] relative right-1" ></i> Créer un utilisateur
             </button>
             @endif
@@ -163,7 +163,7 @@
                                     </td>
                                     <td class="px-6 py-4 text-sm text-center">
                                         <div class="flex justify-center gap-2">
-                                            <button @click="$wire.populateFormFromData({ id: {{ $user->id }}, nom: @js($user->nom), prenom: @js($user->prenom), email: @js($user->email), phone: @js($user->phone ?? ''), role: @js($user->role), is_active: {{ $user->is_active ? 'true' : 'false' }}, userType: 'admin' }); $wire.showCreateModal = true"
+                                            <button type="button" @click="$dispatch('user-modal-open', { mode: 'edit', id: {{ $user->id }}, userType: 'admin', nom: @js($user->nom), prenom: @js($user->prenom), email: @js($user->email), phone: @js($user->phone ?? ''), role: @js($user->role), is_active: {{ $user->is_active ? 'true' : 'false' }} })"
                                                class="p-2 text-gray-600 hover:text-[#04103A] hover:bg-gray-100 rounded-lg transition"
                                                title="Edit">
                                                 <i class="ri-pencil-line"></i>
@@ -275,7 +275,7 @@
                                     </td>
                                     <td class="px-6 py-4 text-sm text-center">
                                         <div class="flex justify-center gap-2">
-                                                                                         <button @click="$wire.populateFormFromData({ id: {{ $item->id }}, nom: @js($item->nom), prenom: @js($item->prenom), email: @js($item->email), phone: @js($item->phone ?? ''), is_active: {{ $item->is_active ? 'true' : 'false' }}, userType: 'candidat' }); $wire.showCreateModal = true"
+                                                                                         <button type="button" @click="$dispatch('user-modal-open', { mode: 'edit', id: {{ $item->id }}, userType: 'candidat', nom: @js($item->nom), prenom: @js($item->prenom), email: @js($item->email), phone: @js($item->phone ?? ''), is_active: {{ $item->is_active ? 'true' : 'false' }} })"
                                                class="p-2 text-gray-600 hover:text-[#04103A] hover:bg-gray-100 rounded-lg transition"
                                                title="Edit">
                                                 <i class="ri-pencil-line"></i>

@@ -197,6 +197,7 @@ class UserManagement extends Component
 
         public function closeCreateModal(): void
         {
+            $this->dispatch('user-modal-close');
             $this->closeModals();
         }
 
@@ -243,7 +244,7 @@ class UserManagement extends Component
 
         public function createUser(): void
         {
-            if ($this->isEditingUser) {
+            if ($this->editId !== null) {
                 $this->updateUser();
             } else {
                 if ($this->userTypeCreate === 'admin') {
