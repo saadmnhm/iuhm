@@ -43,7 +43,7 @@ class EditAdmin extends Component
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $this->userId,
-            'role' => ['required', 'string', 'in:' . implode(',', Role::pluck('nom')->toArray())],
+            'role' => ['required', 'string', 'in:' . implode(',', Role::pluck('name')->toArray())],
             'is_active' => 'boolean',
         ];
 

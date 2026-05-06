@@ -7,7 +7,7 @@
 
         <nav class="p-4 space-y-2">
             {{-- Dashboard: always visible to all admins --}}
-            <a href="{{ route('admin.dashboard') }}" 
+            <a wire:navigate href="{{ route('admin.dashboard') }}" 
                 class="flex items-center gap-3 px-4 py-3 rounded-lg transition {{ request()->routeIs('admin.dashboard') ? 'bg-white/20' : 'hover:bg-white/10' }}">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
@@ -16,18 +16,15 @@
             </a>
             @if(request()->is('admin/console/*'))
                     @canmodule('users')
-                    <a href="{{ route('admin.users.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.users*') ? 'bg-gray-100 font-medium' : '' }}"><i class="ri-admin-line mr-1"></i>Gestion Admin</a>
-                    @endcanmodule
-                    @canmodule('addresses')
-                    <a href="{{ route('admin.addresses.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.addresses*') ? 'bg-gray-100 font-medium' : '' }}"><i class="ri-map-pin-line mr-1"></i>Addresses</a>
+                    <a wire:navigate href="{{ route('admin.users.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.users*') ? 'bg-gray-100 font-medium' : '' }}"><i class="ri-admin-line mr-1"></i>Gestion Admin</a>
                     @endcanmodule
                     @canmodule('formulaires')
-                    <a href="{{ route('admin.formulaires.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.formulaires*') ? 'bg-gray-100 font-medium' : '' }}">
+                    <a wire:navigate href="{{ route('admin.formulaires.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.formulaires*') ? 'bg-gray-100 font-medium' : '' }}">
                         <i class="ri-file-list-3-line mr-1"></i> Formulaires
                     </a>
                     @endcanmodule
                     @canmodule('addresses')
-                    <a href="{{ route('admin.addresses.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.addresses*') ? 'bg-gray-100 font-medium' : '' }}"><i class="ri-map-pin-line mr-1"></i>Addresses</a>
+                    <a wire:navigate href="{{ route('admin.addresses.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.addresses*') ? 'bg-gray-100 font-medium' : '' }}"><i class="ri-map-pin-line mr-1"></i>Addresses</a>
                     @endcanmodule
             @endif
 
@@ -61,7 +58,7 @@
             </div>
 
             @canmodule('support')
-            <a href="{{ route('admin.support.tickets') }}" 
+            <a wire:navigate href="{{ route('admin.support.tickets') }}" 
                 class="flex items-center gap-3 px-4 py-3 rounded-lg transition {{ request()->routeIs('admin.support*') ? 'bg-white/20' : 'hover:bg-white/10' }}">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/>
@@ -73,7 +70,7 @@
 
 
             @canmodule('my_submissions')
-            <a href="{{ route('admin.my.submissions') }}" 
+            <a wire:navigate href="{{ route('admin.my.submissions') }}" 
                 class="flex items-center gap-3 px-4 py-3 rounded-lg transition {{ request()->routeIs('admin.my.submissions') ? 'bg-white/20' : 'hover:bg-white/10' }}">
                 <i class="ri-task-line text-lg"></i>
                 <span>Mes Assignations</span>
@@ -81,7 +78,7 @@
             @endcanmodule
 
             @canmodule('all_submissions')
-            <a href="{{ route('admin.all.submissions') }}" 
+            <a wire:navigate href="{{ route('admin.all.submissions') }}" 
                 class="flex items-center gap-3 px-4 py-3 rounded-lg transition {{ request()->routeIs('admin.all.submissions') ? 'bg-white/20' : 'hover:bg-white/10' }}">
                 <i class="ri-file-list-3-line text-lg"></i>
                 <span>Toutes Soumissions</span>
@@ -89,7 +86,7 @@
             @endcanmodule
 
             @canmodule('history_audit')
-            <a href="{{ route('admin.history.audit') }}" 
+            <a wire:navigate href="{{ route('admin.history.audit') }}" 
                 class="flex items-center gap-3 px-4 py-3 rounded-lg transition {{ request()->routeIs('admin.history.audit') ? 'bg-white/20' : 'hover:bg-white/10' }}">
                 <i class="ri-history-line text-lg"></i>
                 <span>Historique & Audit</span>
@@ -111,10 +108,10 @@
                     </svg>
                 </button>
                 <div x-show="open" x-collapse class="ml-3 mt-1 space-y-1">
-                    <a href="{{ route('admin.chat.list') }}" class="block px-4 py-2 rounded hover:bg-white/10 {{ request()->routeIs('admin.chat.list') || (request()->routeIs('admin.chat.conversation')) ? 'bg-white/20 font-medium' : '' }}">
+                    <a wire:navigate href="{{ route('admin.chat.list') }}" class="block px-4 py-2 rounded hover:bg-white/10 {{ request()->routeIs('admin.chat.list') || (request()->routeIs('admin.chat.conversation')) ? 'bg-white/20 font-medium' : '' }}">
                         <i class="ri-chat-3-line mr-1"></i> Conversations
                     </a>
-                    <a href="{{ route('admin.chat.broadcast') }}" class="block px-4 py-2 rounded hover:bg-white/10 {{ request()->routeIs('admin.chat.broadcast') ? 'bg-white/20 font-medium' : '' }}">
+                    <a wire:navigate href="{{ route('admin.chat.broadcast') }}" class="block px-4 py-2 rounded hover:bg-white/10 {{ request()->routeIs('admin.chat.broadcast') ? 'bg-white/20 font-medium' : '' }}">
                         <i class="ri-broadcast-line mr-1"></i> Broadcast
                     </a>
                 </div>
@@ -137,25 +134,25 @@
                 <div x-show="open" x-collapse class="ml-3 mt-1 space-y-1">
 
                     @canmodule('rh')
-                    <a href="{{ route('admin.rh.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.rh*') ? 'bg-gray-100 font-medium' : '' }}">
+                    <a wire:navigate href="{{ route('admin.rh.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.rh*') ? 'bg-gray-100 font-medium' : '' }}">
                         <i class="ri-team-line mr-1"></i> Gestion RH
                     </a>
                     @endcanmodule
 
                     @canmodule('finance')
-                    <a href="{{ route('admin.finance.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.finance*') ? 'bg-gray-100 font-medium' : '' }}">
+                    <a wire:navigate href="{{ route('admin.finance.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.finance*') ? 'bg-gray-100 font-medium' : '' }}">
                         <i class="ri-money-dollar-circle-line mr-1"></i> Finance
                     </a>
                     @endcanmodule
 
                     @canmodule('material')
-                    <a href="{{ route('admin.material.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.material*') ? 'bg-gray-100 font-medium' : '' }}">
+                    <a wire:navigate href="{{ route('admin.material.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.material*') ? 'bg-gray-100 font-medium' : '' }}">
                         <i class="ri-archive-line mr-1"></i> Matériel
                     </a>
                     @endcanmodule
 
                     @canmodule('association_parameters')
-                    <a href="{{ route('admin.association.parameters') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.association*') ? 'bg-gray-100 font-medium' : '' }}">
+                    <a wire:navigate href="{{ route('admin.association.parameters') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.association*') ? 'bg-gray-100 font-medium' : '' }}">
                         <i class="ri-settings-3-line mr-1"></i> Paramètres Association
                     </a>
                     @endcanmodule
@@ -181,45 +178,45 @@
                 <div x-show="open" x-collapse class="ml-3 mt-1 space-y-1">
 
                     @canmodule('programe')
-                    <a href="{{ route('admin.programe') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.programe*') ? 'bg-gray-100 font-medium' : '' }}"><i class="ri-trello-fill mr-1"></i>Projet</a>
+                    <a wire:navigate href="{{ route('admin.programe') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.programe*') ? 'bg-gray-100 font-medium' : '' }}"><i class="ri-trello-fill mr-1"></i>Projet</a>
                     @endcanmodule
 
                     @canmodule('users')
-                    <a href="{{ route('admin.users.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.users*') ? 'bg-gray-100 font-medium' : '' }}"><i class="ri-admin-line mr-1"></i>Gestion Admin</a>
+                    <a wire:navigate href="{{ route('admin.users.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.users*') ? 'bg-gray-100 font-medium' : '' }}"><i class="ri-admin-line mr-1"></i>Gestion Admin</a>
                     @endcanmodule
 
                     
                     @canmodule('addresses')
-                    <a href="{{ route('admin.addresses.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.addresses*') ? 'bg-gray-100 font-medium' : '' }}"><i class="ri-map-pin-line mr-1"></i>Addresses</a>
+                    <a wire:navigate href="{{ route('admin.addresses.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.addresses*') ? 'bg-gray-100 font-medium' : '' }}"><i class="ri-map-pin-line mr-1"></i>Addresses</a>
                     @endcanmodule
 
                     @canmodule('formulaires')
-                    <a href="{{ route('admin.formulaires.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.formulaires*') ? 'bg-gray-100 font-medium' : '' }}">
+                    <a wire:navigate href="{{ route('admin.formulaires.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.formulaires*') ? 'bg-gray-100 font-medium' : '' }}">
                         <i class="ri-file-list-3-line mr-1"></i> Formulaires
                     </a>
                     @endcanmodule
 
                     @canmodule('activity_logs')
-                    <a href="{{ route('admin.activity.logs') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.activity*') ? 'bg-gray-100 font-medium' : '' }}">
+                    <a wire:navigate href="{{ route('admin.activity.logs') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.activity*') ? 'bg-gray-100 font-medium' : '' }}">
                         <i class="ri-history-line mr-1"></i> Activity Logs
                     </a>
                     @endcanmodule
 
 
                     @canmodule('gestion_roles')
-                    <a href="{{ route('admin.roles.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.roles*') ? 'bg-gray-100 font-medium' : '' }}">
+                    <a wire:navigate href="{{ route('admin.roles.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.roles*') ? 'bg-gray-100 font-medium' : '' }}">
                         <i class="ri-shield-user-line mr-1"></i> Gestion des Rôles
                     </a>
                     @endcanmodule
 
                     @canmodule('blog')
-                    <a href="{{ route('admin.blog.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.blog*') ? 'bg-gray-100 font-medium' : '' }}">
+                    <a wire:navigate href="{{ route('admin.blog.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.blog*') ? 'bg-gray-100 font-medium' : '' }}">
                         <i class="ri-article-line mr-1"></i> Blog & Actualités
                     </a>
                     @endcanmodule
 
                     @canmodule('dev_tools')
-                    <a href="{{ route('admin.dev.tools') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.dev*') ? 'bg-gray-100 font-medium' : '' }}">
+                    <a wire:navigate href="{{ route('admin.dev.tools') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.dev*') ? 'bg-gray-100 font-medium' : '' }}">
                         <i class="ri-code-s-slash-line mr-1"></i> Dev Tools
                     </a>
                     @endcanmodule
@@ -268,7 +265,7 @@
                             class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50"
                             style="display: none;">
                         
-                        <a href="{{ route('admin.users.show', Auth::id()) }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
+                        <a wire:navigate href="{{ route('admin.users.show', Auth::id()) }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition">
                             <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                             </svg>

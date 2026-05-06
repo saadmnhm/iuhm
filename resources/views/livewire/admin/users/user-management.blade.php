@@ -1,14 +1,5 @@
 <div x-data="{ tab: 'users' }" x-cloak>
     <!-- Page Header -->
-     @php
-    $currentUser = Auth::id() ? \App\Models\User::find(Auth::id()) : null;
-     
-        // echo '<pre>';
-        // print_r($candidat);
-        // echo '</pre>';
-        // exit;
-
-     @endphp
     <div class="mb-8">
         <div class="text-m font-bold text-[#066E1B] uppercase tracking-wide mb-2">SYSTEM CONFIGURATION</div>
         <div class="flex justify-between items-start mb-6">
@@ -16,7 +7,7 @@
                 <h1 class="text-[36px] font-bold text-[#04103A]">Gestion des accès utilisateur</h1>
                 <p class="text-gray-600 text-[18px] mt-2">Gérer les hiérarchies organisationnelles en créant des autorisations granulaires pour les membres de l'équipe au sein de l'écosystème Initiative Urbaine</p>
             </div>
-            @if($currentUser && in_array($currentUser->role, ['admin', 'super_admin'], true))
+            @if(in_array($currentUserRole, ['admin', 'super_admin'], true))
             <button wire:click="openCreateModal" class="w-65 h-12.5 text-center p-2 content-center bg-[#1B264F] text-white text-[16px] font-normal rounded-full hover:bg-gray-800 transition">
                 <i class="ri-shield-user-line text-[19px] relative right-1" ></i> Créer un utilisateur
             </button>
@@ -102,7 +93,7 @@
                     <select wire:model.live="adminRoleFilter" class="h-11 border border-gray-300 rounded-full text-sm py-2 px-4 bg-white">
                         <option value="all">Tous les rôles</option>
                         @foreach($allRoles as $role)
-                            <option value="{{ $role->name }}">{{ $role->label }}</option>
+                            <option value="{{ $role['name'] }}">{{ $role['label'] }}</option>
                         @endforeach
                     </select>
 
@@ -149,12 +140,12 @@
                                         <div class="text-xs text-[#04103A] mt-1">{{ $user->updated_at->format('d/m/Y') }}</div>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-[#04103A]">
-                                        @php
-                                            $roleModel = $allRoles->firstWhere('name', $user->role);
-                                            $cls = \App\Models\Role::colorClasses($roleModel?->color ?? 'gray');
-                                        @endphp
+                                            @php
+                                                $roleModel = collect($allRoles)->firstWhere('name', $user->role);
+                                                $cls = \App\Models\Role::colorClasses(data_get($roleModel, 'color', 'gray'));
+                                            @endphp
                                         <span class="px-3 py-1 text-xs rounded-full {{ $cls['badge'] }}">
-                                            {{ $roleModel?->label ?? ucfirst(str_replace('_', ' ', $user->role)) }}
+                                            {{ data_get($roleModel, 'label', ucfirst(str_replace('_', ' ', $user->role))) }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-[#04103A]">
@@ -177,7 +168,7 @@
                                                title="Edit">
                                                 <i class="ri-pencil-line"></i>
                                             </button>
-                                            @if($currentUser && $currentUser->role === 'super_admin')
+                                            @if($currentUserRole === 'super_admin')
                                                 <button wire:click="openDeleteModal({{ $user->id }})"
                                                     class="p-2 text-red-600 hover:text-red-900 hover:bg-red-100 rounded-lg transition"
                                                     title="Delete">
@@ -289,7 +280,7 @@
                                                title="Edit">
                                                 <i class="ri-pencil-line"></i>
                                             </button>
-                                            @if($currentUser && $currentUser->role === 'super_admin')
+                                            @if($currentUserRole === 'super_admin')
                                                 <button wire:click="openDeleteModal({{ $item->id }})"
                                                     class="p-2 text-red-600 hover:text-red-900 hover:bg-red-100 rounded-lg transition"
                                                     title="Delete">

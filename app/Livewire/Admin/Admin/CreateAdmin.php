@@ -16,7 +16,7 @@ class CreateAdmin extends Component
     public $email;
     public $password;
     public $password_confirmation;
-    public $role = 'user';
+    public $role = 'admin';
     public $is_active = true;
 
     protected function rules()
@@ -26,7 +26,7 @@ class CreateAdmin extends Component
             'prenom' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
-            'role' => ['required', 'string', 'in:' . implode(',', Role::pluck('nom')->toArray())],
+            'role' => ['required', 'string', 'in:' . implode(',', Role::pluck('name')->toArray())],
             'is_active' => 'boolean',
         ];
     }

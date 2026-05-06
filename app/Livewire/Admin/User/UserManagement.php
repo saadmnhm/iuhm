@@ -15,6 +15,8 @@ class UserManagement extends Component
 {
     use WithPagination;
 
+    public ?int $currentUserId = null;
+    public string $currentUserRole = '';
     public string $adminSearch = '';
     public string $adminRoleFilter = 'all';
     public string $candidatSearch = '';
@@ -35,11 +37,67 @@ class UserManagement extends Component
     public $password;
     public $password_confirmation = '';
     public $phone = '';
-    public $role = 'user';
+    public $role = 'admin';
     public $is_active = true;
     public $selectedUser = null;
+    public array $allRoles = [];
+    public array $statistics = [];
+    public array $stat_section = [];
     
     protected $paginationTheme = 'tailwind';
+
+    public function mount(): void
+    {
+        $this->loadSharedData();
+    }
+
+    private function loadSharedData(): void
+    {
+        $currentUser = Auth::user();
+
+        $this->currentUserId = Auth::id();
+        $this->currentUserRole = $currentUser?->role ?? '';
+
+        $this->allRoles = Role::orderByDesc('is_system')
+            ->orderBy('label')
+            ->get(['name', 'label', 'color', 'is_system'])
+            ->map(fn (Role $role) => [
+                'name' => $role->name,
+                'label' => $role->label,
+                'color' => $role->color,
+                'is_system' => (bool) $role->is_system,
+            ])
+            ->all();
+
+        $this->refreshStatistics();
+    }
+
+    private function refreshStatistics(): void
+    {
+        $this->statistics = [
+            'total_users' => User::count() + Candidat::count(),
+            'admins' => User::count(),
+            'total_candidats' => Candidat::count(),
+        ];
+
+        $this->stat_section = [
+            [
+                'label' => 'Total Utilisateurs',
+                'value' => $this->statistics['total_users'],
+                'icon' => 'ri-group-line',
+            ],
+            [
+                'label' => 'Admins',
+                'value' => $this->statistics['admins'],
+                'icon' => 'ri-building-line',
+            ],
+            [
+                'label' => 'Candidats',
+                'value' => $this->statistics['total_candidats'],
+                'icon' => 'ri-user-community-line',
+            ],
+        ];
+    }
 
 
         public function openDeleteModal($userId)
@@ -89,6 +147,7 @@ class UserManagement extends Component
             $this->selectedUser = null;
             session()->flash('success', 'User deleted successfully!');
             $this->userId = null;
+            $this->refreshStatistics();
         }
 
         public function closeModals()
@@ -130,7 +189,8 @@ class UserManagement extends Component
             $this->isEditingUser = false;
             $this->editingUserType = null;
             $this->showCreateModal = true;
-            $this->userTypeCreate = 'admin';
+                $this->userTypeCreate = 'admin';
+                $this->role = 'admin';
             $this->resetFormFields();
         }
 
@@ -147,7 +207,7 @@ class UserManagement extends Component
             $this->password = '';
             $this->password_confirmation = '';
             $this->phone = '';
-            $this->role = 'user';
+            $this->role = 'admin';
             $this->is_active = true;
             $this->editId = null;
         }
@@ -158,6 +218,8 @@ class UserManagement extends Component
             $this->isEditingUser = true;
             $this->editingUserType = $type;
             $this->resetFormFields();
+            $this->showCreateModal = true;
+
 
             if ($type === 'admin') {
                 $user = User::find($id);
@@ -180,7 +242,6 @@ class UserManagement extends Component
                 }
             }
 
-            $this->showCreateModal = true;
         }
 
         public function createUser(): void
@@ -212,7 +273,7 @@ class UserManagement extends Component
                 'prenom' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email,' . $this->editId,
                 'phone' => 'nullable|string|max:20',
-                'role' => 'required|exists:roles,nom',
+                'role' => 'required|exists:roles,name',
                 'is_active' => 'sometimes|boolean',
             ]);
 
@@ -240,6 +301,7 @@ class UserManagement extends Component
 
                 session()->flash('success', 'Admin mise à jour avec succès.');
                 $this->closeCreateModal();
+                $this->refreshStatistics();
             } catch (\Exception $e) {
                 session()->flash('error', 'Erreur lors de la mise à jour: ' . $e->getMessage());
             }
@@ -271,6 +333,7 @@ class UserManagement extends Component
 
                 session()->flash('success', 'Bénéficiaire mise à jour avec succès.');
                 $this->closeCreateModal();
+                $this->refreshStatistics();
             } catch (\Exception $e) {
                 session()->flash('error', 'Erreur lors de la mise à jour: ' . $e->getMessage());
             }
@@ -283,7 +346,7 @@ class UserManagement extends Component
                 'prenom' => 'nullable|string|max:255',
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required|string|min:6|confirmed',
-                'role' => 'required|exists:roles,nom',
+                'role' => 'required|exists:roles,name',
             ]);
 
             try {
@@ -298,6 +361,7 @@ class UserManagement extends Component
 
                 session()->flash('success', 'Admin créé avec succès.');
                 $this->closeCreateModal();
+                $this->refreshStatistics();
             } catch (\Exception $e) {
                 session()->flash('error', 'Erreur lors de la création: ' . $e->getMessage());
             }
@@ -325,6 +389,7 @@ class UserManagement extends Component
 
                 session()->flash('success', 'Bénéficiaire créé avec succès.');
                 $this->closeCreateModal();
+                $this->refreshStatistics();
             } catch (\Exception $e) {
                 session()->flash('error', 'Erreur lors de la création: ' . $e->getMessage());
             }
@@ -333,7 +398,7 @@ class UserManagement extends Component
     public function render()
     {
             $queryAdmin = User::query()
-                ->where('id', '!=', Auth::id());
+                ->where('id', '!=', $this->currentUserId);
 
             if ($this->adminSearch !== '') {
                 $queryAdmin->where(function ($q) {
@@ -347,7 +412,10 @@ class UserManagement extends Component
                 $queryAdmin->where('role', $this->adminRoleFilter);
             }
 
-            $users = $queryAdmin->orderBy('id')->paginate(10, ['*'], 'adminsPage');
+            $users = $queryAdmin
+                ->select(['id', 'nom', 'prenom', 'email', 'role', 'is_active', 'created_at', 'updated_at'])
+                ->orderBy('id')
+                ->paginate(10, ['*'], 'adminsPage');
 
             $queryCandidat = Candidat::query();
 
@@ -364,41 +432,16 @@ class UserManagement extends Component
                 $queryCandidat->where('is_active', $this->candidatStatusFilter === 'active');
             }
 
-            $candidat = $queryCandidat->orderBy('id')->paginate(10, ['*'], 'candidatsPage');
-
-        $allRoles = Role::orderByDesc('is_system')->orderBy('label')->get();
-
-
-
-        $statistics = [
-            'total_users'   => User::count() + Candidat::count(),
-            'admins'        => User::count(),
-            'total_candidats' => Candidat::count(),
-        ];
-
-        $stat_section = [
-            [
-                'label' => 'Total Utilisateurs',
-                'value' => $statistics['total_users'],
-                'icon'  => 'ri-group-line',
-            ],
-            [
-                'label' => 'Admins',
-                'value' => $statistics['admins'],
-                'icon'  => 'ri-building-line',
-            ],
-            [
-                'label' => 'Candidats',
-                'value' => $statistics['total_candidats'],
-                'icon'  => 'ri-user-community-line',
-            ],
-        ];
+            $candidat = $queryCandidat
+                ->select(['id', 'nom', 'prenom', 'email', 'phone', 'matricule', 'is_active', 'created_at', 'updated_at'])
+                ->orderBy('id')
+                ->paginate(10, ['*'], 'candidatsPage');
 
         return view('livewire.admin.users.user-management', [
             'users'      => $users,
-            'statistics' => $statistics,
-            'allRoles'   => $allRoles,
-            'stat_section' => $stat_section,
+                'statistics' => $this->statistics,
+                'allRoles'   => $this->allRoles,
+                'stat_section' => $this->stat_section,
             'candidat' => $candidat,
         ])->layout('layouts.admin', ['header' => 'Admin Management']);
     }

@@ -86,9 +86,9 @@
                     <div>
                         <label class="block text-sm font-semibold text-[#04103A] mb-2">Rôle *</label>
                         <select wire:model="role" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
-                            <option value="user">Utilisateur</option>
-                            <option value="admin">Admin</option>
-                            <option value="super_admin">Super Admin</option>
+                            @foreach($allRoles as $roleItem)
+                                <option value="{{ $roleItem['name'] }}">{{ $roleItem['label'] }}</option>
+                            @endforeach
                         </select>
                     </div>
                     @endif
