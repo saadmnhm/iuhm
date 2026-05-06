@@ -138,13 +138,13 @@
 
                 {{-- Footer --}} 
                 <div class="flex justify-end items-center gap-3 px-6 py-4 ">
-                    <button
+                    <button type="button"
                         wire:click="closeModals"
                         class="px-4 py-2 text-sm font-semibold text-gray-700 h-12.5 text-center rounded-full hover:bg-gray-200 transition-colors"
                     >
                         Annuler
                     </button>
-                    <button
+                    <button type="button"
                         wire:click="createUser"
                         wire:loading.attr="disabled"
                         class="gap-2 px-4 py-2 h-12.5 text-center rounded-full w-37.5 text-sm font-semibold text-white bg-[#1B264F] hover:bg-[#0f1a3a] transition-colors disabled:opacity-60"

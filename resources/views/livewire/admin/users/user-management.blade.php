@@ -163,7 +163,7 @@
                                     </td>
                                     <td class="px-6 py-4 text-sm text-center">
                                         <div class="flex justify-center gap-2">
-                                            <button wire:click="openEditModal({{ $user->id }}, 'admin')"
+                                            <button @click="$wire.populateFormFromData({ id: {{ $user->id }}, nom: @js($user->nom), prenom: @js($user->prenom), email: @js($user->email), phone: @js($user->phone ?? ''), role: @js($user->role), is_active: {{ $user->is_active ? 'true' : 'false' }}, userType: 'admin' }); $wire.showCreateModal = true"
                                                class="p-2 text-gray-600 hover:text-[#04103A] hover:bg-gray-100 rounded-lg transition"
                                                title="Edit">
                                                 <i class="ri-pencil-line"></i>
@@ -275,7 +275,7 @@
                                     </td>
                                     <td class="px-6 py-4 text-sm text-center">
                                         <div class="flex justify-center gap-2">
-                                             <button wire:click="openEditModal({{ $item->id }}, 'candidat')"
+                                                                                         <button @click="$wire.populateFormFromData({ id: {{ $item->id }}, nom: @js($item->nom), prenom: @js($item->prenom), email: @js($item->email), phone: @js($item->phone ?? ''), is_active: {{ $item->is_active ? 'true' : 'false' }}, userType: 'candidat' }); $wire.showCreateModal = true"
                                                class="p-2 text-gray-600 hover:text-[#04103A] hover:bg-gray-100 rounded-lg transition"
                                                title="Edit">
                                                 <i class="ri-pencil-line"></i>

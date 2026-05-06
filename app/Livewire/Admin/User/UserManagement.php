@@ -10,6 +10,7 @@ use Livewire\WithPagination;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Models\AdminActivityLog;
+use Illuminate\Support\Str;
 
 class UserManagement extends Component
 {
@@ -214,34 +215,30 @@ class UserManagement extends Component
 
         public function openEditModal($id, $type = 'admin'): void
         {
+            $this->resetFormFields();
             $this->editId = $id;
             $this->isEditingUser = true;
             $this->editingUserType = $type;
-            $this->resetFormFields();
             $this->showCreateModal = true;
+        }
 
+        public function populateFormFromData(array $data): void
+        {
+            $this->resetFormFields();
+            $this->editId = $data['id'] ?? null;
+            $this->isEditingUser = true;
 
-            if ($type === 'admin') {
-                $user = User::find($id);
-                if ($user) {
-                    $this->nom = $user->nom;
-                    $this->prenom = $user->prenom;
-                    $this->email = $user->email;
-                    $this->phone = $user->phone ?? '';
-                    $this->role = $user->role;
-                    $this->is_active = (bool) $user->is_active;
-                }
-            } else {
-                $candidat = Candidat::find($id);
-                if ($candidat) {
-                    $this->nom = $candidat->nom;
-                    $this->prenom = $candidat->prenom;
-                    $this->email = $candidat->email;
-                    $this->phone = $candidat->phone;
-                    $this->is_active = (bool) $candidat->is_active;
-                }
-            }
+            $userType = $data['userType'] ?? 'admin';
+            $this->editingUserType = $userType;
 
+            // Populate form fields from pre-loaded data (no DB query needed)
+            $this->nom = $data['nom'] ?? '';
+            $this->prenom = $data['prenom'] ?? '';
+            $this->email = $data['email'] ?? '';
+            $this->phone = $data['phone'] ?? '';
+            $this->role = $data['role'] ?? 'admin';
+            $this->is_active = (bool) ($data['is_active'] ?? true);
+            $this->showCreateModal = true;
         }
 
         public function createUser(): void
@@ -378,7 +375,10 @@ class UserManagement extends Component
             ]);
 
             try {
+                $login = $this->generateCandidateLogin($validated['email']);
+
                 Candidat::create([
+                    'login' => $login,
                     'nom' => $validated['nom'],
                     'prenom' => $validated['prenom'],
                     'email' => $validated['email'],
@@ -393,6 +393,20 @@ class UserManagement extends Component
             } catch (\Exception $e) {
                 session()->flash('error', 'Erreur lors de la création: ' . $e->getMessage());
             }
+        }
+
+        private function generateCandidateLogin(string $email): string
+        {
+            $baseLogin = Str::slug(Str::before($email, '@')) ?: 'candidate';
+            $login = $baseLogin;
+            $suffix = 1;
+
+            while (Candidat::where('login', $login)->exists()) {
+                $login = $baseLogin . '-' . $suffix;
+                $suffix++;
+            }
+
+            return $login;
         }
 
     public function render()
