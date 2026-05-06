@@ -1,5 +1,5 @@
     <!-- Create/Edit User Modal -->
-    <div x-data="{ open: @entangle('showCreateModal').live }" x-cloak>
+    <div x-data="{ open: @entangle('showCreateModal').live }" x-cloak wire:ignore.self>
         <div
             x-show="open"
             x-transition:enter="ease-out duration-200"
@@ -52,11 +52,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-semibold text-[#04103A] mb-2">Nom</label>
-                            <input type="text" wire:model="nom" placeholder="Entrez le nom" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
+                            <input type="text" wire:model.defer="nom" placeholder="Entrez le nom" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-[#04103A] mb-2">Prénom</label>
-                            <input type="text" wire:model="prenom" placeholder="Entrez le prénom" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
+                            <input type="text" wire:model.defer="prenom" placeholder="Entrez le prénom" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
                         </div>
                     </div>
                     @endif
@@ -66,11 +66,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-semibold text-[#04103A] mb-2">Nom</label>
-                            <input type="text" wire:model="nom" placeholder="Entrez le nom" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
+                            <input type="text" wire:model.defer="nom" placeholder="Entrez le nom" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-[#04103A] mb-2">Prénom</label>
-                            <input type="text" wire:model="prenom" placeholder="Entrez le prénom" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
+                            <input type="text" wire:model.defer="prenom" placeholder="Entrez le prénom" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
                         </div>
                     </div>
                     @endif
@@ -78,14 +78,14 @@
                     <!-- Email Field -->
                     <div>
                         <label class="block text-sm font-semibold text-[#04103A] mb-2">E-mail *</label>
-                        <input type="email" wire:model="email" placeholder="example@urbanunity.com" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
+                        <input type="email" wire:model.defer="email" placeholder="example@urbanunity.com" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
                     </div>
 
                     <!-- Role (Admin only) -->
                     @if((!$isEditingUser && $userTypeCreate === 'admin') || ($isEditingUser && $editingUserType === 'admin'))
                     <div>
                         <label class="block text-sm font-semibold text-[#04103A] mb-2">Rôle *</label>
-                        <select wire:model="role" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
+                        <select wire:model.defer="role" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
                             @foreach($allRoles as $roleItem)
                                 <option value="{{ $roleItem['name'] }}">{{ $roleItem['label'] }}</option>
                             @endforeach
@@ -96,18 +96,18 @@
                     <!-- Phone (for both types) -->
                     <div>
                         <label class="block text-sm font-semibold text-[#04103A] mb-2">Téléphone *</label>
-                        <input type="tel" wire:model="phone" placeholder="Entrez le numéro de téléphone" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
+                        <input type="tel" wire:model.defer="phone" placeholder="Entrez le numéro de téléphone" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
                     </div>
 
                     <!-- Password Fields -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-semibold text-[#04103A] mb-2">Mot de passe {{ !$isEditingUser ? '*' : '(optionnel)' }}</label>
-                            <input type="password" wire:model="password" placeholder="•••••••" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
+                            <input type="password" wire:model.defer="password" placeholder="•••••••" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
                         </div>
                         <div>
                             <label class="block text-sm font-semibold text-[#04103A] mb-2">Confirmer mot de passe {{ !$isEditingUser ? '*' : '' }}</label>
-                            <input type="password" wire:model="password_confirmation" placeholder="•••••••" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
+                            <input type="password" wire:model.defer="password_confirmation" placeholder="•••••••" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
                         </div>
                     </div>
                     <!-- Account Status -->
