@@ -1,7 +1,7 @@
 <div class="p-6 font-sans">
 	<div class="bg-gradient-to-r from-[#0f2441] to-[#15304a] text-white p-9 rounded-xl h-[248px] shadow-lg flex items-center justify-between">
 		<div>
-			<h1 class="text-3xl text-[48px] font-bold">Bienvenue, Abdjalil</h1>
+			<h1 class="text-3xl text-[48px] font-bold">Bienvenue, {{ Auth::user()->nom }} {{ Auth::user()->prenom }}</h1>
 			<p class=" text-[18px] opacity-90 text-gray-200 mt-1">Association Initiative Urbaine - ERP</p>
 			<a href="#" class="inline-block mt-3 bg-white font-bold text-[#12345a] px-3 py-1 rounded-md text-sm"><i class="ri-function-line mr-2 text-[20px] font-[500] text-[#066E1B] relative top-[1px] "></i>Vue d'ensemble du système</a>
 		</div>
