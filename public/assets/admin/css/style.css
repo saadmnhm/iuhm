@@ -22,6 +22,11 @@ header{
         color: #648454;
     }
 }
+
+.aside-admin a{
+    color:  #475569;
+    font-weight: 500;
+}
 .bg-green-logo{
     background-color: #648454;
 }

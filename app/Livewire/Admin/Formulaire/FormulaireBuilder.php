@@ -559,9 +559,13 @@ class FormulaireBuilder extends Component
         }
     }
 
-    public function saveTable()
+    public function saveTable(?bool $hasDynamicRows = null)
     {
         try {
+            if (!is_null($hasDynamicRows)) {
+                $this->tableForm['has_dynamic_rows'] = $hasDynamicRows;
+            }
+
             $this->validate([
                 'tableForm.title' => 'required|string|max:255',
                 'tableForm.table_key' => 'required|string|max:255',

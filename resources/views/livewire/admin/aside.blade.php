@@ -5,26 +5,28 @@
             <img src="{{asset('assets/admin/image/iuhm_logo.png')}}" alt="">
         </div>
 
-        <nav class="p-4 space-y-2">
+        <nav class="p-4 space-y-2 ">
             {{-- Dashboard: always visible to all admins --}}
-            <a wire:navigate href="{{ route('admin.dashboard') }}" 
-                class="flex items-center gap-3 px-4 py-3 rounded-lg transition {{ request()->routeIs('admin.dashboard') ? 'bg-white/20' : 'hover:bg-white/10' }}">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                </svg>
+            <a wire:navigate href="{{ route('admin.dashboard') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.dashboard') ? 'bg-[#DCFCE7]' : '' }}">
+                <i class="ri-home-line mr-1"></i>
                 <span>Dashboard</span>
             </a>
             @if(request()->is('admin/console/*'))
                     @canmodule('users')
-                    <a wire:navigate href="{{ route('admin.users.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.users*') ? 'bg-gray-100 font-medium' : '' }}"><i class="ri-admin-line mr-1"></i>Gestion Admin</a>
+                    <a wire:navigate href="{{ route('admin.users.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.users*') ? 'bg-[#DCFCE7] font-medium' : '' }}"><i class="ri-admin-line mr-1"></i>Gestion Admin</a>
                     @endcanmodule
                     @canmodule('formulaires')
-                    <a wire:navigate href="{{ route('admin.formulaires.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.formulaires*') ? 'bg-gray-100 font-medium' : '' }}">
+                    <a wire:navigate href="{{ route('admin.formulaires.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.formulaires*') ? 'bg-[#DCFCE7] font-medium' : '' }}">
                         <i class="ri-file-list-3-line mr-1"></i> Formulaires
                     </a>
                     @endcanmodule
                     @canmodule('addresses')
-                    <a wire:navigate href="{{ route('admin.addresses.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.addresses*') ? 'bg-gray-100 font-medium' : '' }}"><i class="ri-map-pin-line mr-1"></i>Addresses</a>
+                    <a wire:navigate href="{{ route('admin.addresses.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.addresses*') ? 'bg-[#DCFCE7] font-medium' : '' }}"><i class="ri-map-pin-line mr-1"></i>Addresses</a>
+                    @endcanmodule
+                    @canmodule('gestion_roles')
+                    <a wire:navigate href="{{ route('admin.roles.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.roles*') ? 'bg-[#DCFCE7] font-medium' : '' }}">
+                        <i class="ri-shield-user-line mr-1"></i> Gestion des Rôles
+                    </a>
                     @endcanmodule
             @endif
 
