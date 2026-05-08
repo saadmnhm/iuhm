@@ -13,9 +13,14 @@ class Aside extends Component
     public function mount()
     {
         $this->candidat = Auth::guard('candidat')->user();
-        $this->checkProfileCompletion();
         
-       
+        // Don't render aside for non-candidat users (admins, etc)
+        if (!$this->candidat) {
+            $this->skipRender();
+            return;
+        }
+        
+        $this->checkProfileCompletion();
     }
 
     public function checkProfileCompletion()
@@ -25,7 +30,7 @@ class Aside extends Component
             return;
         }
         
-        if (!$this->candidat->phone || !$this->candidat->selected_prefecture || !$this->candidat->date_naissance || !$this->candidat->niveau_etude || !$this->candidat->specialite || !$this->candidat->gender || !$this->candidat->address_detail) {
+        if (!$this->candidat || !$this->candidat->phone || !$this->candidat->selected_prefecture || !$this->candidat->date_naissance || !$this->candidat->niveau_etude || !$this->candidat->specialite || !$this->candidat->gender || !$this->candidat->address_detail) {
             $this->showCompleteProfileModal = true;
         }
     }

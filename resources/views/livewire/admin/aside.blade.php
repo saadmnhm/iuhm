@@ -29,8 +29,27 @@
                     </a>
                     @endcanmodule
             @endif
+                @if(request()->is('admin/media/*') || request()->is('admin/media') )
 
+                    @canmodule('media')
+                    <a wire:navigate href="{{ route('admin.media.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.media*') ? 'bg-[#DCFCE7]' : '' }}">
+                        <i class="ri-image-2-line mr-1"></i> News & Media   
+                    </a>                    
+                    <a wire:navigate href="{{ route('admin.blog.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.blog*') ? 'bg-[#DCFCE7]' : '' }}">
+                        <i class="ri-article-line mr-1"></i> Blog
+                    </a>
+                    <a wire:navigate href="{{ route('admin.news.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.news*') ? 'bg-[#DCFCE7]' : '' }}">
+                        <i class="ri-newspaper-line mr-1"></i> Actualités
+                    </a>
+                    <a wire:navigate href="{{ route('admin.deliverables.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.deliverables*') ? 'bg-[#DCFCE7]' : '' }}">
+                        <i class="ri-file-download-line mr-1"></i> Livrables
+                    </a>
+                    <a wire:navigate href="{{ route('admin.newsletters.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.newsletters*') ? 'bg-[#DCFCE7]' : '' }}">
+                        <i class="ri-mail-line mr-1"></i> Newsletters
+                    </a>
 
+                    @endcanmodule
+                @endif
 <!-- 
             <div x-data="{ open: false }">
                 <button @click="open = !open" class="flex w-full items-center justify-between gap-3 px-4 py-3 rounded-lg transition hover:bg-gray-100">
@@ -211,11 +230,7 @@
                     </a>
                     @endcanmodule
 
-                    @canmodule('blog')
-                    <a wire:navigate href="{{ route('admin.blog.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.blog*') ? 'bg-gray-100 font-medium' : '' }}">
-                        <i class="ri-article-line mr-1"></i> Blog & Actualités
-                    </a>
-                    @endcanmodule
+
 
                     @canmodule('dev_tools')
                     <a wire:navigate href="{{ route('admin.dev.tools') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.dev*') ? 'bg-gray-100 font-medium' : '' }}">

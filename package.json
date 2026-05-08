@@ -15,6 +15,10 @@
         "vite": "^7.0.7"
     },
     "dependencies": {
+        "@editorjs/editorjs": "^2.31.6",
+        "@editorjs/header": "^2.8.8",
+        "@editorjs/list": "^2.0.9",
+        "@editorjs/quote": "^2.7.6",
         "remixicon": "^4.9.1"
     }
 }

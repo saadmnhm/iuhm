@@ -48,8 +48,12 @@ class ChatMessage extends Model
     }
 
     /** Unread count for candidat (messages from admin not yet read) */
-    public static function unreadForCandidat(int $candidatId): int
+    public static function unreadForCandidat(int|null $candidatId): int
     {
+        if ($candidatId === null) {
+            return 0;
+        }
+        
         return static::where('candidat_id', $candidatId)
             ->where('sender_type', 'admin')
             ->where('is_read', false)

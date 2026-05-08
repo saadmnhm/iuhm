@@ -16,6 +16,13 @@ class Navbar extends Component
     public function mount($pageTitle = null): void
     {
         $candidat             = Auth::guard('candidat')->user();
+        
+        // Don't render navbar for non-candidat users (admins, etc)
+        if (!$candidat) {
+            $this->skipRender();
+            return;
+        }
+        
         $this->pageTitle      = $pageTitle ?? 'Dashboard';
         $this->profile_image  = $candidat?->profile_image;
         $this->loadNotifications($candidat);

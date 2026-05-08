@@ -81,7 +81,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/my-submissions', \App\Livewire\Admin\Submissions\MyAssignedSubmissions::class)->name('my.submissions')->middleware('module:my_submissions');
         Route::get('/all-submissions', \App\Livewire\Admin\Submissions\AllSubmissions::class)->name('all.submissions')->middleware('module:all_submissions');
         Route::get('/association-parameters', \App\Livewire\Admin\Settings\AssociationParameters::class)->name('association.parameters')->middleware('module:association_parameters');
-        Route::get('/blog', \App\Livewire\Admin\Blog\BlogManagement::class)->name('blog.index')->middleware('module:blog');
+        Route::get('/media/blog', \App\Livewire\Admin\Blog\BlogManagement::class)->name('blog.index')->middleware('module:blog');
+        Route::get('/media/news', \App\Livewire\Admin\Blog\NewsManagement::class)->name('news.index')->middleware('module:blog');
+        Route::get('/media/deliverables', \App\Livewire\Admin\Blog\DeliverableManagement::class)->name('deliverables.index')->middleware('module:blog');
+        Route::get('/media/newsletters', \App\Livewire\Admin\Blog\NewsletterManagement::class)->name('newsletters.index')->middleware('module:blog');
+        Route::get('/media', \App\Livewire\Admin\Media\MediaManagement::class)->name('media.index')->middleware('module:media');
+        
         Route::get('/history-audit', \App\Livewire\Admin\Submissions\HistoryAudit::class)->name('history.audit')->middleware('module:history_audit');
         Route::get('/support-tickets', \App\Livewire\Admin\Support\SupportTickets::class)->name('support.tickets')->middleware('module:support');
 

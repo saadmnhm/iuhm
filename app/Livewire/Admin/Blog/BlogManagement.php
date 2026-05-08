@@ -102,7 +102,6 @@ class BlogManagement extends Component
             session()->flash('success', 'Article créé avec succès!');
         }
 
-        $this->showModal = false;
         $this->resetForm();
     }
 
@@ -129,6 +128,7 @@ class BlogManagement extends Component
     {
         $this->reset(['postId', 'title', 'title_ar', 'excerpt', 'content', 'image', 'newImage', 'category', 'tags_input', 'is_published']);
         $this->editMode = false;
+        $this->showModal = false;
         $this->resetValidation();
     }
 
