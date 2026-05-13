@@ -18,7 +18,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\SetLocale::class,
         ]);
-        
+
+        $middleware->validateCsrfTokens(except: [
+            'api/v1/*',
+        ]);
+
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'super_admin' => \App\Http\Middleware\SuperAdminMiddleware::class,

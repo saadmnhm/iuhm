@@ -20,7 +20,6 @@ class MediaManagement extends Component
             'totalNews'            => Actualite::count(),
             'publishedNews'        => Actualite::where('is_published', true)->count(),
             'totalNewsletters'     => Newsletter::count(),
-            'publishedNewsletters' => Newsletter::where('is_published', true)->count(),
             'totalDeliverables'    => Publication::count(),
             'totalMedia'           => Media::count(),
         ];
@@ -37,12 +36,6 @@ class MediaManagement extends Component
                 'icon' => 'ri-newspaper-line',
                 'color' => 'text-blue-600',
                 'data' => $stats['totalNews'],
-            ],
-            'infolettres' => [
-                'label' => 'newsletters',
-                'icon' => 'ri-mail-send-line',
-                'data_icon' => $stats['publishedNewsletters'],
-                'data' => $stats['totalNewsletters'],
             ],
             'livrables' => [
                 'label' => 'Livrables',

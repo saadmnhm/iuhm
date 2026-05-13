@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\NewsApiController;
 use App\Http\Controllers\Api\DeliverableApiController;
 use App\Http\Controllers\Api\NewsletterApiController;
 use App\Http\Controllers\Api\MediaApiController;
+use App\Http\Controllers\Api\ContactApiController;
 use App\Models\Article;
 use App\Models\Actualite;
 use App\Models\Publication;
@@ -84,9 +85,14 @@ Route::prefix('api/v1')->name('api.v1.')->group(function () {
         Route::get('/search', [NewsletterApiController::class, 'search'])->name('search');
         Route::get('/stats', [NewsletterApiController::class, 'stats'])->name('stats');
         Route::get('/issue/{issue}', [NewsletterApiController::class, 'getByIssue'])->name('issue');
-        Route::get('/{id}', [NewsletterApiController::class, 'getById'])->name('show');
         Route::get('/slug/{slug}', [NewsletterApiController::class, 'show'])->name('show.slug');
+        Route::get('/{id}', [NewsletterApiController::class, 'getById'])->name('show');
+        Route::post('/subscribe', [NewsletterApiController::class, 'subscribe'])->name('subscribe');
+        Route::post('/unsubscribe', [NewsletterApiController::class, 'unsubscribe'])->name('unsubscribe');
     });
+
+    // Contacts / Inquiries API
+    Route::post('/contacts', [ContactApiController::class, 'store'])->name('contacts.store');
 
     // Media API
     Route::prefix('media')->name('media.')->group(function () {
