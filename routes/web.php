@@ -87,7 +87,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/media/actualite/{id}', \App\Livewire\Admin\Actualite\ActualiteForm::class)->name('actualite.form')->middleware('module:actualite');
         Route::get('/media/publication', \App\Livewire\Admin\Publication\PublicationManagement::class)->name('publication.index')->middleware('module:publication');
         Route::get('/media/publication/{id}', \App\Livewire\Admin\Publication\PublicationForm::class)->name('publication.form')->middleware('module:publication');
-        Route::get('/media/newsletters', \App\Livewire\Admin\newsletter\NewsletterManagement::class)->name('newsletters.index')->middleware('module:blog');
+        Route::get('/media/newsletters', \App\Livewire\Admin\Newsletter\NewsletterManagement::class)->name('newsletters.index')->middleware('module:blog');
         Route::get('/media/contact', \App\Livewire\Admin\Contact\ContactManagement::class)->name('contact.index');
         Route::get('/media', \App\Livewire\Admin\Media\MediaManagement::class)->name('media.index')->middleware('module:media');
         
