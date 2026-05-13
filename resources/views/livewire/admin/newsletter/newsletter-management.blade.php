@@ -87,19 +87,10 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="flex gap-3 items-center">
-                                        <button wire:click="openEdit({{ $item->id }})"
-                                            class="text-blue-600 hover:text-blue-800 text-sm font-medium" title="Modifier">
-                                            <i class="ri-edit-line text-base"></i>
-                                        </button>
                                         <button wire:click="toggleActive({{ $item->id }})"
                                             class="text-yellow-600 hover:text-yellow-800 text-sm font-medium"
                                             title="{{ $item->is_active ? 'Désactiver' : 'Activer' }}">
                                             <i class="{{ $item->is_active ? 'ri-toggle-fill' : 'ri-toggle-line' }} text-base"></i>
-                                        </button>
-                                        <button wire:click="delete({{ $item->id }})"
-                                            wire:confirm="Êtes-vous sûr de vouloir supprimer cet abonné ?"
-                                            class="text-red-600 hover:text-red-800 text-sm font-medium" title="Supprimer">
-                                            <i class="ri-delete-bin-line text-base"></i>
                                         </button>
                                     </div>
                                 </td>
