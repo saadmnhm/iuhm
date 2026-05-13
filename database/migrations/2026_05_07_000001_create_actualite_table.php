@@ -11,27 +11,29 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('newsletters', function (Blueprint $table) {
+        Schema::create('actualite', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->string('title_ar')->nullable();
             $table->string('slug')->unique();
+            $table->text('excerpt')->nullable();
+            $table->text('excerpt_ar')->nullable();
             $table->longText('content');
             $table->longText('content_ar')->nullable();
-            $table->string('featured_image')->nullable();
-            $table->integer('issue_number')->nullable()->unique();
+            $table->string('image')->nullable();
+            $table->string('category')->nullable();
+            $table->json('tags')->nullable();
             $table->boolean('is_published')->default(false);
             $table->timestamp('published_at')->nullable();
-            $table->timestamp('sent_at')->nullable();
             $table->foreignId('author_id')->constrained('users')->cascadeOnDelete();
-            $table->integer('recipients_count')->default(0);
+            $table->integer('views_count')->default(0);
             $table->softDeletes();
             $table->timestamps();
 
             $table->index('slug');
+            $table->index('category');
             $table->index('is_published');
             $table->index('published_at');
-            $table->index('sent_at');
         });
     }
 
@@ -40,6 +42,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('newsletters');
+        Schema::dropIfExists('actualite');
     }
 };

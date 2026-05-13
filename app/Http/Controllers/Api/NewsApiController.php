@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\News;
+use App\Models\Actualite;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -13,7 +13,7 @@ class NewsApiController
      */
     public function index(Request $request): JsonResponse
     {
-        $query = News::published();
+        $query = Actualite::published();
 
         if ($request->has('category')) {
             $query->where('category', $request->category);
@@ -28,7 +28,7 @@ class NewsApiController
         }
 
         $per_page = $request->get('per_page', 15);
-        $news = $query->with('author:id,name,email')->latest('published_at')->paginate($per_page);
+        $news = $query->with('author:id,nom,prenom,email')->latest('published_at')->paginate($per_page);
 
         return response()->json([
             'status' => 'success',
@@ -47,7 +47,7 @@ class NewsApiController
      */
     public function show(string $slug): JsonResponse
     {
-        $news = News::where('slug', $slug)->published()->with('author:id,name,email')->firstOrFail();
+        $news = Actualite::where('slug', $slug)->published()->with('author:id,nom,prenom,email')->firstOrFail();
         $news->increment('views_count');
 
         return response()->json([
@@ -61,7 +61,7 @@ class NewsApiController
      */
     public function getById(int $id): JsonResponse
     {
-        $news = News::where('id', $id)->published()->with('author:id,name,email')->firstOrFail();
+        $news = Actualite::where('id', $id)->published()->with('author:id,nom,prenom,email')->firstOrFail();
         $news->increment('views_count');
 
         return response()->json([
@@ -79,13 +79,13 @@ class NewsApiController
             'q' => 'required|string|min:2|max:255'
         ]);
 
-        $news = News::published()
+        $news = Actualite::published()
             ->where(function ($q) use ($request) {
                 $q->where('title', 'like', "%{$request->q}%")
                   ->orWhere('excerpt', 'like', "%{$request->q}%")
                   ->orWhere('tags', 'like', "%{$request->q}%");
             })
-            ->with('author:id,name,email')
+            ->with('author:id,nom,prenom,email')
             ->latest('published_at')
             ->limit(10)
             ->get();
@@ -103,9 +103,9 @@ class NewsApiController
     public function getByCategory(string $category, Request $request): JsonResponse
     {
         $per_page = $request->get('per_page', 15);
-        $news = News::published()
+        $news = Actualite::published()
             ->where('category', $category)
-            ->with('author:id,name,email')
+            ->with('author:id,nom,prenom,email')
             ->latest('published_at')
             ->paginate($per_page);
 
@@ -127,8 +127,8 @@ class NewsApiController
     public function latest(Request $request): JsonResponse
     {
         $limit = $request->get('limit', 10);
-        $news = News::published()
-            ->with('author:id,name,email')
+        $news = Actualite::published()
+            ->with('author:id,nom,prenom,email')
             ->latest('published_at')
             ->limit($limit)
             ->get();

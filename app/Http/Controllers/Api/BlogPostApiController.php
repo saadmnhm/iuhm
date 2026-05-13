@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\BlogPost;
+use App\Models\Article;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -13,7 +13,7 @@ class BlogPostApiController
      */
     public function index(Request $request): JsonResponse
     {
-        $query = BlogPost::published();
+        $query = Article::published();
 
         if ($request->has('category')) {
             $query->where('category', $request->category);
@@ -29,7 +29,7 @@ class BlogPostApiController
         }
 
         $per_page = $request->get('per_page', 15);
-        $posts = $query->with('author:id,name,email')->latest('published_at')->paginate($per_page);
+        $posts = $query->with('author:id,nom,prenom,email')->latest('published_at')->paginate($per_page);
 
         return response()->json([
             'status' => 'success',
@@ -48,7 +48,7 @@ class BlogPostApiController
      */
     public function show(string $slug): JsonResponse
     {
-        $post = BlogPost::where('slug', $slug)->published()->with('author:id,name,email')->firstOrFail();
+        $post = Article::where('slug', $slug)->published()->with('author:id,nom,prenom,email')->firstOrFail();
         
         // Increment view count
         $post->increment('views_count');
@@ -64,7 +64,7 @@ class BlogPostApiController
      */
     public function getById(int $id): JsonResponse
     {
-        $post = BlogPost::where('id', $id)->published()->with('author:id,name,email')->firstOrFail();
+        $post = Article::where('id', $id)->published()->with('author:id,nom,prenom,email')->firstOrFail();
         $post->increment('views_count');
 
         return response()->json([
@@ -82,13 +82,13 @@ class BlogPostApiController
             'q' => 'required|string|min:2|max:255'
         ]);
 
-        $posts = BlogPost::published()
+        $posts = Article::published()
             ->where(function ($q) use ($request) {
                 $q->where('title', 'like', "%{$request->q}%")
                   ->orWhere('excerpt', 'like', "%{$request->q}%")
                   ->orWhere('tags', 'like', "%{$request->q}%");
             })
-            ->with('author:id,name,email')
+            ->with('author:id,nom,prenom,email')
             ->latest('published_at')
             ->limit(10)
             ->get();
@@ -106,9 +106,9 @@ class BlogPostApiController
     public function getByCategory(string $category, Request $request): JsonResponse
     {
         $per_page = $request->get('per_page', 15);
-        $posts = BlogPost::published()
+        $posts = Article::published()
             ->where('category', $category)
-            ->with('author:id,name,email')
+            ->with('author:id,nom,prenom,email')
             ->latest('published_at')
             ->paginate($per_page);
 
@@ -130,8 +130,8 @@ class BlogPostApiController
     public function trending(Request $request): JsonResponse
     {
         $limit = $request->get('limit', 10);
-        $posts = BlogPost::published()
-            ->with('author:id,name,email')
+        $posts = Article::published()
+            ->with('author:id,nom,prenom,email')
             ->orderBy('views_count', 'desc')
             ->limit($limit)
             ->get();

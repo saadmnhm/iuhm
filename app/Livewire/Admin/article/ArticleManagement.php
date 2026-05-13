@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Livewire\Admin\Blog;
+namespace App\Livewire\Admin\Article;
 
-use App\Models\BlogPost;
+use App\Models\Article;
 use App\Models\AdminActivityLog;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Str;
 
-class BlogManagement extends Component
+class ArticleManagement extends Component
 {
     use WithPagination, WithFileUploads;
 
@@ -51,7 +51,7 @@ class BlogManagement extends Component
 
     public function openEdit(int $id): void
     {
-        $post = BlogPost::findOrFail($id);
+        $post = Article::findOrFail($id);
         $this->postId = $post->id;
         $this->title = $post->title;
         $this->title_ar = $post->title_ar;
@@ -84,21 +84,21 @@ class BlogManagement extends Component
         }
 
         if ($this->newImage) {
-            $filename = uniqid('blog_') . '.' . $this->newImage->getClientOriginalExtension();
-            $this->newImage->storeAs('blog', $filename, 'uploads');
-            $data['image'] = 'uploads/blog/' . $filename;
+            $filename = uniqid('article_') . '.' . $this->newImage->getClientOriginalExtension();
+            $this->newImage->storeAs('article', $filename, 'uploads');
+            $data['image'] = 'uploads/article/' . $filename;
         }
 
         if ($this->editMode) {
-            $post = BlogPost::findOrFail($this->postId);
+            $post = Article::findOrFail($this->postId);
             $post->update($data);
-            AdminActivityLog::log('blog_post_updated', "Updated blog post: {$post->title}", BlogPost::class, $post->id);
+            AdminActivityLog::log('article_updated', "Updated article: {$post->title}", Article::class, $post->id);
             session()->flash('success', 'Article mis à jour avec succès!');
         } else {
-            $data['slug'] = BlogPost::generateSlug($this->title);
+            $data['slug'] = Article::generateSlug($this->title);
             $data['author_id'] = auth()->id();
-            $post = BlogPost::create($data);
-            AdminActivityLog::log('blog_post_created', "Created blog post: {$post->title}", BlogPost::class, $post->id);
+            $post = Article::create($data);
+            AdminActivityLog::log('article_created', "Created article: {$post->title}", Article::class, $post->id);
             session()->flash('success', 'Article créé avec succès!');
         }
 
@@ -107,19 +107,19 @@ class BlogManagement extends Component
 
     public function togglePublish(int $id): void
     {
-        $post = BlogPost::findOrFail($id);
+        $post = Article::findOrFail($id);
         $post->update([
             'is_published' => !$post->is_published,
             'published_at' => !$post->is_published ? now() : $post->published_at,
         ]);
         $status = $post->is_published ? 'published' : 'unpublished';
-        AdminActivityLog::log("blog_post_{$status}", "Toggled blog post: {$post->title} → {$status}", BlogPost::class, $post->id);
+        AdminActivityLog::log("article_{$status}", "Toggled article: {$post->title} → {$status}", Article::class, $post->id);
     }
 
     public function delete(int $id): void
     {
-        $post = BlogPost::findOrFail($id);
-        AdminActivityLog::log('blog_post_deleted', "Deleted blog post: {$post->title}", BlogPost::class, $post->id);
+        $post = Article::findOrFail($id);
+        AdminActivityLog::log('article_deleted', "Deleted article: {$post->title}", Article::class, $post->id);
         $post->delete();
         session()->flash('success', 'Article supprimé avec succès!');
     }
@@ -134,7 +134,7 @@ class BlogManagement extends Component
 
     public function render()
     {
-        $query = BlogPost::with('author');
+        $query = Article::with('author');
 
         if ($this->search) {
             $query->where(function ($q) {
@@ -152,14 +152,34 @@ class BlogManagement extends Component
 
         $posts = $query->latest()->paginate(12);
 
-        $stats = [
-            'total'     => BlogPost::count(),
-            'published' => BlogPost::where('is_published', true)->count(),
-            'draft'     => BlogPost::where('is_published', false)->count(),
-            'views'     => BlogPost::sum('views_count'),
+
+
+        $stats_card = [
+            'totalarticles' => [
+                'label' => 'Total articles',
+                'icon' => 'ri-article-line',
+                'data' => Article::count(),
+            ],
+            'actualites' => [
+                'label' => 'Published articles',
+                'icon' => 'ri-newspaper-line',
+                'color' => 'text-blue-600',
+                'data' => Article::where('is_published', true)->count(),
+            ],
+            'infolettres' => [
+                'label' => 'Draft articles',
+                'icon' => 'ri-mail-send-line',
+                'data' => Article::where('is_published', false)->count(),
+            ],
+            'views' => [
+                'label' => 'Views',
+                'icon' => 'ri-eye-line',
+                'data' => Article::sum('views_count'),
+            ],
+
         ];
 
-        return view('livewire.admin.blog.blog-management', compact('posts', 'stats'))
-            ->layout('layouts.admin', ['header' => 'Blog & Actualités']);
+        return view('livewire.admin.article.article-management', compact('posts', 'stats_card'))
+            ->layout('layouts.admin', ['header' => 'Gestion des Articles']);
     }
 }

@@ -38,6 +38,6 @@ class BlogList extends Component
             ->select('category')->distinct()->pluck('category');
 
         return view('livewire.front.blog.blog-list', compact('posts', 'categories'))
-            ->layout('layouts.app', ['pageTitle' => 'Blog & Actualités']);
+            ->layout('layouts.app', ['pageTitle' => 'Actualités']);
     }
 }

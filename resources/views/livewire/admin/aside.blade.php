@@ -13,7 +13,10 @@
             </a>
             @if(request()->is('admin/console/*'))
                     @canmodule('users')
-                    <a wire:navigate href="{{ route('admin.users.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.users*') ? 'bg-[#DCFCE7] font-medium' : '' }}"><i class="ri-admin-line mr-1"></i>Gestion Admin</a>
+                    <a wire:navigate href="{{ route('admin.users.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.users*') ? 'bg-[#DCFCE7] font-medium' : '' }}">
+                        <i class="ri-admin-line mr-1"></i>
+                        Gestion d'utilisateurs
+                    </a>
                     @endcanmodule
                     @canmodule('formulaires')
                     <a wire:navigate href="{{ route('admin.formulaires.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.formulaires*') ? 'bg-[#DCFCE7] font-medium' : '' }}">
@@ -21,7 +24,9 @@
                     </a>
                     @endcanmodule
                     @canmodule('addresses')
-                    <a wire:navigate href="{{ route('admin.addresses.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.addresses*') ? 'bg-[#DCFCE7] font-medium' : '' }}"><i class="ri-map-pin-line mr-1"></i>Addresses</a>
+                    <a wire:navigate href="{{ route('admin.addresses.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.addresses*') ? 'bg-[#DCFCE7] font-medium' : '' }}">
+                        <i class="ri-map-pin-line mr-1"></i> Gestion des adresses
+                    </a>
                     @endcanmodule
                     @canmodule('gestion_roles')
                     <a wire:navigate href="{{ route('admin.roles.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.roles*') ? 'bg-[#DCFCE7] font-medium' : '' }}">
@@ -33,20 +38,24 @@
 
                     @canmodule('media')
                     <a wire:navigate href="{{ route('admin.media.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.media*') ? 'bg-[#DCFCE7]' : '' }}">
-                        <i class="ri-image-2-line mr-1"></i> News & Media   
+                        <i class="ri-stack-line mr-1"></i> Médias   
                     </a>                    
-                    <a wire:navigate href="{{ route('admin.blog.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.blog*') ? 'bg-[#DCFCE7]' : '' }}">
-                        <i class="ri-article-line mr-1"></i> Blog
+                    <a wire:navigate href="{{ route('admin.article.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.article*') ? 'bg-[#DCFCE7]' : '' }}">
+                        <i class="ri-article-line mr-1"></i> Articles
                     </a>
-                    <a wire:navigate href="{{ route('admin.news.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.news*') ? 'bg-[#DCFCE7]' : '' }}">
+                    <a wire:navigate href="{{ route('admin.actualite.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.actualite*') ? 'bg-[#DCFCE7]' : '' }}">
                         <i class="ri-newspaper-line mr-1"></i> Actualités
                     </a>
-                    <a wire:navigate href="{{ route('admin.deliverables.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.deliverables*') ? 'bg-[#DCFCE7]' : '' }}">
+                    <a wire:navigate href="{{ route('admin.publication.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.publication*') ? 'bg-[#DCFCE7]' : '' }}">
                         <i class="ri-file-download-line mr-1"></i> Livrables
+                    </a>
+                    <a wire:navigate href="{{ route('admin.contact.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.contact*') ? 'bg-[#DCFCE7]' : '' }}">
+                        <i class="ri-message-3-line mr-1"></i> Messages Contact
                     </a>
                     <a wire:navigate href="{{ route('admin.newsletters.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.newsletters*') ? 'bg-[#DCFCE7]' : '' }}">
                         <i class="ri-mail-line mr-1"></i> Newsletters
                     </a>
+
 
                     @endcanmodule
                 @endif

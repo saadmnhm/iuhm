@@ -6,33 +6,33 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class News extends Model
+class Publication extends Model
 {
     use SoftDeletes;
 
-    protected $table = 'news';
+    protected $table = 'publication';
 
     protected $fillable = [
         'title',
         'title_ar',
         'slug',
-        'excerpt',
-        'excerpt_ar',
-        'content',
-        'content_ar',
-        'image',
+        'description',
+        'description_ar',
+        'file_url',
+        'file_type',
         'category',
-        'tags',
+        'status',
+        'due_date',
         'is_published',
         'published_at',
         'author_id',
-        'views_count',
+        'downloads_count',
     ];
 
     protected $casts = [
-        'tags' => 'array',
         'is_published' => 'boolean',
         'published_at' => 'datetime',
+        'due_date' => 'datetime',
     ];
 
     public function author()

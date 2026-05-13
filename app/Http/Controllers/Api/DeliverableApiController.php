@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Deliverable;
+use App\Models\Publication;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -13,7 +13,7 @@ class DeliverableApiController
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Deliverable::published();
+        $query = Publication::published();
 
         if ($request->has('category')) {
             $query->where('category', $request->category);
@@ -32,7 +32,7 @@ class DeliverableApiController
         }
 
         $per_page = $request->get('per_page', 15);
-        $deliverables = $query->with('author:id,name,email')->latest('published_at')->paginate($per_page);
+        $deliverables = $query->with('author:id,nom,prenom,email')->latest('published_at')->paginate($per_page);
 
         return response()->json([
             'status' => 'success',
@@ -51,7 +51,7 @@ class DeliverableApiController
      */
     public function show(string $slug): JsonResponse
     {
-        $deliverable = Deliverable::where('slug', $slug)->published()->with('author:id,name,email')->firstOrFail();
+        $deliverable = Publication::where('slug', $slug)->published()->with('author:id,nom,prenom,email')->firstOrFail();
         $deliverable->increment('downloads_count');
 
         return response()->json([
@@ -65,7 +65,7 @@ class DeliverableApiController
      */
     public function getById(int $id): JsonResponse
     {
-        $deliverable = Deliverable::where('id', $id)->published()->with('author:id,name,email')->firstOrFail();
+        $deliverable = Publication::where('id', $id)->published()->with('author:id,nom,prenom,email')->firstOrFail();
         $deliverable->increment('downloads_count');
 
         return response()->json([
@@ -83,12 +83,12 @@ class DeliverableApiController
             'q' => 'required|string|min:2|max:255'
         ]);
 
-        $deliverables = Deliverable::published()
+        $deliverables = Publication::published()
             ->where(function ($q) use ($request) {
                 $q->where('title', 'like', "%{$request->q}%")
                   ->orWhere('description', 'like', "%{$request->q}%");
             })
-            ->with('author:id,name,email')
+            ->with('author:id,nom,prenom,email')
             ->latest('published_at')
             ->limit(10)
             ->get();
@@ -106,9 +106,9 @@ class DeliverableApiController
     public function getByCategory(string $category, Request $request): JsonResponse
     {
         $per_page = $request->get('per_page', 15);
-        $deliverables = Deliverable::published()
+        $deliverables = Publication::published()
             ->where('category', $category)
-            ->with('author:id,name,email')
+            ->with('author:id,nom,prenom,email')
             ->latest('published_at')
             ->paginate($per_page);
 
@@ -130,9 +130,9 @@ class DeliverableApiController
     public function getByStatus(string $status, Request $request): JsonResponse
     {
         $per_page = $request->get('per_page', 15);
-        $deliverables = Deliverable::published()
+        $deliverables = Publication::published()
             ->where('status', $status)
-            ->with('author:id,name,email')
+            ->with('author:id,nom,prenom,email')
             ->latest('published_at')
             ->paginate($per_page);
 
@@ -154,8 +154,8 @@ class DeliverableApiController
     public function popular(Request $request): JsonResponse
     {
         $limit = $request->get('limit', 10);
-        $deliverables = Deliverable::published()
-            ->with('author:id,name,email')
+        $deliverables = Publication::published()
+            ->with('author:id,nom,prenom,email')
             ->orderBy('downloads_count', 'desc')
             ->limit($limit)
             ->get();

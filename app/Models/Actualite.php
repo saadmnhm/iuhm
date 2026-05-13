@@ -6,13 +6,27 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class BlogPost extends Model
+class Actualite extends Model
 {
     use SoftDeletes;
 
+    protected $table = 'actualite';
+
     protected $fillable = [
-        'title', 'title_ar', 'slug', 'excerpt', 'content', 'image',
-        'category', 'tags', 'is_published', 'published_at', 'author_id', 'views_count',
+        'title',
+        'title_ar',
+        'slug',
+        'excerpt',
+        'excerpt_ar',
+        'content',
+        'content_ar',
+        'image',
+        'category',
+        'tags',
+        'is_published',
+        'published_at',
+        'author_id',
+        'views_count',
     ];
 
     protected $casts = [

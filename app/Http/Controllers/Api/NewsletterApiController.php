@@ -9,133 +9,84 @@ use Illuminate\Http\JsonResponse;
 class NewsletterApiController
 {
     /**
-     * Get all published newsletters
+     * Get all active subscribers
      */
     public function index(Request $request): JsonResponse
     {
-        $per_page = $request->get('per_page', 15);
-        $newsletters = Newsletter::published()
-            ->with('author:id,name,email')
-            ->latest('published_at')
-            ->paginate($per_page);
+        $perPage     = (int) $request->get('per_page', 15);
+        $subscribers = Newsletter::where('is_active', true)
+            ->latest('subscribed_at')
+            ->paginate($perPage);
 
         return response()->json([
             'status' => 'success',
-            'data' => $newsletters->items(),
+            'data'   => $subscribers->items(),
             'pagination' => [
-                'total' => $newsletters->total(),
-                'per_page' => $newsletters->perPage(),
-                'current_page' => $newsletters->currentPage(),
-                'last_page' => $newsletters->lastPage(),
-            ]
+                'total'        => $subscribers->total(),
+                'per_page'     => $subscribers->perPage(),
+                'current_page' => $subscribers->currentPage(),
+                'last_page'    => $subscribers->lastPage(),
+            ],
         ]);
     }
 
     /**
-     * Get single newsletter by slug
+     * Subscribe an email address
      */
-    public function show(string $slug): JsonResponse
-    {
-        $newsletter = Newsletter::where('slug', $slug)->published()->with('author:id,name,email')->firstOrFail();
-
-        return response()->json([
-            'status' => 'success',
-            'data' => $newsletter
-        ]);
-    }
-
-    /**
-     * Get newsletter by ID
-     */
-    public function getById(int $id): JsonResponse
-    {
-        $newsletter = Newsletter::where('id', $id)->published()->with('author:id,name,email')->firstOrFail();
-
-        return response()->json([
-            'status' => 'success',
-            'data' => $newsletter
-        ]);
-    }
-
-    /**
-     * Get newsletter by issue number
-     */
-    public function getByIssue(int $issue): JsonResponse
-    {
-        $newsletter = Newsletter::where('issue_number', $issue)->published()->with('author:id,name,email')->firstOrFail();
-
-        return response()->json([
-            'status' => 'success',
-            'data' => $newsletter
-        ]);
-    }
-
-    /**
-     * Search newsletters
-     */
-    public function search(Request $request): JsonResponse
+    public function subscribe(Request $request): JsonResponse
     {
         $request->validate([
-            'q' => 'required|string|min:2|max:255'
+            'email' => 'required|email|unique:newsletter_subscribers,email',
         ]);
 
-        $newsletters = Newsletter::published()
-            ->where(function ($q) use ($request) {
-                $q->where('title', 'like', "%{$request->q}%")
-                  ->orWhere('content', 'like', "%{$request->q}%");
-            })
-            ->with('author:id,name,email')
-            ->latest('published_at')
-            ->limit(10)
-            ->get();
+        $subscriber = Newsletter::create([
+            'email'         => $request->email,
+            'is_active'     => true,
+            'subscribed_at' => now(),
+        ]);
 
         return response()->json([
-            'status' => 'success',
-            'count' => $newsletters->count(),
-            'data' => $newsletters
+            'status'  => 'success',
+            'message' => 'Subscribed successfully.',
+            'data'    => $subscriber,
+        ], 201);
+    }
+
+    /**
+     * Unsubscribe an email address
+     */
+    public function unsubscribe(Request $request): JsonResponse
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $subscriber = Newsletter::where('email', $request->email)->first();
+
+        if (! $subscriber) {
+            return response()->json(['status' => 'error', 'message' => 'Email not found.'], 404);
+        }
+
+        $subscriber->update(['is_active' => false]);
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Unsubscribed successfully.',
         ]);
     }
 
     /**
-     * Get latest newsletters
+     * Check subscription status
      */
-    public function latest(Request $request): JsonResponse
+    public function check(Request $request): JsonResponse
     {
-        $limit = $request->get('limit', 5);
-        $newsletters = Newsletter::published()
-            ->with('author:id,name,email')
-            ->latest('published_at')
-            ->limit($limit)
-            ->get();
+        $request->validate(['email' => 'required|email']);
+
+        $subscriber = Newsletter::where('email', $request->email)->first();
 
         return response()->json([
-            'status' => 'success',
-            'count' => $newsletters->count(),
-            'data' => $newsletters
-        ]);
-    }
-
-    /**
-     * Get sent newsletters
-     */
-    public function sent(Request $request): JsonResponse
-    {
-        $per_page = $request->get('per_page', 15);
-        $newsletters = Newsletter::published()
-            ->whereNotNull('sent_at')
-            ->with('author:id,name,email')
-            ->latest('sent_at')
-            ->paginate($per_page);
-
-        return response()->json([
-            'status' => 'success',
-            'data' => $newsletters->items(),
-            'pagination' => [
-                'total' => $newsletters->total(),
-                'per_page' => $newsletters->perPage(),
-                'current_page' => $newsletters->currentPage(),
-                'last_page' => $newsletters->lastPage(),
-            ]
+            'status'    => 'success',
+            'subscribed' => $subscriber ? (bool) $subscriber->is_active : false,
         ]);
     }
 
@@ -146,13 +97,11 @@ class NewsletterApiController
     {
         return response()->json([
             'status' => 'success',
-            'data' => [
-                'total' => Newsletter::count(),
-                'published' => Newsletter::published()->count(),
-                'sent' => Newsletter::whereNotNull('sent_at')->count(),
-                'draft' => Newsletter::where('is_published', false)->count(),
-                'total_recipients' => Newsletter::sum('recipients_count') ?? 0,
-            ]
+            'data'   => [
+                'total'    => Newsletter::count(),
+                'active'   => Newsletter::where('is_active', true)->count(),
+                'inactive' => Newsletter::where('is_active', false)->count(),
+            ],
         ]);
     }
 }

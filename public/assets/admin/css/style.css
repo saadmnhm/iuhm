@@ -48,6 +48,22 @@ button:focus {
     font-weight: 700;
     font-size: 14px;
     height: 50px;
+    padding: 0px 10px;
+}
+.iuhm_textarea{
+    background-color: #E4E1E6;
+    color: #04103A;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 10px 10px;
+}
+.iuhm_select{
+    background-color: #E4E1E6;
+    color: #04103A;
+    font-weight: 700;
+    font-size: 14px;
+    height: 50px;
+    padding: 0px 10px;
 }
 .btn_standar{
     background-color: #1B264F;

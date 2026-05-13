@@ -1,15 +1,51 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Api\BlogPostApiController;
 use App\Http\Controllers\Api\NewsApiController;
 use App\Http\Controllers\Api\DeliverableApiController;
 use App\Http\Controllers\Api\NewsletterApiController;
 use App\Http\Controllers\Api\MediaApiController;
+use App\Models\Article;
+use App\Models\Actualite;
+use App\Models\Publication;
+use App\Models\Newsletter;
 
 Route::prefix('api/v1')->name('api.v1.')->group(function () {
-    
-    // Blog Posts API
+
+    // Health check – used by site_iuhm to verify ERP connectivity
+    Route::get('/health', function () {
+        try {
+            DB::connection()->getPdo();
+            $dbOk = true;
+        } catch (\Throwable) {
+            $dbOk = false;
+        }
+
+        $stats = [];
+        if ($dbOk) {
+            try {
+                $stats = [
+                    'blog_posts'   => Article::count(),
+                    'news'         => Actualite::count(),
+                    'deliverables' => Publication::count(),
+                    'newsletters'  => Newsletter::count(),
+                ];
+            } catch (\Throwable) {}
+        }
+
+        return response()->json([
+            'status'    => $dbOk ? 'ok' : 'degraded',
+            'service'   => 'iuhm-erp-api',
+            'version'   => '1.0',
+            'timestamp' => now()->toISOString(),
+            'database'  => $dbOk ? 'connected' : 'error',
+            'stats'     => $stats,
+        ], $dbOk ? 200 : 503);
+    })->name('health');
+
+
     Route::prefix('blog')->name('blog.')->group(function () {
         Route::get('/', [BlogPostApiController::class, 'index'])->name('index');
         Route::get('/trending', [BlogPostApiController::class, 'trending'])->name('trending');

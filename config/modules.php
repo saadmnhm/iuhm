@@ -32,7 +32,7 @@ return [
         'rh'                     => ['label' => 'Gestion RH',                'icon' => 'ri-team-line'],
         'gestion_roles'          => ['label' => 'Gestion des Rôles',         'icon' => 'ri-key-line'],
         'association_parameters' => ['label' => 'Paramètres Association',    'icon' => 'ri-settings-3-line'],
-        'blog'                   => ['label' => 'Blog & Actualités',         'icon' => 'ri-article-line'],
+        'blog'                   => ['label' => 'Actualités',         'icon' => 'ri-article-line'],
         'dev_tools'              => ['label' => 'Dev Tools',                 'icon' => 'ri-code-s-slash-line'],
         "association"            => ['label' => 'Association',               'icon' => 'ri-building-2-line'],
         'finance'                => ['label' => 'Finance',                   'icon' => 'ri-wallet-line'],

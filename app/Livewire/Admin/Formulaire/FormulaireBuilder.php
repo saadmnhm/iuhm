@@ -482,6 +482,7 @@ class FormulaireBuilder extends Component
             }
 
             $this->showFieldModal = false;
+            $this->dispatch('close-field-modal');
             $this->dispatch('alert', type: 'success', title: 'Sauvegardé', message: 'Question sauvegardée.');
         } catch (ValidationException $e) {
             $this->dispatch('alert', type: 'error', title: 'Erreur', message: 'Veuillez remplir les champs obligatoires de la question.');
@@ -591,6 +592,7 @@ class FormulaireBuilder extends Component
             }
 
             $this->showTableModal = false;
+            $this->dispatch('close-table-modal');
             $this->dispatch('alert', type: 'success', title: 'Sauvegardé', message: 'Tableau sauvegardé.');
         } catch (ValidationException $e) {
             $this->dispatch('alert', type: 'error', title: 'Erreur', message: 'Veuillez remplir les champs obligatoires du tableau.');
@@ -717,6 +719,7 @@ class FormulaireBuilder extends Component
         }
 
         $this->showColumnModal = false;
+        $this->dispatch('close-column-modal');
         $this->dispatch('alert', type: 'success', title: 'Sauvegardé', message: 'Colonne sauvegardée.');
     }
 
@@ -773,6 +776,7 @@ class FormulaireBuilder extends Component
         }
 
         $this->showRowModal = false;
+        $this->dispatch('close-row-modal');
         $this->dispatch('alert', type: 'success', title: 'Sauvegardé', message: 'Ligne sauvegardée.');
     }
 

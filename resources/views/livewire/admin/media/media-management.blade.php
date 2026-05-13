@@ -11,97 +11,24 @@
 
     {{-- Stats Row --}}
     <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5 mb-10">
-        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div class="flex items-center justify-between mb-3">
-                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-100">
-                    <i class="ri-article-line text-xl text-indigo-600"></i>
+        @foreach ($stats_card as $item )
+        
+        <div class="rounded-2xl  bg-white p-5 shadow-sm">
+            <div class="flex justify-between mb-3">
+                <p class="text-[14px] font-bold uppercase tracking-[0.05em] text-[#45464E] mt-0.5">{{ $item['label'] }}</p>
+                
+                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#9AF89330]">
+                    <i class="{{ $item['icon'] }} text-xl text-[#04103A]"></i>
                 </div>
-                <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">{{ $stats['publishedBlog'] }} publiés</span>
+                
             </div>
             <p class="text-2xl font-black text-slate-900">{{ $stats['totalBlog'] }}</p>
-            <p class="text-xs font-semibold uppercase tracking-[0.05em] text-slate-500 mt-0.5">Articles blog</p>
+            
         </div>
+        @endforeach
 
-        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div class="flex items-center justify-between mb-3">
-                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100">
-                    <i class="ri-newspaper-line text-xl text-blue-600"></i>
-                </div>
-                <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">{{ $stats['publishedNews'] }} publiées</span>
-            </div>
-            <p class="text-2xl font-black text-slate-900">{{ $stats['totalNews'] }}</p>
-            <p class="text-xs font-semibold uppercase tracking-[0.05em] text-slate-500 mt-0.5">Actualités</p>
-        </div>
-
-        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div class="flex items-center justify-between mb-3">
-                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100">
-                    <i class="ri-mail-send-line text-xl text-emerald-600"></i>
-                </div>
-                <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">{{ $stats['publishedNewsletters'] }} envoyées</span>
-            </div>
-            <p class="text-2xl font-black text-slate-900">{{ $stats['totalNewsletters'] }}</p>
-            <p class="text-xs font-semibold uppercase tracking-[0.05em] text-slate-500 mt-0.5">Infolettres</p>
-        </div>
-
-        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div class="flex items-center justify-between mb-3">
-                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100">
-                    <i class="ri-file-list-3-line text-xl text-amber-600"></i>
-                </div>
-            </div>
-            <p class="text-2xl font-black text-slate-900">{{ $stats['totalDeliverables'] }}</p>
-            <p class="text-xs font-semibold uppercase tracking-[0.05em] text-slate-500 mt-0.5">Livrables</p>
-        </div>
-
-        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-            <div class="flex items-center justify-between mb-3">
-                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-100">
-                    <i class="ri-folder-open-line text-xl text-rose-600"></i>
-                </div>
-            </div>
-            <p class="text-2xl font-black text-slate-900">{{ $stats['totalMedia'] }}</p>
-            <p class="text-xs font-semibold uppercase tracking-[0.05em] text-slate-500 mt-0.5">Fichiers média</p>
-        </div>
     </div>
 
-    {{-- Quick Access --}}
-    <div class="mb-10">
-        <h3 class="text-xs font-bold uppercase tracking-[0.14em] text-slate-400 mb-4">Accès rapide</h3>
-        <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            <a href="{{ route('admin.blog.index') }}" class="group rounded-2xl border-2 border-slate-200 bg-white p-6 shadow-sm hover:border-indigo-400 hover:shadow-md transition">
-                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-100 group-hover:bg-indigo-600 transition mb-4">
-                    <i class="ri-article-line text-2xl text-indigo-600 group-hover:text-white transition"></i>
-                </div>
-                <h4 class="font-bold text-slate-900">Blog</h4>
-                <p class="text-xs text-slate-500 mt-1">{{ $stats['totalBlog'] }} articles &bull; {{ $stats['publishedBlog'] }} publiés</p>
-            </a>
-
-            <a href="{{ route('admin.news.index') }}" class="group rounded-2xl border-2 border-slate-200 bg-white p-6 shadow-sm hover:border-blue-400 hover:shadow-md transition">
-                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 group-hover:bg-blue-600 transition mb-4">
-                    <i class="ri-newspaper-line text-2xl text-blue-600 group-hover:text-white transition"></i>
-                </div>
-                <h4 class="font-bold text-slate-900">Actualités</h4>
-                <p class="text-xs text-slate-500 mt-1">{{ $stats['totalNews'] }} actualités &bull; {{ $stats['publishedNews'] }} publiées</p>
-            </a>
-
-            <a href="{{ route('admin.newsletters.index') }}" class="group rounded-2xl border-2 border-slate-200 bg-white p-6 shadow-sm hover:border-emerald-400 hover:shadow-md transition">
-                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100 group-hover:bg-emerald-600 transition mb-4">
-                    <i class="ri-mail-send-line text-2xl text-emerald-600 group-hover:text-white transition"></i>
-                </div>
-                <h4 class="font-bold text-slate-900">Infolettres</h4>
-                <p class="text-xs text-slate-500 mt-1">{{ $stats['totalNewsletters'] }} infolettres</p>
-            </a>
-
-            <a href="{{ route('admin.deliverables.index') }}" class="group rounded-2xl border-2 border-slate-200 bg-white p-6 shadow-sm hover:border-amber-400 hover:shadow-md transition">
-                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100 group-hover:bg-amber-600 transition mb-4">
-                    <i class="ri-file-list-3-line text-2xl text-amber-600 group-hover:text-white transition"></i>
-                </div>
-                <h4 class="font-bold text-slate-900">Livrables</h4>
-                <p class="text-xs text-slate-500 mt-1">{{ $stats['totalDeliverables'] }} livrables</p>
-            </a>
-        </div>
-    </div>
 
     {{-- Recent Content: Blog + News --}}
     <div class="grid grid-cols-1 gap-8 lg:grid-cols-2 mb-10">
@@ -110,7 +37,7 @@
         <div>
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-xs font-bold uppercase tracking-[0.14em] text-slate-400">Articles récents</h3>
-                <a href="{{ route('admin.blog.index') }}" class="text-xs font-semibold text-[#0f1d57] hover:underline">Voir tout</a>
+                <a href="{{ route('admin.article.index') }}" class="text-xs font-semibold text-[#0f1d57] hover:underline">Voir tout</a>
             </div>
             <div class="space-y-3">
                 @forelse($recentBlog as $post)
@@ -145,7 +72,7 @@
         <div>
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-xs font-bold uppercase tracking-[0.14em] text-slate-400">Actualités récentes</h3>
-                <a href="{{ route('admin.news.index') }}" class="text-xs font-semibold text-[#0f1d57] hover:underline">Voir tout</a>
+                <a href="{{ route('admin.actualite.index') }}" class="text-xs font-semibold text-[#0f1d57] hover:underline">Voir tout</a>
             </div>
             <div class="space-y-3">
                 @forelse($recentNews as $news)
