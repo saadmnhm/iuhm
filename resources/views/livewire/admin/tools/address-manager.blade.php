@@ -9,7 +9,7 @@
                     <h1 class="text-[36px] font-bold text-[#04103A]">Gestion des localisations</h1>
                     <p class="text-gray-600 text-[18px] mt-2">Gérer les hiérarchies organisationnelles en créant des autorisations granulaires pour les membres de l'équipe au sein de l'écosystème Initiative Urbaine</p>
                 </div>
-                <button wire:click="openModal" class="w-65 h-12.5 text-center p-2 content-center bg-[#1B264F] text-white text-[16px] font-normal rounded-full hover:bg-gray-800 transition">
+                <button wire:click="openModal" class="w-95 h-12.5 text-center p-2 content-center bg-[#1B264F] text-white text-[16px] font-normal rounded-full hover:bg-gray-800 transition">
                     <i class="ri-shield-user-line text-[19px] relative right-1"></i> Créer une localisation
             </div>
         </div>

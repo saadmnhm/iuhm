@@ -90,19 +90,19 @@
         <div x-show="tab === 'users'" class="space-y-4">
             <div class=" rounded-b-xl overflow-hidden ">
                 <div class="px-6 py-4 flex justify-between gap-3">
-                    <select wire:model.live="adminRoleFilter" class="h-11 border border-gray-300 rounded-full text-sm py-2 px-4 bg-white">
+                    <select wire:model.live="adminRoleFilter" class="h-11  iuhm_select border-gray-300 rounded-full text-sm py-2 px-4 bg-white">
                         <option value="all">Tous les rôles</option>
                         @foreach($allRoles as $role)
                             <option value="{{ $role['name'] }}">{{ $role['label'] }}</option>
                         @endforeach
                     </select>
 
-                    <div class="group relative w-10 hover:w-72 focus-within:w-72 overflow-hidden transition-all duration-300">
+                    <div class="group relative w-10 hover:w-72  focus-within:w-72 overflow-hidden transition-all duration-300">
                         <i class="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
                            <input type="text"
                                wire:model.live="adminSearch"
                                placeholder="Rechercher un administrateur..."
-                               class="h-11 w-full pl-10 pr-4 border border-gray-300 rounded-full text-sm   outline-none bg-white">
+                               class="h-11 iuhm_search w-full pl-10 pr-4 border border-gray-300 rounded-full text-sm   outline-none bg-white">
                     </div>
                 </div>
 
@@ -209,7 +209,7 @@
                 <div class="px-6 py-4 flex justify-between gap-3">
 
 
-                    <select wire:model.live="candidatStatusFilter" class="h-11 border border-gray-300 rounded-full text-sm py-2 px-4 bg-white">
+                    <select wire:model.live="candidatStatusFilter" class="h-11 border iuhm_select border-gray-300 rounded-full text-sm py-2 px-4 bg-white">
                         <option value="all">Tous les statuts</option>
                         <option value="active">Actif</option>
                         <option value="inactive">Désactivé</option>
@@ -220,7 +220,7 @@
                            <input type="text"
                                wire:model.live="candidatSearch"
                                placeholder="Rechercher un bénéficiaire..."
-                               class="h-11 w-full pl-10 pr-4 border border-gray-300 rounded-full text-sm  outline-none bg-white">
+                               class="h-11 iuhm_search w-full pl-10 pr-4 border border-gray-300 rounded-full text-sm  outline-none bg-white">
                     </div>
                 </div>
 

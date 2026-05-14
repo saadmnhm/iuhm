@@ -9,7 +9,7 @@
                 </p>
             </div>
 
-            <a href="{{ route('admin.formulaires.create') }}" class="inline-flex items-center gap-2 self-start rounded-full bg-[#0f1d57] px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(15,23,42,0.22)] transition hover:bg-[#14256f]">
+            <a href="{{ route('admin.formulaires.create') }}" class="inline-flex w-95 items-center gap-2 self-start rounded-full bg-[#0f1d57] px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(15,23,42,0.22)] transition hover:bg-[#14256f]">
                 <span class="flex h-6 w-6 items-center justify-center rounded-full border border-white/25 bg-white/10">
                     <i class="ri-add-line text-sm"></i>
                 </span>
@@ -18,7 +18,7 @@
         </div>
 
         <!-- Tabs Navigation -->
-        <div class="mt-8 border-b border-slate-200 bg-white rounded-t-[22px] overflow-hidden">
+        <div class="mt-8  rounded-t-[22px] overflow-hidden">
             <div class="flex gap-0 px-6">
                 <button wire:click="$set('activeTab', 'list')" class="px-4 py-4 text-sm font-semibold transition border-b-2 {{ $activeTab === 'list' ? 'border-[#0f1d57] text-[#0f1d57]' : 'border-transparent text-slate-600 hover:text-slate-800' }}">
                     <i class="ri-list-check-2 mr-2"></i>Formulaires ({{ $forms->total() }})
@@ -31,14 +31,14 @@
 
         <!-- List Tab -->
         @if($activeTab === 'list')
-        <div class="overflow-hidden rounded-b-[22px] border border-slate-200 border-t-0 bg-white shadow-[0_18px_40px_rgba(15,23,42,0.06)]">
+        <div class="overflow-hidden rounded-b-[22px] ">
             <div class="border-b border-slate-200 bg-slate-50 p-5">
                 <div class="flex gap-3">
                     <div class="relative flex-1">
                         <i class="ri-search-line pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input type="text" wire:model.live.debounce="search" placeholder="Rechercher un formulaire..." class="w-full rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-sm outline-none focus:border-[#0f1d57] focus:ring-4 focus:ring-[#0f1d57]/10">
+                        <input type="text" wire:model.live.debounce="search" placeholder="Rechercher un formulaire..." class="w-full iuhm_search rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-sm outline-none focus:border-[#0f1d57] focus:ring-4 focus:ring-[#0f1d57]/10">
                     </div>
-                    <select wire:model.live="filterStatus" class="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#0f1d57] focus:ring-4 focus:ring-[#0f1d57]/10">
+                    <select wire:model.live="filterStatus" class="rounded-xl iuhm_select border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#0f1d57] focus:ring-4 focus:ring-[#0f1d57]/10">
                         <option value="">Tous les statuts</option>
                         <option value="active">Actif</option>
                         <option value="inactive">Inactif</option>

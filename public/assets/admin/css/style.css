@@ -50,6 +50,15 @@ button:focus {
     height: 50px;
     padding: 0px 10px;
 }
+
+.iuhm_search{
+    background-color: #E4E1E6;
+    color: #04103A;
+    font-weight: 700;
+    font-size: 14px;
+    height: 50px;
+    padding: 0px 40px;
+}
 .iuhm_textarea{
     background-color: #E4E1E6;
     color: #04103A;
