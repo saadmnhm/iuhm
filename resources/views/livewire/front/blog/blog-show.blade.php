@@ -45,9 +45,44 @@
             </div>
             @endif
 
-            <div class="article-content" style="line-height: 1.8; font-size: 1rem;">
-                {!! nl2br(e($post->content)) !!}
+            <div class="article-content">
+                {!! $post->content !!}
             </div>
         </div>
     </div>
 </div>
+
+<style>
+.article-content { line-height: 1.8; font-size: 1rem; color: #4A5568; }
+.article-content h2 { font-size: 1.75rem; font-weight: 700; color: #0B1528; margin-top: 2.5rem; margin-bottom: 1rem; }
+.article-content h3 { font-size: 1.35rem; font-weight: 700; color: #0B1528; margin-top: 2rem; margin-bottom: 0.75rem; }
+.article-content h4 { font-size: 1.1rem; font-weight: 700; color: #0B1528; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+.article-content p { margin-bottom: 1.25rem; }
+.article-content a { color: #214f95; }
+.article-content ul, .article-content ol { padding-left: 1.5rem; margin-bottom: 1.25rem; }
+.article-content li { margin-bottom: 0.4rem; }
+.article-content strong { font-weight: 700; }
+.article-content em { font-style: italic; }
+.article-content hr { border: none; border-top: 2px solid #e2e8f0; margin: 2rem 0; }
+.article-content blockquote {
+    background: #F0F2F5;
+    border-radius: 1rem;
+    border-left: 6px solid #82E682;
+    padding: 1.25rem 1.75rem;
+    margin: 1.75rem 0;
+    color: #0B1528;
+    font-size: 1.05rem;
+    font-style: normal;
+}
+.article-content img { max-width: 100%; border-radius: 1rem; height: auto; display: block; }
+/* Multi-image row */
+.article-content .iuhm-img-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin: 1.5rem 0; }
+.article-content .iuhm-img-row img { flex: 1 1 0; min-width: 0; width: auto; max-width: 100%; border-radius: 1rem; object-fit: cover; }
+/* Tables */
+.article-content table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95rem; }
+.article-content table td, .article-content table th { border: 1px solid #e2e8f0; padding: 0.6rem 0.9rem; }
+.article-content table th { background: #f8fafc; font-weight: 700; color: #0B1528; }
+.article-content table tr:nth-child(even) td { background: #fafafa; }
+/* Callout boxes */
+.article-content [style*="border-left"] { border-radius: 0.75rem !important; }
+</style>

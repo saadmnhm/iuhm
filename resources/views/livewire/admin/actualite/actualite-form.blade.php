@@ -16,7 +16,19 @@
     .jodit-wysiwyg a { color: #214f95; }
     .jodit-wysiwyg blockquote { background: #F0F2F5; border-radius: 1.5rem; border-left: 6px solid #82E682; border-top: none; border-right: none; border-bottom: none; padding: 1.5rem 2rem; margin: 2rem 0; color: #0B1528; font-size: 1.05rem; font-style: normal; }
     .jodit-wysiwyg img { max-width: 100%; border-radius: 1.5rem; }
+    .jodit-wysiwyg .iuhm-img-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin: 1.5rem 0; }
+    .jodit-wysiwyg .iuhm-img-row img { flex: 1 1 0; min-width: 0; width: auto; max-width: 100%; border-radius: 1rem; object-fit: cover; }
+    .jodit-wysiwyg hr { border: none; border-top: 2px solid #e2e8f0; margin: 2rem 0; }
+    .jodit-wysiwyg table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+    .jodit-wysiwyg table td, .jodit-wysiwyg table th { border: 1px solid #e2e8f0; padding: 0.6rem 0.9rem; }
+    .jodit-wysiwyg table th { background: #f8fafc; font-weight: 700; }
     .jodit-status-bar { display: none !important; }
+    /* ── Error toast ── */
+    #iuhm-editor-toast { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999; display: none; align-items: center; gap: 0.75rem; background: #1e293b; color: #fff; padding: 1rem 1.25rem; border-radius: 0.875rem; box-shadow: 0 8px 28px rgba(0,0,0,.3); max-width: 420px; font-size: 0.875rem; line-height: 1.45; }
+    #iuhm-editor-toast svg { flex-shrink: 0; color: #f87171; }
+    #iuhm-editor-toast .toast-msg { flex: 1; }
+    #iuhm-editor-toast .toast-close { background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 1.2rem; line-height: 1; padding: 0 0 0 0.5rem; }
+    #iuhm-editor-toast .toast-close:hover { color: #fff; }
 </style>
 
 <script>
@@ -39,12 +51,13 @@ document.addEventListener('alpine:init', () => {
                     showXPathInStatusbar: false,
                     buttons: [
                         'paragraph',
-                        '|', 'bold', 'italic', 'underline', 'strikethrough',
-                        '|', 'brush',
-                        '|', 'ul', 'ol',
-                        '|', 'link', 'image',
-                        '|', 'blockquote',
-                        '|', 'eraser',
+                        '|', 'bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript',
+                        '|', 'brush', 'font', 'fontsize',
+                        '|', 'ul', 'ol', 'indent', 'outdent',
+                        '|', 'align',
+                        '|', 'link', 'image', 'video', 'table', 'file',
+                        '|', 'blockquote', 'hr', 'symbols',
+                        '|', 'selectall', 'cut', 'copy', 'paste', 'copyformat', 'eraser',
                         '|', 'undo', 'redo',
                         '|', 'fullsize', 'source',
                     ],
@@ -52,11 +65,24 @@ document.addEventListener('alpine:init', () => {
                         insertImageAsBase64URI: true,
                     },
                     image: {
-                        dialogWidth: 460,
+                        dialogWidth: 560,
+                        openOnDblClick: true,
+                    },
+                    table: {
+                        allowCellResize: true,
                     },
                     events: {
-                        change: (content) => {
-                            wire.set('content', content);
+                        change: async (content) => {
+                            const compressed = await compressBase64Images(content);
+                            try {
+                                await wire.set('content', compressed);
+                            } catch (e) {
+                                window.iuhmShowEditorError(
+                                    e && e.message && e.message.toLowerCase().includes('payload')
+                                        ? 'Image trop lourde même après compression. Veuillez réduire la taille de l\'image.'
+                                        : 'Erreur de synchronisation. Veuillez réessayer.'
+                                );
+                            }
                         },
                     },
                 });
@@ -79,11 +105,66 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 });
+
+// Compress base64 images in editor content to reduce Livewire payload
+async function compressBase64Images(html) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const imgs = doc.querySelectorAll('img[src^="data:image"]');
+    if (!imgs.length) return html;
+    await Promise.all(Array.from(imgs).map(img => new Promise(resolve => {
+        const MAX_W = 1200;
+        const image = new Image();
+        image.onload = () => {
+            let w = image.naturalWidth, h = image.naturalHeight;
+            if (w > MAX_W) { h = Math.round(h * MAX_W / w); w = MAX_W; }
+            const canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(image, 0, 0, w, h);
+            img.src = canvas.toDataURL('image/jpeg', 0.72);
+            resolve();
+        };
+        image.onerror = resolve;
+        image.src = img.src;
+    })));
+    return doc.body.innerHTML;
+}
+
+// Error toast helper
+window.iuhmShowEditorError = function (msg) {
+    const el = document.getElementById('iuhm-editor-toast');
+    if (!el) return;
+    el.querySelector('.toast-msg').textContent = msg;
+    el.style.display = 'flex';
+    clearTimeout(window.__iuhmToastTimer);
+    window.__iuhmToastTimer = setTimeout(() => { el.style.display = 'none'; }, 7000);
+};
+
+// Livewire commit hook – catch server-side errors
+document.addEventListener('livewire:init', () => {
+    if (window.__iuhmErrorHookRegistered) return;
+    window.__iuhmErrorHookRegistered = true;
+    Livewire.hook('commit', ({ fail }) => {
+        fail(({ status }) => {
+            window.iuhmShowEditorError(
+                (status === 413 || status === 500)
+                    ? 'Image trop lourde. Veuillez utiliser une image plus petite avant de l\'insérer.'
+                    : 'Erreur lors de la sauvegarde (code ' + status + '). Veuillez réessayer.'
+            );
+        });
+    });
+});
 </script>
 @endpush
 
 
 <div>
+    {{-- Error toast notification --}}
+    <div id="iuhm-editor-toast" role="alert">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+        <span class="toast-msg"></span>
+        <button type="button" class="toast-close" onclick="document.getElementById('iuhm-editor-toast').style.display='none'" aria-label="Fermer">&#x2715;</button>
+    </div>
     {{-- ═══════ CREATE / EDIT FORM ═══════ --}}
     <form wire:submit.prevent="save">
     <div class="px-6 pb-12 pt-8 sm:px-8 sm:pt-10 bg-[#FAFAFC] min-h-screen">

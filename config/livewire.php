@@ -269,7 +269,7 @@ return [
     */
 
     'payload' => [
-        'max_size' => 1024 * 1024,   // 1MB - maximum request payload size in bytes
+        'max_size' => 1024 * 1024 * 10,   // 10MB - increased for rich-text editor
         'max_nesting_depth' => 10,   // Maximum depth of dot-notation property paths
         'max_calls' => 50,           // Maximum method calls per request
         'max_components' => 20,      // Maximum components per batch request
