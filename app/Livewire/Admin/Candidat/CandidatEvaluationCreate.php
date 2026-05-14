@@ -4,7 +4,7 @@ namespace App\Livewire\Admin\Candidat;
 
 use App\Models\Candidat;
 use App\Models\CandidatEvaluationGrid;
-use App\Models\ProgrameList;
+use App\Models\ProjectsList;
 use Throwable;
 use Illuminate\Support\Carbon;
 use Livewire\Component;
@@ -15,7 +15,7 @@ class CandidatEvaluationCreate extends Component
     public int $projectId;
 
     public ?Candidat $candidat = null;
-    public ?ProgrameList $project = null;
+    public ?ProjectsList $project = null;
 
     public int $motivationScore = 0;
     public int $profileScore = 0;
@@ -105,7 +105,7 @@ class CandidatEvaluationCreate extends Component
         $this->projectId = $projectId;
 
         $this->candidat = Candidat::findOrFail($id);
-        $this->project = ProgrameList::findOrFail($projectId);
+        $this->project = ProjectsList::findOrFail($projectId);
 
         $this->evaluateurName = auth()->user()?->name ?? 'Administrateur';
 
@@ -183,7 +183,7 @@ class CandidatEvaluationCreate extends Component
     {
         $header = 'Grille d\'evaluation - ' . $this->candidat?->nom . ' ' . $this->candidat?->prenom;
 
-        return view('livewire.admin.programe.candidat.candidat-evaluation-create')
+        return view('livewire.admin.projects.candidat.candidat-evaluation-create')
             ->layout('layouts.admin', ['header' => $header]);
     }
 }

@@ -26,7 +26,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', \App\Livewire\Admin\Dashboard::class)->name('dashboard');
         Route::post('/address/create', [\App\Http\Controllers\Admin\DashboardController::class, 'createAddress'])->name('address.create');
         Route::post('/address/delete/{id}', [\App\Http\Controllers\Admin\DashboardController::class, 'DeleteAddess'])->name('address.delete');
-        Route::get('/projects/{id}', \App\Livewire\Admin\Project\ProjectDetail::class)->name('projects.show');
+        Route::get('/projects/{id}', \App\Livewire\Admin\Projects\ProjectsDetail::class)->name('projects.show')->where('id', '[0-9]+');
         
 
 
@@ -102,14 +102,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
         
         
-        Route::get('/programe', App\Livewire\Admin\Programe\ProgrameList::class)->name('programe')->middleware('module:programe');
-        Route::get('/programe/create', App\Livewire\Admin\Programe\ProgrameCreate::class)->name('programe.create')->middleware('module:programe');
-        Route::get('/programe/edit/{id}', App\Livewire\Admin\Programe\ProgrameEdit::class)->name('programe.edit')->middleware('module:programe');
-        Route::get('/programe/submissions/{id}', App\Livewire\Admin\Programe\ProjectSubmissions::class)->name('project.submissions')->middleware('module:programmes');
-        Route::get('/programe/candidat/{id}/submissions/{projectId?}', \App\Livewire\Admin\Candidat\CandidatSubmissions::class)->name('candidat.submissions')->middleware('module:programmes');
-        Route::get('/programe/candidat/{id}/project/{projectId}/evaluation', \App\Livewire\Admin\Candidat\CandidatEvaluationCreate::class)->name('candidat.evaluation.create')->middleware('module:programmes');
-        Route::get('/programe/candidat/{candidatId}/submission/{id}/export-pdf', [\App\Http\Controllers\Admin\CandidatExportController::class, 'exportSingle'])->name('candidat.submission.export')->middleware('module:candidats');
-        Route::get('/programe/candidat/{id}/export-all-pdf', [\App\Http\Controllers\Admin\CandidatExportController::class, 'exportAll'])->name('candidat.export-all')->middleware('module:candidats');
+        Route::get('/projects', App\Livewire\Admin\Projects\ProjectsList::class)->name('programe')->middleware('module:programe');
+        Route::get('/projects/create', App\Livewire\Admin\Projects\ProjectsCreate::class)->name('programe.create')->middleware('module:programe');
+        Route::get('/projects/edit/{id}', App\Livewire\Admin\Projects\ProjectsEdit::class)->name('programe.edit')->middleware('module:programe');
+        Route::get('/projects/submissions/{id}', App\Livewire\Admin\Projects\ProjectsSubmissions::class)->name('project.submissions')->middleware('module:programmes');
+        Route::get('/projects/candidat/{id}/submissions/{projectId?}', \App\Livewire\Admin\Candidat\CandidatSubmissions::class)->name('candidat.submissions')->middleware('module:programmes');
+        Route::get('/projects/candidat/{id}/project/{projectId}/evaluation', \App\Livewire\Admin\Candidat\CandidatEvaluationCreate::class)->name('candidat.evaluation.create')->middleware('module:programmes');
+        Route::get('/projects/candidat/{candidatId}/submission/{id}/export-pdf', [\App\Http\Controllers\Admin\CandidatExportController::class, 'exportSingle'])->name('candidat.submission.export')->middleware('module:candidats');
+        Route::get('/projects/candidat/{id}/export-all-pdf', [\App\Http\Controllers\Admin\CandidatExportController::class, 'exportAll'])->name('candidat.export-all')->middleware('module:candidats');
 Route::get('/uploads/{path}/download', function ($path) {
     if (!Auth::guard('web')->check() && !Auth::guard('candidat')->check()) {
         abort(403);
@@ -124,7 +124,6 @@ Route::get('/uploads/{path}/download', function ($path) {
     return response()->download($filePath, basename($filePath));
 })->where('path', '.*')->name('uploads.download');
         
-        Route::get('/projects_view', App\Livewire\Admin\Project\ProjectView::class)->name('projects_view');
 
         // Dynamic Form Builder (Referential)
         Route::get('/console/formulaires', \App\Livewire\Admin\Formulaire\FormulaireList::class)->name('formulaires.index')->middleware('module:formulaires');

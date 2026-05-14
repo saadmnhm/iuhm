@@ -5,8 +5,8 @@ namespace App\Livewire\Admin;
 use App\Models\User;
 use App\Models\Candidat;
 use App\Models\DynamicFormSubmission;
-use App\Models\ProjectSubmission;
-use App\Models\ProgrameList;
+use App\Models\ProjectsSubmission;
+use App\Models\ProjectsList;
 use Livewire\Component;
 
 class Aside extends Component

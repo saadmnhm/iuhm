@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Livewire\Admin\Programe;
+namespace App\Livewire\Admin\Projects;
 
-use App\Models\ProgrameList;
+use App\Models\ProjectsList;
 use App\Models\AdminActivityLog;
 use App\Models\MoroccoLocation;
 use Livewire\Component;
@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
 
-class ProgrameCreate extends Component
+class ProjectsCreate extends Component
 {
     use WithFileUploads;
 
@@ -70,7 +70,7 @@ class ProgrameCreate extends Component
     {
         if ($id) {
             $this->programeId = $id;
-            $list = ProgrameList::findOrFail($id);
+            $list = ProjectsList::findOrFail($id);
             
             $this->project_name = $list->project_name;
             $this->description = $list->description;
@@ -156,27 +156,27 @@ class ProgrameCreate extends Component
             \Log::info('Data to save:', $data);
 
             if ($this->programeId) {
-                $project = ProgrameList::findOrFail($this->programeId);
+                $project = ProjectsList::findOrFail($this->programeId);
                 $project->update($data);
                 \Log::info('Project updated', ['id' => $this->programeId]);
 
                 AdminActivityLog::log(
                     'programme_updated',
                     "Updated programme: {$project->project_name}",
-                    ProgrameList::class,
+                    ProjectsList::class,
                     $project->id
                 );
 
                 $this->successProjectId = $project->id;
                 $this->showSuccessModal = true;
             } else {
-                $project = ProgrameList::create($data);
+                $project = ProjectsList::create($data);
                 \Log::info('Project created', ['id' => $project->id]);
 
                 AdminActivityLog::log(
                     'programme_created',
                     "Created programme: {$project->project_name}",
-                    ProgrameList::class,
+                    ProjectsList::class,
                     $project->id
                 );
 
@@ -300,7 +300,7 @@ class ProgrameCreate extends Component
             ->orderBy('prefecture')
             ->get();
         
-        return view('livewire.admin.programe.create_project', [
+        return view('livewire.admin.projects.create_project', [
             'regions' => $regions,
             'cities' => $cities,
             'locations' => $locations,

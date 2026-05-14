@@ -5,8 +5,8 @@ namespace App\Livewire\Admin;
 use App\Models\User;
 use App\Models\Candidat;
 use App\Models\DynamicFormSubmission;
-use App\Models\ProjectSubmission;
-use App\Models\ProgrameList;
+use App\Models\ProjectsSubmission;
+use App\Models\ProjectsList;
 use Livewire\Component;
 
 class Dashboard extends Component
@@ -23,9 +23,9 @@ class Dashboard extends Component
         $this->projectId = $latestSubmission?->programe_id;
 
         $allSubmissions = DynamicFormSubmission::with(['candidat', 'programe'])->latest()->get();
-        $programe_list = ProgrameList::all();
+        $programe_list = ProjectsList::all();
 
-        $projectSubmissions = ProjectSubmission::latest('updated_at')->get();
+        $ProjectsSubmissions = ProjectsSubmission::latest('updated_at')->get();
 
 
         
@@ -49,7 +49,7 @@ class Dashboard extends Component
         $statistics = [
             'total_users' => User::count(),
             'total_candidats' => Candidat::count(),
-            'total_submissions' => ProjectSubmission::count(),
+            'total_submissions' => ProjectsSubmission::count(),
             'recent_projects' => $allSubmissions->take(20),
             'total_projects' => $programe_list->count(),
             'total_candidats' => Candidat::count(),
@@ -83,7 +83,7 @@ class Dashboard extends Component
         return view('livewire.admin.dashboard', [
             'statistics' => $statistics,
             'chartData' => $chartData,
-            'userSubmissions' => $projectSubmissions,
+            'userSubmissions' => $ProjectsSubmissions,
             'matricule_null' => $matricule_null,
             'admins' => User::whereIn('role', ['admin', 'super_admin'])->orderBy('nom')->get(['id', 'nom']),
             'menu' => $menu,

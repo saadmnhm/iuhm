@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Candidat;
 use App\Models\Address;
-use App\Models\ProgrameList;
+use App\Models\ProjectsList;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -19,9 +19,9 @@ class DashboardController extends Controller
             'female_count' => Candidat::where('gender', 'female')->count(),
         ];
 
-        $programe_list = ProgrameList::all();
+        $projects_list = ProjectsList::all();
 
-        return view('admin.dashboard', compact('statistics', 'programe_list'));
+        return view('admin.dashboard', compact('statistics', 'projects_list'));
     }
 
     public function createAddress(Request $request)

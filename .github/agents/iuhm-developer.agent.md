@@ -36,8 +36,8 @@ Admin routes use `middleware('module:<name>')` backed by `config/modules.php` an
 - **User** — admin user; fields `nom`, `prenom` (NOT `name`/`first_name`); has a `role` relationship
 - **DynamicForm** / **DynamicFormStep** / **DynamicFormField** / **DynamicFormTable** / **DynamicFormTableColumn** — form builder system
 - **DynamicFormSubmission** / **DynamicFormAnswer** / **DynamicFormTableAnswer** — submission tracking
-- **ProjectSubmission** — links a `Candidat` to a `ProgrameList`; has `syncFinishedStatusFor()` static method
-- **ProgrameList** — programme/project entity
+- **ProjectsSubmission** — links a `Candidat` to a `ProjectsList`; has `syncFinishedStatusFor()` static method
+- **ProjectsList** — programme/project entity
 - **BlogPost**, **Deliverable** — media/blog content
 - **Role** — has `isDevelopmentAccessLocked()` and `canBypassDevelopmentLock()` static methods
 

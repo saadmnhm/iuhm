@@ -4,7 +4,7 @@ namespace App\Livewire\Admin\Candidat;
 
 use App\Models\Role;
 use App\Models\Candidat;
-use App\Models\ProgrameList;
+use App\Models\ProjectsList;
 use App\Models\DynamicFormSubmission;
 use App\Models\CandidatFormulaireOrder;
 use Livewire\Component;
@@ -137,7 +137,7 @@ class EditCandidat extends Component
 
     protected function loadProjectOptions(): void
     {
-        $projects = ProgrameList::withCount(['formulaires' => function ($q) {
+        $projects = ProjectsList::withCount(['formulaires' => function ($q) {
                 $q->where('programe_formulaire.status', 'active');
             }])
             ->where('is_active', true)
@@ -164,7 +164,7 @@ class EditCandidat extends Component
             return;
         }
 
-        $project = ProgrameList::with(['formulaires' => function ($q) {
+        $project = ProjectsList::with(['formulaires' => function ($q) {
                 $q->where('programe_formulaire.status', 'active')
                     ->orderBy('programe_formulaire.order');
             }])

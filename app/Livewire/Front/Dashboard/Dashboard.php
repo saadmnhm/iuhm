@@ -7,7 +7,7 @@ use Livewire\Attributes\Layout;
 use App\Services\FormSubmissionService;
 use App\Services\ProjectEligibilityService;
 use App\Models\Candidat;
-use App\Models\ProgrameList;
+use App\Models\ProjectsList;
 use App\Models\DynamicFormSubmission;
 use App\Models\CandidatFormulaireOrder;
 use Illuminate\Support\Facades\Auth;
@@ -163,7 +163,7 @@ class Dashboard extends Component
             ->unique()
             ->values();
 
-        $projects = ProgrameList::query()
+        $projects = ProjectsList::query()
             ->where('is_active', true)
             ->orderBy('sort_order')
             ->get();

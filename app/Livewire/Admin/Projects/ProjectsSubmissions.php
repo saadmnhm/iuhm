@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Livewire\Admin\Programe;
+namespace App\Livewire\Admin\Projects;
 
 use Livewire\Component;
-use App\Models\ProgrameList;
+use App\Models\ProjectsList;
 use App\Models\DynamicFormSubmission;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\DB;
 
-class ProjectSubmissions extends Component
+class ProjectsSubmissions extends Component
 {
     use WithPagination;
     
@@ -28,7 +28,7 @@ class ProjectSubmissions extends Component
     
     public function loadProject()
     {
-        $this->project = ProgrameList::with('formulaires')->findOrFail($this->projectId);
+        $this->project = ProjectsList::with('formulaires')->findOrFail($this->projectId);
     }
     
     public function calculateStatistics()
@@ -231,7 +231,7 @@ class ProjectSubmissions extends Component
             ['path' => \Illuminate\Pagination\Paginator::resolveCurrentPath()]
         );
         
-        return view('livewire.admin.programe.submissions.index-submissions', [
+        return view('livewire.admin.projects.submissions.index-submissions', [
             'userSubmissions' => $paginatedSubmissions,
         ])->layout('layouts.admin', ['header' => $this->project->project_name]);
     }

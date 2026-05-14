@@ -34,7 +34,7 @@ return new class extends Migration
             }
         }
 
-        $projectSubmissionMap = DB::table('project_submissions')
+        $ProjectSubmissionMap = DB::table('project_submissions')
             ->select('id', 'candidat_id', 'programe_id')
             ->get()
             ->mapWithKeys(function ($row) {
@@ -47,15 +47,15 @@ return new class extends Migration
             ->whereNotNull('candidat_id')
             ->whereNotNull('programe_id')
             ->orderBy('id')
-            ->chunkById(500, function ($submissions) use ($projectSubmissionMap) {
+            ->chunkById(500, function ($submissions) use ($ProjectSubmissionMap) {
                 foreach ($submissions as $submission) {
                     $key = $submission->candidat_id . ':' . $submission->programe_id;
-                    $projectSubmissionId = $projectSubmissionMap->get($key);
+                    $ProjectSubmissionId = $ProjectSubmissionMap->get($key);
 
-                    if ($projectSubmissionId) {
+                    if ($ProjectSubmissionId) {
                         DB::table('dynamic_form_submissions')
                             ->where('id', $submission->id)
-                            ->update(['project_submission_id' => $projectSubmissionId]);
+                            ->update(['project_submission_id' => $ProjectSubmissionId]);
                     }
                 }
             });

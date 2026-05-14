@@ -52,8 +52,8 @@ class PrintController extends Controller
 
     public function avisformation(Request $request, int $id, int $projectId){
         $candidat = \App\Models\Candidat::findOrFail($id);
-        $project = \App\Models\ProgrameList::findOrFail($projectId);
-        $submission = \App\Models\ProjectSubmission::where('candidat_id', $id)
+        $project = \App\Models\ProjectsList::findOrFail($projectId);
+        $submission = \App\Models\ProjectsSubmission::where('candidat_id', $id)
             ->where('programe_id', $projectId)
             ->firstOrFail();
         $association = \App\Models\AssociationParameter::getByCategory('general');
@@ -74,7 +74,7 @@ class PrintController extends Controller
 
     public function projectFicheInscription(Request $request, int $id, int $projectId){
         $candidat = \App\Models\Candidat::with(['moroccoLocation'])->findOrFail($id);
-        $project = \App\Models\ProgrameList::findOrFail($projectId);
+        $project = \App\Models\ProjectsList::findOrFail($projectId);
         $association = \App\Models\AssociationParameter::getByCategory('general');
         $agreement = \App\Models\CandidatProjectAgreement::where('candidat_id', $id)
             ->where('project_id', $projectId)
@@ -87,7 +87,7 @@ class PrintController extends Controller
 
     public function projectAgreement(Request $request, int $id, int $projectId){
         $candidat = \App\Models\Candidat::findOrFail($id);
-        $project = \App\Models\ProgrameList::findOrFail($projectId);
+        $project = \App\Models\ProjectsList::findOrFail($projectId);
         $association = \App\Models\AssociationParameter::getByCategory('general');
         $agreement = \App\Models\CandidatProjectAgreement::where('candidat_id', $id)
             ->where('project_id', $projectId)
@@ -100,7 +100,7 @@ class PrintController extends Controller
 
     public function projectEvaluation(Request $request, int $id, int $projectId){
         $candidat = \App\Models\Candidat::findOrFail($id);
-        $project = \App\Models\ProgrameList::findOrFail($projectId);
+        $project = \App\Models\ProjectsList::findOrFail($projectId);
         $association = \App\Models\AssociationParameter::getByCategory('general');
         $evaluation = \App\Models\CandidatEvaluationGrid::with('admin')
             ->where('candidat_id', $id)
@@ -119,9 +119,9 @@ class PrintController extends Controller
         }
 
         $candidat = \App\Models\Candidat::findOrFail($id);
-        $project = \App\Models\ProgrameList::findOrFail($projectId);
+        $project = \App\Models\ProjectsList::findOrFail($projectId);
         $association = \App\Models\AssociationParameter::getByCategory('general');
-        $submission = \App\Models\ProjectSubmission::where('candidat_id', $id)
+        $submission = \App\Models\ProjectsSubmission::where('candidat_id', $id)
             ->where('programe_id', $projectId)
             ->firstOrFail();
 
@@ -146,7 +146,7 @@ class PrintController extends Controller
         }
         
         $candidat = \App\Models\Candidat::with(['moroccoLocation'])->findOrFail($id);
-        $project = \App\Models\ProgrameList::findOrFail($projectId);
+        $project = \App\Models\ProjectsList::findOrFail($projectId);
         $association = \App\Models\AssociationParameter::getByCategory('general');
         $agreement = \App\Models\CandidatProjectAgreement::where('candidat_id', $id)
             ->where('project_id', $projectId)
@@ -157,7 +157,7 @@ class PrintController extends Controller
             ->where('programe_id', $projectId)
             ->get();
 
-        $projectSubmission = \App\Models\ProjectSubmission::where('candidat_id', $id)
+        $ProjectsSubmission = \App\Models\ProjectsSubmission::where('candidat_id', $id)
             ->where('programe_id', $projectId)
             ->first();
 
@@ -167,7 +167,7 @@ class PrintController extends Controller
             ->latest('id')
             ->first();
 
-        return $this->renderPrintTemplate($request,'livewire.admin.impression.project-folder', compact('candidat', 'project', 'agreement', 'submissions', 'projectSubmission', 'evaluation', 'association'),
+        return $this->renderPrintTemplate($request,'livewire.admin.impression.project-folder', compact('candidat', 'project', 'agreement', 'submissions', 'ProjectsSubmission', 'evaluation', 'association'),
             "dossier-complet-{$project->slug}-{$candidat->nom}-{$candidat->prenom}.pdf"
         );
     }

@@ -3,7 +3,7 @@
 namespace App\Livewire\Admin\Submissions;
 
 use App\Models\Candidat;
-use App\Models\ProjectSubmission;
+use App\Models\ProjectsSubmission;
 use App\Models\DynamicFormSubmission;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -28,14 +28,14 @@ class MyAssignedSubmissions extends Component
 
         // Statistics
         $stats = [
-            'candidats_assigned' => ProjectSubmission::where('reviewed_by', $adminId)->count(),
-            'candidats_approved' => ProjectSubmission::where('reviewed_by', $adminId)->where('review_status', 'approved')->count(),
-            'candidats_rejected' => ProjectSubmission::where('reviewed_by', $adminId)->where('review_status', 'rejected')->count(),
-            'candidats_in_review' => ProjectSubmission::where('reviewed_by', $adminId)->where('review_status', 'in_review')->count(),
+            'candidats_assigned' => ProjectsSubmission::where('reviewed_by', $adminId)->count(),
+            'candidats_approved' => ProjectsSubmission::where('reviewed_by', $adminId)->where('review_status', 'approved')->count(),
+            'candidats_rejected' => ProjectsSubmission::where('reviewed_by', $adminId)->where('review_status', 'rejected')->count(),
+            'candidats_in_review' => ProjectsSubmission::where('reviewed_by', $adminId)->where('review_status', 'in_review')->count(),
         ];
 
         if ($this->tab === 'candidats') {
-            $query = ProjectSubmission::where('reviewed_by', $adminId)->with('reviewer');
+            $query = ProjectsSubmission::where('reviewed_by', $adminId)->with('reviewer');
 
             if ($this->search) {
                 $query->where(function ($q) {

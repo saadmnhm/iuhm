@@ -34,7 +34,7 @@ class CandidatEvaluationGrid extends Model
 
     public function project()
     {
-        return $this->belongsTo(ProgrameList::class, 'project_id');
+        return $this->belongsTo(ProjectsList::class, 'project_id');
     }
 
     public function admin()

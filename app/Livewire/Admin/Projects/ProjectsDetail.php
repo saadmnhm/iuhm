@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Livewire\Admin\Project;
+namespace App\Livewire\Admin\Projects;
 
 use App\Models\Candidat;
+use App\Models\ProjectsList;
 use App\Models\AdminActivityLog;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 
-class ProjectDetail extends Component
+class ProjectsDetail extends Component
 {
     public $projectId;
     public $project;
@@ -22,6 +23,12 @@ class ProjectDetail extends Component
     {
         $this->projectId = $id;
         $this->loadProject();
+    }
+
+    public function loadProject(): void
+    {
+        $this->project = ProjectsList::with('candidat')->findOrFail($this->projectId);
+        $this->candidat = $this->project->candidat;
     }
 
     public function saveRegistration()

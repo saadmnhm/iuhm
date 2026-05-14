@@ -351,7 +351,7 @@
                      
                         {{-- Responsable --}}
                                 <td  class="px-4 py-3.5">
-                                    {{ $sub->projectSubmission?->reviewer?->name ?? 'Non assigné' }}
+                                    {{ $sub->ProjectsSubmission?->reviewer?->name ?? 'Non assigné' }}
                                 </td>
 
                         {{-- Date cell --}}
@@ -444,7 +444,7 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse($projectSubmissions as $projectSub)
+                @forelse($ProjectsSubmissions as $projectSub)
                 @php
                     $projectRowUrl = $projectSub->candidat ? route('admin.candidat.submissions', ['id' => $projectSub->candidat_id, 'projectId' => $projectSub->programe_id]) : null;
                 @endphp
@@ -524,7 +524,7 @@
 
     {{-- Project Pagination --}}
     <div class="mt-4">
-        {{ $projectSubmissions->links() }}
+        {{ $ProjectsSubmissions->links() }}
     </div>
 
     @endif

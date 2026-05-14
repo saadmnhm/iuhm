@@ -37,7 +37,7 @@
       
     </div>
 
-    @if($projectSubmission && $projectSubmission->require_formation_review && !$projectSubmission->formation_review_rating)
+    @if($ProjectsSubmission && $ProjectsSubmission->require_formation_review && !$ProjectsSubmission->formation_review_rating)
     <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded-lg shadow-sm flex justify-between items-center">
         <div>
             <h3 class="text-yellow-800 font-bold">{{ $tr('Avis de Formation Requis', 'مطلوب رأي التكوين') }}</h3>

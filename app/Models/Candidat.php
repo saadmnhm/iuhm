@@ -107,9 +107,9 @@ class Candidat extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(DynamicFormSubmission::class);
     }
 
-    public function projectSubmissions()
+    public function ProjectsSubmissions()
     {
-        return $this->hasMany(ProjectSubmission::class);
+        return $this->hasMany(ProjectsSubmission::class);
     }
     /**
      * Get projects by form type

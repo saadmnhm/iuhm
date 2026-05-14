@@ -6,7 +6,7 @@ use App\Models\Role;
 use App\Models\Candidat;
 use App\Models\AdminActivityLog;
 use App\Models\DynamicFormSubmission;
-use App\Models\ProgrameList;
+use App\Models\ProjectsList;
 use App\Models\CandidatFormulaireOrder;
 use App\Services\ProjectEligibilityService;
 use Livewire\Component;
@@ -77,7 +77,7 @@ class ShowCandidat extends Component
                 ];
             });
 
-        $this->eligibleProjects = ProgrameList::where('is_active', true)
+        $this->eligibleProjects = ProjectsList::where('is_active', true)
             ->orderBy('sort_order')
             ->get()
             ->map(function ($project) {

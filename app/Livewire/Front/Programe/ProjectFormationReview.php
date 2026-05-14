@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Front\Programe;
 
-use App\Models\ProgrameList;
-use App\Models\ProjectSubmission;
+use App\Models\ProjectsList;
+use App\Models\ProjectsSubmission;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -11,7 +11,7 @@ class ProjectFormationReview extends Component
 {
     public int $projectId;
     public $project;
-    public $projectSubmission;
+    public $ProjectsSubmission;
 
     public ?int $reviewRating = null;
     public string $reviewFeedback = '';
@@ -20,12 +20,12 @@ class ProjectFormationReview extends Component
     public function mount($id): void
     {
         $this->projectId = (int) $id;
-        $this->project = ProgrameList::findOrFail($this->projectId);
+        $this->project = ProjectsList::findOrFail($this->projectId);
 
         $candidat = Auth::guard('candidat')->user();
         abort_unless($candidat, 403);
 
-        $this->projectSubmission = ProjectSubmission::firstOrCreate(
+        $this->ProjectsSubmission = ProjectsSubmission::firstOrCreate(
             [
                 'candidat_id' => $candidat->id,
                 'programe_id' => $this->projectId,
@@ -35,9 +35,9 @@ class ProjectFormationReview extends Component
             ]
         );
 
-        $this->reviewRating = $this->projectSubmission->formation_review_rating;
-        $this->reviewFeedback = (string) ($this->projectSubmission->formation_review_feedback ?? '');
-        $this->answers = $this->projectSubmission->formation_review_answers ?? [];
+        $this->reviewRating = $this->ProjectsSubmission->formation_review_rating;
+        $this->reviewFeedback = (string) ($this->ProjectsSubmission->formation_review_feedback ?? '');
+        $this->answers = $this->ProjectsSubmission->formation_review_answers ?? [];
     }
 
     public function saveReview()
@@ -61,7 +61,7 @@ class ProjectFormationReview extends Component
         $candidat = Auth::guard('candidat')->user();
         abort_unless($candidat, 403);
 
-        $this->projectSubmission->update([
+        $this->ProjectsSubmission->update([
             'formation_review_rating' => $this->reviewRating,
             'formation_review_feedback' => $this->reviewFeedback,
             'formation_review_answers' => $this->answers,

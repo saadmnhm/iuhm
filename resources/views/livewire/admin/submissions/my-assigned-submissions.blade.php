@@ -51,7 +51,7 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        @forelse($items as $ProjectSubmission)
+        @forelse($items as $ProjectsSubmission)
         @php
             $statusColors = [
                 'in_review' => 'bg-amber-100 text-amber-800',
@@ -64,45 +64,45 @@
                 'rejected'  => 'Rejeté',
             ];
         @endphp
-        <a href="{{ route('admin.candidat.submissions', $ProjectSubmission->candidat->id) }}"
+        <a href="{{ route('admin.candidat.submissions', $ProjectsSubmission->candidat->id) }}"
            class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition group block">
             <div class="p-5">
                 <div class="flex items-start justify-between mb-3">
                     <div class="flex items-center gap-3">
                         <div class="w-11 h-11 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center text-sm font-bold shadow">
-                          @if($ProjectSubmission->candidat->profile_image)
-                                <img src="{{ asset('uploads/' . $ProjectSubmission->candidat->profile_image) }}" alt="{{ $ProjectSubmission->candidat->nom }} {{ $ProjectSubmission->candidat->prenom }}" class="w-full h-full object-cover rounded-full">
+                          @if($ProjectsSubmission->candidat->profile_image)
+                                <img src="{{ asset('uploads/' . $ProjectsSubmission->candidat->profile_image) }}" alt="{{ $ProjectsSubmission->candidat->nom }} {{ $ProjectsSubmission->candidat->prenom }}" class="w-full h-full object-cover rounded-full">
                             @else
-                                {{ strtoupper(substr($ProjectSubmission->candidat->nom ?? '', 0, 1)) }}{{ strtoupper(substr($ProjectSubmission->candidat->prenom ?? '', 0, 1)) }}
+                                {{ strtoupper(substr($ProjectsSubmission->candidat->nom ?? '', 0, 1)) }}{{ strtoupper(substr($ProjectsSubmission->candidat->prenom ?? '', 0, 1)) }}
                           @endif
                         </div>
                         <div>
-                            <h4 class="font-semibold text-gray-900 group-hover:text-indigo-700 transition">{{ $ProjectSubmission->candidat->nom }} {{ $ProjectSubmission->candidat->prenom }}</h4>
-                            @if($ProjectSubmission->candidat->matricule)
-                            <span class="text-xs text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded font-mono">{{ $ProjectSubmission->candidat->matricule }}</span>
+                            <h4 class="font-semibold text-gray-900 group-hover:text-indigo-700 transition">{{ $ProjectsSubmission->candidat->nom }} {{ $ProjectsSubmission->candidat->prenom }}</h4>
+                            @if($ProjectsSubmission->candidat->matricule)
+                            <span class="text-xs text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded font-mono">{{ $ProjectsSubmission->candidat->matricule }}</span>
                             @endif
                         </div>
                     </div>
-                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ $statusColors[$ProjectSubmission->review_status] ?? 'bg-gray-100 text-gray-600' }}">
-                        {{ $statusLabels[$ProjectSubmission->review_status] ?? ($ProjectSubmission->review_status ?? 'N/A') }}
+                    <span class="px-2 py-0.5 text-xs font-semibold rounded-full {{ $statusColors[$ProjectsSubmission->review_status] ?? 'bg-gray-100 text-gray-600' }}">
+                        {{ $statusLabels[$ProjectsSubmission->review_status] ?? ($ProjectsSubmission->review_status ?? 'N/A') }}
                     </span>
                 </div>
 
                 <div class="space-y-1.5 text-sm text-gray-600">
-                    @if($ProjectSubmission->candidat->email)
-                    <div class="flex items-center gap-2"><i class="ri-mail-line text-gray-400 w-4"></i> {{ $ProjectSubmission->candidat->email }}</div>
+                    @if($ProjectsSubmission->candidat->email)
+                    <div class="flex items-center gap-2"><i class="ri-mail-line text-gray-400 w-4"></i> {{ $ProjectsSubmission->candidat->email }}</div>
                     @endif
-                    @if($ProjectSubmission->candidat->phone)
-                    <div class="flex items-center gap-2"><i class="ri-phone-line text-gray-400 w-4"></i> {{ $ProjectSubmission->candidat->phone }}</div>
+                    @if($ProjectsSubmission->candidat->phone)
+                    <div class="flex items-center gap-2"><i class="ri-phone-line text-gray-400 w-4"></i> {{ $ProjectsSubmission->candidat->phone }}</div>
                     @endif
-                    @if($ProjectSubmission->candidat->reviewed_at)
-                    <div class="flex items-center gap-2"><i class="ri-calendar-check-line text-gray-400 w-4"></i> Assigné le {{ $ProjectSubmission->candidat->reviewed_at->format('d/m/Y H:i') }}</div>
+                    @if($ProjectsSubmission->candidat->reviewed_at)
+                    <div class="flex items-center gap-2"><i class="ri-calendar-check-line text-gray-400 w-4"></i> Assigné le {{ $ProjectsSubmission->candidat->reviewed_at->format('d/m/Y H:i') }}</div>
                     @endif
                 </div>
 
-                @if($ProjectSubmission->candidat->review_notes)
+                @if($ProjectsSubmission->candidat->review_notes)
                 <div class="mt-3 pt-3 border-t border-gray-100">
-                    <p class="text-xs text-gray-500 italic line-clamp-2"><i class="ri-sticky-note-line mr-1"></i> {{ $ProjectSubmission->candidat->review_notes }}</p>
+                    <p class="text-xs text-gray-500 italic line-clamp-2"><i class="ri-sticky-note-line mr-1"></i> {{ $ProjectsSubmission->candidat->review_notes }}</p>
                 </div>
                 @endif
             </div>

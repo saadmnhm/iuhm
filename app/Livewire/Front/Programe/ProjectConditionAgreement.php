@@ -3,14 +3,14 @@
 namespace App\Livewire\Front\Programe;
 
 use App\Models\CandidatProjectAgreement;
-use App\Models\ProgrameList;
+use App\Models\ProjectsList;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class ProjectConditionAgreement extends Component
 {
     public int $projectId;
-    public ?ProgrameList $project = null;
+    public ?ProjectsList $project = null;
     public bool $acceptConditions = false;
     public string $projectIdea = '';
     public string $howKnew = '';
@@ -18,7 +18,7 @@ class ProjectConditionAgreement extends Component
     public function mount($id): void
     {
         $this->projectId = (int) $id;
-        $this->project = ProgrameList::findOrFail($this->projectId);
+        $this->project = ProjectsList::findOrFail($this->projectId);
     }
 
     public function agreeAndContinue()

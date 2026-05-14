@@ -6,12 +6,12 @@ use Livewire\Component;
 use App\Models\Candidat;
 use App\Models\AdminActivityLog;
 use App\Models\SubmissionHistory;
-use App\Models\ProgrameList;
+use App\Models\ProjectsList;
 use App\Models\DynamicFormSubmission;
 use App\Models\DynamicForm;
 use App\Models\CandidatFormulaireOrder;
 use App\Models\CandidatEvaluationGrid;
-use App\Models\ProjectSubmission;
+use App\Models\ProjectsSubmission;
 use App\Models\User;
 use App\Services\FormSubmissionService;
 use Illuminate\Support\Facades\DB;
@@ -83,10 +83,10 @@ class CandidatSubmissions extends Component
             : ($firstSubmission->programe_id ?? null);
 
         $this->project   = $this->projectId
-            ? ProgrameList::with('formulaires')->findOrFail($this->projectId)
+            ? ProjectsList::with('formulaires')->findOrFail($this->projectId)
             : null;
 
-        $this->candidatSubmissions = ProjectSubmission::firstOrCreate(
+        $this->candidatSubmissions = ProjectsSubmission::firstOrCreate(
             [
                 'candidat_id' => $this->candidatId,
                 'programe_id' => $this->projectId,
@@ -522,7 +522,7 @@ class CandidatSubmissions extends Component
         }
 
         $this->loadFormData();
-        ProjectSubmission::syncFinishedStatusFor((int) $submission->candidat_id, (int) $submission->programe_id);
+        ProjectsSubmission::syncFinishedStatusFor((int) $submission->candidat_id, (int) $submission->programe_id);
         $this->candidatSubmissions->refresh();
         $this->openWorkflowModal($submission->id);
         session()->flash('success', 'Étapes / statut mis à jour.');
@@ -583,7 +583,7 @@ class CandidatSubmissions extends Component
         );
 
         $this->loadFormData();
-        ProjectSubmission::syncFinishedStatusFor((int) $submission->candidat_id, (int) $submission->programe_id);
+        ProjectsSubmission::syncFinishedStatusFor((int) $submission->candidat_id, (int) $submission->programe_id);
         $this->candidatSubmissions->refresh();
         if ($this->showWorkflowModal && $this->workflowSubmissionId === $submissionId) {
             $this->openWorkflowModal($submissionId);
@@ -604,7 +604,7 @@ class CandidatSubmissions extends Component
 
 
 
-        return view('livewire.admin.programe.candidat.candidat-submissions')
+        return view('livewire.admin.projects.candidat.candidat-submissions')
             ->layout('layouts.admin', [
                 'header' => 'Soumissions de ' . $this->candidat->nom . ' ' . $this->candidat->prenom . ($this->project ? " - {$this->project->project_name}" : ''),
                 'is_evaluated' => $is_evaluated,

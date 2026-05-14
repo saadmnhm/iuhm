@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
-use App\Models\ProgrameList;
+use App\Models\ProjectsList;
 use App\Models\Address;     
 
 class AppServiceProvider extends ServiceProvider
@@ -33,7 +33,7 @@ class AppServiceProvider extends ServiceProvider
         $locale = session('locale', 'fr');
         app()->setLocale($locale);
         View::composer(['layouts.admin', 'layouts.app', 'livewire.front.dashboard.*'], function ($view) {
-            $view->with('programe_list', ProgrameList::all());
+            $view->with('programe_list', ProjectsList::all());
             $view->with('addresses', Address::orderBy('city')->orderBy('address_line1')->get());
         });
     }

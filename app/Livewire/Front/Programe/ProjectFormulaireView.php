@@ -3,14 +3,14 @@
 namespace App\Livewire\Front\Programe;
 
 use Livewire\Component;
-use App\Models\ProgrameList;
+use App\Models\ProjectsList;
 use App\Models\DynamicForm;
 use App\Models\DynamicFormSubmission;
 use App\Models\DynamicFormAnswer;
 use App\Models\DynamicFormTableAnswer;
 use App\Models\CandidatFormulaireOrder;
 use App\Models\CandidatProjectAgreement;
-use App\Models\ProjectSubmission;
+use App\Models\ProjectsSubmission;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -61,7 +61,7 @@ class ProjectFormulaireView extends Component
 
     public function loadData()
     {
-        $this->project = ProgrameList::with(['formulaires' => function ($query) {
+        $this->project = ProjectsList::with(['formulaires' => function ($query) {
             $query->where('programe_formulaire.status', 'active')
                 ->orderBy('programe_formulaire.order');
         }])->findOrFail($this->projectId);
@@ -433,7 +433,7 @@ class ProjectFormulaireView extends Component
         try {
             $candidatId = Auth::guard('candidat')->id();
 
-            $projectSubmission = ProjectSubmission::updateOrCreate(
+            $ProjectsSubmission = ProjectsSubmission::updateOrCreate(
                 [
                     'candidat_id' => $candidatId,
                     'programe_id' => $this->projectId,
@@ -450,7 +450,7 @@ class ProjectFormulaireView extends Component
                     'candidat_id' => $candidatId,
                 ],
                 [
-                    'project_submission_id' => $projectSubmission->id,
+                    'project_submission_id' => $ProjectsSubmission->id,
                     'current_step' => $this->currentStep,
                     'is_submitted' => false,
                 ]
@@ -642,11 +642,11 @@ class ProjectFormulaireView extends Component
                 'submitted_at' => now(),
             ]);
 
-            ProjectSubmission::where('id', $submission->project_submission_id)->update([
+            ProjectsSubmission::where('id', $submission->project_submission_id)->update([
                 'last_activity' => now(),
             ]);
 
-            ProjectSubmission::syncFinishedStatusFor(
+            ProjectsSubmission::syncFinishedStatusFor(
                 (int) $submission->candidat_id,
                 (int) $submission->programe_id
             );
@@ -680,7 +680,7 @@ class ProjectFormulaireView extends Component
         if ($this->existingSubmission?->programe) {
             $project = $this->existingSubmission->programe;
         } elseif ($projectId > 0) {
-            $project = ProgrameList::find($projectId);
+            $project = ProjectsList::find($projectId);
         }
 
         return view('livewire.front.programe.project-formulaire-view', [

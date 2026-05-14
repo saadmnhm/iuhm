@@ -50,7 +50,7 @@ class FormulaireSubmissionDetail extends Component
             'reviewer',
         ])->findOrFail($this->submissionId);
 
-        return view('livewire.admin.programe.candidat.details.formulaire-submission-detail', [
+        return view('livewire.admin.projects.candidat.details.formulaire-submission-detail', [
             'submission' => $submission,
         ])->layout('layouts.admin', ['header' => 'Détail Soumission']);
     }

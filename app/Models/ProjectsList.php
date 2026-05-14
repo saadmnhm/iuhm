@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
-class ProgrameList extends Model
+class ProjectsList extends Model
 {
     use SoftDeletes;
 
@@ -72,9 +72,9 @@ class ProgrameList extends Model
                     ->orderByPivot('order');
     }
 
-    public function projectSubmissions(): HasMany
+    public function ProjectsSubmissions(): HasMany
     {
-        return $this->hasMany(ProjectSubmission::class, 'programe_id');
+        return $this->hasMany(ProjectsSubmission::class, 'programe_id');
     }
 
 

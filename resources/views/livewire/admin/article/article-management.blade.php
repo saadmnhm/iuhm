@@ -20,7 +20,7 @@
                     <i class="ri-add-line text-sm"></i>
                 </span>
                 Nouvel article
-</a>
+            </a>
         </div>
 
         @if(session()->has('success'))

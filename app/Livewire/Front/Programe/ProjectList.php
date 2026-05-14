@@ -3,7 +3,7 @@
 namespace App\Livewire\Front\Programe;
 
 use Livewire\Component;
-use App\Models\ProgrameList;
+use App\Models\ProjectsList;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
 use App\Services\ProjectEligibilityService;
@@ -28,7 +28,7 @@ class ProjectList extends Component
     
     public function render()
     {
-        $query = ProgrameList::with('formulaires')
+        $query = ProjectsList::with('formulaires')
             ->where('is_active', true);
         
         if ($this->search) {

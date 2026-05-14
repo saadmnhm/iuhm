@@ -6,14 +6,14 @@
 
     $hasAgreementPage = isset($agreement) && $agreement;
     $hasEvaluationPage = isset($evaluation) && $evaluation;
-    $hasProjectSubmission = isset($projectSubmission) && $projectSubmission;
+    $hasProjectSubmission = isset($ProjectsSubmission) && $ProjectsSubmission;
 
-    $reviewAnswers = (array) ($projectSubmission->formation_review_answers ?? []);
-    $reviewFiles = (array) ($projectSubmission->formation_review_files ?? []);
+    $reviewAnswers = (array) ($ProjectsSubmission->formation_review_answers ?? []);
+    $reviewFiles = (array) ($ProjectsSubmission->formation_review_files ?? []);
 
     $hasAvisFormation = $hasProjectSubmission && (
-        filled($projectSubmission->formation_review_rating)
-        || filled($projectSubmission->formation_review_feedback)
+        filled($ProjectsSubmission->formation_review_rating)
+        || filled($ProjectsSubmission->formation_review_feedback)
         || !empty($reviewAnswers)
         || !empty($reviewFiles)
     );
@@ -95,7 +95,7 @@
     @include('livewire.admin.impression.project-review', [
         'candidat' => $candidat,
         'project' => $project,
-        'submission' => $projectSubmission,
+        'submission' => $ProjectsSubmission,
         'association' => $association ?? null,
     ])
 @endif
@@ -105,7 +105,7 @@
         @include('livewire.admin.impression.avis-formation', [
             'candidat' => $candidat,
             'project' => $project,
-            'submission' => $projectSubmission,
+            'submission' => $ProjectsSubmission,
             'association' => $association ?? null,
         ])
     </div>

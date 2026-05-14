@@ -6,8 +6,8 @@ use App\Models\DynamicForm;
 use App\Models\DynamicFormSubmission;
 use App\Models\DynamicFormAnswer;
 use App\Models\DynamicFormTableAnswer;
-use App\Models\ProjectSubmission;
-use App\Models\ProgrameList;
+use App\Models\ProjectsSubmission;
+use App\Models\ProjectsList;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -321,11 +321,11 @@ class DynamicFormWizard extends Component
 
         DB::beginTransaction();
         try {
-            $projectSubmissionId = null;
+            $ProjectSubmissionId = null;
             $projectId = request()->integer('project_id');
 
             if ($projectId > 0) {
-                $projectSubmission = ProjectSubmission::updateOrCreate(
+                $ProjectsSubmission = ProjectsSubmission::updateOrCreate(
                     [
                         'candidat_id' => $candidatId,
                         'programe_id' => $projectId,
@@ -335,7 +335,7 @@ class DynamicFormWizard extends Component
                     ]
                 );
 
-                $projectSubmissionId = $projectSubmission->id;
+                $ProjectSubmissionId = $ProjectsSubmission->id;
             }
 
             // Create or update submission
@@ -346,7 +346,7 @@ class DynamicFormWizard extends Component
                 ],
                 [
                     'programe_id' => $projectId > 0 ? $projectId : null,
-                    'project_submission_id' => $projectSubmissionId,
+                    'project_submission_id' => $ProjectSubmissionId,
                     'current_step' => $this->step,
                     'is_submitted' => false,
                 ]
@@ -539,7 +539,7 @@ class DynamicFormWizard extends Component
             ]);
 
             if ($submission->programe_id) {
-                ProjectSubmission::syncFinishedStatusFor(
+                ProjectsSubmission::syncFinishedStatusFor(
                     (int) $submission->candidat_id,
                     (int) $submission->programe_id
                 );
@@ -568,7 +568,7 @@ class DynamicFormWizard extends Component
         if ($this->existingSubmission?->programe) {
             $project = $this->existingSubmission->programe;
         } elseif ($projectId > 0) {
-            $project = ProgrameList::find($projectId);
+            $project = ProjectsList::find($projectId);
         }
 
         $layoutTitle = str_starts_with(app()->getLocale(), 'ar') && filled($form->title_ar)

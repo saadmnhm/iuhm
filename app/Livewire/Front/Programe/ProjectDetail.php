@@ -3,11 +3,11 @@
 namespace App\Livewire\Front\Programe;
 
 use Livewire\Component;
-use App\Models\ProgrameList;
+use App\Models\ProjectsList;
 use App\Models\DynamicFormSubmission;
 use App\Models\CandidatFormulaireOrder;
 use App\Models\CandidatProjectAgreement;
-use App\Models\ProjectSubmission;
+use App\Models\ProjectsSubmission;
 use Illuminate\Support\Facades\Auth;
 use App\Services\ProjectEligibilityService;
 
@@ -17,7 +17,7 @@ class ProjectDetail extends Component
     public $project;
     public $formulaires = [];
     public $currentFormulaireIndex = null;
-    public $projectSubmission;
+    public $ProjectsSubmission;
 
     protected ProjectEligibilityService $eligibilityService;
 
@@ -34,19 +34,19 @@ class ProjectDetail extends Component
     
     public function loadProject()
     {
-        $this->project = ProgrameList::with(['formulaires' => function($query) {
+        $this->project = ProjectsList::with(['formulaires' => function($query) {
             $query->where('programe_formulaire.status', 'active')
                   ->orderBy('programe_formulaire.order');
         }])->findOrFail($this->projectId);
 
         $candidat = Auth::guard('candidat')->user();
         if ($candidat) {
-            $this->projectSubmission = \App\Models\ProjectSubmission::where('candidat_id', $candidat->id)
+            $this->ProjectsSubmission = \App\Models\ProjectsSubmission::where('candidat_id', $candidat->id)
                 ->where('programe_id', $this->projectId)
                 ->first();
 
-            ProjectSubmission::syncFinishedStatusFor((int) $candidat->id, (int) $this->projectId);
-            $this->projectSubmission?->refresh();
+            ProjectsSubmission::syncFinishedStatusFor((int) $candidat->id, (int) $this->projectId);
+            $this->ProjectsSubmission?->refresh();
 
             $check = $this->eligibilityService->evaluate($candidat, $this->project);
             if (!$check['eligible']) {
@@ -163,7 +163,7 @@ class ProjectDetail extends Component
     
     public function startFormulaire($index)
     {
-        if ($this->projectSubmission && $this->projectSubmission->require_formation_review && !$this->projectSubmission->formation_review_rating) {
+        if ($this->ProjectsSubmission && $this->ProjectsSubmission->require_formation_review && !$this->ProjectsSubmission->formation_review_rating) {
             session()->flash('error', __('Veuillez remplir l\'avis de formation avant de continuer.'));
             return;
         }

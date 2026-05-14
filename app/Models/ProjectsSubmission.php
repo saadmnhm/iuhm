@@ -7,8 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 
-class ProjectSubmission extends Model
+class ProjectsSubmission extends Model
 {
+
+    protected $table = 'project_submissions';
     protected $fillable = [
         'candidat_id',
         'programe_id',
@@ -80,7 +82,7 @@ class ProjectSubmission extends Model
 
     public function project(): BelongsTo
     {
-        return $this->belongsTo(ProgrameList::class, 'programe_id');
+        return $this->belongsTo(ProjectsList::class, 'programe_id');
     }
 
     public function assignedAdmin(): BelongsTo

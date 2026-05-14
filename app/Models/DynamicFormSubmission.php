@@ -39,7 +39,7 @@ class DynamicFormSubmission extends Model
     
     public function programe(): BelongsTo
     {
-        return $this->belongsTo(ProgrameList::class, 'programe_id');
+        return $this->belongsTo(ProjectsList::class, 'programe_id');
     }
 
     public function reviewer(): BelongsTo
@@ -47,9 +47,9 @@ class DynamicFormSubmission extends Model
         return $this->belongsTo(User::class, 'reviewed_by');
     }
 
-    public function projectSubmission(): BelongsTo
+    public function ProjectsSubmission(): BelongsTo
     {
-        return $this->belongsTo(ProjectSubmission::class);
+        return $this->belongsTo(ProjectsSubmission::class);
     }
 
     public function answers(): HasMany

@@ -3,12 +3,12 @@
 namespace App\Services;
 
 use App\Models\Candidat;
-use App\Models\ProgrameList;
+use App\Models\ProjectsList;
 use Carbon\Carbon;
 
 class ProjectEligibilityService
 {
-    public function evaluate(Candidat $candidat, ProgrameList $project): array
+    public function evaluate(Candidat $candidat, ProjectsList $project): array
     {
         $reasons = [];
 

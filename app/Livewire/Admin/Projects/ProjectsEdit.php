@@ -1,16 +1,16 @@
 <?php
-namespace App\Livewire\Admin\Programe;
+namespace App\Livewire\Admin\Projects;
 
 use App\Models\AdminActivityLog;
 use Livewire\Component;
 use App\Models\MoroccoLocation;
-use App\Models\ProgrameList;
+use App\Models\ProjectsList;
 use App\Models\DynamicForm;
 use App\Models\Candidat;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 
-class ProgrameEdit extends Component{
+class ProjectsEdit extends Component{
     use WithPagination, WithFileUploads;
 
     public $programeId;
@@ -49,7 +49,7 @@ class ProgrameEdit extends Component{
     public function mount($id)
     {
         $this->programeId = $id;
-        $programe = ProgrameList::findOrFail($id);
+        $programe = ProjectsList::findOrFail($id);
         
         $this->project_name = $programe->project_name;
         $this->status = $programe->status ?? 'Active';
@@ -80,7 +80,7 @@ class ProgrameEdit extends Component{
     
     public function loadFormulaires()
     {
-        $programe = ProgrameList::findOrFail($this->programeId);
+        $programe = ProjectsList::findOrFail($this->programeId);
         $this->attachedFormulaires = $programe->formulaires()->get()->map(function($form) {
             return [
                 'id' => $form->id,
@@ -134,7 +134,7 @@ class ProgrameEdit extends Component{
             'formulaireUnlockStatus' => 'required|in:submitted,in_review,approved',
         ]);
         
-        $programe = ProgrameList::findOrFail($this->programeId);
+        $programe = ProjectsList::findOrFail($this->programeId);
         
         // Check if already attached
         if ($programe->formulaires()->where('formulaire_id', $this->selectedFormulaire)->exists()) {
@@ -152,7 +152,7 @@ class ProgrameEdit extends Component{
         AdminActivityLog::log(
             'formulaire_attached',
             "Attached formulaire ID {$this->selectedFormulaire} to programme: {$programe->project_name}",
-            ProgrameList::class,
+            ProjectsList::class,
             $programe->id
         );
         
@@ -163,13 +163,13 @@ class ProgrameEdit extends Component{
     
     public function detachFormulaire($formulaireId)
     {
-        $programe = ProgrameList::findOrFail($this->programeId);
+        $programe = ProjectsList::findOrFail($this->programeId);
         $programe->formulaires()->detach($formulaireId);
 
         AdminActivityLog::log(
             'formulaire_detached',
             "Detached formulaire ID {$formulaireId} from programme: {$programe->project_name}",
-            ProgrameList::class,
+            ProjectsList::class,
             $programe->id
         );
 
@@ -179,21 +179,21 @@ class ProgrameEdit extends Component{
     
     public function updateFormulaireOrder($formulaireId, $newOrder)
     {
-        $programe = ProgrameList::findOrFail($this->programeId);
+        $programe = ProjectsList::findOrFail($this->programeId);
         $programe->formulaires()->updateExistingPivot($formulaireId, ['order' => $newOrder]);
         $this->loadFormulaires();
     }
     
     public function updateFormulaireStatus($formulaireId, $newStatus)
     {
-        $programe = ProgrameList::findOrFail($this->programeId);
+        $programe = ProjectsList::findOrFail($this->programeId);
         $programe->formulaires()->updateExistingPivot($formulaireId, ['status' => $newStatus]);
         $this->loadFormulaires();
     }
     
     public function toggleFormulaireRequired($formulaireId)
     {
-        $programe = ProgrameList::findOrFail($this->programeId);
+        $programe = ProjectsList::findOrFail($this->programeId);
         $formulaire = collect($this->attachedFormulaires)->firstWhere('id', $formulaireId);
         $newRequired = !$formulaire['is_required'];
         $programe->formulaires()->updateExistingPivot($formulaireId, ['is_required' => $newRequired]);
@@ -224,7 +224,7 @@ class ProgrameEdit extends Component{
             'logo3' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        $programe = ProgrameList::findOrFail($this->programeId);
+        $programe = ProjectsList::findOrFail($this->programeId);
         
         $data = [
             'project_name' => $this->project_name,
@@ -255,7 +255,7 @@ class ProgrameEdit extends Component{
         AdminActivityLog::log(
             'programme_updated',
             "Updated programme: {$programe->project_name}",
-            ProgrameList::class,
+            ProjectsList::class,
             $programe->id
         );
 
@@ -352,7 +352,7 @@ class ProgrameEdit extends Component{
             ->orderBy('prefecture')
             ->get();
 
-        return view('livewire.admin.programe.edit_project', compact('regions', 'cities', 'locations', 'selectedLocations'))
+        return view('livewire.admin.projects.edit_project', compact('regions', 'cities', 'locations', 'selectedLocations'))
             ->layout('layouts.admin', ['header' => 'Edit Project']);
     }
 }

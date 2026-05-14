@@ -4,8 +4,8 @@ namespace App\Livewire\Admin\Submissions;
 
 use App\Models\DynamicFormSubmission;
 use App\Models\DynamicForm;
-use App\Models\ProgrameList;
-use App\Models\ProjectSubmission;
+use App\Models\ProjectsList;
+use App\Models\ProjectsSubmission;
 use App\Models\User;
 use App\Models\Candidat;
 use Livewire\Component;
@@ -106,7 +106,7 @@ class AllSubmissions extends Component
 
     public function render()
     {
-        $query = DynamicFormSubmission::with(['candidat', 'form', 'programe', 'reviewer', 'projectSubmission.reviewer']);
+        $query = DynamicFormSubmission::with(['candidat', 'form', 'programe', 'reviewer', 'ProjectsSubmission.reviewer']);
 
         // Search
         if ($this->search) {
@@ -170,7 +170,7 @@ class AllSubmissions extends Component
 
         $submissions = $query->latest()->where('is_submitted', true)->paginate(15);
 
-        $projectQuery = ProjectSubmission::with(['candidat', 'project', 'reviewer']);
+        $projectQuery = ProjectsSubmission::with(['candidat', 'project', 'reviewer']);
 
         if ($this->search) {
             $projectQuery->where(function ($q) {
@@ -230,9 +230,9 @@ class AllSubmissions extends Component
             $projectQuery->whereDate('created_at', '<=', $this->dateTo);
         }
 
-        $projectSubmissions = $projectQuery->latest()->paginate(15, ['*'], 'projectPage');
+        $ProjectsSubmissions = $projectQuery->latest()->paginate(15, ['*'], 'projectPage');
 
-        $programmes  = ProgrameList::orderBy('project_name')->get(['id', 'project_name']);
+        $programmes  = ProjectsList::orderBy('project_name')->get(['id', 'project_name']);
         $formulaires = DynamicForm::orderBy('title')->get(['id', 'title']);
         $admins      = User::whereIn('role', ['admin', 'super_admin'])->orderBy('nom')->get(['id', 'nom', 'prenom']);
         $addresses   = Candidat::whereNotNull('address')
@@ -253,7 +253,7 @@ class AllSubmissions extends Component
         ];
 
         return view('livewire.admin.submissions.all-submissions', compact(
-            'submissions', 'projectSubmissions', 'programmes', 'formulaires', 'admins', 'addresses', 'stats'
+            'submissions', 'ProjectsSubmissions', 'programmes', 'formulaires', 'admins', 'addresses', 'stats'
         ))->layout('layouts.admin', ['header' => 'Toutes les Soumissions']);
     }
 }

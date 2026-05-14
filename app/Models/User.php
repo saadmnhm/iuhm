@@ -104,11 +104,11 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function assignedProjectSubmissions()
     {
-        return $this->hasMany(ProjectSubmission::class, 'assigned_admin_id');
+        return $this->hasMany(ProjectsSubmission::class, 'assigned_admin_id');
     }
 
     public function reviewedProjectSubmissions()
     {
-        return $this->hasMany(ProjectSubmission::class, 'reviewed_by');
+        return $this->hasMany(ProjectsSubmission::class, 'reviewed_by');
     }
 }
