@@ -8,7 +8,7 @@
                 <p class="text-gray-600 text-[18px] mt-2">Gérer les hiérarchies organisationnelles en créant des autorisations granulaires pour les membres de l'équipe au sein de l'écosystème Initiative Urbaine</p>
             </div>
             @if(in_array($currentUserRole, ['admin', 'super_admin'], true))
-            <button type="button" @click="$dispatch('user-modal-open', { mode: 'create', userType: 'admin' })" class="w-65 h-12.5 text-center p-2 content-center bg-[#1B264F] text-white text-[16px] font-normal rounded-full hover:bg-gray-800 transition">
+            <button type="button" @click="$dispatch('user-modal-open', { mode: 'create', userType: 'admin' })" class="w-75 h-12.5 text-center p-2 content-center bg-[#1B264F] text-white text-[16px] font-normal rounded-full hover:bg-gray-800 transition">
                 <i class="ri-shield-user-line text-[19px] relative right-1" ></i> Créer un utilisateur
             </button>
             @endif

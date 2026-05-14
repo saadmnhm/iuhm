@@ -10,7 +10,7 @@
     </div>
 
     {{-- Stats Row --}}
-    <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5 mb-10">
+    <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 mb-10">
         @foreach ($stats_card as $item )
         
         <div class="rounded-2xl  bg-white p-5 shadow-sm">

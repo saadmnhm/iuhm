@@ -241,7 +241,7 @@ document.addEventListener('livewire:init', () => {
                     <label class="block text-[0.65rem] font-extrabold uppercase tracking-widest text-[#23803B] mb-3">
                         Résumé / Introduction
                     </label>
-                    <textarea wire:model="excerpt" rows="3"
+                    <textarea wire:model="excerpt" rows="3" maxlength="250"
                               placeholder="Rédigez une accroche qui donne envie de lire l'article complet…"
                               class="w-full rounded-2xl border border-slate-100 bg-[#FAFAFC] px-5 py-3.5 text-[0.95rem] italic text-[#4A5568] placeholder:text-slate-300 placeholder:not-italic outline-none focus:border-[#0B1528] focus:bg-white focus:ring-4 focus:ring-[#0B1528]/8 resize-none transition leading-relaxed"></textarea>
                     @error('excerpt') <p class="mt-2 text-xs text-rose-500 font-medium">{{ $message }}</p> @enderror

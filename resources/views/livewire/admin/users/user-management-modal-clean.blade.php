@@ -56,7 +56,7 @@
     >
         <template x-if="open">
             <div
-                class="fixed inset-0 z-50 flex items-center justify-center"
+                class="fixed inset-0 z-50 overflow-y-auto"
                 x-transition:enter="ease-out duration-200"
                 x-transition:enter-start="opacity-0"
                 x-transition:enter-end="opacity-100"
@@ -66,8 +66,9 @@
             >
                 <div class="absolute inset-0 bg-black/50" @click="closeModal()"></div>
 
+                <div class="flex min-h-full items-center justify-center p-4">
                 <div
-                    class="relative bg-white rounded-2xl shadow-xl w-170 mx-4 z-10 overflow-hidden"
+                    class="relative bg-white rounded-2xl shadow-xl w-full max-w-lg sm:max-w-2xl z-10 overflow-y-auto max-h-[90vh]"
                     @click.stop
                     x-transition:enter="ease-out duration-200"
                     x-transition:enter-start="opacity-0 scale-95"
@@ -80,12 +81,12 @@
                     <input type="hidden" x-model="form.userType" wire:model.defer="editingUserType">
                     <input type="hidden" x-model="form.userType" wire:model.defer="userTypeCreate">
 
-                    <div class="text-center px-6 py-4">
-                        <h3 class="text-[30px] font-bold text-center text-[#04103A]" x-text="mode === 'edit' ? 'Modifier utilisateur' : 'Nouvel utilisateur'"></h3>
+                    <div class="text-center px-4 sm:px-6 py-4">
+                        <h3 class="text-xl sm:text-[30px] font-bold text-center text-[#04103A]" x-text="mode === 'edit' ? 'Modifier utilisateur' : 'Nouvel utilisateur'"></h3>
                         <p class="text-base text-gray-600 font-medium mt-4">Complétez les formulaires suivants</p>
                     </div>
 
-                    <div class="px-6 py-5 space-y-4">
+                    <div class="px-4 sm:px-6 py-4 sm:py-5 space-y-4">
                         <div x-show="mode === 'create'" x-cloak>
                             <label class="block text-sm font-semibold text-[#04103A] mb-2">Type d'utilisateur *</label>
                             <select x-model="form.userType" wire:model.defer="userTypeCreate" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
@@ -142,6 +143,7 @@
                         <div x-show="form.userType === 'admin'" x-cloak>
                             <label class="block text-sm font-semibold text-[#04103A] mb-2">Rôle *</label>
                             <select x-model="form.role" wire:model.defer="role" class="w-full font-semibold h-13 text-[#76767F] bg-[#E4E1E6] rounded-lg text-sm py-2 px-4 focus:outline-none">
+                                <option value="" disabled selected>Sélectionnez un rôle</option>
                                 @foreach($allRoles as $roleItem)
                                     <option value="{{ $roleItem['name'] }}">{{ $roleItem['label'] }}</option>
                                 @endforeach
@@ -193,7 +195,7 @@
                         </div>
                     </div>
 
-                    <div class="flex justify-end items-center gap-3 px-6 py-4">
+                    <div class="flex justify-end items-center gap-3 px-4 sm:px-6 py-4">
                         <button type="button"
                             @click="closeModal()"
                             class="px-4 py-2 text-sm font-semibold text-gray-700 h-12.5 text-center rounded-full hover:bg-gray-200 transition-colors"
@@ -212,6 +214,7 @@
                             Confirmer
                         </button>
                     </div>
+                </div>
                 </div>
             </div>
         </template>
