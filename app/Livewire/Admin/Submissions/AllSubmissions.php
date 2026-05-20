@@ -251,9 +251,16 @@ class AllSubmissions extends Component
             'rejected_week'  => DynamicFormSubmission::where('status', 'rejected')->where('updated_at', '>=', $weekStart)->count(),
             'in_review_week' => DynamicFormSubmission::where('status', 'in_review')->where('updated_at', '>=', $weekStart)->count(),
         ];
+            $statCards = [
+                ['key' => 'all',       'label' => 'TOTAL SOUMISSIONS',   'value' => $stats['total'],     'icon' => 'ri-file-list-3-line',     'dot' => 'bg-blue-500'],
+                ['key' => 'submitted', 'label' => 'SOUMISES',            'value' => $stats['submitted'], 'icon' => 'ri-send-plane-line',      'dot' => 'bg-indigo-500'],
+                ['key' => 'in_review', 'label' => 'EN RÉVISION',         'value' => $stats['in_review'], 'icon' => 'ri-time-line',            'dot' => 'bg-amber-500'],
+                ['key' => 'approved',  'label' => 'SOUMISSIONS APPROUVÉ','value' => $stats['approved'],  'icon' => 'ri-checkbox-circle-line', 'dot' => 'bg-green-500'],
+                ['key' => 'rejected',  'label' => 'REJETÉES',            'value' => $stats['rejected'],  'icon' => 'ri-close-circle-line',    'dot' => 'bg-red-500'],
+            ];
 
         return view('livewire.admin.submissions.all-submissions', compact(
-            'submissions', 'ProjectsSubmissions', 'programmes', 'formulaires', 'admins', 'addresses', 'stats'
+            'submissions', 'ProjectsSubmissions', 'programmes', 'formulaires', 'admins', 'addresses', 'stats', 'statCards'
         ))->layout('layouts.admin', ['header' => 'Toutes les Soumissions']);
     }
 }

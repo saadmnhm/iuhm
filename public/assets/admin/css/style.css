@@ -73,6 +73,7 @@ button:focus {
     font-size: 14px;
     height: 50px;
     padding: 0px 10px;
+    border-radius: 50px;
 }
 .btn_standar{
     background-color: #1B264F;
@@ -95,4 +96,63 @@ button:focus {
     color: #04103a;
     display: block;
     margin-bottom: 6px;
+}
+.iuhm_title_1{
+    font-size: 38px;
+    font-weight: 700;
+    color: #04103a;
+    display: block;
+    margin-bottom: 6px;
+}
+.iuhm_title_2{
+    font-size: 20px;
+    font-weight: 700;
+    color: #04103a;
+    display: block;
+    margin-bottom: 6px;
+}
+.green_title_1{
+    /* text-m font-bold text-[#066E1B] uppercase tracking-wide mb-2 */
+    font-size: 16px;
+    font-weight: 700;
+    color: #066E1B;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+}
+
+.iuhm_btn_1{
+    text-align: center;
+    background-color: #1B264F;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    height: 50px;
+    border-radius: 99px;
+    padding: 10px 20px;
+    transition: background-color 0.3s ease;
+    min-width: 150px;
+    cursor: pointer;
+}
+.iuhm_btn_1:hover{
+    background-color: #ffffff;
+    color: #04103A;
+    border: 1px solid #1B264F;
+}
+.iuhm_btn_close_1{
+    /* px-4 py-2 text-sm font-semibold text-gray-700 h-12.5 text-center rounded-full hover:bg-gray-200 transition-colors */
+    text-align: center;
+    color: #1B264F;
+    font-size: 16px;
+    font-weight: 500;
+    height: 50px;
+    border-radius: 99px;
+    padding: 10px 20px;
+    transition: background-color 0.3s ease;
+    min-width: 100px;
+    cursor: pointer;
+}
+
+.iuhm_btn_close_1:hover{
+    background-color: #e5e7eb;
 }

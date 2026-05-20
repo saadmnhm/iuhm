@@ -26,6 +26,10 @@ class ProjectsEdit extends Component{
     public $allowed_location_ids = [];
     public $candidature_types = [];
     public string $newCandidatureType = '';
+
+    // Sector eligibility criteria
+    public array $crit_sector = [];
+
     public bool $showLocationModal = false;
     public $locationRegionFilter = '';
     public $locationCityFilter = '';
@@ -70,6 +74,12 @@ class ProjectsEdit extends Component{
         $this->candidature_types = is_array($programe->candidature_types)
             ? $programe->candidature_types
             : (json_decode($programe->candidature_types ?? '[]', true) ?? []);
+
+        // Load supplementary eligibility criteria
+        $ec = is_array($programe->eligibility_criteria)
+            ? $programe->eligibility_criteria
+            : (json_decode($programe->eligibility_criteria ?? '{}', true) ?? []);
+            $this->crit_sector = $ec['sector'] ?? [];
 
         $this->icon = $programe->icon ?? 'ri-file-list-3-line';
         $this->color = $programe->color ?? '#2f5496';
@@ -219,6 +229,7 @@ class ProjectsEdit extends Component{
             'allowed_address_id' => 'nullable|array',
             'allowed_location_ids' => 'nullable|array',
             'candidature_types' => 'nullable|array',
+            'crit_sector' => 'nullable|array',
             'logo1' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
             'logo2' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
             'logo3' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
@@ -238,6 +249,9 @@ class ProjectsEdit extends Component{
             'allowed_address_id' => json_encode($this->allowed_address_id),
             'allowed_location_ids' => array_values(array_unique(array_map('intval', $this->allowed_location_ids ?? []))),
             'candidature_types' => array_values(array_unique(array_filter(array_map('trim', $this->candidature_types ?? [])))),
+            'eligibility_criteria' => [
+                'sector' => array_values(array_filter($this->crit_sector ?? [])),
+            ],
         ];
 
         if ($this->logo1) {

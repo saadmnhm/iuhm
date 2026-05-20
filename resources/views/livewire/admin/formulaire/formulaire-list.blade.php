@@ -1,18 +1,16 @@
 <div class="">
-    <div class="px-6 pb-6 pt-8 sm:px-8 sm:pb-8 sm:pt-10">
+    <div class="px-6 pb-6 ">
         <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
             <div class="max-w-2xl">
-                <p class="text-[11px] font-extrabold uppercase tracking-[0.28em] text-emerald-700">System Configuration</p>
-                <h2 class="mt-3 text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">Gestion des Formulaires</h2>
+                <p class="green_title_1">System Configuration</p>
+                <h2 class="iuhm_title_1">Gestion des Formulaires</h2>
                 <p class="mt-3 text-sm leading-6 text-slate-600 sm:text-base">
                     Gérer les formulaires en configurant les champs, les règles de validation et les parcours de saisie afin d'optimiser la collecte et la structuration des données au sein de l'écosystème Initiative Urbaine
                 </p>
             </div>
 
-            <a href="{{ route('admin.formulaires.create') }}" class="inline-flex w-95 items-center gap-2 self-start rounded-full bg-[#0f1d57] px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(15,23,42,0.22)] transition hover:bg-[#14256f]">
-                <span class="flex h-6 w-6 items-center justify-center rounded-full border border-white/25 bg-white/10">
-                    <i class="ri-add-line text-sm"></i>
-                </span>
+            <a href="{{ route('admin.formulaires.create') }}" class="w-75 h-12.5 text-center p-2 content-center bg-[#1B264F] text-white text-[16px] font-normal rounded-full hover:bg-gray-800 transition">
+                <i class="ri-add-line text-sm"></i>
                 Créer un Formulaires
             </a>
         </div>
@@ -20,10 +18,10 @@
         <!-- Tabs Navigation -->
         <div class="mt-8  rounded-t-[22px] overflow-hidden">
             <div class="flex gap-0 px-6">
-                <button wire:click="$set('activeTab', 'list')" class="px-4 py-4 text-sm font-semibold transition border-b-2 {{ $activeTab === 'list' ? 'border-[#0f1d57] text-[#0f1d57]' : 'border-transparent text-slate-600 hover:text-slate-800' }}">
+                <button wire:click="$set('activeTab', 'list')" class="px-4 py-4 text-sm font-semibold transition border-b-2 {{ $activeTab === 'list' ? 'px-6 py-4 text-[18px] font-bold text-[#172554] border-b-2 border-green-600' : 'px-6 py-4 text-[18px] font-bold text-[#172554] border-b-2 border-transparent hover:text-gray-700' }}">
                     <i class="ri-list-check-2 mr-2"></i>Formulaires ({{ $forms->total() }})
                 </button>
-                <button wire:click="$set('activeTab', 'audit-logs')" class="px-4 py-4 text-sm font-semibold transition border-b-2 {{ $activeTab === 'audit-logs' ? 'border-[#0f1d57] text-[#0f1d57]' : 'border-transparent text-slate-600 hover:text-slate-800' }}">
+                <button wire:click="$set('activeTab', 'audit-logs')" class="px-4 py-4 text-sm font-semibold transition border-b-2 {{ $activeTab === 'audit-logs' ? 'px-6 py-4 text-[18px] font-bold text-[#172554] border-b-2 border-green-600' : 'px-6 py-4 text-[18px] font-bold text-[#172554] border-b-2 border-transparent hover:text-gray-700' }}">
                     <i class="ri-history-line mr-2"></i>Journaux d'audit ({{ $auditLogs->total() }})
                 </button>
             </div>
@@ -32,11 +30,11 @@
         <!-- List Tab -->
         @if($activeTab === 'list')
         <div class="overflow-hidden rounded-b-[22px] ">
-            <div class="border-b border-slate-200 bg-slate-50 p-5">
+            <div class="p-5">
                 <div class="flex gap-3">
                     <div class="relative flex-1">
                         <i class="ri-search-line pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input type="text" wire:model.live.debounce="search" placeholder="Rechercher un formulaire..." class="w-full iuhm_search rounded-xl border border-slate-200 bg-white py-3 pl-11 pr-4 text-sm outline-none focus:border-[#0f1d57] focus:ring-4 focus:ring-[#0f1d57]/10">
+                        <input type="text" wire:model.live.debounce="search" placeholder="Rechercher un formulaire..." class="w-full iuhm_search rounded-xl ">
                     </div>
                     <select wire:model.live="filterStatus" class="rounded-xl iuhm_select border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#0f1d57] focus:ring-4 focus:ring-[#0f1d57]/10">
                         <option value="">Tous les statuts</option>
@@ -48,18 +46,18 @@
 
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-slate-200">
-                    <thead class="bg-[#0f1d57] text-white">
-                        <tr>
-                            <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.16em]">TITRE DU FORMULAIRE</th>
-                            <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.16em]">DESCRIPTION</th>
-                            <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.16em]">ETAPES</th>
-                            <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.16em]">STATUS</th>
-                            <th class="px-6 py-4 text-center text-[11px] font-bold uppercase tracking-[0.16em]">ACTIONS</th>
+                    <thead >
+                        <tr class="bg-[#04103A] border-b border-gray-100">
+                            <th class="px-6 py-5 text-left text-xs font-semibold text-white uppercase rounded-tl-[10px]">TITRE DU FORMULAIRE</th>
+                            <th class="px-6 py-5 text-left text-xs font-semibold text-white uppercase">DESCRIPTION</th>
+                            <th class="px-6 py-5 text-left text-xs font-semibold text-white uppercase">ETAPES</th>
+                            <th class="px-6 py-5 text-left text-xs font-semibold text-white uppercase">STATUS</th>
+                            <th class="px-6 py-5 text-center text-xs font-semibold text-white uppercase rounded-tr-[10px]">ACTIONS</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-100 bg-slate-50/50">
+                    <tbody class="divide-y divide-gray-100">
                         @forelse($forms as $form)
-                        <tr class="transition hover:bg-white">
+                        <tr class="hover:bg-gray-200 bg-gray-100 transition-colors font-bold" style="border-bottom: 10px solid #fbf8fd;">
                             <td class="px-6 py-6 text-[16px] font-semibold text-[#45464E]">{{ $form->title }}</td>
                             <td class="px-6 py-6 text-[14px] text-[#04103A]">{{ Str::limit($form->introduction, 60) }}</td>
                             <td class="px-6 py-6 text-[16px] text-[#04103A]">{{ $form->steps_count ?? 0 }}</td>
@@ -103,17 +101,17 @@
         <div class="overflow-hidden rounded-b-[22px] border border-slate-200 border-t-0 bg-white shadow-[0_18px_40px_rgba(15,23,42,0.06)]">
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-slate-200">
-                    <thead class="bg-[#0f1d57] text-white">
-                        <tr>
-                            <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.16em]">UTILISATEUR</th>
-                            <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.16em]">ACTION</th>
-                            <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.16em]">DESCRIPTION</th>
-                            <th class="px-6 py-4 text-left text-[11px] font-bold uppercase tracking-[0.16em]">DATE</th>
+                    <thead>
+                        <tr class="bg-[#04103A] border-b border-gray-100">
+                            <th class="px-6 py-5 text-left text-xs font-semibold text-white uppercase rounded-tl-[10px]">UTILISATEUR</th>
+                            <th class="px-6 py-5 text-left text-xs font-semibold text-white uppercase">ACTION</th>
+                            <th class="px-6 py-5 text-left text-xs font-semibold text-white uppercase">DESCRIPTION</th>
+                            <th class="px-6 py-5 text-left text-xs font-semibold text-white uppercase rounded-tr-[10px]">DATE</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-100 bg-slate-50/50">
+                    <tbody class="divide-y divide-gray-100">
                         @forelse($auditLogs as $log)
-                        <tr class="transition hover:bg-white">
+                        <tr class="hover:bg-gray-200 bg-gray-100 transition-colors font-bold" style="border-bottom: 10px solid #fbf8fd;">
                             <td class="px-6 py-4 text-sm text-slate-700">
                                 <div class="flex items-center gap-2">
                                     <div class="h-8 w-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-xs font-semibold">

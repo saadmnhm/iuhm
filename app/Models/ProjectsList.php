@@ -26,6 +26,7 @@ class ProjectsList extends Model
         'allowed_address_id',
         'allowed_location_ids',
         'candidature_types',
+        'eligibility_criteria',
         'form_attached_id',
         'sort_order',
         'is_active',
@@ -39,6 +40,7 @@ class ProjectsList extends Model
         'is_active' => 'boolean',
         'allowed_location_ids' => 'array',
         'candidature_types' => 'array',
+        'eligibility_criteria' => 'array',
     ];
 
     protected static function booted(): void

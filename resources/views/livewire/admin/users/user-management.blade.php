@@ -1,7 +1,7 @@
 <div x-data="{ tab: 'users' }" x-cloak>
     <!-- Page Header -->
     <div class="mb-8">
-        <div class="text-m font-bold text-[#066E1B] uppercase tracking-wide mb-2">SYSTEM CONFIGURATION</div>
+        <div class="green_title_1">SYSTEM CONFIGURATION</div>
         <div class="flex justify-between items-start mb-6">
             <div>
                 <h1 class="text-[36px] font-bold text-[#04103A]">Gestion des accès utilisateur</h1>

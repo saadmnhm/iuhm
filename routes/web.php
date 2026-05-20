@@ -104,7 +104,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         
         Route::get('/projects', App\Livewire\Admin\Projects\ProjectsList::class)->name('programe')->middleware('module:programe');
         Route::get('/projects/create', App\Livewire\Admin\Projects\ProjectsCreate::class)->name('programe.create')->middleware('module:programe');
-        Route::get('/projects/edit/{id}', App\Livewire\Admin\Projects\ProjectsEdit::class)->name('programe.edit')->middleware('module:programe');
+        Route::get('/projects/edit/{id}', App\Livewire\Admin\Projects\ProjectsCreate::class)->name('programe.edit')->middleware('module:programe');
         Route::get('/projects/submissions/{id}', App\Livewire\Admin\Projects\ProjectsSubmissions::class)->name('project.submissions')->middleware('module:programmes');
         Route::get('/projects/candidat/{id}/submissions/{projectId?}', \App\Livewire\Admin\Candidat\CandidatSubmissions::class)->name('candidat.submissions')->middleware('module:programmes');
         Route::get('/projects/candidat/{id}/project/{projectId}/evaluation', \App\Livewire\Admin\Candidat\CandidatEvaluationCreate::class)->name('candidat.evaluation.create')->middleware('module:programmes');

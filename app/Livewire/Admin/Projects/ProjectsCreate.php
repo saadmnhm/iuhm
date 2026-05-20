@@ -5,18 +5,21 @@ namespace App\Livewire\Admin\Projects;
 use App\Models\ProjectsList;
 use App\Models\AdminActivityLog;
 use App\Models\MoroccoLocation;
+use App\Models\DynamicForm;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Livewire\WithPagination;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
 
 class ProjectsCreate extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, WithPagination;
 
     public ?int $programeId = null;
     public $project_name = '';
+    public $status = 'Active';
     public $description = '';
     public $slug = '';
     public $icon = 'ri-file-list-3-line';
@@ -28,6 +31,10 @@ class ProjectsCreate extends Component
     public $allowed_location_ids = [];
     public $candidature_types = [];
     public string $newCandidatureType = '';
+
+    // Sector eligibility criteria
+    public array $crit_sector = [];
+
     public $form_attached_id = null;
     public $sort_order = 0;
     public $is_active = true;
@@ -38,6 +45,19 @@ class ProjectsCreate extends Component
     public $locationSearch = '';
     public bool $showSuccessModal = false;
     public ?int $successProjectId = null;
+    public bool $showErrorModal = false;
+    public string $errorMessage = '';
+    public array $errorDetails = [];
+
+    // Formulaire management
+    public bool $showFormulaireModal = false;
+    public array $availableFormulaires = [];
+    public array $attachedFormulaires = [];
+    public $selectedFormulaire = null;
+    public int $formulaireOrder = 1;
+    public string $formulaireStatus = 'active';
+    public bool $formulaireRequired = true;
+    public string $formulaireUnlockStatus = 'approved';
 
     public $logo1;
     public $logo2;
@@ -56,6 +76,7 @@ class ProjectsCreate extends Component
             'allowed_address_id' => 'nullable|array',
             'allowed_location_ids' => 'nullable|array',
             'candidature_types' => 'nullable|array',
+            'crit_sector' => 'nullable|array',
             'form_attached_id' => 'nullable|integer',
             'sort_order' => 'nullable|integer',
             'is_active' => 'boolean',
@@ -90,11 +111,119 @@ class ProjectsCreate extends Component
             $this->candidature_types = is_array($list->candidature_types)
                 ? $list->candidature_types
                 : (json_decode($list->candidature_types ?? '[]', true) ?? []);
-            
+
+            // Load supplementary eligibility criteria
+            $ec = is_array($list->eligibility_criteria)
+                ? $list->eligibility_criteria
+                : (json_decode($list->eligibility_criteria ?? '{}', true) ?? []);
+            $this->crit_sector = $ec['sector'] ?? [];
+            $this->status = $list->status ?? 'Active';
             $this->form_attached_id = $list->form_attached_id;
             $this->sort_order = $list->sort_order;
             $this->is_active = $list->is_active;
+            $this->loadFormulaires();
+        } else {
+            $this->loadFormulaires();
         }
+    }
+
+    public function loadFormulaires(): void
+    {
+        if (!$this->programeId) {
+            $this->attachedFormulaires = [];
+            $this->availableFormulaires = DynamicForm::where('is_active', true)->orderBy('title')
+                ->get()->map(fn($f) => ['id' => $f->id, 'title' => $f->title, 'title_ar' => $f->title_ar])->toArray();
+            return;
+        }
+        $programe = ProjectsList::findOrFail($this->programeId);
+        $this->attachedFormulaires = $programe->formulaires()->get()->map(function ($form) {
+            return [
+                'id'               => $form->id,
+                'title'            => $form->title,
+                'title_ar'         => $form->title_ar,
+                'order'            => $form->pivot->order,
+                'status'           => $form->pivot->status,
+                'is_required'      => $form->pivot->is_required,
+                'unlock_on_status' => $form->pivot->unlock_on_status ?? 'approved',
+            ];
+        })->toArray();
+        $attachedIds = collect($this->attachedFormulaires)->pluck('id')->toArray();
+        $this->availableFormulaires = DynamicForm::whereNotIn('id', $attachedIds)->where('is_active', true)
+            ->orderBy('title')->get()
+            ->map(fn($f) => ['id' => $f->id, 'title' => $f->title, 'title_ar' => $f->title_ar])->toArray();
+    }
+
+    public function openFormulaireModal(): void
+    {
+        $this->loadFormulaires();
+        $this->showFormulaireModal = true;
+        $this->selectedFormulaire = null;
+        $this->formulaireOrder = count($this->attachedFormulaires) + 1;
+        $this->formulaireStatus = 'active';
+        $this->formulaireRequired = true;
+        $this->formulaireUnlockStatus = 'approved';
+    }
+
+    public function closeFormulaireModal(): void
+    {
+        $this->showFormulaireModal = false;
+        $this->selectedFormulaire = null;
+    }
+
+    public function attachFormulaire(): void
+    {
+        $this->validate([
+            'selectedFormulaire'     => 'required|exists:dynamic_forms,id',
+            'formulaireOrder'        => 'required|integer|min:1',
+            'formulaireStatus'       => 'required|in:active,inactive,draft',
+            'formulaireUnlockStatus' => 'required|in:submitted,in_review,approved',
+        ]);
+        if (!$this->programeId) {
+            session()->flash('error', 'Enregistrez d\'abord le projet avant d\'attacher des formulaires.');
+            return;
+        }
+        $programe = ProjectsList::findOrFail($this->programeId);
+        if ($programe->formulaires()->where('formulaire_id', $this->selectedFormulaire)->exists()) {
+            session()->flash('error', 'Ce formulaire est déjà attaché à ce projet.');
+            return;
+        }
+        $programe->formulaires()->attach($this->selectedFormulaire, [
+            'order'            => $this->formulaireOrder,
+            'status'           => $this->formulaireStatus,
+            'is_required'      => $this->formulaireRequired,
+            'unlock_on_status' => $this->formulaireUnlockStatus,
+        ]);
+        $this->loadFormulaires();
+        $this->closeFormulaireModal();
+        session()->flash('message', 'Formulaire attaché avec succès!');
+    }
+
+    public function detachFormulaire(int $formulaireId): void
+    {
+        $programe = ProjectsList::findOrFail($this->programeId);
+        $programe->formulaires()->detach($formulaireId);
+        $this->loadFormulaires();
+        session()->flash('message', 'Formulaire détaché avec succès!');
+    }
+
+    public function updateFormulaireOrder(int $formulaireId, int $newOrder): void
+    {
+        ProjectsList::findOrFail($this->programeId)->formulaires()->updateExistingPivot($formulaireId, ['order' => $newOrder]);
+        $this->loadFormulaires();
+    }
+
+    public function updateFormulaireStatus(int $formulaireId, string $newStatus): void
+    {
+        ProjectsList::findOrFail($this->programeId)->formulaires()->updateExistingPivot($formulaireId, ['status' => $newStatus]);
+        $this->loadFormulaires();
+    }
+
+    public function toggleFormulaireRequired(int $formulaireId): void
+    {
+        $formulaire = collect($this->attachedFormulaires)->firstWhere('id', $formulaireId);
+        $newRequired = !$formulaire['is_required'];
+        ProjectsList::findOrFail($this->programeId)->formulaires()->updateExistingPivot($formulaireId, ['is_required' => $newRequired]);
+        $this->loadFormulaires();
     }
 
     public function selectIcon(string $iconClass): void
@@ -127,6 +256,7 @@ class ProjectsCreate extends Component
 
             $data = [
                 'project_name' => $this->project_name,
+                'status' => $this->status ?? 'Active',
                 'description' => $this->description,
                 'slug' => $this->slug,
                 'icon' => $this->icon ?? 'ri-file-list-3-line',
@@ -137,6 +267,9 @@ class ProjectsCreate extends Component
                 'allowed_address_id' => json_encode($this->allowed_address_id ?? []),
                 'allowed_location_ids' => array_values(array_unique(array_map('intval', $this->allowed_location_ids ?? []))),
                 'candidature_types' => array_values(array_unique(array_filter(array_map('trim', $this->candidature_types ?? [])))),
+                'eligibility_criteria' => [
+                    'sector' => array_values(array_filter($this->crit_sector ?? [])),
+                ],
                 'form_attached_id' => $this->form_attached_id,
                 'sort_order' => $this->sort_order ?? 0,
                 'is_active' => $this->is_active,
@@ -186,23 +319,21 @@ class ProjectsCreate extends Component
             
         } catch (\Illuminate\Validation\ValidationException $e) {
             \Log::error('Validation failed', ['errors' => $e->errors()]);
-            
-            $this->dispatch('alert', [
-                'type' => 'error',
-                'title' => 'Validation Error',
-                'message' => implode(', ', array_map(fn($errors) => implode(', ', $errors), $e->errors()))
-            ]);
-            
-            throw $e;
+            $flat = [];
+            foreach ($e->errors() as $field => $messages) {
+                foreach ($messages as $msg) {
+                    $flat[] = $msg;
+                }
+            }
+            $this->errorDetails = $flat;
+            $this->errorMessage = 'Veuillez corriger les erreurs de validation.';
+            $this->showErrorModal = true;
         } catch (\Exception $e) {
             \Log::error('Error saving project: ' . $e->getMessage());
             \Log::error('Stack trace: ' . $e->getTraceAsString());
-            
-            $this->dispatch('alert', [
-                'type' => 'error',
-                'title' => 'Error',
-                'message' => 'Error saving project: ' . $e->getMessage()
-            ]);
+            $this->errorDetails = [$e->getMessage()];
+            $this->errorMessage = 'Une erreur est survenue lors de l\'enregistrement.';
+            $this->showErrorModal = true;
         }
     }
 
@@ -214,13 +345,20 @@ class ProjectsCreate extends Component
         $this->showLocationModal = true;
     }
 
+    public function closeErrorModal(): void
+    {
+        $this->showErrorModal = false;
+        $this->errorMessage = '';
+        $this->errorDetails = [];
+    }
+
     public function redirectAfterSuccess()
     {
         if ($this->successProjectId) {
-            return redirect()->route('admin.programe.edit', $this->successProjectId);
+            return redirect()->route('programe.edit', $this->successProjectId);
         }
 
-        return redirect()->route('admin.programe');
+        return redirect()->route('programe');
     }
 
     public function closeLocationModal(): void
@@ -299,15 +437,28 @@ class ProjectsCreate extends Component
             ->orderBy('city')
             ->orderBy('prefecture')
             ->get();
-        
+
+        $availableFormulaires = DynamicForm::where('is_active', true)
+            ->orderBy('title')
+            ->get()
+            ->map(fn($f) => ['id' => $f->id, 'title' => $f->title, 'title_ar' => $f->title_ar])
+            ->toArray();
+
+        // Sync $availableFormulaires if not loaded yet (create mode)
+        if (empty($this->availableFormulaires) && empty($this->attachedFormulaires)) {
+            $this->availableFormulaires = $availableFormulaires;
+        }
+
         return view('livewire.admin.projects.create_project', [
-            'regions' => $regions,
-            'cities' => $cities,
-            'locations' => $locations,
-            'selectedLocations' => $selectedLocations,
+            'regions'             => $regions,
+            'cities'              => $cities,
+            'locations'           => $locations,
+            'selectedLocations'   => $selectedLocations,
+            'availableFormulaires' => $this->availableFormulaires,
+            'attachedFormulaires'  => $this->attachedFormulaires,
         ])
             ->layout('layouts.admin', [
-                'header' => $this->programeId ? 'Edit Project' : 'Create New Project'
+                'header' => $this->programeId ? 'Modifier le Projet' : 'Créer un nouveau Projet'
             ]);
     }
 }

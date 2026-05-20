@@ -34,9 +34,10 @@
                     </a>
                     @endcanmodule
             @endif
-                @if(request()->is('admin/media/*') || request()->is('admin/media') )
 
-                    @canmodule('media')
+            @if(request()->is('admin/media/*') || request()->is('admin/media') )
+
+                @canmodule('media')
                     <a wire:navigate href="{{ route('admin.media.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.media*') ? 'bg-[#DCFCE7]' : '' }}">
                         <i class="ri-stack-line mr-1"></i> Médias   
                     </a>                    
@@ -57,8 +58,24 @@
                     </a>
 
 
-                    @endcanmodule
-                @endif
+                @endcanmodule
+            @endif
+            @if(request()->is('admin/projects/*') || request()->is('admin/projects') )
+
+                @canmodule('projects')
+                    <a wire:navigate href="{{ route('admin.programe') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.projects*') ? 'bg-[#DCFCE7]' : '' }}">
+                        <i class="ri-folder-line mr-1"></i> Projets
+                    </a>                    
+                    <a wire:navigate href="{{ route('admin.programe.create') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.programe.create') ? 'bg-[#DCFCE7]' : '' }}">
+                        <i class="ri-file-add-line mr-1"></i> Nouveau Projet
+                    </a>
+
+
+
+                @endcanmodule
+            @endif
+
+
 <!-- 
             <div x-data="{ open: false }">
                 <button @click="open = !open" class="flex w-full items-center justify-between gap-3 px-4 py-3 rounded-lg transition hover:bg-gray-100">

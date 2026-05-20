@@ -1,22 +1,23 @@
-<div x-data="{ tab: 'list', ...deleteModal() }" x-cloak class="p-6 bg-gray-50 min-h-screen">
+<div x-data="{ tab: 'list', ...deleteModal() }" x-cloak class="p-6  min-h-screen">
 
     
-           
-    <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-900 leading-tight">Gestion des Projets</h1>
-            <p class="text-sm text-gray-500 mt-1">Curation et gestion de projets participatifs à l'échelle des districts métropolitains.</p>
-        </div>
-        <a href="{{ route('admin.programe.create') }}"
-        class="inline-flex items-center gap-2 px-5 py-3 bg-gray-900 hover:bg-gray-800 text-white text-sm font-semibold rounded-xl transition whitespace-nowrap shadow-md">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
-            </svg>
-            Ajouter un Projet
-        </a>
-    </div>
 
+    <div class="mb-8">
+        <div class="text-m font-bold text-[#066E1B] uppercase tracking-wide mb-2">SYSTEM CONFIGURATION</div>
+        <div class="flex justify-between items-start mb-6">
+            <div>
+                <h1 class="text-[36px] font-bold text-[#04103A]">Gestion des Projets</h1>
+                <p class="text-gray-600 text-[18px] mt-2">Curation et gestion de projets participatifs à l'échelle des districts métropolitains.</p>
+            </div>
+            <a href="{{ route('admin.programe.create') }}" class="inline-flex items-center gap-2 px-5 py-3  transition whitespace-nowrap scontent-center bg-[#1B264F] text-white text-[16px] font-normal rounded-full ">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                </svg>
+                Ajouter un Projet
+            </a>
+        </div>
+    </div>
 
     <!-- Statistics Grid -->
     <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-3 mb-10 mt-10">
@@ -41,13 +42,12 @@
    
     <div class="mb-5">
         <div class="flex gap-6 px-6 pt-4 pb-0 border-b border-gray-100">
-            <button @click="tab='list'"
-                    :class="tab==='list' ? 'border-b-2 border-gray-900 text-[#04103A] font-semibold' : 'text-gray-400 hover:text-gray-600'"
+            <button @click="tab='list'" :class="tab==='list' ? 'px-6 py-4 text-[18px] font-bold text-[#172554] border-b-2 border-green-600' : 'px-6 py-4 text-[18px] font-bold text-[#172554] border-b-2 border-transparent hover:text-gray-700'"
                     class="pb-3 text-sm transition">
-                Liste des articles
+                Liste des projets
             </button>
             <button @click="tab='logs'"
-                    :class="tab==='logs' ? 'border-b-2 border-gray-900 text-[#04103A] font-semibold' : 'text-gray-400 hover:text-gray-600'"
+                    :class="tab==='logs' ? 'px-6 py-4 text-[18px] font-bold text-[#172554] border-b-2 border-green-600' : 'px-6 py-4 text-[18px] font-bold text-[#172554] border-b-2 border-transparent hover:text-gray-700'"
                     class="pb-3 text-sm transition">
                 Logs d'audit
             </button>
@@ -76,13 +76,13 @@
                                     <i class="{{ $project->icon ?? 'ri-leaf-line' }} text-green-600 text-base"></i>
                                 </div>
                                 <div>
-                                    <p class="text-sm font-semibold text-gray-900">{{ $project->project_name }}</p>
-                                    <p class="text-xs text-gray-400">{{ $project->formulaires_count ?? 0 }} formulaires</p>
+                                    <p class="py-4text-sm text-[#04103A]">{{ $project->project_name }}</p>
+                                    <p class="py-1 text-xs text-gray-400">{{ $project->formulaires_count ?? 0 }} formulaires</p>
                                 </div>
                             </div>
                         </td>
                         <td class="px-5 py-4">
-                            <span class="text-sm font-medium text-gray-800">{{ $project->user->name ?? '—' }}</span>
+                            <span class="px-3 py-4 text-sm text-[#04103A]">{{ $project->user->name ?? '—' }}</span>
                         </td>
                         <td class="px-5 py-4">
                             @php
@@ -152,7 +152,7 @@
             <p class="text-sm text-gray-500">
                 Affichage de {{ $projects->firstItem() ?? 0 }} à {{ $projects->lastItem() ?? 0 }} sur {{ $projects->total() }} projets
             </p>
-            {{ $projects->links() }}
+            <div>{{ $projects->links('vendor.pagination.circle') }}</div>
         </div>
     </div>
 
