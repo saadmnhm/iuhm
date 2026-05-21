@@ -93,7 +93,7 @@
         <div class="flex items-center justify-between border-b border-gray-100 px-6 pt-0 flex-wrap gap-y-2">
             <div class="flex items-center gap-0">
                 <button wire:click="$set('tab', 'formulaire')" class="py-4 px-1 mr-6 text-sm font-semibold border-b-2 transition-colors duration-150 {{ $tab === 'formulaire' ? 'px-6 py-4 text-[18px] font-bold text-[#172554] border-b-2 border-green-600' : 'px-6 py-4 text-[18px] font-bold text-[#172554] border-b-2 border-transparent hover:text-gray-700' }}">
-                    <i class="ri-file-list-3-line mr-1.5"></i>Liste des articles
+                    <i class="ri-file-list-3-line mr-1.5"></i>Soumissions par formulaire
                 </button>
                 <button wire:click="$set('tab', 'project')" class="py-4 px-1 mr-6 text-sm font-semibold border-b-2 transition-colors duration-150 {{ $tab === 'project' ? 'px-6 py-4 text-[18px] font-bold text-[#172554] border-b-2 border-green-600' : 'px-6 py-4 text-[18px] font-bold text-[#172554] border-b-2 border-transparent hover:text-gray-700' }}">
                     <i class="ri-folder-3-line mr-1.5"></i>Soumissions par projet
