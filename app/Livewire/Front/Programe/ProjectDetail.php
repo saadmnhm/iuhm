@@ -92,6 +92,10 @@ class ProjectDetail extends Component
 
             $unlockOnStatus = $form->pivot->unlock_on_status ?? 'approved';
             $status = $submission?->status;
+
+            $reviewer = $submission?->reviewed_by
+                ? \App\Models\User::find($submission->reviewed_by)
+                : null;
             
             return [
                 'id' => $form->id,
@@ -108,9 +112,14 @@ class ProjectDetail extends Component
                 'status' => $form->pivot->status,
                 'submission_id' => $submission?->id,
                 'submitted_at' => $submission?->submitted_at,
+                'updated_at' => $submission?->updated_at,
+                'last_modified_human' => $submission?->updated_at?->diffForHumans() ?? null,
                 'is_submitted' => $submission?->is_submitted ?? false,
                 'submission_status' => $status,
                 'status_label' => $submission?->status_label ?? null,
+                'status_badge_color' => $submission?->status_badge_color ?? null,
+                'review_notes' => $submission?->review_notes ?? null,
+                'reviewer_name' => $reviewer ? ($reviewer->nom . ' ' . $reviewer->prenom) : null,
                 'is_unlocked_for_next' => $this->meetsUnlockStatus($submission, $unlockOnStatus),
             ];
         })
@@ -186,7 +195,9 @@ class ProjectDetail extends Component
     
     public function render()
     {
-        return view('livewire.front.programe.project-detail')
-            ->layout('layouts.app', ['title' => $this->project->project_name]);
+        $candidat = Auth::guard('candidat')->user();
+        return view('livewire.front.programe.project-detail', [
+            'candidat' => $candidat,
+        ])->layout('layouts.app', ['title' => $this->project->project_name]);
     }
 }

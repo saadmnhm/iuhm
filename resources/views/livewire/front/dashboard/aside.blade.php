@@ -4,6 +4,7 @@
 @endphp
 
 <div @if($isArabic) dir="rtl" @endif>
+@if(!request()->routeIs('user.dashboard') && !request()->routeIs('user.dynamic_form'))
 <aside class="sidebar d-flex flex-column" style="overflow-x: hidden; height: 100%;">
     <div class="logo">
         <a href="{{ route('user.dashboard') }}">
@@ -174,7 +175,8 @@
             </div>
         </div>
     </div>
-</div>
+@endif
+
 @endif
 
 </div>
