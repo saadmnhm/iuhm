@@ -1,351 +1,227 @@
-@php
+﻿@php
     $isArabic = str_starts_with(app()->getLocale(), 'ar');
     $tr = fn (string $fr, string $ar) => $isArabic ? $ar : $fr;
 @endphp
 
-<div class="container py-4" @if($isArabic) dir="rtl" @endif>
-    <div class="row justify-content-center">
-        <div class="col-lg-10">
-            <div class="card shadow-sm">
-                <div class="card-header bg-white py-3">
-                    <h4 class="mb-0"><i class="ri-settings-3-line me-2"></i>{{ $tr('Paramètres du compte', 'إعدادات الحساب') }}</h4>
+<div @if($isArabic) dir="rtl" @endif class="p-6 font-sans">
+
+        @if($activeTab === 'profile')
+        <div>
+            <h2 class="text-[26px] font-bold text-gray-900 mb-4">{{ $tr('Votre Espace Candidat', 'فضاء المترشح') }}</h2>
+
+            <div class="flex items-center gap-3 bg-green-50 border border-green-100 rounded-xl px-4 py-3 mb-6">
+                <div class="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                    <i class="ri-shield-check-line text-[#066E1B]"></i>
                 </div>
-                <div class="card-body p-0">
-                    <!-- Tabs Navigation -->
-                    <ul class="nav nav-tabs border-bottom px-4 pt-3" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button 
-                                class="nav-link {{ $activeTab === 'profile' ? 'active' : '' }}" 
-                                wire:click="setActiveTab('profile')"
-                                type="button">
-                                <i class="ri-user-line me-1"></i>{{ $tr('Informations du profil', 'معلومات الملف الشخصي') }}
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button 
-                                class="nav-link {{ $activeTab === 'password' ? 'active' : '' }}" 
-                                wire:click="setActiveTab('password')"
-                                type="button">
-                                <i class="ri-lock-password-line me-1"></i>{{ $tr('Changer le mot de passe', 'تغيير كلمة المرور') }}
-                            </button>
-                        </li>
-                    </ul>
+                <p class="text-sm text-gray-600 mb-0">{{ $tr("Gérez vos informations personnelles et académiques pour optimiser le traitement de votre dossier au sein de l'Association Initiative Urbaine.", 'أدر معلوماتك الشخصية والأكاديمية لتحسين معالجة ملفك داخل جمعية المبادرة الحضرية.') }}</p>
+            </div>
 
-                    <!-- Tab Content -->
-                    <div class="tab-content p-4">
-                        <!-- Profile Information Tab -->
-                        @if($activeTab === 'profile')
-                        <div class="tab-pane fade show active">
-                            @if (session()->has('profile_success'))
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    <i class="ri-check-line me-2"></i>{{ session('profile_success') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                </div>
+            @if (session()->has('profile_success'))
+                <div class="flex items-center gap-2 bg-green-50 border border-green-200 text-green-800 rounded-lg px-4 py-3 mb-4 text-sm">
+                    <i class="ri-check-line"></i> {{ session('profile_success') }}
+                </div>
+            @endif
+
+            <form wire:submit.prevent="updateProfile">
+                <div class="bg-white rounded-xl shadow-sm p-6">
+
+                    <div class="flex flex-col items-center mb-6">
+                        <div class="rounded-full border-4 border-dashed border-gray-200 bg-gray-50 flex items-center justify-center overflow-hidden mb-3" style="width:96px;height:96px;">
+                            @if ($new_profile_image)
+                                <img src="{{ $new_profile_image->temporaryUrl() }}" class="w-full h-full object-cover">
+                            @elseif ($profile_image)
+                                <img src="{{ route('uploads.show', ['path' => $profile_image]) }}" class="w-full h-full object-cover">
+                            @else
+                                <i class="ri-user-3-line text-3xl text-gray-300"></i>
                             @endif
-
-                            <form wire:submit.prevent="updateProfile">
-                                <div class="row g-3">
-                                    <div class="field-image text-center mb-6">
-                                        <label for="profile-image" class="block mb-2 font-semibold">
-                                            {{ __('messages.Photo_profil') }}
-                                        </label>
-
-                                        <div class="mb-3">
-                                            <div
-                                                class="mx-auto rounded-full border-4 border-dashed border-gray-300 bg-gray-100 flex items-center justify-center overflow-hidden"
-                                                style="width: 200px; height: 200px;"
-                                            >
-                                                @if ($new_profile_image)
-                                                    <img
-                                                        src="{{ $new_profile_image->temporaryUrl() }}"
-                                                        alt="Photo de profil"
-                                                        class="w-full h-full object-cover"
-                                                    >
-                                                @elseif ($profile_image)
-                                                    <img
-                                                        src="{{ route('uploads.show', ['path' => $profile_image]) }}"
-                                                        alt="Photo de profil"
-                                                        class="w-full h-full object-cover"
-                                                    >
-                                                @else
-                                                    <span class="text-gray-400">{{ __('messages.aucune_image') }}</span>
-                                                @endif
-                                            </div>
-                                        </div>
-
-                                        <input
-                                            type="file"
-                                            id="profile-image"
-                                            wire:model="new_profile_image"
-                                            accept=".jpg,.jpeg,.png,.webp"
-                                            class="form-control"
-                                        >
-
-                                        @error('new_profile_image')
-                                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                                        @enderror
-
-                                        <div wire:loading wire:target="new_profile_image" class="text-blue-500 text-sm mt-2">
-                                            {{ __('messages.telechargement_cours') }}
-                                        </div>
-                                    </div>
-                                    <!-- Name Fields -->
-                                    <div class="col-md-6">
-                                        <label for="nom" class="form-label">{{ $tr('Prénom', 'الاسم') }} <span class="text-danger">*</span></label>
-                                        <input 
-                                            type="text" 
-                                            class="form-control @error('nom') is-invalid @enderror" 
-                                            id="nom" 
-                                            wire:model="nom"
-                                            placeholder="{{ $tr('Entrez votre prénom', 'أدخل اسمك') }}">
-                                        @error('nom')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label for="prenom" class="form-label">{{ $tr('Nom', 'النسب') }} <span class="text-danger">*</span></label>
-                                        <input 
-                                            type="text" 
-                                            class="form-control @error('prenom') is-invalid @enderror" 
-                                            id="prenom" 
-                                            wire:model="prenom"
-                                            placeholder="{{ $tr('Entrez votre nom', 'أدخل نسبك') }}">
-                                        @error('prenom')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label for="cin" class="form-label">{{ $tr('CIN', 'رقم البطاقة الوطنية') }} <span class="text-danger">*</span></label>
-                                        <input
-                                            type="text"
-                                            class="form-control @error('cin') is-invalid @enderror"
-                                            id="cin"
-                                            wire:model="cin"
-                                            inputmode="numeric"
-                                            placeholder="{{ $tr('Entrez votre CIN', 'أدخل رقم البطاقة الوطنية') }}">
-                                        @error('cin')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label for="date_naissance" class="form-label">{{ $tr('Date de naissance', 'تاريخ الازدياد') }} <span class="text-danger">*</span></label>
-                                        <input
-                                            type="date"
-                                            class="form-control @error('date_naissance') is-invalid @enderror"
-                                            id="date_naissance"
-                                            wire:model="date_naissance">
-                                        @error('date_naissance')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label for="niveau_etude" class="form-label">{{ $tr('Niveau d\'étude', 'المستوى الدراسي') }} <span class="text-danger">*</span></label>
-                                        <input
-                                            type="text"
-                                            class="form-control @error('niveau_etude') is-invalid @enderror"
-                                            id="niveau_etude"
-                                            wire:model="niveau_etude"
-                                            placeholder="{{ $tr('Entrez votre niveau d\'étude', 'أدخل مستواك الدراسي') }}">
-                                        @error('niveau_etude')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label for="specialite" class="form-label">{{ $tr('Spécialité', 'التخصص') }} <span class="text-danger">*</span></label>
-                                        <input
-                                            type="text"
-                                            class="form-control @error('specialite') is-invalid @enderror"
-                                            id="specialite"
-                                            wire:model="specialite"
-                                            placeholder="{{ $tr('Entrez votre spécialité', 'أدخل تخصصك') }}">
-                                        @error('specialite')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <!-- Login & Email -->
-
-                                    <div class="col-md-6">
-                                        <label for="email" class="form-label">{{ $tr('Adresse email', 'البريد الإلكتروني') }} <span class="text-danger">*</span></label>
-                                        <input 
-                                            type="email" 
-                                            class="form-control @error('email') is-invalid @enderror" 
-                                            id="email" 
-                                            wire:model="email"
-                                            placeholder="{{ $tr('Entrez votre email', 'أدخل بريدك الإلكتروني') }}">
-                                        @error('email')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <!-- Contact Information -->
-                                    <div class="col-md-6">
-                                        <label for="phone" class="form-label">{{ $tr('Téléphone', 'رقم الهاتف') }} <span class="text-danger">*</span></label>
-                                        <input 
-                                            type="number" 
-                                            class="form-control @error('phone') is-invalid @enderror" 
-                                            id="phone" 
-                                            wire:model="phone"
-                                            min="0"
-                                            step="1"
-                                            inputmode="numeric"
-                                            oninput="this.value=this.value.replace(/\D/g,'')"
-                                            placeholder="{{ $tr('Entrez votre numéro de téléphone', 'أدخل رقم هاتفك') }}">
-                                        @error('phone')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label for="gender" class="form-label">{{ $tr('Genre', 'الجنس') }} <span class="text-danger">*</span></label>
-                                        <select class="form-control border border-gray-300 rounded p-2 w-full" id="gender" name="gender" wire:model="gender">
-                                            <option value="">{{ __('messages.selectionner') }}</option>
-                                            <option value="homme">{{ __('messages.homme') }}</option>
-                                            <option value="femme">{{ __('messages.femme') }}</option>
-                                        </select>
-                                        @error('gender')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label for="selected_region" class="form-label">{{ $tr('Région', 'الجهة') }} <span class="text-danger">*</span></label>
-                                        <select class="form-control @error('selected_region') is-invalid @enderror" id="selected_region" wire:model.live="selected_region">
-                                            <option value="">{{ $tr('Sélectionner une région', 'اختر جهة') }}</option>
-                                            @foreach($regions as $region)
-                                                <option value="{{ $region }}">{{ $region }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('selected_region')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label for="selected_city" class="form-label">{{ $tr('Ville', 'المدينة') }} <span class="text-danger">*</span></label>
-                                        <select class="form-control @error('selected_city') is-invalid @enderror" id="selected_city" wire:model.live="selected_city" {{ empty($selected_region) ? 'disabled' : '' }}>
-                                            <option value="">{{ $tr('Sélectionner une ville', 'اختر مدينة') }}</option>
-                                            @foreach($cities as $city)
-                                                <option value="{{ $city }}">{{ $city }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('selected_city')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label for="selected_prefecture" class="form-label">{{ $tr('Préfecture', 'العمالة / الإقليم') }} <span class="text-danger">*</span></label>
-                                        <select class="form-control @error('selected_prefecture') is-invalid @enderror" id="selected_prefecture" wire:model.live="selected_prefecture" {{ empty($selected_city) ? 'disabled' : '' }}>
-                                            <option value="">{{ $tr('Sélectionner une préfecture', 'اختر عمالة / إقليم') }}</option>
-                                            @foreach($prefectures as $prefecture)
-                                                <option value="{{ $prefecture }}">{{ $prefecture }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('selected_prefecture')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label for="address_detail" class="form-label">{{ $tr('Détails adresse (IMM, GH...)', 'تفاصيل العنوان (IMM, GH...)') }} <span class="text-danger">*</span></label>
-                                        <input
-                                            type="text"
-                                            class="form-control @error('address_detail') is-invalid @enderror"
-                                            id="address_detail"
-                                            wire:model="address_detail"
-                                            placeholder="{{ $tr('Ex : IMM 12, GH B, Appartement 4', 'مثال: IMM 12, GH B, شقة 4') }}"
-                                        >
-                                        @error('address_detail')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    
-                                    <div class="col-12 mt-4">
-                                        <button type="submit" class="btn btn-primary px-4">
-                                            <i class="ri-save-line me-2"></i>{{ $tr('Enregistrer les modifications', 'حفظ التغييرات') }}
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
                         </div>
-                        @endif
+                        <label for="profile-image" class="cursor-pointer text-sm text-[#066E1B] font-semibold hover:underline">
+                            {{ $tr('Changer la photo', 'تغيير الصورة') }}
+                        </label>
+                        <input type="file" id="profile-image" wire:model="new_profile_image" accept=".jpg,.jpeg,.png,.webp" class="hidden">
+                        @error('new_profile_image') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                    </div>
 
-                        <!-- Change Password Tab -->
-                        @if($activeTab === 'password')
-                        <div class="tab-pane fade show active">
-                            @if (session()->has('password_success'))
-                                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    <i class="ri-check-line me-2"></i>{{ session('password_success') }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                </div>
-                            @endif
-
-                            <form wire:submit.prevent="updatePassword">
-                                <div class="row g-3">
-                                    <div class="col-12">
-                                        <div class="alert alert-info">
-                                            <i class="ri-information-line me-2"></i>
-                                            {{ $tr('Le mot de passe doit contenir au moins 6 caractères.', 'يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.') }}
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-12">
-                                        <label for="current_password" class="form-label">{{ $tr('Mot de passe actuel', 'كلمة المرور الحالية') }} <span class="text-danger">*</span></label>
-                                        <input 
-                                            type="password" 
-                                            class="form-control @error('current_password') is-invalid @enderror" 
-                                            id="current_password" 
-                                            wire:model="current_password"
-                                            placeholder="{{ $tr('Entrez votre mot de passe actuel', 'أدخل كلمة المرور الحالية') }}">
-                                        @error('current_password')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="col-md-12">
-                                        <label for="new_password" class="form-label">{{ $tr('Nouveau mot de passe', 'كلمة المرور الجديدة') }} <span class="text-danger">*</span></label>
-                                        <input 
-                                            type="password" 
-                                            class="form-control @error('new_password') is-invalid @enderror" 
-                                            id="new_password" 
-                                            wire:model="new_password"
-                                            placeholder="{{ $tr('Entrez votre nouveau mot de passe', 'أدخل كلمة المرور الجديدة') }}">
-                                        @error('new_password')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-
-                                    <div class="col-md-12">
-                                        <label for="new_password_confirmation" class="form-label">{{ $tr('Confirmer le nouveau mot de passe', 'تأكيد كلمة المرور الجديدة') }} <span class="text-danger">*</span></label>
-                                        <input 
-                                            type="password" 
-                                            class="form-control" 
-                                            id="new_password_confirmation" 
-                                            wire:model="new_password_confirmation"
-                                            placeholder="{{ $tr('Confirmez votre nouveau mot de passe', 'أكد كلمة المرور الجديدة') }}">
-                                    </div>
-
-                                    <div class="col-12 mt-4">
-                                        <button type="submit" class="btn btn-primary px-4">
-                                            <i class="ri-lock-line me-2"></i>{{ $tr('Mettre à jour le mot de passe', 'تحديث كلمة المرور') }}
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
+                    <div class="flex items-center gap-2 mb-4">
+                        <i class="ri-user-3-line text-[#066E1B]"></i>
+                        <h5 class="font-bold text-gray-800 mb-0">{{ $tr('Informations Personnelles', 'المعلومات الشخصية') }}</h5>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1">{{ $tr('Prénom', 'الاسم') }} <span class="text-red-500">*</span></label>
+                            <input type="text" wire:model="nom" placeholder="{{ $tr('Prénom', 'الاسم') }}"
+                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200">
+                            @error('nom') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
-                        @endif
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1">{{ $tr('Nom', 'النسب') }} <span class="text-red-500">*</span></label>
+                            <input type="text" wire:model="prenom" placeholder="{{ $tr('Nom', 'النسب') }}"
+                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200">
+                            @error('prenom') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1">{{ $tr('CIN (ID Number)', 'رقم البطاقة الوطنية') }} <span class="text-red-500">*</span></label>
+                            <input type="text" wire:model="cin" placeholder="{{ $tr('CIN', 'رقم البطاقة') }}"
+                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200">
+                            @error('cin') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1">{{ $tr('Date de naissance', 'تاريخ الازدياد') }} <span class="text-red-500">*</span></label>
+                            <input type="date" wire:model="date_naissance"
+                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200">
+                            @error('date_naissance') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1">{{ $tr('Genre', 'الجنس') }} <span class="text-red-500">*</span></label>
+                            <select wire:model="gender"
+                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200">
+                                <option value="">{{ __('messages.selectionner') }}</option>
+                                <option value="homme">{{ __('messages.homme') }}</option>
+                                <option value="femme">{{ __('messages.femme') }}</option>
+                            </select>
+                            @error('gender') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
 
+                    <div class="flex items-center gap-2 mb-4">
+                        <i class="ri-graduation-cap-line text-[#066E1B]"></i>
+                        <h5 class="font-bold text-gray-800 mb-0">{{ $tr('Parcours Académique', 'المسار الأكاديمي') }}</h5>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1">{{ $tr("Niveau d'étude", 'المستوى الدراسي') }} <span class="text-red-500">*</span></label>
+                            <input type="text" wire:model="niveau_etude" placeholder="{{ $tr('Ex: Licence', 'مثال: ليسانس') }}"
+                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200">
+                            @error('niveau_etude') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1">{{ $tr('Spécialité', 'التخصص') }} <span class="text-red-500">*</span></label>
+                            <input type="text" wire:model="specialite" placeholder="{{ $tr('Ex: Économie Sociale', 'مثال: الاقتصاد الاجتماعي') }}"
+                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200">
+                            @error('specialite') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 mb-4">
+                        <i class="ri-map-pin-2-line text-[#066E1B]"></i>
+                        <h5 class="font-bold text-gray-800 mb-0">{{ $tr('Coordonnées', 'معلومات التواصل') }}</h5>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1">{{ $tr('Adresse email', 'البريد الإلكتروني') }} <span class="text-red-500">*</span></label>
+                            <input type="email" wire:model="email" placeholder="email@example.com"
+                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200">
+                            @error('email') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1">{{ $tr('Téléphone', 'رقم الهاتف') }} <span class="text-red-500">*</span></label>
+                            <input type="text" wire:model="phone" inputmode="numeric" oninput="this.value=this.value.replace(/\D/g,'')" placeholder="+212 6 00 00 00 00"
+                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200">
+                            @error('phone') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1">{{ $tr('Région', 'الجهة') }} <span class="text-red-500">*</span></label>
+                            <select wire:model.live="selected_region"
+                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200">
+                                <option value="">{{ $tr('Sélectionner une région', 'اختر جهة') }}</option>
+                                @foreach($regions as $region)
+                                    <option value="{{ $region }}">{{ $region }}</option>
+                                @endforeach
+                            </select>
+                            @error('selected_region') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1">{{ $tr('Ville', 'المدينة') }} <span class="text-red-500">*</span></label>
+                            <select wire:model.live="selected_city" {{ empty($selected_region) ? 'disabled' : '' }}
+                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200 disabled:opacity-50">
+                                <option value="">{{ $tr('Sélectionner une ville', 'اختر مدينة') }}</option>
+                                @foreach($cities as $city)
+                                    <option value="{{ $city }}">{{ $city }}</option>
+                                @endforeach
+                            </select>
+                            @error('selected_city') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1">{{ $tr('Préfecture', 'العمالة / الإقليم') }} <span class="text-red-500">*</span></label>
+                            <select wire:model.live="selected_prefecture" {{ empty($selected_city) ? 'disabled' : '' }}
+                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200 disabled:opacity-50">
+                                <option value="">{{ $tr('Sélectionner une préfecture', 'اختر عمالة / إقليم') }}</option>
+                                @foreach($prefectures as $prefecture)
+                                    <option value="{{ $prefecture }}">{{ $prefecture }}</option>
+                                @endforeach
+                            </select>
+                            @error('selected_prefecture') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1">{{ $tr('Détails adresse', 'تفاصيل العنوان') }} <span class="text-red-500">*</span></label>
+                            <input type="text" wire:model="address_detail" placeholder="{{ $tr('Ex : IMM 12, GH B, Appartement 4', 'مثال: IMM 12, GH B, شقة 4') }}"
+                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200">
+                            @error('address_detail') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex justify-end">
+                        <button type="submit"
+                            class="bg-[#066E1B] hover:bg-[#055717] text-white font-semibold px-6 py-2.5 rounded-lg text-sm transition-colors">
+                            <i class="ri-save-line me-1"></i>{{ $tr('Enregistrer les modifications', 'حفظ التغييرات') }}
+                        </button>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
-    </div>
+        @endif
+
+        @if($activeTab === 'password')
+        <div>
+            <h2 class="text-[26px] font-bold text-gray-900 mb-4">{{ $tr('Sécurité', 'الأمان') }}</h2>
+
+            <div class="flex items-center gap-3 bg-green-50 border border-green-100 rounded-xl px-4 py-3 mb-6">
+                <div class="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                    <i class="ri-shield-check-line text-[#066E1B]"></i>
+                </div>
+                <p class="text-sm text-gray-600 mb-0">{{ $tr("Modifiez votre mot de passe pour sécuriser votre compte. Le mot de passe doit contenir au moins 6 caractères.", 'غيّر كلمة مرورك لتأمين حسابك. يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.') }}</p>
+            </div>
+
+            @if (session()->has('password_success'))
+                <div class="flex items-center gap-2 bg-green-50 border border-green-200 text-green-800 rounded-lg px-4 py-3 mb-4 text-sm">
+                    <i class="ri-check-line"></i> {{ session('password_success') }}
+                </div>
+            @endif
+
+            <form wire:submit.prevent="updatePassword">
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex items-center gap-2 mb-4">
+                        <i class="ri-lock-password-line text-[#066E1B]"></i>
+                        <h5 class="font-bold text-gray-800 mb-0">{{ $tr('Changer le mot de passe', 'تغيير كلمة المرور') }}</h5>
+                    </div>
+                    <div class="flex flex-col gap-4" style="max-width:480px;">
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1">{{ $tr('Mot de passe actuel', 'كلمة المرور الحالية') }} <span class="text-red-500">*</span></label>
+                            <input type="password" wire:model="current_password" placeholder="{{ $tr('Mot de passe actuel', 'كلمة المرور الحالية') }}"
+                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200 @error('current_password') ring-2 ring-red-300 @enderror">
+                            @error('current_password') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1">{{ $tr('Nouveau mot de passe', 'كلمة المرور الجديدة') }} <span class="text-red-500">*</span></label>
+                            <input type="password" wire:model="new_password" placeholder="{{ $tr('Nouveau mot de passe', 'كلمة المرور الجديدة') }}"
+                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200 @error('new_password') ring-2 ring-red-300 @enderror">
+                            @error('new_password') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-500 mb-1">{{ $tr('Confirmer le nouveau mot de passe', 'تأكيد كلمة المرور الجديدة') }} <span class="text-red-500">*</span></label>
+                            <input type="password" wire:model="new_password_confirmation" placeholder="{{ $tr('Confirmer le mot de passe', 'تأكيد كلمة المرور') }}"
+                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200">
+                        </div>
+                        <div class="mt-2">
+                            <button type="submit"
+                                class="bg-[#066E1B] hover:bg-[#055717] text-white font-semibold px-6 py-2.5 rounded-lg text-sm transition-colors">
+                                <i class="ri-lock-line me-1"></i>{{ $tr('Mettre à jour le mot de passe', 'تحديث كلمة المرور') }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        @endif
+
 </div>
-
-

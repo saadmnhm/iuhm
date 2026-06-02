@@ -424,7 +424,6 @@ textarea{
 
         .content-area {
             flex: 1;
-            padding: 2rem;
             background-color: #f8f9fa;
         }
 
@@ -529,16 +528,11 @@ textarea{
                 width: 100%;
                 min-width: 0;
             }
-            
-            .content-area {
-                padding: 1.5rem;
-            }
+
         }
         
         @media (max-width: 576px) {
-            .content-area {
-                padding: 1rem;
-            }
+
             
             .page-title {
                 font-size: 1.1rem;

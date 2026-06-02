@@ -19,6 +19,7 @@
         "@editorjs/header": "^2.8.8",
         "@editorjs/list": "^2.0.9",
         "@editorjs/quote": "^2.7.6",
+        "bootstrap": "^5.3.8",
         "remixicon": "^4.9.1"
     }
 }

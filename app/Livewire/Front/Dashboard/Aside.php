@@ -9,6 +9,21 @@ class Aside extends Component
 {
     public $showCompleteProfileModal = false;
     public $candidat;
+    public $activeTab = 'profile';
+    public $isSettingsPage = false;
+
+    protected $listeners = [
+        'set-active-tab' => 'setActiveTab',
+    ];
+
+    public function setActiveTab($tab)
+    {
+        if (is_array($tab)) {
+            $this->activeTab = $tab['tab'] ?? 'profile';
+        } else {
+            $this->activeTab = $tab;
+        }
+    }
 
     public function mount()
     {
@@ -19,13 +34,15 @@ class Aside extends Component
             $this->skipRender();
             return;
         }
+
+        $this->isSettingsPage = request()->routeIs('user.settings');
         
         $this->checkProfileCompletion();
     }
 
     public function checkProfileCompletion()
     {
-        if (request()->routeIs('user.settings')) {
+        if ($this->isSettingsPage) {
             $this->showCompleteProfileModal = false;
             return;
         }

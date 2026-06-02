@@ -46,6 +46,10 @@ class Settings extends Component
     
     public $activeTab = 'profile';
 
+    protected $listeners = [
+        'set-active-tab' => 'setActiveTab',
+    ];
+
     public function mount()
     {
         $this->candidat = Auth::guard('candidat')->user();
@@ -188,7 +192,11 @@ class Settings extends Component
 
     public function setActiveTab($tab)
     {
-        $this->activeTab = $tab;
+        if (is_array($tab)) {
+            $this->activeTab = $tab['tab'] ?? 'profile';
+        } else {
+            $this->activeTab = $tab;
+        }
     }
 
     public function updatedSelectedRegion()
