@@ -13,6 +13,10 @@
     </div>
 
     <nav class="py-3 grow" style="min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;">
+        <a wire:navigate href="{{ route('user.dashboard') }}"  class="project-item d-flex align-items-center gap-2 {{ request()->routeIs('user.dashboard') ? 'bg-[#DCFCE7]' : '' }}">
+            <i class="ri-home-line mr-1"></i>
+            <span>Dashboard</span>
+        </a>
         @if($isSettingsPage)
             <ul class="nav flex-column gap-1" style="padding: 0 10px;">
 
