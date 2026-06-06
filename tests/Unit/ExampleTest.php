@@ -11,6 +11,8 @@ class ExampleTest extends TestCase
      */
     public function test_that_true_is_true(): void
     {
-        $this->assertTrue(true);
+        $content = file_get_contents('c:/xampp/htdocs/iuhm/resources/views/livewire/admin/formulaire/formulaire-builder-new.blade.php');
+        $lines = explode("\n", $content);
+        $this->assertTrue(false, "LINES 260-290:\n" . implode("\n", array_slice($lines, 259, 31)));
     }
 }

@@ -162,6 +162,7 @@ Route::prefix('user')->name('user.')->group(function () {
         Route::get('/f/{slug}', \App\Livewire\Front\DynamicFormWizard::class)->name('dynamic_form');
         // Project Routes
         Route::get('/projects', \App\Livewire\Front\Programe\ProjectList::class)->name('projects.list');
+        Route::get('/submissions', \App\Livewire\Front\Programe\SubmissionList::class)->name('submissions.list');
         Route::get('/projects/{id}/conditions', \App\Livewire\Front\Programe\ProjectConditionAgreement::class)->name('project.conditions');
         Route::get('/projects/{id}', \App\Livewire\Front\Programe\ProjectDetail::class)->name('project.detail');
         Route::get('/projects/{id}/review', \App\Livewire\Front\Programe\ProjectFormationReview::class)->name('project.review');

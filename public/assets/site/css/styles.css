@@ -301,7 +301,6 @@ textarea{
         .sidebar .nav-link {
             color: #344054;
             padding: 0.75rem 1rem;
-            margin: 0.25rem 0.5rem;
             border-radius: 0.5rem;
             transition: all 0.3s ease;
             display: flex;
@@ -380,10 +379,10 @@ textarea{
         .project-item {
             border-radius: .5rem;
             color: #344054;
-            padding: .5rem .55rem;
+            padding: 15px 7px;
             margin: .15rem 0;
             text-decoration: none;
-            font-size: .84rem;
+            font-size: 16px;
             transition: all .2s ease;
         }
 

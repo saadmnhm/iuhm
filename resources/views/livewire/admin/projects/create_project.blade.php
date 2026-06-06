@@ -25,6 +25,7 @@
                    class="px-5 py-2.5 border border-gray-300 rounded-xl text-gray-700 font-medium hover:bg-gray-50 transition text-sm">
                     Aperçu
                 </a>
+                {{-- FIX 1: Single save trigger — removed duplicate form wire:submit, this button is the only entry point --}}
                 <button type="button"
                     wire:click="saveProjectList"
                     wire:loading.attr="disabled"
@@ -37,7 +38,8 @@
         </div>
     </div>
 
-    <form id="create-project-form" wire:submit="saveProjectList" class="px-8 py-6 space-y-6">
+    {{-- FIX 1: Removed wire:submit from form to prevent double submission --}}
+    <div id="create-project-form" class="px-8 py-6 space-y-6">
 
         {{-- Row 1: Informations + Criteres --}}
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -57,7 +59,7 @@
                     <input type="text"
                            wire:model="project_name"
                            placeholder="Ex: École de l'Innovation Urbaine"
-                           class="w-full iuhm_input px-4 py-2.5 border border-gray-200 rounded-xl text-sm  focus:outline-none transition bg-gray-50 hover:bg-white">
+                           class="w-full iuhm_input px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none transition bg-gray-50 hover:bg-white">
                     @error('project_name') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                 </div>
 
@@ -67,7 +69,7 @@
                     <textarea wire:model="description"
                         rows="4"
                         placeholder="Détaillez les objectifs et la vision de cette initiative..."
-                        class="w-full iuhm_textarea px-4 py-2.5 border border-gray-200 rounded-xl text-sm  focus:outline-none transition resize-none bg-gray-50 hover:bg-white"></textarea>
+                        class="w-full iuhm_textarea px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none transition resize-none bg-gray-50 hover:bg-white"></textarea>
                     @error('description') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                 </div>
 
@@ -193,7 +195,7 @@
                 </div>
 
                 {{-- Localisation --}}
-                <div class="mb-6" x-data="{}">
+                <div class="mb-6">
                     @php $locCount = count($selectedLocations ?? []); @endphp
                     <div class="flex items-center justify-between mb-1.5">
                         <label class="iuhm_label_2 mb-0">Localisation (Quartiers)</label>
@@ -203,15 +205,16 @@
                             </span>
                         @endif
                     </div>
+                    {{-- FIX 9: Use Alpine-only open state for the location modal; sync close via wire:click on close/confirm buttons --}}
                     <button type="button"
-                        onclick="window.dispatchEvent(new CustomEvent('open-location-modal'))"
+                        wire:click="$set('showLocationModal', true)"
                         class="w-full rounded-xl flex iuhm_input flex-wrap items-center gap-1.5 cursor-pointer text-left py-2 min-h-[50px]">
                         @if($locCount > 0)
                             @foreach($selectedLocations->take(3) as $loc)
                                 <span class="inline-flex items-center gap-1 pl-2 pr-1 py-1 bg-white border border-blue-200 text-blue-700 rounded-lg text-xs font-medium shrink-0">
                                     <i class="ri-map-pin-2-line text-blue-400 text-xs"></i>
                                     {{ $loc->prefecture }}
-                                    <span @click.stop="$wire.removeSelectedLocation({{ $loc->id }})"
+                                    <span wire:click.stop="removeSelectedLocation({{ $loc->id }})"
                                         class="ml-0.5 w-4 h-4 flex items-center justify-center rounded-full hover:bg-red-100 text-gray-400 hover:text-red-500 transition cursor-pointer">
                                         <i class="ri-close-line" style="font-size:10px;"></i>
                                     </span>
@@ -236,16 +239,16 @@
                     <label class="iuhm_label_2">Tranche d'Âge</label>
                     <div class="grid grid-cols-[1fr_32px_1fr] items-start gap-2">
                         <div>
-                            <p class="iuhm_label_2 text-center ">Âge Minimum</p>
+                            <p class="iuhm_label_2 text-center">Âge Minimum</p>
                             <input type="number" wire:model="min_age" min="0" placeholder="18"
-                                class="w-full iuhm_input rounded-xl text-center ">
+                                class="w-full iuhm_input rounded-xl text-center">
                             @error('min_age') <span class="text-red-500 text-xs block text-center mt-1">{{ $message }}</span> @enderror
                         </div>
                         <div class="flex items-center justify-center pt-8 text-gray-300 text-2xl font-light select-none">—</div>
                         <div>
-                            <p class="iuhm_label_2 text-center ">Âge Maximum</p>
+                            <p class="iuhm_label_2 text-center">Âge Maximum</p>
                             <input type="number" wire:model="max_age" min="0" placeholder="35"
-                                class="w-full iuhm_input rounded-xl text-center ">
+                                class="w-full iuhm_input rounded-xl text-center">
                             @error('max_age') <span class="text-red-500 text-xs block text-center mt-1">{{ $message }}</span> @enderror
                         </div>
                     </div>
@@ -265,18 +268,18 @@
                             </div>
                         </label>
                         <label class="flex items-center gap-2.5 px-4 py-2.5 border border-gray-200 rounded-xl cursor-pointer bg-gray-50 hover:bg-amber-50 hover:border-amber-300 transition has-[:checked]:bg-amber-50 has-[:checked]:border-amber-400">
-                            <input type="checkbox" wire:model="crit_sector" value="commercial" class="w-4 h-4 ">
+                            <input type="checkbox" wire:model="crit_sector" value="commercial" class="w-4 h-4">
                             <span class="w-6 h-6 rounded-lg bg-amber-100 flex items-center justify-center shrink-0"><i class="ri-store-2-line text-amber-600 text-xs"></i></span>
                             <div>
                                 <p class="text-sm font-medium text-gray-800 leading-tight">Commercial</p>
                                 <p class="text-xs text-gray-400">Vente, distribution, services</p>
                             </div>
                         </label>
-
                     </div>
                 </div>
             </div>
         </div>
+
         {{-- Row 2: Formulaires --}}
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
@@ -317,16 +320,17 @@
                                 @endif
                             </div>
                             @if($programeId)
+                                {{-- FIX 6: Single method call that sets selectedFormulaire AND opens modal atomically --}}
                                 <button type="button"
-                                    wire:click="$set('selectedFormulaire', {{ $form['id'] }}); $wire.openFormulaireModal()"
-                                    class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-gray-400  transition hover:bg-blue-100 hover:text-blue-600">
+                                    wire:click="selectFormulaire({{ $form['id'] }})"
+                                    class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 transition hover:bg-blue-100 hover:text-blue-600">
                                     <i class="ri-add-line text-sm"></i>
                                 </button>
                             @else
                                 <button type="button"
                                     disabled
                                     title="Disponible après enregistrement du projet"
-                                    class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-gray-300  transition cursor-not-allowed">
+                                    class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-gray-300 transition cursor-not-allowed">
                                     <i class="ri-add-line text-sm"></i>
                                 </button>
                             @endif
@@ -385,11 +389,13 @@
                                         <div class="flex items-center gap-2 mt-2 flex-wrap">
                                             <div class="flex items-center gap-1">
                                                 <label class="text-xs text-gray-400">Ordre</label>
+                                                {{-- FIX 4: Livewire 4 removed $event magic — use x-on:change with $el.value via Alpine --}}
                                                 <input type="number" min="1" value="{{ $formulaire['order'] }}"
-                                                    wire:change="updateFormulaireOrder({{ $formulaire['id'] }}, $event.target.value)"
+                                                    x-on:change="$wire.updateFormulaireOrder({{ $formulaire['id'] }}, $event.target.value)"
                                                     class="w-14 px-2 py-1 border border-gray-200 rounded-lg text-xs text-center focus:ring-1 focus:ring-blue-500 focus:outline-none">
                                             </div>
-                                            <select wire:change="updateFormulaireStatus({{ $formulaire['id'] }}, $event.target.value)"
+                                            {{-- FIX 5: Same $event fix for status select --}}
+                                            <select x-on:change="$wire.updateFormulaireStatus({{ $formulaire['id'] }}, $event.target.value)"
                                                 class="text-xs px-2 py-1 border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-500 focus:outline-none bg-white">
                                                 <option value="active" {{ $formulaire['status'] == 'active' ? 'selected' : '' }}>Actif</option>
                                                 <option value="inactive" {{ $formulaire['status'] == 'inactive' ? 'selected' : '' }}>Inactif</option>
@@ -404,9 +410,10 @@
                                             </label>
                                         </div>
                                     </div>
+                                    {{-- FIX 3: wire:confirm replaces onclick="return confirm()" for Livewire 4 --}}
                                     <button type="button"
                                         wire:click="detachFormulaire({{ $formulaire['id'] }})"
-                                        onclick="return confirm('Détacher ce formulaire ?')"
+                                        wire:confirm="Détacher ce formulaire ?"
                                         class="text-gray-300 hover:text-red-500 transition shrink-0 mt-0.5 opacity-0 group-hover:opacity-100">
                                         <i class="ri-delete-bin-line text-base"></i>
                                     </button>
@@ -443,101 +450,104 @@
 
         </div>
 
-    </form>
+    </div>
 
     {{-- Location Modal --}}
-    <div x-data="{ open: false }" @open-location-modal.window="open = true">
-    <div x-show="open" x-cloak
-         x-transition:enter="transition ease-out duration-150"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-100"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0"
-         class="fixed inset-0 z-50 p-4" style="background: rgba(0,0,0,0.53);">
-        <div class="flex min-h-full items-start justify-center py-6 md:py-10">
-            <div class="w-full max-w-6xl bg-white rounded-2xl shadow-2xl max-h-[90vh] overflow-hidden flex flex-col" @click.outside="open = false">
+    <div x-data="{ open: @entangle('showLocationModal').live }">
+        <div x-show="open" x-cloak
+             x-transition:enter="transition ease-out duration-150"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-100"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="fixed inset-0 z-50 p-4"
+             style="background: rgba(0,0,0,0.53); display: none;">
+            <div class="flex min-h-full items-start justify-center py-6 md:py-10">
+                <div class="w-full max-w-6xl bg-white rounded-2xl shadow-2xl max-h-[90vh] overflow-hidden flex flex-col">
 
-                <div class="px-6 py-4  flex items-center justify-center shrink-0">
-                    <div>
-                        <h3 class="iuhm_title_2 text-center">Sélectionner les Localisations</h3>
-                        <p class="text-sm text-gray-500 mt-1">Utilisez les filtres pour gérer facilement les listes. ({{ $locations->count() }}) résultat(s)</p>
-                    </div>
-                    
-                </div>
-
-                <div class="px-6 py-4 ">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <select wire:model.live="locationRegionFilter" class="w-full px-3 py-2 iuhm_select">
-                            <option value="">Toutes les régions</option>
-                            @foreach($regions as $region)
-                                <option value="{{ $region }}">{{ $region }}</option>
-                            @endforeach
-                        </select>
-                        <select wire:model.live="locationCityFilter" class="w-full px-3 py-2 iuhm_select">
-                            <option value="">Toutes les villes</option>
-                            @foreach($cities as $city)
-                                <option value="{{ $city }}">{{ $city }}</option>
-                            @endforeach
-                        </select>
-                        <div class="relative">
-                             <i class="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none"></i>
-                             <input type="text" wire:model.live.debounce.300ms="locationSearch" placeholder="Rechercher région, ville, préfecture..." class="w-full px-3 py-2 iuhm_search rounded-3xl">
+                    <div class="px-6 py-4 flex items-center justify-center shrink-0">
+                        <div>
+                            <h3 class="iuhm_title_2 text-center">Sélectionner les Localisations</h3>
+                            <p class="text-sm text-gray-500 mt-1">Utilisez les filtres pour gérer facilement les listes. ({{ $locations->count() }}) résultat(s)</p>
                         </div>
                     </div>
-                </div>
 
-                <div class="flex-1 overflow-y-auto p-6">
-                    <div class="border border-gray-200 rounded-2xl overflow-hidden">
-                        <div class="overflow-y-auto max-h-[55vh] px-4 py-3">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                                @forelse($locations as $location)
-                                    <label class="flex items-start gap-2 p-3 border border-gray-100 rounded-xl cursor-pointer hover:bg-gray-50 transition">
-                                        <input type="checkbox"
-                                            wire:model.live="allowed_location_ids"
-                                            value="{{ $location->id }}"
-                                            class="mt-0.5 w-4 h-4 rounded text-blue-600 focus:ring-1 focus:ring-blue-500 shrink-0">
-                                        <div class="min-w-0 text-sm text-gray-700">
-                                            <div class="font-medium text-gray-800 text-xs">{{ $location->prefecture }}</div>
-                                            <div class="text-gray-500 text-xs mt-0.5">{{ $location->city }} · {{ $location->region }}</div>
-                                        </div>
-                                    </label>
-                                @empty
-                                    <div class="col-span-4 h-full flex items-center justify-center p-6 text-gray-500 text-center text-sm">
-                                        Aucune localisation trouvée.
-                                    </div>
-                                @endforelse
+                    <div class="px-6 py-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <select wire:model.live="locationRegionFilter" class="w-full px-3 py-2 iuhm_select">
+                                <option value="">Toutes les régions</option>
+                                @foreach($regions as $region)
+                                    <option value="{{ $region }}">{{ $region }}</option>
+                                @endforeach
+                            </select>
+                            <select wire:model.live="locationCityFilter" class="w-full px-3 py-2 iuhm_select">
+                                <option value="">Toutes les villes</option>
+                                @foreach($cities as $city)
+                                    <option value="{{ $city }}">{{ $city }}</option>
+                                @endforeach
+                            </select>
+                            <div class="relative">
+                                <i class="ri-search-line absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none"></i>
+                                <input type="text" wire:model.live.debounce.300ms="locationSearch" placeholder="Rechercher région, ville, préfecture..." class="w-full px-3 py-2 iuhm_search rounded-3xl">
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="px-6 py-4  bg-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shrink-0">
-                    <span class="text-sm text-[#1B264F] font-medium">{{ count($allowed_location_ids ?? []) }} localisation(s) sélectionnée(s)</span>
-                    <div>
-                        <button type="button" @click="open = false" class="iuhm_btn_close_1">
-                            Fermer
-                        </button>
-                        <button type="button" @click="open = false" class="iuhm_btn_1">
-                            Confirmer
-                        </button>
+                    <div class="flex-1 overflow-y-auto p-6">
+                        <div class="border border-gray-200 rounded-2xl overflow-hidden">
+                            <div class="overflow-y-auto max-h-[55vh] px-4 py-3">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                                    @forelse($locations as $location)
+                                        <label class="flex items-start gap-2 p-3 border border-gray-100 rounded-xl cursor-pointer hover:bg-gray-50 transition">
+                                            <input type="checkbox"
+                                                wire:model.live="allowed_location_ids"
+                                                value="{{ $location->id }}"
+                                                class="mt-0.5 w-4 h-4 rounded text-blue-600 focus:ring-1 focus:ring-blue-500 shrink-0">
+                                            <div class="min-w-0 text-sm text-gray-700">
+                                                <div class="font-medium text-gray-800 text-xs">{{ $location->prefecture }}</div>
+                                                <div class="text-gray-500 text-xs mt-0.5">{{ $location->city }} · {{ $location->region }}</div>
+                                            </div>
+                                        </label>
+                                    @empty
+                                        <div class="col-span-4 h-full flex items-center justify-center p-6 text-gray-500 text-center text-sm">
+                                            Aucune localisation trouvée.
+                                        </div>
+                                    @endforelse
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="px-6 py-4 bg-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shrink-0">
+                        <span class="text-sm text-[#1B264F] font-medium">{{ count($allowed_location_ids ?? []) }} localisation(s) sélectionnée(s)</span>
+                        <div>
+                            <button type="button" wire:click="closeLocationModal" class="iuhm_btn_close_1">
+                                Fermer
+                            </button>
+                            <button type="button" wire:click="closeLocationModal" class="iuhm_btn_1">
+                                Confirmer
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    </div>
 
     {{-- Formulaire Attach Modal --}}
-    @if($showFormulaireModal)
-        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-             x-data x-show="true" x-transition>
+    <div x-data="{ open: @entangle('showFormulaireModal').live }">
+        <div x-show="open" x-cloak
+             x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+             x-transition:leave="ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+             class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+             style="display: none;">
             <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden"
-                 @click.away="$wire.closeFormulaireModal()">
+                 @click.outside="$wire.closeFormulaireModal()">
 
                 <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
                     <h2 class="text-base font-semibold text-gray-900">Attacher un Formulaire</h2>
-                    <button wire:click="closeFormulaireModal" class="text-gray-400 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100">
+                    <button type="button" @click="$wire.closeFormulaireModal()" class="text-gray-400 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100">
                         <i class="ri-close-line text-lg"></i>
                     </button>
                 </div>
@@ -593,7 +603,7 @@
                 </div>
 
                 <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-50">
-                    <button type="button" wire:click="closeFormulaireModal"
+                    <button type="button" @click="$wire.closeFormulaireModal()"
                         class="px-4 py-2 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition">
                         Annuler
                     </button>
@@ -604,16 +614,18 @@
                 </div>
             </div>
         </div>
-    @endif
+    </div>
 
     {{-- Success Modal --}}
-    <div x-data="{ open: @entangle('showSuccessModal') }" x-cloak>
-        <div x-show="open"
+    {{-- Always in DOM. x-cloak on the overlay only, not the wrapper. Single x-show. Close via $wire to keep PHP state in sync. --}}
+    <div x-data="{ open: @entangle('showSuccessModal').live }">
+        <div x-show="open" x-cloak
             x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
             x-transition:leave="ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-            class="fixed inset-0 z-50 flex items-center justify-center">
+            class="fixed inset-0 z-50 flex items-center justify-center"
+            style="display: none;">
             <div class="absolute inset-0 bg-black/50"></div>
-            <div x-show="open"
+            <div
                 x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                 x-transition:leave="ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
                 class="relative bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 z-10 overflow-hidden">
@@ -628,7 +640,7 @@
                 <div class="p-6">
                     <p class="text-sm text-gray-600">{{ $programeId ? 'Les modifications ont été enregistrées avec succès.' : 'Le projet a été enregistré. Vous pouvez maintenant attacher des formulaires.' }}</p>
                     <div class="mt-6 flex justify-end">
-                        <button wire:click="redirectAfterSuccess"
+                        <button type="button" wire:click="redirectAfterSuccess"
                             class="px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition text-sm font-medium">
                             Continuer
                         </button>
@@ -639,13 +651,15 @@
     </div>
 
     {{-- Error Modal --}}
-    <div x-data="{ open: @entangle('showErrorModal') }" x-cloak>
-        <div x-show="open"
+    {{-- Always in DOM. Single x-show on the overlay. Close button sets PHP property which entangle reflects back. --}}
+    <div x-data="{ open: @entangle('showErrorModal').live }">
+        <div x-show="open" x-cloak
             x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
             x-transition:leave="ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-            class="fixed inset-0 z-50 flex items-center justify-center">
-            <div class="absolute inset-0 bg-black/50"></div>
-            <div x-show="open"
+            class="fixed inset-0 z-50 flex items-center justify-center"
+            style="display: none;">
+            <div class="absolute inset-0 bg-black/50" @click="$wire.closeErrorModal()"></div>
+            <div
                 x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                 x-transition:leave="ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
                 class="relative bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4 z-10 overflow-hidden">
@@ -670,7 +684,7 @@
                         </ul>
                     @endif
                     <div class="mt-6 flex justify-end">
-                        <button wire:click="closeErrorModal"
+                        <button type="button" @click="$wire.closeErrorModal()"
                             class="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition text-sm font-medium">
                             Fermer
                         </button>
@@ -681,5 +695,3 @@
     </div>
 
 </div>
-
-

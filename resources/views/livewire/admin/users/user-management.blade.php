@@ -338,10 +338,8 @@
             x-transition:leave="ease-in duration-150"
             x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0"
-            class="fixed inset-0 z-50 flex items-center justify-center"
+            class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50" 
         >
-            {{-- Backdrop --}}
-            <div class="absolute inset-0 bg-black/50" @click="open = false"></div>
 
             {{-- Panel --}}
             <div

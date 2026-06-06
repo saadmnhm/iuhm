@@ -50,31 +50,31 @@
                         <div>
                             <label class="block text-sm text-gray-500 mb-1">{{ $tr('Prénom', 'الاسم') }} <span class="text-red-500">*</span></label>
                             <input type="text" wire:model="nom" placeholder="{{ $tr('Prénom', 'الاسم') }}"
-                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200">
+                                class="w-full iuhm_input rounded-full ">
                             @error('nom') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
                         <div>
                             <label class="block text-sm text-gray-500 mb-1">{{ $tr('Nom', 'النسب') }} <span class="text-red-500">*</span></label>
                             <input type="text" wire:model="prenom" placeholder="{{ $tr('Nom', 'النسب') }}"
-                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200">
+                                class="w-full iuhm_input rounded-full ">
                             @error('prenom') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
                         <div>
                             <label class="block text-sm text-gray-500 mb-1">{{ $tr('CIN (ID Number)', 'رقم البطاقة الوطنية') }} <span class="text-red-500">*</span></label>
                             <input type="text" wire:model="cin" placeholder="{{ $tr('CIN', 'رقم البطاقة') }}"
-                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200">
+                                class="w-full iuhm_input rounded-full ">
                             @error('cin') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
                         <div>
                             <label class="block text-sm text-gray-500 mb-1">{{ $tr('Date de naissance', 'تاريخ الازدياد') }} <span class="text-red-500">*</span></label>
                             <input type="date" wire:model="date_naissance"
-                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200">
+                                class="w-full iuhm_input rounded-full ">
                             @error('date_naissance') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
                         <div>
                             <label class="block text-sm text-gray-500 mb-1">{{ $tr('Genre', 'الجنس') }} <span class="text-red-500">*</span></label>
                             <select wire:model="gender"
-                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200">
+                                class="w-full iuhm_select border-gray-300 rounded-full text-sm py-2 px-4 ">
                                 <option value="">{{ __('messages.selectionner') }}</option>
                                 <option value="homme">{{ __('messages.homme') }}</option>
                                 <option value="femme">{{ __('messages.femme') }}</option>
@@ -91,13 +91,13 @@
                         <div>
                             <label class="block text-sm text-gray-500 mb-1">{{ $tr("Niveau d'étude", 'المستوى الدراسي') }} <span class="text-red-500">*</span></label>
                             <input type="text" wire:model="niveau_etude" placeholder="{{ $tr('Ex: Licence', 'مثال: ليسانس') }}"
-                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200">
+                                class="w-full iuhm_input rounded-full ">
                             @error('niveau_etude') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
                         <div>
                             <label class="block text-sm text-gray-500 mb-1">{{ $tr('Spécialité', 'التخصص') }} <span class="text-red-500">*</span></label>
                             <input type="text" wire:model="specialite" placeholder="{{ $tr('Ex: Économie Sociale', 'مثال: الاقتصاد الاجتماعي') }}"
-                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200">
+                                class="w-full iuhm_input rounded-full ">
                             @error('specialite') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
                     </div>
@@ -110,19 +110,19 @@
                         <div>
                             <label class="block text-sm text-gray-500 mb-1">{{ $tr('Adresse email', 'البريد الإلكتروني') }} <span class="text-red-500">*</span></label>
                             <input type="email" wire:model="email" placeholder="email@example.com"
-                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200">
+                                class="w-full iuhm_input rounded-full ">
                             @error('email') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
                         <div>
                             <label class="block text-sm text-gray-500 mb-1">{{ $tr('Téléphone', 'رقم الهاتف') }} <span class="text-red-500">*</span></label>
                             <input type="text" wire:model="phone" inputmode="numeric" oninput="this.value=this.value.replace(/\D/g,'')" placeholder="+212 6 00 00 00 00"
-                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200">
+                                class="w-full iuhm_input rounded-full ">
                             @error('phone') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
                         <div>
                             <label class="block text-sm text-gray-500 mb-1">{{ $tr('Région', 'الجهة') }} <span class="text-red-500">*</span></label>
                             <select wire:model.live="selected_region"
-                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200">
+                                class="w-full iuhm_select border-gray-300 rounded-full text-sm py-2 px-4 ">
                                 <option value="">{{ $tr('Sélectionner une région', 'اختر جهة') }}</option>
                                 @foreach($regions as $region)
                                     <option value="{{ $region }}">{{ $region }}</option>
@@ -133,7 +133,7 @@
                         <div>
                             <label class="block text-sm text-gray-500 mb-1">{{ $tr('Ville', 'المدينة') }} <span class="text-red-500">*</span></label>
                             <select wire:model.live="selected_city" {{ empty($selected_region) ? 'disabled' : '' }}
-                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200 disabled:opacity-50">
+                                class="w-full iuhm_select border-gray-300 rounded-full text-sm py-2 px-4 ">
                                 <option value="">{{ $tr('Sélectionner une ville', 'اختر مدينة') }}</option>
                                 @foreach($cities as $city)
                                     <option value="{{ $city }}">{{ $city }}</option>
@@ -144,7 +144,7 @@
                         <div>
                             <label class="block text-sm text-gray-500 mb-1">{{ $tr('Préfecture', 'العمالة / الإقليم') }} <span class="text-red-500">*</span></label>
                             <select wire:model.live="selected_prefecture" {{ empty($selected_city) ? 'disabled' : '' }}
-                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200 disabled:opacity-50">
+                                class="w-full iuhm_select border-gray-300 rounded-full text-sm py-2 px-4 ">
                                 <option value="">{{ $tr('Sélectionner une préfecture', 'اختر عمالة / إقليم') }}</option>
                                 @foreach($prefectures as $prefecture)
                                     <option value="{{ $prefecture }}">{{ $prefecture }}</option>
@@ -155,7 +155,7 @@
                         <div>
                             <label class="block text-sm text-gray-500 mb-1">{{ $tr('Détails adresse', 'تفاصيل العنوان') }} <span class="text-red-500">*</span></label>
                             <input type="text" wire:model="address_detail" placeholder="{{ $tr('Ex : IMM 12, GH B, Appartement 4', 'مثال: IMM 12, GH B, شقة 4') }}"
-                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200">
+                                class="w-full iuhm_select border-gray-300 rounded-full text-sm py-2 px-4">
                             @error('address_detail') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
                         </div>
                     </div>
@@ -198,19 +198,19 @@
                         <div>
                             <label class="block text-sm text-gray-500 mb-1">{{ $tr('Mot de passe actuel', 'كلمة المرور الحالية') }} <span class="text-red-500">*</span></label>
                             <input type="password" wire:model="current_password" placeholder="{{ $tr('Mot de passe actuel', 'كلمة المرور الحالية') }}"
-                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200 @error('current_password') ring-2 ring-red-300 @enderror">
+                                class="w-full iuhm_input rounded-full @error('current_password') ring-2 ring-red-300 @enderror">
                             @error('current_password') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
                         <div>
                             <label class="block text-sm text-gray-500 mb-1">{{ $tr('Nouveau mot de passe', 'كلمة المرور الجديدة') }} <span class="text-red-500">*</span></label>
                             <input type="password" wire:model="new_password" placeholder="{{ $tr('Nouveau mot de passe', 'كلمة المرور الجديدة') }}"
-                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200 @error('new_password') ring-2 ring-red-300 @enderror">
+                                class="w-full iuhm_input rounded-full @error('new_password') ring-2 ring-red-300 @enderror">
                             @error('new_password') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
                         </div>
                         <div>
                             <label class="block text-sm text-gray-500 mb-1">{{ $tr('Confirmer le nouveau mot de passe', 'تأكيد كلمة المرور الجديدة') }} <span class="text-red-500">*</span></label>
                             <input type="password" wire:model="new_password_confirmation" placeholder="{{ $tr('Confirmer le mot de passe', 'تأكيد كلمة المرور') }}"
-                                class="w-full bg-gray-100 rounded-lg px-3 py-2.5 text-sm text-gray-800 border-0 focus:outline-none focus:ring-2 focus:ring-green-200">
+                                class="w-full iuhm_input rounded-full">
                         </div>
                         <div class="mt-2">
                             <button type="submit"

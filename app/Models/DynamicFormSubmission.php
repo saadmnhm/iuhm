@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class DynamicFormSubmission extends Model
+class DynamicFormSubmission extends BaseModel
 {
     use SoftDeletes;
 

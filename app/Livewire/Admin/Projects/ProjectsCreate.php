@@ -32,7 +32,6 @@ class ProjectsCreate extends Component
     public $candidature_types = [];
     public string $newCandidatureType = '';
 
-    // Sector eligibility criteria
     public array $crit_sector = [];
 
     public $form_attached_id = null;
@@ -49,7 +48,6 @@ class ProjectsCreate extends Component
     public string $errorMessage = '';
     public array $errorDetails = [];
 
-    // Formulaire management
     public bool $showFormulaireModal = false;
     public array $availableFormulaires = [];
     public array $attachedFormulaires = [];
@@ -102,7 +100,6 @@ class ProjectsCreate extends Component
             $this->min_age = $list->min_age;
             $this->max_age = $list->max_age;
             
-            // Decode JSON to array
             $this->allowed_address_id = json_decode($list->allowed_address_id, true) ?? [];
             $this->allowed_location_ids = is_array($list->allowed_location_ids)
                 ? $list->allowed_location_ids
@@ -112,10 +109,11 @@ class ProjectsCreate extends Component
                 ? $list->candidature_types
                 : (json_decode($list->candidature_types ?? '[]', true) ?? []);
 
-            // Load supplementary eligibility criteria
-            $ec = is_array($list->eligibility_criteria)
-                ? $list->eligibility_criteria
-                : (json_decode($list->eligibility_criteria ?? '{}', true) ?? []);
+            // FIX 4: guard against already-decoded array from Eloquent cast
+            $raw = $list->eligibility_criteria;
+            $ec = is_array($raw)
+                ? $raw
+                : (json_decode($raw ?? '{}', true) ?? []);
             $this->crit_sector = $ec['sector'] ?? [];
             $this->status = $list->status ?? 'Active';
             $this->form_attached_id = $list->form_attached_id;
@@ -183,7 +181,8 @@ class ProjectsCreate extends Component
             return;
         }
         $programe = ProjectsList::findOrFail($this->programeId);
-        if ($programe->formulaires()->where('formulaire_id', $this->selectedFormulaire)->exists()) {
+        // FIX 2: use whereIn on the pivot table via the relationship, not a wrong column name
+        if ($programe->formulaires()->wherePivot('dynamic_form_id', $this->selectedFormulaire)->exists()) {
             session()->flash('error', 'Ce formulaire est déjà attaché à ce projet.');
             return;
         }
@@ -196,6 +195,15 @@ class ProjectsCreate extends Component
         $this->loadFormulaires();
         $this->closeFormulaireModal();
         session()->flash('message', 'Formulaire attaché avec succès!');
+    }
+
+    public function selectFormulaire(int $formulaireId): void
+    {
+        // FIX 5: reload formulaires before computing the count for order
+        $this->loadFormulaires();
+        $this->selectedFormulaire = $formulaireId;
+        $this->formulaireOrder = count($this->attachedFormulaires) + 1;
+        $this->showFormulaireModal = true;
     }
 
     public function detachFormulaire(int $formulaireId): void
@@ -265,7 +273,8 @@ class ProjectsCreate extends Component
                 'min_age' => $this->min_age,
                 'max_age' => $this->max_age,
                 'allowed_address_id' => json_encode($this->allowed_address_id ?? []),
-                'allowed_location_ids' => array_values(array_unique(array_map('intval', $this->allowed_location_ids ?? []))),
+                // FIX 3: encode consistently with allowed_address_id
+                'allowed_location_ids' => json_encode(array_values(array_unique(array_map('intval', $this->allowed_location_ids ?? [])))),
                 'candidature_types' => array_values(array_unique(array_filter(array_map('trim', $this->candidature_types ?? [])))),
                 'eligibility_criteria' => [
                     'sector' => array_values(array_filter($this->crit_sector ?? [])),
@@ -335,14 +344,6 @@ class ProjectsCreate extends Component
             $this->errorMessage = 'Une erreur est survenue lors de l\'enregistrement.';
             $this->showErrorModal = true;
         }
-    }
-
-    public function openLocationModal(): void
-    {
-        $this->locationRegionFilter = '';
-        $this->locationCityFilter = '';
-        $this->locationSearch = '';
-        $this->showLocationModal = true;
     }
 
     public function closeErrorModal(): void
@@ -444,8 +445,8 @@ class ProjectsCreate extends Component
             ->map(fn($f) => ['id' => $f->id, 'title' => $f->title, 'title_ar' => $f->title_ar])
             ->toArray();
 
-        // Sync $availableFormulaires if not loaded yet (create mode)
-        if (empty($this->availableFormulaires) && empty($this->attachedFormulaires)) {
+        // FIX 1: only sync when availableFormulaires is empty, regardless of attachedFormulaires
+        if (empty($this->availableFormulaires)) {
             $this->availableFormulaires = $availableFormulaires;
         }
 

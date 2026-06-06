@@ -150,6 +150,9 @@ class Dashboard extends Component
 
     public function render()
     {
+        $isArabic = str_starts_with(app()->getLocale(), 'ar');
+        $tr = fn (string $fr, string $ar) => $isArabic ? $ar : $fr;
+
         $allDynamic = collect($this->dynamicSubmissions);
         $candidateAge = $this->candidat->age;
 
@@ -221,12 +224,18 @@ class Dashboard extends Component
             );
         }
 
+        $menu = [
+            ['label' => $tr('Projets & Candidatures', 'المشاريع والترشيحات') , 'description' => $tr('EXPLOREZ LES PROJETS DISPONIBLES', 'استكشف المشاريع المتاحة'), 'icon' => 'ri-apps-2-line', 'route' => route('user.projects.list')],
+            ['label' => $tr('Mon Profil', 'ملفي الشخصي') , 'description' => $tr('METTEZ À JOUR VOS INFORMATIONS PERSONNELLES', 'قم بتحديث معلوماتك الشخصية'), 'icon' => 'ri-user-3-line', 'route' =>  route('user.settings')],
+        ];
+
         return view('livewire.front.dashboard.dashboard', [
             'stats'                   => $stats,
             'filteredSubmissions'     => $filteredSubmissions->values()->toArray(),
             'projectInsights'         => $projectInsights->toArray(),
             'projectEligibilityStats' => $projectEligibilityStats,
             'candidateAge'            => $candidateAge,
+            'menu'                    => $menu,
         ]);
     }
 }

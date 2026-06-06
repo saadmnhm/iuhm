@@ -34,31 +34,22 @@
     <h3 class="text-slate-900 text-lg font-semibold mt-8 mb-3">{{ $tr('Apps pour vous', 'التطبيقات لك') }}</h3>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
-        <div class="bg-[#F5F3F7] rounded-lg p-6 min-h-[268px] shadow-sm content-center">
-            <div class="text-2xl mb-3 h-[50px] w-[50px] flex items-center justify-center text-[#0f2441] rounded-[10px] bg-white">
-                <i class="ri-user-3-line"></i>
-            </div>
-            <h3 class="text-[20px] font-bold text-[#04103A]">{{ $tr('Mon Profil', 'ملفي الشخصي') }}</h3>
-            <small class="block mt-3 mb-3 text-[14px] font-[400] tracking-[2px] text-gray-400 uppercase">
-                {{ $tr('METTEZ À JOUR VOS INFORMATIONS PERSONNELLES', 'قم بتحديث معلوماتك الشخصية') }}
-            </small>
-            <a href="{{ route('user.settings') }}" class="inline-block text-[#066E1B] font-bold hover:scale-105">
-                {{ $tr('Accéder', 'الوصول') }}<i class="ri-arrow-right-long-line relative top-[1px] left-[2px]"></i>
-            </a>
+    @foreach ($menu as $item )
+    
+    <div class="bg-[#F5F3F7] rounded-lg p-6 min-h-[268px] shadow-sm content-center">
+        <div class="text-2xl mb-3 h-[50px] w-[50px] flex items-center justify-center text-[#0f2441] rounded-[10px] bg-white">
+            <i class="{{ $item['icon'] }}"></i>
         </div>
+        <h3 class="text-[20px] font-bold text-[#04103A]">{{ $item['label'] }}</h3>
+        <small class="block mt-3 mb-3 text-[14px] font-[400] tracking-[2px] text-gray-400 uppercase">
+            {{ $item['description'] }}
+        </small>
+        <a href="{{ $item['route'] }}" class="inline-block text-[#066E1B] font-bold hover:scale-105 no-underline">
+            {{ $tr('Accéder', 'الوصول') }}<i class="ri-arrow-right-long-line relative top-[1px] left-[2px]"></i>
+        </a>
+    </div>
+    @endforeach
 
-        <div class="bg-[#F5F3F7] rounded-lg p-6 min-h-[268px] shadow-sm content-center">
-            <div class="text-2xl mb-3 h-[50px] w-[50px] flex items-center justify-center text-[#0f2441] rounded-[10px] bg-white">
-                <i class="ri-apps-2-line"></i>
-            </div>
-            <h3 class="text-[20px] font-bold text-[#04103A]">{{ $tr('Projets & Candidatures', 'المشاريع والترشيحات') }}</h3>
-            <small class="block mt-3 mb-3 text-[14px] font-[400] tracking-[2px] text-gray-400 uppercase">
-                {{ $tr('EXPLOREZ LES PROJETS DISPONIBLES', 'استكشف المشاريع المتاحة') }}
-            </small>
-            <a href="{{ route('user.projects.list') }}" class="inline-block text-[#066E1B] font-bold hover:scale-105">
-                {{ $tr('Accéder', 'الوصول') }}<i class="ri-arrow-right-long-line relative top-[1px] left-[2px]"></i>
-            </a>
-        </div>
 
     </div>
 

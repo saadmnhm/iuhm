@@ -31,22 +31,22 @@ class ProjectsList extends Component
     {
 
             $stats_card = [
-            'Total Projets' => [
-                'label' => 'Total Projets',
-                'icon' => 'ri-article-line',
-                'data' => Project_list::count(),
-            ],
-            'Projets Actives' => [
-                'label' => 'Projets Actives',
-                'icon' => 'ri-newspaper-line',
-                'color' => 'text-blue-600',
-                'data' => Project_list::where('is_active', true)->count(),
-            ],
-            'Projets Inactives' => [
-                'label' => 'Projets Inactives',
-                'icon' => 'ri-mail-send-line',
-                'data' => Project_list::where('is_active', false)->count(),
-            ],
+                'Total Projets' => [
+                    'label' => 'Total Projets',
+                    'icon' => 'ri-article-line',
+                    'data' => Project_list::count(),
+                ],
+                'Projets Actives' => [
+                    'label' => 'Projets Actives',
+                    'icon' => 'ri-newspaper-line',
+                    'color' => 'text-blue-600',
+                    'data' => Project_list::where('is_active', true)->count(),
+                ],
+                'Projets Inactives' => [
+                    'label' => 'Projets Inactives',
+                    'icon' => 'ri-mail-send-line',
+                    'data' => Project_list::where('is_active', false)->count(),
+                ],
 
         ];
         $projects = Project_list::with('user')->withCount('formulaires')->paginate(10);

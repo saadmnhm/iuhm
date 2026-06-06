@@ -74,10 +74,16 @@ class ProjectsList extends Model
                     ->orderByPivot('order');
     }
 
+    public function dynamicForm()
+    {
+        return $this->belongsTo(DynamicForm::class, 'dynamic_form_id');
+    }
+
     public function ProjectsSubmissions(): HasMany
     {
         return $this->hasMany(ProjectsSubmission::class, 'programe_id');
     }
+    
 
 
 }

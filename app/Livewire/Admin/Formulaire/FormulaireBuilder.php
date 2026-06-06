@@ -315,7 +315,7 @@ class FormulaireBuilder extends Component
 
     public function selectStep($stepId)
     {
-        $this->activeStepId = $stepId;
+        $this->activeStepId = (int) $stepId;
         $this->editingFieldId = null;
         $this->editingTableId = null;
     }
@@ -341,7 +341,7 @@ class FormulaireBuilder extends Component
         $this->stepTitle = $step->title;
         $this->stepTitleAr = $step->title_ar ?? '';
         $this->stepDescription = $step->description ?? '';
-        $this->activeStepId = $stepId;
+        $this->activeStepId = (int) $stepId;
     }
 
     public function deleteStep($stepId)
@@ -368,6 +368,7 @@ class FormulaireBuilder extends Component
 
     public function moveStep($stepId, $direction)
     {
+        $stepId = (int) $stepId;
         $steps = DynamicFormStep::where('dynamic_form_id', $this->formId)
             ->orderBy('step_number')->get();
 
@@ -386,7 +387,7 @@ class FormulaireBuilder extends Component
 
     public function openFieldModal($stepId, $fieldId = null)
     {
-        $this->activeStepId = $stepId;
+        $this->activeStepId = (int) $stepId;
 
         if ($fieldId) {
             $field = DynamicFormField::findOrFail($fieldId);
@@ -498,6 +499,7 @@ class FormulaireBuilder extends Component
 
     public function moveField($fieldId, $direction)
     {
+        $fieldId = (int) $fieldId;
         $field = DynamicFormField::findOrFail($fieldId);
         $fields = DynamicFormField::where('dynamic_form_step_id', $field->dynamic_form_step_id)
             ->orderBy('sort_order')->get();
@@ -519,7 +521,7 @@ class FormulaireBuilder extends Component
 
     public function openTableModal($stepId, $tableId = null)
     {
-        $this->activeStepId = $stepId;
+        $this->activeStepId = (int) $stepId;
 
         if ($tableId) {
             $table = DynamicFormTable::findOrFail($tableId);
@@ -610,7 +612,7 @@ class FormulaireBuilder extends Component
 
     public function openColumnModal($tableId, $columnId = null)
     {
-        $this->editingTableId = $tableId;
+        $this->editingTableId = (int) $tableId;
         $this->tableRequiresRadioColumn = DynamicFormTableColumn::where('dynamic_form_table_id', $tableId)
             ->where('input_type', 'radio')
             ->exists();
@@ -733,7 +735,7 @@ class FormulaireBuilder extends Component
 
     public function openRowModal($tableId, $rowId = null)
     {
-        $this->editingTableId = $tableId;
+        $this->editingTableId = (int) $tableId;
 
         if ($rowId) {
             $row = DynamicFormTableRow::findOrFail($rowId);

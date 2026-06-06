@@ -14,37 +14,38 @@
 
     <nav class="py-3 grow" style="min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;">
         @if($isSettingsPage)
-            <ul class="nav flex-column gap-1">
-                {{-- Settings Section Label --}}
-                <li class="nav-item mt-1 mb-1">
-                    <small class="sidebar-section-label" style="font-size: .65rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; padding: 0 15px; font-weight: 700;">{{ $tr('Paramètres', 'الإعدادات') }}</small>
-                </li>
+            <ul class="nav flex-column gap-1" style="padding: 0 10px;">
 
-                {{-- Votre Espace Candidat Button Tab --}}
-                <li class="nav-item">
                     <button wire:click="$dispatch('set-active-tab', { tab: 'profile' })" type="button"
                         class="nav-link sidebar-main-link d-flex align-items-center gap-3 w-100 text-start border-0 py-2.5 px-3"
                         style="{{ $activeTab === 'profile' ? 'background:#64845415;color:#648454;border-radius:.65rem;font-weight:700;' : 'background:transparent;color:#475569;' }}">
                         <i class="ri-user-3-line fs-5" style="{{ $activeTab === 'profile' ? 'color:#648454;' : '' }}"></i>
                         <span>{{ $tr('Votre Espace Candidat', 'فضاء المترشح') }}</span>
-                        @if($activeTab === 'profile')
-                            <span class="ms-auto rounded-pill" style="width:6px;height:6px;background:#648454;display:inline-block;"></span>
-                        @endif
                     </button>
-                </li>
-
-                {{-- Sécurité Button Tab --}}
-                <li class="nav-item">
+                   
                     <button wire:click="$dispatch('set-active-tab', { tab: 'password' })" type="button"
                         class="nav-link sidebar-main-link d-flex align-items-center gap-3 w-100 text-start border-0 py-2.5 px-3"
                         style="{{ $activeTab === 'password' ? 'background:#64845415;color:#648454;border-radius:.65rem;font-weight:700;' : 'background:transparent;color:#475569;' }}">
                         <i class="ri-shield-check-line fs-5" style="{{ $activeTab === 'password' ? 'color:#648454;' : '' }}"></i>
                         <span>{{ $tr('Sécurité', 'الأمان') }}</span>
-                        @if($activeTab === 'password')
-                            <span class="ms-auto rounded-pill" style="width:6px;height:6px;background:#648454;display:inline-block;"></span>
-                        @endif
                     </button>
-                </li>
+            </ul>
+
+        @elseif (request()->routeIs('user.projects*') || request()->routeIs('user.projects') || request()->routeIs('user.submissions*'))
+            <ul class="nav flex-column gap-1" style="padding: 0 10px;">
+
+                {{-- Votre Espace Candidat Button Tab --}}
+                <a href="{{ route('user.projects.list') }}"
+                    class="project-item d-flex align-items-center gap-2 {{ request()->routeIs('user.projects.list') ? 'active' : '' }}">
+                    <i class="ri-list-check-2"></i>
+                    <span>{{ $tr('Tous les projets', 'كل المشاريع') }}</span>
+                </a>
+
+                <a href="{{ route('user.submissions.list') }}"
+                    class="project-item d-flex align-items-center gap-2 {{ request()->routeIs('user.submissions.list') ? 'active' : '' }}">
+                    <i class="ri-file-list-3-line"></i>
+                    <span>{{ $tr('Mes soumissions', 'ترشيحاتي') }}</span>
+                </a>
             </ul>
         @else
             <ul class="nav flex-column gap-1">
@@ -84,6 +85,12 @@
                                class="project-item d-flex align-items-center gap-2 {{ request()->routeIs('user.projects.list') ? 'active' : '' }}">
                                 <i class="ri-list-check-2"></i>
                                 <span>{{ $tr('Tous les projets', 'كل المشاريع') }}</span>
+                            </a>
+
+                            <a href="{{ route('user.submissions.list') }}"
+                               class="project-item d-flex align-items-center gap-2 {{ request()->routeIs('user.submissions.list') ? 'active' : '' }}">
+                                <i class="ri-file-list-3-line"></i>
+                                <span>{{ $tr('Mes soumissions', 'ترشيحاتي') }}</span>
                             </a>
 
                             <div class="project-list mt-1">

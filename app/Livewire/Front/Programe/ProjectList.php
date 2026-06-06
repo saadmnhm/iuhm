@@ -55,23 +55,11 @@ class ProjectList extends Component
                 ->orderByDesc('updated_at')
                 ->first();
 
-            $statusLabel = null;
-            $statusColor = null;
-            if ($submission) {
-                $statusLabel = $submission->status_label;
-                $statusColor = $submission->status_badge_color;
-            } elseif (!$check['eligible']) {
-                $statusLabel = 'Non éligible';
-                $statusColor = '#dc2626';
-            } else {
-                $statusLabel = 'Disponible';
-                $statusColor = '#6b7280';
-            }
-
+           
             return [
                 'id'           => $project->id,
                 'name'         => $project->project_name,
-                'description'  => Str::limit(strip_tags((string) $project->description), 120),
+                'description'  => Str::limit(strip_tags((string) $project->description), 200),
                 'icon'         => $project->icon ?: 'ri-briefcase-4-line',
                 'color'        => $project->color ?: '#2f5496',
                 'eligible'     => $check['eligible'],
@@ -79,8 +67,11 @@ class ProjectList extends Component
                 'submission'   => $submission,
                 'submitted_at' => $submission?->created_at?->format('d/m/Y'),
                 'updated_at'   => $submission?->updated_at?->format('d/m/Y'),
-                'status_label' => $statusLabel,
-                'status_color' => $statusColor,
+                'min_age'      => $project->min_age,
+                'max_age'      => $project->max_age,
+                'locations'    => \App\Models\MoroccoLocation::whereIn('id', $project->allowed_location_ids ?? [])->get()->map(function($loc) {
+                    return strtoupper($loc->city . ($loc->prefecture ? ', ' . $loc->prefecture : ''));
+                })->implode(' / ') ?: 'TOUT LE MAROC',
             ];
         });
 
@@ -104,13 +95,36 @@ class ProjectList extends Component
         $page     = $this->getPage();
         $perPage  = 10;
         $paginated = $rows->values()->forPage($page, $perPage);
+        $isArabic = str_starts_with(app()->getLocale(), 'ar');
+        $tr = fn (string $fr, string $ar) => $isArabic ? $ar : $fr;
+        $state_card = [
+            'Total Projets' => [
+                'label' =>  $tr('Total Candidatures', 'إجمالي الترشيحات'),
+                'icon' => 'ri-file-list-3-line',
+                'data' => $total,
+            ],
+            'approved' => [
+                'label' => $tr('Candidatures Approuvé', 'المقبولة'),
+                'icon' => 'ri-checkbox-circle-line',
+                'data' => $approved,
+            ],
+            'review' => [
+                'label' => $tr('Candidatures En Révision', 'قيد المراجعة'),
+                'icon' => 'ri-time-line',
+                'data' => $inReview,
+            ],
+            'notEligible' => [
+                'label' => $tr('Candidatures Non Éligibles', 'غير المؤهلة'),
+                'icon' => 'ri-error-warning-line',
+                'data' => $notEligible,
+            ],
+
+        ];
 
         return view('livewire.front.programe.project-list', [
-            'rows'        => $paginated,
-            'total'       => $total,
-            'approved'    => $approved,
-            'inReview'    => $inReview,
-            'notEligible' => $notEligible,
+            'state_card' => $state_card,
+            'rows'    => $rows,
+            'total' => $total,
             'totalPages'  => (int) ceil($total / $perPage),
             'currentPage' => $page,
             'perPage'     => $perPage,
