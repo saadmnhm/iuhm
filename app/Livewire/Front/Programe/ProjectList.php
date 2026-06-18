@@ -54,8 +54,29 @@ class ProjectList extends Component
                 ->where('programe_id', $project->id)
                 ->orderByDesc('updated_at')
                 ->first();
-            $locationIds = $project->allowed_location_ids ? explode(',', $project->allowed_location_ids) : [];
+            $rawLocationIds = $project->allowed_location_ids ?? [];
+            if (is_string($rawLocationIds)) {
+                $decoded = json_decode($rawLocationIds, true);
+                $rawLocationIds = is_array($decoded) ? $decoded : explode(',', $rawLocationIds);
+            }
+            $locationIds = collect($rawLocationIds)
+                ->map(fn ($id) => (int) $id)
+                ->filter(fn ($id) => $id > 0)
+                ->unique()
+                ->values()
+                ->all();
            
+            $locations = \App\Models\MoroccoLocation::whereIn('id', $locationIds)
+                ->get()
+                ->map(function ($loc) {
+                    return strtoupper(
+                        $loc->city .
+                        ($loc->prefecture ? ', ' . $loc->prefecture : '')
+                    );
+                })
+                ->values()
+                ->all();
+
             return [
                 'id'           => $project->id,
                 'name'         => $project->project_name,
@@ -69,12 +90,9 @@ class ProjectList extends Component
                 'updated_at'   => $submission?->updated_at?->format('d/m/Y'),
                 'min_age'      => $project->min_age,
                 'max_age'      => $project->max_age,
-                'locations' => \App\Models\MoroccoLocation::whereIn('id', $locationIds)->get()->map(function ($loc) {
-                        return strtoupper(
-                            $loc->city .
-                            ($loc->prefecture ? ', ' . $loc->prefecture : '')
-                        );
-                    })->implode(' / ') ?: 'TOUT LE MAROC',];});
+                'locations'    => $locations ?: ['TOUT LE MAROC'],
+            ];
+        });
 
         // Apply status filter
         if ($this->statusFilter) {
@@ -124,7 +142,7 @@ class ProjectList extends Component
 
         return view('livewire.front.programe.project-list', [
             'state_card' => $state_card,
-            'rows'    => $rows,
+            'rows'    => $paginated,
             'total' => $total,
             'totalPages'  => (int) ceil($total / $perPage),
             'currentPage' => $page,

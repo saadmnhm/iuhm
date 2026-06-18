@@ -209,24 +209,36 @@
                         <label class="iuhm_label_2 mb-0">Localisation (Quartiers)</label>
                         @if($locCount > 0)
                             <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
-                                {{ $locCount }} selectionne{{ $locCount > 1 ? 's' : '' }}
+                                {{ $locCount }} sélectionné{{ $locCount > 1 ? 's' : '' }}
                             </span>
                         @endif
                     </div>
+                    
                     <button type="button" @click="locationOpen = true" class="w-full rounded-xl flex iuhm_input flex-wrap items-center gap-1.5 cursor-pointer text-left py-2 px-3 min-h-[50px] border border-gray-200 bg-gray-50 hover:bg-white transition">
-                        @forelse($selectedLocations as $loc)
-                            <span class="inline-flex items-center gap-1 pl-2 pr-1 py-1 bg-white border border-blue-200 text-blue-700 rounded-lg text-xs font-medium shrink-0">
-                                <i class="ri-map-pin-2-line text-blue-400 text-xs"></i>
-                                {{ $loc->prefecture }}
-                                <span wire:click.stop="removeSelectedLocation({{ $loc->id }})" class="ml-1 cursor-pointer hover:text-red-500">
-                                    <i class="ri-close-line"></i>
+                        @if($locCount > 0)
+                            {{-- On limite la boucle à 3 éléments maximum grâce à ->take(3) --}}
+                            @foreach(collect($selectedLocations)->take(3) as $loc)
+                                <span class="inline-flex items-center gap-1 pl-2 pr-1 py-1 bg-white border border-blue-200 text-blue-700 rounded-lg text-xs font-medium shrink-0">
+                                    <i class="ri-map-pin-2-line text-blue-400 text-xs"></i>
+                                    {{ $loc->prefecture }}
+                                    <span wire:click.stop="removeSelectedLocation({{ $loc->id }})" class="ml-1 cursor-pointer hover:text-red-500">
+                                        <i class="ri-close-line"></i>
+                                    </span>
                                 </span>
-                            </span>
-                        @empty
-                            <span class="text-sm text-gray-400 flex-1">Selectionner des quartiers...</span>
-                        @endforelse
+                            @endforeach
+
+                            {{-- Si on a plus de 3 éléments, on affiche le badge dynamique de surplus --}}
+                            @if($locCount > 3)
+                                <span class="inline-flex items-center px-2 py-1 bg-gray-100 text-gray-600 rounded-lg text-xs font-semibold shrink-0 border border-gray-200">
+                                    +{{ $locCount - 3 }} autre{{ ($locCount - 3) > 1 ? 's' : '' }}
+                                </span>
+                            @endif
+                        @else
+                            <span class="text-sm text-gray-400 flex-1">Sélectionner des quartiers...</span>
+                        @endif
                         <i class="ri-arrow-down-s-line text-gray-400 ml-auto shrink-0"></i>
                     </button>
+                    
                     @error('allowed_location_ids') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
                 </div>
 

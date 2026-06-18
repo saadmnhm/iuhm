@@ -25,9 +25,15 @@ class ProjectEligibilityService
             $reasons[] = "Âge requis: maximum {$project->max_age} ans.";
         }
 
-        $allowedLocationIds = collect($project->allowed_location_ids ?? [])
-            ->filter()
+        $rawAllowedLocationIds = $project->allowed_location_ids ?? [];
+        if (is_string($rawAllowedLocationIds)) {
+            $decoded = json_decode($rawAllowedLocationIds, true);
+            $rawAllowedLocationIds = is_array($decoded) ? $decoded : explode(',', $rawAllowedLocationIds);
+        }
+
+        $allowedLocationIds = collect($rawAllowedLocationIds)
             ->map(static fn ($id) => (int) $id)
+            ->filter(static fn ($id) => $id > 0)
             ->unique()
             ->values();
 

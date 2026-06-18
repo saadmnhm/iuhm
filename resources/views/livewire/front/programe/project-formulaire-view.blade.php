@@ -3,16 +3,19 @@
     $tr = fn (string $fr, string $ar) => $isArabic ? $ar : $fr;
     $displayLabel = fn ($fr, $ar = null) => $isArabic && filled($ar) ? $ar : $fr;
     $fColor = $form->color ?? '#2f5496';
+    if (! str_starts_with($fColor, '#')) {
+        $fColor = '#' . $fColor;
+    }
 @endphp
 
 <div x-data="{ showSubmitConfirm: false }" @if($isArabic) dir="rtl" @endif
-     style="min-height:100vh;background:rgba(10,18,40,.55);display:flex;align-items:flex-start;justify-content:center;padding:1.5rem 1rem;">
+     style="min-height:100vh;background:#f4f5f7;display:flex;align-items:flex-start;justify-content:center;padding:1.5rem 1rem;">
 
-    {{-- ===== MODAL CARD ===== --}}
-    <div style="background:#fff;width:100%;max-width:680px;border-radius:20px;box-shadow:0 24px 64px rgba(0,0,0,.28);display:flex;flex-direction:column;max-height:calc(100vh - 3rem);overflow:hidden;">
+    {{-- ===== FORM CARD ===== --}}
+    <div style="background:#fff;width:100%;max-width:980px;border-radius:18px;box-shadow:0 14px 40px rgba(15,23,42,.10);border:1px solid #e5e7eb;display:flex;flex-direction:column;overflow:hidden;">
 
         {{-- ---- HEADER ---- --}}
-        <div style="padding:2rem 2.5rem 1.25rem;border-bottom:1px solid #f1f5f9;flex-shrink:0;">
+        <div style="padding:1.5rem 2rem 1.25rem;border-bottom:1px solid #f1f5f9;flex-shrink:0;">
 
             {{-- Flash --}}
             @if(session()->has('message') || session()->has('success'))
@@ -62,7 +65,7 @@
         </div>
 
         {{-- ---- SCROLLABLE BODY ---- --}}
-        <div style="flex:1;overflow-y:auto;padding:1.5rem 2.5rem;">
+        <div style="flex:1;padding:1.5rem 2rem;">
 
             {{-- INTRODUCTION PAGE --}}
             @if($showIntroduction && $formulaire->has_introduction)
@@ -412,13 +415,25 @@
                             <i class="ri-arrow-left-s-line"></i>
                         </button>
                         @for($s = 1; $s <= $totalSteps; $s++)
-                            <button wire:click="{{ $s < $currentStep ? 'previousStep' : ($s > $currentStep ? 'nextStep' : '') }}"
-                                    class="btn btn-sm rounded-circle p-0 d-flex align-items-center justify-content-center fw-bold"
-                                    style="width:30px;height:30px;font-size:.75rem;
-                                           background:{{ $currentStep == $s ? '#0f2441' : '#f1f5f9' }};
-                                           color:{{ $currentStep == $s ? '#fff' : '#374151' }};border:0;">
-                                {{ $s }}
-                            </button>
+                            @if($s === $currentStep)
+                                <button type="button" disabled
+                                        class="btn btn-sm rounded-circle p-0 d-flex align-items-center justify-content-center fw-bold"
+                                        style="width:30px;height:30px;font-size:.75rem;background:#0f2441;color:#fff;border:0;">
+                                    {{ $s }}
+                                </button>
+                            @elseif($s < $currentStep)
+                                <button type="button" wire:click="previousStep"
+                                        class="btn btn-sm rounded-circle p-0 d-flex align-items-center justify-content-center fw-bold"
+                                        style="width:30px;height:30px;font-size:.75rem;background:#f1f5f9;color:#374151;border:0;">
+                                    {{ $s }}
+                                </button>
+                            @else
+                                <button type="button" wire:click="nextStep"
+                                        class="btn btn-sm rounded-circle p-0 d-flex align-items-center justify-content-center fw-bold"
+                                        style="width:30px;height:30px;font-size:.75rem;background:#f1f5f9;color:#374151;border:0;">
+                                    {{ $s }}
+                                </button>
+                            @endif
                         @endfor
                         {{-- next arrow --}}
                         <button wire:click="nextStep" @if($currentStep >= $totalSteps) disabled @endif
@@ -500,18 +515,14 @@
                 <button type="button"
                         class="btn btn-sm rounded-3 fw-bold"
                         style="background:{{ $fColor }};color:#fff;border:0;font-size:.84rem;"
-                        @click="$wire.submit(); showSubmitConfirm = false">
+                        wire:click="submit"
+                        wire:loading.attr="disabled"
+                        @click="showSubmitConfirm = false">
                     <i class="ri-send-plane-fill me-1"></i>{{ $tr('Oui, soumettre','نعم، إرسال') }}
                 </button>
             </div>
         </div>
     </div>
     @endif
-
-    <script>
-        document.addEventListener('livewire:init', () => {
-            Livewire.on('scroll-to-top', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
-        });
-    </script>
 
 </div>

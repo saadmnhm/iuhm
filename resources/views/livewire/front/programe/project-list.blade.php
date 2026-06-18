@@ -1,4 +1,4 @@
-﻿@php
+@php
     $isArabic = str_starts_with(app()->getLocale(), 'ar');
     $tr = fn (string $fr, string $ar) => $isArabic ? $ar : $fr;
 @endphp
@@ -50,7 +50,7 @@
     {{-- ── PROJECTS CARDS GRID ── --}}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         @forelse($rows as $row)
-            @php
+@php
                 $color = $row['color'] ?? '#2f5496';
                 if (!str_starts_with($color, '#')) {
                     $color = '#' . $color;
@@ -78,7 +78,20 @@
                             {{ $tr('Non Eligible', 'غير مؤهل') }}
                         </span>
                     @endif
+                    
+                    {{-- reasons will be shown below the badge (rendered after this top row) --}}
                 </div>
+
+                {{-- Show reasons directly below the eligibility badge when not eligible --}}
+                @if (! $row['eligible'] && ! empty($row['reasons']))
+                    <div class="mb-3 w-100">
+                        <ul class="mb-0 small text-rose-600" style="line-height:1.4; margin-left:1rem;">
+                            @foreach($row['reasons'] as $reason)
+                                <li>{{ $reason }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
                 {{-- Second Row: Criteria Pills (Age and Location) --}}
                 <div class="d-flex justify-between gap-2 mb-3">

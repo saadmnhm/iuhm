@@ -206,9 +206,21 @@ class ProjectFormulaireView extends Component
         $submission = DynamicFormSubmission::with(['answers', 'tableAnswers'])->find($this->submissionId);
         if (!$submission) return;
 
+        $fieldsById = $this->formulaire->steps
+            ->flatMap(fn ($step) => $step->fields)
+            ->keyBy('id');
+
         foreach ($submission->answers as $answer) {
             if ($answer->dynamic_form_field_id) {
-                $this->answers[$answer->dynamic_form_field_id] = $answer->value;
+                $field = $fieldsById->get($answer->dynamic_form_field_id);
+                $value = $answer->value;
+
+                if (($field?->type ?? null) === 'checkbox') {
+                    $decoded = is_string($value) ? json_decode($value, true) : null;
+                    $value = is_array($decoded) ? $decoded : array_filter([(string) $value]);
+                }
+
+                $this->answers[$answer->dynamic_form_field_id] = $value;
             }
         }
 
@@ -470,7 +482,10 @@ class ProjectFormulaireView extends Component
                     continue;
                 }
 
-                $answerValue = $value;
+                $answerValue = is_array($value)
+                    ? json_encode(array_values($value), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+                    : $value;
+
                 if ($field->type === 'file') {
                     $answerValue = $this->prepareFileAnswerValue(
                         $submission->id,
@@ -674,14 +689,7 @@ class ProjectFormulaireView extends Component
             $currentStepData = $this->formulaire->steps->firstWhere('step_number', $this->currentStep);
         }
 
-        $projectId = request()->integer('project_id');
-        $project = null;
-
-        if ($this->existingSubmission?->programe) {
-            $project = $this->existingSubmission->programe;
-        } elseif ($projectId > 0) {
-            $project = ProjectsList::find($projectId);
-        }
+        $project = $this->existingSubmission?->programe ?: $this->project;
 
         return view('livewire.front.programe.project-formulaire-view', [
             'currentStepData' => $currentStepData,
