@@ -17,6 +17,8 @@ class ProjectsCreate extends Component
 {
     use WithFileUploads, WithPagination;
 
+    protected $listeners = ['reorderFormulaires'];
+
     public ?int $programeId = null;
     public string $project_name = '';
     public string $status = 'Active';
@@ -72,10 +74,12 @@ class ProjectsCreate extends Component
 
     public bool $isEditing = false;
 
-    // Gha nchm3o l-inputs l-jded m3a l-properties l-qdamin dyal database b l-entrelacement
+    // Keep old/new property aliases in sync while the Blade is being migrated.
     public function updatedTitle($value) { $this->project_name = $value; }
     public function updatedContent($value) { $this->description = $value; }
     public function updatedNewImage($value) { $this->logo1 = $value; }
+    public function updatedProjectName($value) { $this->title = $value; }
+    public function updatedDescription($value) { $this->content = $value; }
 
     protected function rules(): array
     {
@@ -179,7 +183,7 @@ class ProjectsCreate extends Component
         if ($this->programeId) {
             $this->mount($this->programeId); // Reset modifications
         } else {
-            $this->redirect(route('admin.projects.index')); // wla l-blasa fin bghiti re-routage
+            $this->redirect(route('admin.programe')); // wla l-blasa fin bghiti re-routage
         }
     }
 
@@ -220,8 +224,16 @@ class ProjectsCreate extends Component
             ->toArray();
     }
 
-    public function attachFormulaire(): void
+    public function attachFormulaire(?int $formulaireId = null): void
     {
+        if ($formulaireId) {
+            $this->selectedFormulaire = $formulaireId;
+            $this->formulaireOrder = count($this->attachedFormulaires) + 1;
+            $this->formulaireStatus = $this->formulaireStatus ?: 'active';
+            $this->formulaireRequired = true;
+            $this->formulaireUnlockStatus = $this->formulaireUnlockStatus ?: 'approved';
+        }
+
         $this->validate([
             'selectedFormulaire'     => 'required|exists:dynamic_forms,id',
             'formulaireOrder'        => 'required|integer|min:1',
@@ -236,7 +248,7 @@ class ProjectsCreate extends Component
 
         $programe = ProjectsList::findOrFail($this->programeId);
 
-        if ($programe->formulaires()->wherePivot('dynamic_form_id', $this->selectedFormulaire)->exists()) {
+        if ($programe->formulaires()->wherePivot('formulaire_id', $this->selectedFormulaire)->exists()) {
             session()->flash('error', 'Ce formulaire est déjà attaché à ce projet.');
             return;
         }
@@ -248,8 +260,45 @@ class ProjectsCreate extends Component
             'unlock_on_status' => $this->formulaireUnlockStatus,
         ]);
 
+        $this->normalizeFormulaireOrders($programe);
         $this->loadFormulaires();
+        $this->selectedFormulaire = null;
+        $this->formulaireOrder = count($this->attachedFormulaires) + 1;
+        $this->formulaireStatus = 'active';
+        $this->formulaireRequired = true;
+        $this->formulaireUnlockStatus = 'approved';
         session()->flash('message', 'Formulaire attaché avec succès !');
+    }
+
+    public function reorderFormulaires(array $orderedIds): void
+    {
+        if (!$this->programeId) return;
+
+        $programe = ProjectsList::findOrFail($this->programeId);
+        $attachedIds = $programe->formulaires()
+            ->pluck('dynamic_forms.id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
+        $orderedIds = collect($orderedIds)
+            ->map(fn ($id) => (int) $id)
+            ->filter(fn ($id) => in_array($id, $attachedIds, true))
+            ->unique()
+            ->values();
+
+        foreach ($orderedIds as $index => $id) {
+            $programe->formulaires()->updateExistingPivot((int) $id, ['order' => $index + 1]);
+        }
+
+        collect($attachedIds)
+            ->diff($orderedIds)
+            ->values()
+            ->each(function ($id, $index) use ($programe, $orderedIds) {
+                $programe->formulaires()->updateExistingPivot((int) $id, [
+                    'order' => $orderedIds->count() + $index + 1,
+                ]);
+            });
+
+        $this->loadFormulaires();
     }
 
     public function selectFormulaire(int $formulaireId): void
@@ -265,7 +314,9 @@ class ProjectsCreate extends Component
     public function detachFormulaire(int $formulaireId): void
     {
         if (!$this->programeId) return;
-        ProjectsList::findOrFail($this->programeId)->formulaires()->detach($formulaireId);
+        $programe = ProjectsList::findOrFail($this->programeId);
+        $programe->formulaires()->detach($formulaireId);
+        $this->normalizeFormulaireOrders($programe);
         $this->loadFormulaires();
         session()->flash('message', 'Formulaire détaché avec succès !');
     }
@@ -273,9 +324,9 @@ class ProjectsCreate extends Component
     public function updateFormulaireOrder(int $formulaireId, $newOrder): void
     {
         if (!$this->programeId) return;
-        ProjectsList::findOrFail($this->programeId)
-            ->formulaires()
-            ->updateExistingPivot($formulaireId, ['order' => (int) $newOrder]);
+        $programe = ProjectsList::findOrFail($this->programeId);
+        $programe->formulaires()->updateExistingPivot($formulaireId, ['order' => max(1, (int) $newOrder)]);
+        $this->normalizeFormulaireOrders($programe);
         $this->loadFormulaires();
     }
 
@@ -297,6 +348,17 @@ class ProjectsCreate extends Component
             ->formulaires()
             ->updateExistingPivot($formulaireId, ['is_required' => $newRequired]);
         $this->loadFormulaires();
+    }
+
+    private function normalizeFormulaireOrders(ProjectsList $programe): void
+    {
+        $programe->formulaires()
+            ->get()
+            ->sortBy(fn ($form) => [(int) $form->pivot->order, (int) $form->id])
+            ->values()
+            ->each(function ($form, int $index) use ($programe) {
+                $programe->formulaires()->updateExistingPivot($form->id, ['order' => $index + 1]);
+            });
     }
 
     public function selectIcon(string $iconClass): void
@@ -355,9 +417,10 @@ class ProjectsCreate extends Component
         $this->errorMessage   = '';
 
         try {
-            // Sincronisw l-valeurs f la validation direct bch maytrach khit f l-wire:model dyal l-front
-            $this->project_name = $this->title;
-            $this->description = $this->content;
+            $this->project_name = trim((string) ($this->project_name ?: $this->title));
+            $this->description = trim((string) ($this->description ?: $this->content));
+            $this->title = $this->project_name;
+            $this->content = $this->description;
 
             $this->validate();
 
@@ -431,7 +494,7 @@ class ProjectsCreate extends Component
                 $project = ProjectsList::create($data);
                 AdminActivityLog::log('programme_created', "Created programme: {$project->project_name}", ProjectsList::class, $project->id);
                 session()->flash('success', 'Projet créé avec succès.');
-                $this->redirect(route('admin.projects.index'));
+                $this->redirect(route('admin.programe.edit', $project->id), navigate: true);
             }
 
             $this->successProjectId = $project->id;
