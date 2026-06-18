@@ -54,7 +54,7 @@ class ProjectList extends Component
                 ->where('programe_id', $project->id)
                 ->orderByDesc('updated_at')
                 ->first();
-
+            $locationIds = $project->allowed_location_ids ? explode(',', $project->allowed_location_ids) : [];
            
             return [
                 'id'           => $project->id,
@@ -69,11 +69,12 @@ class ProjectList extends Component
                 'updated_at'   => $submission?->updated_at?->format('d/m/Y'),
                 'min_age'      => $project->min_age,
                 'max_age'      => $project->max_age,
-                'locations'    => \App\Models\MoroccoLocation::whereIn('id', $project->allowed_location_ids ?? [])->get()->map(function($loc) {
-                    return strtoupper($loc->city . ($loc->prefecture ? ', ' . $loc->prefecture : ''));
-                })->implode(' / ') ?: 'TOUT LE MAROC',
-            ];
-        });
+                'locations' => \App\Models\MoroccoLocation::whereIn('id', $locationIds)->get()->map(function ($loc) {
+                        return strtoupper(
+                            $loc->city .
+                            ($loc->prefecture ? ', ' . $loc->prefecture : '')
+                        );
+                    })->implode(' / ') ?: 'TOUT LE MAROC',];});
 
         // Apply status filter
         if ($this->statusFilter) {

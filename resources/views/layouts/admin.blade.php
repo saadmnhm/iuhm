@@ -21,6 +21,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head-scripts')
     @livewireStyles
+    <!-- Alpine is bundled inside Livewire; do NOT load it separately -->
     <style>
         /* Global select styling */
         select {
@@ -171,6 +172,52 @@
                 });
             });
         });
+    </script>
+    <script>
+        // Diagnostic: log Livewire elements missing server snapshot
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                const els = Array.from(document.querySelectorAll('[wire\\:id]'));
+                const missing = els.filter(e => !e.hasAttribute('wire:snapshot'));
+                if (missing.length > 0) {
+                    console.warn(`Livewire diagnostic: ${missing.length} element(s) with wire:id but missing wire:snapshot:`);
+                    missing.forEach((el, idx) => {
+                        console.warn(idx + 1 + ':', el.tagName, el.getAttribute('wire:id'), el);
+                    });
+                } else {
+                    console.log('Livewire diagnostic: all wired elements have snapshots.');
+                }
+            } catch (err) {
+                console.error('Livewire diagnostic error:', err);
+            }
+        });
+        // Watch for DOM mutations that add Livewire elements without snapshots
+        (function() {
+            try {
+                const observer = new MutationObserver(mutations => {
+                    for (const m of mutations) {
+                        for (const node of Array.from(m.addedNodes || [])) {
+                            if (!(node instanceof Element)) continue;
+                            // check the node and its descendants
+                            const candidates = node.matches('[wire\\:id]') ? [node] : Array.from(node.querySelectorAll('[wire\\:id]'));
+                            candidates.forEach(el => {
+                                if (!el.hasAttribute('wire:snapshot')) {
+                                    const parent = el.parentElement ? `${el.parentElement.tagName}${el.parentElement.id ? '#'+el.parentElement.id : ''}.${el.parentElement.className}` : 'no-parent';
+                                    const snippet = (el.outerHTML || '').slice(0, 300).replace(/\s+/g, ' ');
+                                    console.warn('Livewire diagnostic (mutation): element added with wire:id but missing wire:snapshot:', el.tagName, el.getAttribute('wire:id'), 'parent=', parent, 'snippet=', snippet);
+                                }
+                            });
+                        }
+                    }
+                });
+
+                observer.observe(document.documentElement || document.body, { childList: true, subtree: true });
+                // expose for debugging
+                window.__livewireSnapshotObserver = observer;
+            } catch (e) {
+                console.error('Livewire snapshot observer error', e);
+            }
+        })();
     </script>
 </body>
 </html>

@@ -36,6 +36,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::permanentRedirect('addresses', 'console/addresses');
         Route::permanentRedirect('formulaires', 'console/formulaires');
 
+
+
         Route::get('/console/users', \App\Livewire\Admin\User\UserManagement::class)->name('users.index')->middleware('module:users');
         Route::get('/candidats/{id}', \App\Livewire\Admin\Candidat\ShowCandidat::class)->name('candidats.show')->middleware('module:candidats');
         Route::get('/candidats/{id}/edit', \App\Livewire\Admin\Candidat\EditCandidat::class)->name('candidats.edit')->middleware('module:candidats');
@@ -81,6 +83,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/my-submissions', \App\Livewire\Admin\Submissions\MyAssignedSubmissions::class)->name('my.submissions')->middleware('module:my_submissions');
         Route::get('/all-submissions', \App\Livewire\Admin\Submissions\AllSubmissions::class)->name('all.submissions')->middleware('module:all_submissions');
         Route::get('/association-parameters', \App\Livewire\Admin\Settings\AssociationParameters::class)->name('association.parameters')->middleware('module:association_parameters');
+        
+        // media
         Route::get('/media/article', \App\Livewire\Admin\Article\ArticleManagement::class)->name('article.index')->middleware('module:article');
         Route::get('/media/article/{id}', \App\Livewire\Admin\Article\ArticleForm::class)->name('article.form')->middleware('module:article');
         Route::get('/media/actualite', \App\Livewire\Admin\Actualite\ActualiteManagement::class)->name('actualite.index')->middleware('module:actualite');
@@ -90,6 +94,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/media/newsletters', \App\Livewire\Admin\Newsletter\NewsletterManagement::class)->name('newsletters.index')->middleware('module:blog');
         Route::get('/media/contact', \App\Livewire\Admin\Contact\ContactManagement::class)->name('contact.index');
         Route::get('/media', \App\Livewire\Admin\Media\MediaManagement::class)->name('media.index')->middleware('module:media');
+        Route::get('/media/apropos', \App\Livewire\Admin\Apropos\Apropos::class)->name('apropos.index')->middleware('module:apropos');
+
         
         Route::get('/history-audit', \App\Livewire\Admin\Submissions\HistoryAudit::class)->name('history.audit')->middleware('module:history_audit');
         Route::get('/support-tickets', \App\Livewire\Admin\Support\SupportTickets::class)->name('support.tickets')->middleware('module:support');

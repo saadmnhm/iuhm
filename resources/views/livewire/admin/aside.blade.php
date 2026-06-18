@@ -56,6 +56,9 @@
                     <a wire:navigate href="{{ route('admin.newsletters.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.newsletters*') ? 'bg-[#DCFCE7]' : '' }}">
                         <i class="ri-mail-line mr-1"></i> Newsletters
                     </a>
+                    <a wire:navigate href="{{ route('admin.apropos.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.apropos*') ? 'bg-[#DCFCE7]' : '' }}">
+                        <i class="ri-mail-line mr-1"></i> A propos
+                    </a>
 
 
                 @endcanmodule
