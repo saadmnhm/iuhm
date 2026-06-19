@@ -108,65 +108,6 @@ class AllSubmissions extends Component
     {
         $query = DynamicFormSubmission::with(['candidat', 'form', 'programe', 'reviewer', 'ProjectsSubmission.reviewer']);
 
-        // Search
-        if ($this->search) {
-            $query->where(function ($q) {
-                $q->whereHas('candidat', function ($c) {
-                    $c->where('nom', 'like', "%{$this->search}%")
-                      ->orWhere('prenom', 'like', "%{$this->search}%")
-                      ->orWhere('email', 'like', "%{$this->search}%")
-                      ->orWhere('matricule', 'like', "%{$this->search}%");
-                })->orWhereHas('form', function ($f) {
-                    $f->where('title', 'like', "%{$this->search}%");
-                });
-            });
-        }
-
-        // Status filter
-        if ($this->statusFilter !== 'all') {
-            $query->where('status', $this->statusFilter);
-        }
-
-        // Programme filter
-        if ($this->programeFilter !== 'all') {
-            $query->where('programe_id', $this->programeFilter);
-        }
-
-        // Formulaire filter
-        if ($this->formulaireFilter !== 'all') {
-            $query->where('dynamic_form_id', $this->formulaireFilter);
-        }
-
-        // Responsable filter
-        if ($this->responsableFilter !== 'all') {
-            if ($this->responsableFilter === 'none') {
-                $query->whereNull('reviewed_by');
-            } else {
-                $query->where('reviewed_by', $this->responsableFilter);
-            }
-        }
-
-        // Gender filter
-        if ($this->genderFilter !== 'all') {
-            $query->whereHas('candidat', function ($q) {
-                $q->where('gender', $this->genderFilter);
-            });
-        }
-
-        // Address filter
-        if ($this->addressFilter !== 'all') {
-            $query->whereHas('candidat', function ($q) {
-                $q->where('address', $this->addressFilter);
-            });
-        }
-
-        // Date range
-        if ($this->dateFrom) {
-            $query->whereDate('created_at', '>=', $this->dateFrom);
-        }
-        if ($this->dateTo) {
-            $query->whereDate('created_at', '<=', $this->dateTo);
-        }
 
         $submissions = $query->latest()->where('is_submitted', true)->paginate(15);
 
@@ -230,7 +171,7 @@ class AllSubmissions extends Component
             $projectQuery->whereDate('created_at', '<=', $this->dateTo);
         }
 
-        $ProjectsSubmissions = $projectQuery->latest()->paginate(15, ['*'], 'projectPage');
+        $ProjectsSubmissions = $projectQuery->latest()->where('is_finished', true)->paginate(15, ['*'], 'projectPage');
 
         $programmes  = ProjectsList::orderBy('project_name')->get(['id', 'project_name']);
         $formulaires = DynamicForm::orderBy('title')->get(['id', 'title']);
@@ -240,7 +181,7 @@ class AllSubmissions extends Component
 
         $weekStart = now()->startOfWeek();
         $stats = [
-            'total'          => DynamicFormSubmission::count(),
+            'total'          => DynamicFormSubmission::where('is_submitted', true)->count(),
             'draft'          => DynamicFormSubmission::where('status', 'draft')->count(),
             'submitted'      => DynamicFormSubmission::where('status', 'submitted')->count(),
             'in_review'      => DynamicFormSubmission::where('status', 'in_review')->count(),

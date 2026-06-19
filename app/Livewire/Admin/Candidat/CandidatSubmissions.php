@@ -28,7 +28,7 @@ class CandidatSubmissions extends Component
     public $is_evaluated;
     public $statistics = [];
     public $submissions = [];
-    public $dynamicSubmissions;
+    public $dynamicSubmissions = []; // Changed to array to prevent overwriting
     public array $customOrders = [];
     public array $globalOrders = [];
     public array $lockedOrders = [];
@@ -57,32 +57,44 @@ class CandidatSubmissions extends Component
     public bool $workflowAlreadyAllowed = false;
     public array $workflowHistory = [];
 
-
-
     public function mount($id, $projectId = null)
     {
         $this->candidatId = $id;
         $this->candidat   = Candidat::with('reviewer')->findOrFail($id);
         $this->formationRanking = (string) ($this->candidat->formation_ranking ?? '');
-        $this->admins     = User::all()->sortBy('name')->values()->toArray();
+        
+        // Optimized: Select nom and prenom, and map to a 'name' key so the frontend array structure remains identical
+        $this->admins = User::select('id', 'nom', 'prenom')
+            ->orderBy('nom')
+            ->get()
+            ->map(function($user) {
+                return [
+                    'id' => $user->id,
+                    'name' => trim($user->nom . ' ' . $user->prenom)
+                ];
+            })
+            ->toArray();
         
         // Get project from URL when provided and valid for this candidat; fallback to first available
-        $firstSubmission = DynamicFormSubmission::where('candidat_id', $id)
-            ->whereNotNull('programe_id')
-            ->first();
-
         $requestedProjectId = $projectId !== null ? (int) $projectId : null;
-        $projectExistsForCandidat = $requestedProjectId
-            ? DynamicFormSubmission::where('candidat_id', $id)
+        
+        $projectExistsForCandidat = false;
+        if ($requestedProjectId) {
+            $projectExistsForCandidat = DynamicFormSubmission::where('candidat_id', $id)
                 ->where('programe_id', $requestedProjectId)
-                ->exists()
-            : false;
+                ->exists();
+        }
 
-        $this->projectId = $projectExistsForCandidat
-            ? $requestedProjectId
-            : ($firstSubmission->programe_id ?? null);
+        if ($projectExistsForCandidat) {
+            $this->projectId = $requestedProjectId;
+        } else {
+            $firstSubmission = DynamicFormSubmission::where('candidat_id', $id)
+                ->whereNotNull('programe_id')
+                ->first();
+            $this->projectId = $firstSubmission->programe_id ?? null;
+        }
 
-        $this->project   = $this->projectId
+        $this->project = $this->projectId
             ? ProjectsList::with('formulaires')->findOrFail($this->projectId)
             : null;
 
@@ -100,105 +112,9 @@ class CandidatSubmissions extends Component
         $formService = app(FormSubmissionService::class);
         $this->submissions = $formService->getCandidatSubmissions($this->candidatId);
 
-        // Submissions by formulaire
-        $submissionsByFormulaire = [];
-        $attachedForm = [];
-
-        $customOrdersMap = collect();
-        if ($this->projectId) {
-            $customOrdersMap = CandidatFormulaireOrder::where('candidat_id', $this->candidatId)
-                ->where('programe_id', $this->projectId)
-                ->get()
-                ->keyBy('formulaire_id');
-        }
-        
-        if ($this->project) {
-            foreach ($this->project->formulaires as $formulaire) {
-                $count = DynamicFormSubmission::where('programe_id', $this->projectId)
-                    ->where('dynamic_form_id', $formulaire->id)
-                    ->where('candidat_id', $this->candidatId)
-                    ->count();
-                
-                $completed = DynamicFormSubmission::where('programe_id', $this->projectId)
-                    ->where('dynamic_form_id', $formulaire->id)
-                    ->where('candidat_id', $this->candidatId)
-                    ->whereIn('status', ['submitted', 'in_review', 'approved'])
-                    ->count();
-
-                $this->dynamicSubmissions = \Illuminate\Support\Facades\DB::table('programe_formulaire')
-                    ->where('programe_id', $this->projectId)
-                    ->where('formulaire_id', $formulaire->id)
-                    ->orderByDesc('updated_at')
-                    ->get();
-
-                $DynamicFormSubmission = DynamicFormSubmission::with('reviewer')
-                    ->where('programe_id', $this->projectId)
-                    ->where('dynamic_form_id', $formulaire->id)
-                    ->where('candidat_id', $this->candidatId)
-                    ->first();
-
-                $submissionsByFormulaire[] = [
-                    'id' => $formulaire->id,
-                    'title' => $formulaire->title,
-                    'icon' => $formulaire->icon,
-                    'color' => $formulaire->color,
-                    'total' => $count,
-                    'completed' => $completed,
-                    'is_active' => $formulaire->pivot->status === 'active',
-                ];
-
-                $effectiveOrder = $customOrdersMap->has($formulaire->id)
-                    ? (int) $customOrdersMap->get($formulaire->id)->order
-                    : (int) $formulaire->pivot->order;
-
-                $this->globalOrders[$formulaire->id] = (int) $formulaire->pivot->order;
-                $this->customOrders[$formulaire->id] = $effectiveOrder;
-                $this->lockedOrders[$formulaire->id] = (bool) (
-                    ($DynamicFormSubmission?->is_submitted ?? false)
-                    || in_array($DynamicFormSubmission?->status, ['submitted', 'in_review', 'approved'], true)
-                );
-
-                $attachedForm[] = [
-                    'id' => $formulaire->id,
-                    'submission_id' => $DynamicFormSubmission->id ?? null,
-                    'title' => $formulaire->title,
-                    'icon' => $formulaire->icon,
-                    'color' => $formulaire->color,
-                    'order' => $effectiveOrder,
-                    'global_order' => (int) $formulaire->pivot->order,
-                    'has_custom_order' => $customOrdersMap->has($formulaire->id),
-                    'completed' => $completed,
-                    'is_active' => $formulaire->pivot->status,
-                    'actual_status'    => $DynamicFormSubmission?->status,
-                    'is_submitted'     => $DynamicFormSubmission?->is_submitted ?? 0,
-                    'status_label'     => $DynamicFormSubmission?->status
-                        ? (['draft' => 'Brouillon', 'submitted' => 'Soumis', 'in_review' => 'En révision', 'approved' => 'Approuvé', 'rejected' => 'Rejeté'][$DynamicFormSubmission->status] ?? ucfirst($DynamicFormSubmission->status))
-                        : 'Non soumis',
-                    'programe'         => ['project_name' => $this->project->project_name ?? 'N/A'],
-                    'created_at'       => $DynamicFormSubmission?->created_at?->format('d/m/Y H:i'),
-                    'submitted_at'     => $DynamicFormSubmission?->submitted_at?->format('d/m/Y H:i'),
-                    'review_notes'     => $DynamicFormSubmission?->review_notes,
-                    'all_stages_validated' => $this->allWorkflowStagesValidated($DynamicFormSubmission?->workflow_stages),
-                    'next_form_allowed' => $this->isNextFormAllowed($DynamicFormSubmission?->workflow_stages),
-                ];
-            }
-        }
-
-        $attachedForm = collect($attachedForm)
-            ->sortBy([['order', 'asc'], ['global_order', 'asc'], ['id', 'asc']])
-            ->values()
-            ->toArray();
-
-        $attachedForm = $this->addFormPositionFlags($attachedForm);
-
-        $this->statistics = [
-            'by_formulaire' => $submissionsByFormulaire,
-            'form_attached' => $attachedForm,
-        ];
-
+        // Populate form data using the single source of truth
+        $this->loadFormData();
     }
-
-
 
     public function openReviewModal(): void
     {
@@ -230,7 +146,8 @@ class CandidatSubmissions extends Component
             SubmissionHistory::log(Candidat::class, $this->candidat->id, 'status_changed', $oldStatus, $this->reviewStatus, $this->reviewNotes);
         }
         if ($oldReviewer != $this->reviewerId) {
-            $reviewerName = User::find($this->reviewerId)?->name ?? 'N/A';
+            $reviewer = User::find($this->reviewerId);
+            $reviewerName = $reviewer ? trim($reviewer->nom . ' ' . $reviewer->prenom) : 'N/A';
             SubmissionHistory::log(Candidat::class, $this->candidat->id, 'reviewer_assigned', null, $reviewerName, null);
         }
 
@@ -254,10 +171,25 @@ class CandidatSubmissions extends Component
             return;
         }
 
+        // Optimized: Fetch custom orders once and key by formulaire_id
         $customOrdersMap = CandidatFormulaireOrder::where('candidat_id', $this->candidatId)
             ->where('programe_id', $this->projectId)
             ->get()
             ->keyBy('formulaire_id');
+
+        // Optimized: Fetch all relevant submissions once (Fixing N+1)
+        $submissionsMap = DynamicFormSubmission::with('reviewer')
+            ->where('programe_id', $this->projectId)
+            ->where('candidat_id', $this->candidatId)
+            ->get()
+            ->keyBy('dynamic_form_id');
+
+        // Optimized: Fetch programe_formulaire data once
+        $programeFormulaires = DB::table('programe_formulaire')
+            ->where('programe_id', $this->projectId)
+            ->orderByDesc('updated_at')
+            ->get()
+            ->groupBy('formulaire_id');
 
         $statusLabels = [
             'draft'     => 'Brouillon',
@@ -268,12 +200,26 @@ class CandidatSubmissions extends Component
         ];
 
         $attachedForm = [];
+        $submissionsByFormulaire = [];
+
         foreach ($this->project->formulaires as $formulaire) {
-            $sub = DynamicFormSubmission::with('reviewer')
-                ->where('programe_id', $this->projectId)
-                ->where('dynamic_form_id', $formulaire->id)
-                ->where('candidat_id', $this->candidatId)
-                ->first();
+            $sub = $submissionsMap->get($formulaire->id);
+
+            // Store the program formulaires specifically for this iteration
+            $this->dynamicSubmissions[$formulaire->id] = $programeFormulaires->get($formulaire->id) ?? collect();
+
+            $count = $sub ? 1 : 0; 
+            $completed = $sub && in_array($sub->status, ['submitted', 'in_review', 'approved']) ? 1 : 0;
+
+            $submissionsByFormulaire[] = [
+                'id' => $formulaire->id,
+                'title' => $formulaire->title,
+                'icon' => $formulaire->icon,
+                'color' => $formulaire->color,
+                'total' => $count,
+                'completed' => $completed,
+                'is_active' => $formulaire->pivot->status === 'active',
+            ];
 
             $effectiveOrder = $customOrdersMap->has($formulaire->id)
                 ? (int) $customOrdersMap->get($formulaire->id)->order
@@ -295,10 +241,10 @@ class CandidatSubmissions extends Component
                 'order'            => $effectiveOrder,
                 'global_order'     => (int) $formulaire->pivot->order,
                 'has_custom_order' => $customOrdersMap->has($formulaire->id),
-                'completed'        => $sub && in_array($sub->status, ['submitted', 'in_review', 'approved']) ? 1 : 0,
+                'completed'        => $completed,
                 'is_active'        => $formulaire->pivot->status,
                 'actual_status'    => $sub?->status,
-                'is_submitted'     => $sub?->is_submitted,
+                'is_submitted'     => $sub?->is_submitted ?? 0,
                 'status_label'     => $sub?->status
                     ? ($statusLabels[$sub->status] ?? ucfirst($sub->status))
                     : 'Non soumis',
@@ -318,7 +264,10 @@ class CandidatSubmissions extends Component
 
         $attachedForm = $this->addFormPositionFlags($attachedForm);
 
-        $this->statistics['form_attached'] = $attachedForm;
+        $this->statistics = [
+            'by_formulaire' => $submissionsByFormulaire,
+            'form_attached' => $attachedForm,
+        ];
     }
 
     protected function addFormPositionFlags(array $attachedForm): array
@@ -356,7 +305,6 @@ class CandidatSubmissions extends Component
         DB::transaction(function () use ($allowedFormIds) {
             foreach ($allowedFormIds as $formId) {
                 if (($this->lockedOrders[$formId] ?? false) === true) {
-                    // Safety: never change order for already submitted/reviewed forms
                     continue;
                 }
 
@@ -463,7 +411,7 @@ class CandidatSubmissions extends Component
                     'old' => $h->old_value,
                     'new' => $h->new_value,
                     'notes' => $h->notes,
-                    'by' => $h->changedByUser?->name ?? 'Système',
+                    'by' => $h->changedByUser ? trim($h->changedByUser->nom . ' ' . $h->changedByUser->prenom) : 'Système',
                     'at' => $h->created_at?->format('d/m/Y H:i'),
                 ];
             })->toArray();
@@ -488,18 +436,30 @@ class CandidatSubmissions extends Component
             ? (bool) ($existingStages['next_form_allowed'] ?? false)
             : false;
 
-        $submission->update([
+        $newWorkflowStages = [
+            'formation_validated' => $this->stageFormationValidated,
+            'candidate_in_formation' => $this->stageCandidateInFormation,
+            'administrative_validated' => $this->stageAdministrativeValidated,
+            'next_form_allowed' => $nextFormAllowed,
+        ];
+
+        if ($this->workflowStatus === 'approved') {
+            $newWorkflowStages['next_form_allowed'] = true;
+        }
+
+        $updatePayload = [
             'status' => $this->workflowStatus,
-            'workflow_stages' => [
-                'formation_validated' => $this->stageFormationValidated,
-                'candidate_in_formation' => $this->stageCandidateInFormation,
-                'administrative_validated' => $this->stageAdministrativeValidated,
-                'next_form_allowed' => $nextFormAllowed,
-            ],
+            'workflow_stages' => $newWorkflowStages,
             'review_notes' => $this->workflowComment,
             'reviewed_at' => now(),
             'reviewed_by' => auth()->id(),
-        ]);
+        ];
+
+        if ($this->workflowStatus === 'rejected') {
+            $updatePayload['is_submitted'] = false; 
+        }
+
+        $submission->update($updatePayload);
 
         if ($oldStatus !== $this->workflowStatus) {
             SubmissionHistory::log(
@@ -592,8 +552,6 @@ class CandidatSubmissions extends Component
         session()->flash('success', 'Formulaire validé: le candidat peut passer au suivant.');
     }
 
-
-
     public function render()
     {
         $is_evaluated = CandidatEvaluationGrid::where('candidat_id', $this->candidatId)
@@ -602,12 +560,10 @@ class CandidatSubmissions extends Component
 
         $this->is_evaluated = $is_evaluated;
 
-
-
         return view('livewire.admin.projects.candidat.candidat-submissions')
             ->layout('layouts.admin', [
                 'header' => 'Soumissions de ' . $this->candidat->nom . ' ' . $this->candidat->prenom . ($this->project ? " - {$this->project->project_name}" : ''),
                 'is_evaluated' => $is_evaluated,
-                ]);
+            ]);
     }
 }

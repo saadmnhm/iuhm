@@ -8,11 +8,10 @@
     }
 @endphp
 
-<div x-data="{ showSubmitConfirm: false }" @if($isArabic) dir="rtl" @endif
-     style="min-height:100vh;background:#f4f5f7;display:flex;align-items:flex-start;justify-content:center;padding:1.5rem 1rem;">
+<div x-data="{ showSubmitConfirm: false }" @if($isArabic) dir="rtl" @endif >
 
     {{-- ===== FORM CARD ===== --}}
-    <div style="background:#fff;width:100%;max-width:980px;border-radius:18px;box-shadow:0 14px 40px rgba(15,23,42,.10);border:1px solid #e5e7eb;display:flex;flex-direction:column;overflow:hidden;">
+    <div >
 
         {{-- ---- HEADER ---- --}}
         <div style="padding:1.5rem 2rem 1.25rem;border-bottom:1px solid #f1f5f9;flex-shrink:0;">
@@ -124,42 +123,36 @@
 
                         @if($field->type === 'text')
                             <input type="text" id="f_{{ $field->id }}" wire:model="answers.{{ $field->id }}"
-                                   class="form-control rounded-3 border-0"
-                                   style="background:#f5f6fa;padding:.7rem 1rem;font-size:.86rem;color:#374151;"
+                                   class="form-control iuhm_input rounded-3 border-0"
                                    placeholder="{{ $field->placeholder }}"
                                    @if($isReadOnly) readonly @endif>
 
                         @elseif($field->type === 'textarea')
                             <textarea id="f_{{ $field->id }}" wire:model="answers.{{ $field->id }}"
-                                      class="form-control rounded-3 border-0"
-                                      style="background:#f5f6fa;padding:.7rem 1rem;font-size:.86rem;color:#374151;min-height:100px;resize:vertical;"
+                                      class="form-control iuhm_textarea rounded-3 border-0"
                                       placeholder="{{ $field->placeholder }}"
                                       @if($isReadOnly) readonly @endif></textarea>
 
                         @elseif($field->type === 'number')
                             <input type="number" id="f_{{ $field->id }}" wire:model="answers.{{ $field->id }}"
-                                   class="form-control rounded-3 border-0"
-                                   style="background:#f5f6fa;padding:.7rem 1rem;font-size:.86rem;color:#374151;"
+                                   class="form-control iuhm_input rounded-3 border-0"
                                    placeholder="{{ $field->placeholder }}"
                                    @if($isReadOnly) readonly @endif>
 
                         @elseif($field->type === 'email')
                             <input type="email" id="f_{{ $field->id }}" wire:model="answers.{{ $field->id }}"
-                                   class="form-control rounded-3 border-0"
-                                   style="background:#f5f6fa;padding:.7rem 1rem;font-size:.86rem;color:#374151;"
+                                   class="form-control iuhm_input rounded-3 border-0"
                                    placeholder="{{ $field->placeholder }}"
                                    @if($isReadOnly) readonly @endif>
 
                         @elseif($field->type === 'date')
                             <input type="date" id="f_{{ $field->id }}" wire:model="answers.{{ $field->id }}"
-                                   class="form-control rounded-3 border-0"
-                                   style="background:#f5f6fa;padding:.7rem 1rem;font-size:.86rem;color:#374151;"
+                                   class="form-control iuhm_input rounded-3 border-0"
                                    @if($isReadOnly) readonly @endif>
 
                         @elseif($field->type === 'select')
                             <select id="f_{{ $field->id }}" wire:model="answers.{{ $field->id }}"
-                                    class="form-select rounded-3 border-0"
-                                    style="background:#f5f6fa;padding:.7rem 1rem;font-size:.86rem;color:#374151;"
+                                    class="form-select iuhm_select rounded-3 border-0"
                                     @if($isReadOnly) disabled @endif>
                                 <option value="">{{ $field->placeholder ?: $tr('Sélectionner...','اختر...') }}</option>
                                 @foreach($field->options ?? [] as $opt)
@@ -259,7 +252,7 @@
                                         <th class="px-3 py-2 fw-semibold border-0" style="color:#fff;"></th>
                                     @endif
                                     @foreach($table->columns->sortBy('sort_order') as $col)
-                                        <th class="px-3 py-2 fw-semibold border-0" style="color:#fff;white-space:nowrap;">
+                                        <th class="pt-3 pb-3 text-center text-[14px] font-black text-slate-900 " >
                                             {{ $displayLabel($col->header, $col->header_ar) }}
                                         </th>
                                     @endforeach
@@ -272,7 +265,7 @@
                                 @if(!$table->has_dynamic_rows && $table->fixedRows->isNotEmpty())
                                     @foreach($table->fixedRows->sortBy('sort_order') as $ri => $row)
                                     <tr style="background:{{ $ri%2===0?'#fff':'#f9fafb' }};">
-                                        <td class="px-3 py-2 fw-semibold" style="color:#374151;border-color:#f1f5f9;">{{ $displayLabel($row->label, $row->label_ar) }}</td>
+                                        <td class="text-[14px] font-black text-slate-900 text-center content-center " >{{ $displayLabel($row->label, $row->label_ar) }}</td>
                                         @foreach($table->columns->sortBy('sort_order') as $col)
                                         <td class="px-2 py-1" style="border-color:#f1f5f9;">
                                             @if($col->input_type==='checkbox')
@@ -280,16 +273,16 @@
                                             @elseif($col->input_type==='radio')
                                                 <div class="text-center"><input type="radio" wire:model="tableData.{{ $table->table_key }}.{{ $ri }}._radio" value="{{ $col->column_key }}" name="radio_{{ $table->table_key }}_{{ $ri }}" style="accent-color:{{ $fColor }};" @if($isReadOnly) disabled @endif></div>
                                             @elseif($col->input_type==='number')
-                                                <input type="number" wire:model.live="tableData.{{ $table->table_key }}.{{ $ri }}.{{ $col->column_key }}" class="form-control form-control-sm rounded-2 border-0" style="background:#f5f6fa;" @if($isReadOnly) readonly @endif>
+                                                <input type="number" wire:model.live="tableData.{{ $table->table_key }}.{{ $ri }}.{{ $col->column_key }}" class="form-control iuhm_input form-control-sm rounded-2 border-0"  @if($isReadOnly) readonly @endif>
                                             @elseif($col->input_type==='select')
-                                                <select wire:model="tableData.{{ $table->table_key }}.{{ $ri }}.{{ $col->column_key }}" class="form-select form-select-sm rounded-2 border-0" style="background:#f5f6fa;" @if($isReadOnly) disabled @endif>
+                                                <select wire:model="tableData.{{ $table->table_key }}.{{ $ri }}.{{ $col->column_key }}" class="form-select form-select-sm rounded-2 iuhm_select border-0"  @if($isReadOnly) disabled @endif>
                                                     <option value="">--</option>
                                                     @foreach($col->options??[] as $opt)<option value="{{ $opt }}">{{ $opt }}</option>@endforeach
                                                 </select>
                                             @elseif($col->input_type==='readonly')
-                                                <input type="text" readonly class="form-control form-control-sm rounded-2 border-0" style="background:#e9ecef;" value="{{ $tableData[$table->table_key][$ri][$col->column_key]??'' }}">
+                                                <input type="text" readonly class="form-control iuhm_input form-control-sm rounded-2 border-0" style="background:#e9ecef;" value="{{ $tableData[$table->table_key][$ri][$col->column_key]??'' }}">
                                             @else
-                                                <input type="text" wire:model="tableData.{{ $table->table_key }}.{{ $ri }}.{{ $col->column_key }}" class="form-control form-control-sm rounded-2 border-0" style="background:#f5f6fa;" @if($isReadOnly) readonly @endif>
+                                                <input type="text" wire:model="tableData.{{ $table->table_key }}.{{ $ri }}.{{ $col->column_key }}" class="form-control iuhm_input form-control-sm rounded-2 border-0"  @if($isReadOnly) readonly @endif>
                                             @endif
                                         </td>
                                         @endforeach
@@ -305,14 +298,14 @@
                                             @elseif($col->input_type==='radio')
                                                 <div class="text-center"><input type="radio" wire:model="tableData.{{ $table->table_key }}.{{ $ri }}._radio" value="{{ $col->column_key }}" name="radio_{{ $table->table_key }}_{{ $ri }}" style="accent-color:{{ $fColor }};" @if($isReadOnly) disabled @endif></div>
                                             @elseif($col->input_type==='number')
-                                                <input type="number" wire:model.live="tableData.{{ $table->table_key }}.{{ $ri }}.{{ $col->column_key }}" class="form-control form-control-sm rounded-2 border-0" style="background:#f5f6fa;" @if($isReadOnly) readonly @endif>
+                                                <input type="number" wire:model.live="tableData.{{ $table->table_key }}.{{ $ri }}.{{ $col->column_key }}" class="form-control iuhm_input form-control-sm rounded-2 border-0"  @if($isReadOnly) readonly @endif>
                                             @elseif($col->input_type==='select')
-                                                <select wire:model="tableData.{{ $table->table_key }}.{{ $ri }}.{{ $col->column_key }}" class="form-select form-select-sm rounded-2 border-0" style="background:#f5f6fa;" @if($isReadOnly) disabled @endif>
+                                                <select wire:model="tableData.{{ $table->table_key }}.{{ $ri }}.{{ $col->column_key }}" class="form-select form-select-sm rounded-2 iuhm_select border-0"  @if($isReadOnly) disabled @endif>
                                                     <option value="">--</option>
                                                     @foreach($col->options??[] as $opt)<option value="{{ $opt }}">{{ $opt }}</option>@endforeach
                                                 </select>
                                             @else
-                                                <input type="text" wire:model="tableData.{{ $table->table_key }}.{{ $ri }}.{{ $col->column_key }}" class="form-control form-control-sm rounded-2 border-0" style="background:#f5f6fa;" @if($isReadOnly) readonly @endif>
+                                                <input type="text" wire:model="tableData.{{ $table->table_key }}.{{ $ri }}.{{ $col->column_key }}" class="form-control iuhm_input form-control-sm rounded-2 border-0"  @if($isReadOnly) readonly @endif>
                                             @endif
                                         </td>
                                         @endforeach
@@ -468,61 +461,75 @@
         {{-- END footer --}}
 
         {{-- ---- LOGOS ---- --}}
-        <div class="d-flex align-items-center justify-content-center gap-4 px-4 py-2"
+        <div class="d-flex align-items-center justify-content-center gap-7 px-4 py-2"
              style="border-top:1px solid #f1f5f9;">
             @if(isset($project) && $project->logo1)
-                <img src="{{ asset('uploads/' . $project->logo1) }}" alt="" style="height:32px;object-fit:contain;">
+                <img src="{{ asset('uploads/' . $project->logo1) }}" alt="" style="height:90px;object-fit:contain;">
             @else
-                <img src="{{ asset('assets/site/images/iuhm_logo.png') }}" alt="" style="height:32px;object-fit:contain;">
+                <img src="{{ asset('assets/site/images/iuhm_logo.png') }}" alt="" style="height:90px;object-fit:contain;">
             @endif
             @if(isset($project) && $project->logo2)
-                <img src="{{ asset('uploads/' . $project->logo2) }}" alt="" style="height:32px;object-fit:contain;">
+                <img src="{{ asset('uploads/' . $project->logo2) }}" alt="" style="height:90px;object-fit:contain;">
             @else
-                <img src="{{ asset('assets/site/images/indh_logo.png') }}" alt="" style="height:32px;object-fit:contain;">
+                <img src="{{ asset('assets/site/images/indh_logo.png') }}" alt="" style="height:90px;object-fit:contain;">
             @endif
             @if(isset($project) && $project->logo3)
-                <img src="{{ asset('uploads/' . $project->logo3) }}" alt="" style="height:32px;object-fit:contain;">
+                <img src="{{ asset('uploads/' . $project->logo3) }}" alt="" style="height:90px;object-fit:contain;">
             @else
-                <img src="{{ asset('assets/site/images/logo_zettat.png') }}" alt="" style="height:32px;object-fit:contain;">
+                <img src="{{ asset('assets/site/images/logo_zettat.png') }}" alt="" style="height:90px;object-fit:contain;">
             @endif
         </div>
 
     </div>
     {{-- END modal card --}}
+ @if(!$isReadOnly)
+            <div x-show="showSubmitConfirm"
+                 x-cloak
+                 x-transition:enter="ease-out duration-200"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="ease-in duration-150"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="fixed inset-0 z-50 flex items-center justify-center p-3"
+                 style="z-index: 9999;">
+                <div class="absolute inset-0 bg-black/55" @click="showSubmitConfirm = false"></div>
 
-    {{-- ===== SUBMIT CONFIRM MODAL ===== --}}
-    @if(!$isReadOnly)
-    <div x-show="showSubmitConfirm" x-cloak
-         class="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center p-3"
-         style="background:rgba(0,0,0,.6);z-index:9999;">
-        <div @click.stop class="rounded-4 bg-white shadow-lg w-100" style="max-width:500px;">
-            <div class="d-flex align-items-center justify-content-between px-4 py-4" style="border-bottom:1px solid #f1f5f9;">
-                <h5 class="mb-0 fw-bold" style="color:#0f172a;font-size:.95rem;">
-                    <i class="ri-shield-check-line me-2" style="color:{{ $fColor }};"></i>{{ $tr("Confirmer l'envoi","تأكيد الإرسال") }}
-                </h5>
-                <button type="button" class="btn-close btn-sm" @click="showSubmitConfirm = false"></button>
+                <div x-show="showSubmitConfirm"
+                     x-transition:enter="ease-out duration-200"
+                     x-transition:enter-start="opacity-0 scale-95"
+                     x-transition:enter-end="opacity-100 scale-100"
+                     x-transition:leave="ease-in duration-150"
+                     x-transition:leave-start="opacity-100 scale-100"
+                     x-transition:leave-end="opacity-0 scale-95"
+                     class="relative bg-white rounded-4 shadow-xl w-full" style="max-width: 520px;"
+                     @click.stop>
+                    <div class="px-4 px-md-5 py-4 border-bottom d-flex align-items-center justify-content-between">
+                        <h5 class="mb-0 fw-bold" style="color: #1f2937;">
+                            <i class="ri-shield-check-line me-2" style="color: {{ $form->color ?? '#2f5496' }};"></i>
+                            {{ $tr('Confirmer l\'envoi', 'تأكيد الإرسال') }}
+                        </h5>
+                        <button type="button" class="btn-close" @click="showSubmitConfirm = false"></button>
+                    </div>
+
+                    <div class="px-4 px-md-5 py-4 text-secondary" style="line-height: 1.7;">
+                        {{ $tr('Vous allez soumettre ce formulaire. Après envoi, vous ne pourrez plus modifier vos réponses.', 'أنت على وشك إرسال هذه الاستمارة. بعد الإرسال لن تتمكن من تعديل إجاباتك.') }}
+                    </div>
+
+                    <div class="px-4 rounded-b-xl px-md-5 py-3 bg-light border-top d-flex flex-column flex-md-row justify-content-end gap-2">
+                        <button type="button" class="btn btn-outline-secondary" @click="showSubmitConfirm = false">
+                            {{ $tr('Annuler', 'إلغاء') }}
+                        </button>
+                        <button type="button"
+                                class="btn text-white"
+                                style="background-color: {{ $form->color ?? '#2f5496' }};"
+                                @click="$wire.submit(); showSubmitConfirm = false">
+                            <i class="ri-send-plane-fill me-1"></i> {{ $tr('Oui, soumettre', 'نعم، إرسال') }}
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div class="px-4 py-3" style="color:#6b7280;font-size:.86rem;line-height:1.7;">
-                {{ $tr("Vous allez soumettre ce formulaire. Après envoi, vous ne pourrez plus modifier vos réponses.","أنت على وشك إرسال هذه الاستمارة. بعد الإرسال لن تتمكن من تعديل إجاباتك.") }}
-            </div>
-            <div class="d-flex justify-content-end gap-2 px-4 py-3" style="border-top:1px solid #f1f5f9;background:#fafafa;">
-                <button type="button"
-                        class="btn btn-sm rounded-3 fw-semibold"
-                        style="border:1px solid #e2e8f0;background:#fff;color:#374151;font-size:.84rem;"
-                        @click="showSubmitConfirm = false">
-                    {{ $tr('Annuler','إلغاء') }}
-                </button>
-                <button type="button"
-                        class="btn btn-sm rounded-3 fw-bold"
-                        style="background:{{ $fColor }};color:#fff;border:0;font-size:.84rem;"
-                        wire:click="submit"
-                        wire:loading.attr="disabled"
-                        @click="showSubmitConfirm = false">
-                    <i class="ri-send-plane-fill me-1"></i>{{ $tr('Oui, soumettre','نعم، إرسال') }}
-                </button>
-            </div>
-        </div>
-    </div>
-    @endif
+        @endif
+
 
 </div>
