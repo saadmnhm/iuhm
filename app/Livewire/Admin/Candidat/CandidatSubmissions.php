@@ -118,51 +118,114 @@ class CandidatSubmissions extends Component
 
     public function openReviewModal(): void
     {
-        $this->reviewerId      = $this->candidatSubmissions->reviewed_by ?? auth()->id();
+        $this->reviewerId      = $this->candidatSubmissions->reviewed_by ?: auth()->id();
         $this->reviewStatus    = $this->candidatSubmissions->review_status ?? 'in_review';
         $this->reviewNotes     = $this->candidatSubmissions->review_notes ?? '';
         $this->showReviewModal = true;
     }
 
+    public function updateFormSubmissionStatus(int $submissionId, string $status): void
+    {
+        $allowedStatuses = ['in_review', 'approved', 'rejected'];
+
+        if (!in_array($status, $allowedStatuses, true)) {
+            session()->flash('error', 'Statut invalide.');
+            return;
+        }
+
+        $submission = DynamicFormSubmission::findOrFail($submissionId);
+        $submission->update([
+            'status' => $status,
+            'reviewed_at' => now(),
+            'reviewed_by' => auth()->id(),
+            'review_notes' => $submission->review_notes,
+        ]);
+
+        $this->loadFormData();
+        session()->flash('success', 'Statut mis à jour avec succès.');
+    }
+
     public function submitReview(): void
     {
+        $this->reviewStatus = $this->reviewStatus ?: 'in_review';
+        $this->reviewerId = $this->reviewerId ?: auth()->id();
+
         $this->validate([
             'reviewStatus' => 'required|in:in_review,approved,rejected',
-            'reviewerId'   => 'required|exists:users,id',
+            'reviewerId'   => 'nullable|integer|exists:users,id',
         ]);
 
         $oldStatus = $this->candidatSubmissions->review_status;
         $oldReviewer = $this->candidatSubmissions->reviewed_by;
 
-        $this->candidatSubmissions->update([
-            'reviewed_by'   => $this->reviewerId,
-            'reviewed_at'   => now(),
-            'review_notes'  => $this->reviewNotes ?: null,
-            'review_status' => $this->reviewStatus,
+        try {
+            $this->candidatSubmissions->update([
+                'reviewed_by'   => $this->reviewerId,
+                'reviewed_at'   => now(),
+                'review_notes'  => $this->reviewNotes ?: null,
+                'review_status' => $this->reviewStatus,
+            ]);
+
+            // Log history
+            if ($oldStatus !== $this->reviewStatus) {
+                SubmissionHistory::log(Candidat::class, $this->candidat->id, 'status_changed', $oldStatus, $this->reviewStatus, $this->reviewNotes);
+            }
+            if ($oldReviewer != $this->reviewerId) {
+                $reviewer = User::find($this->reviewerId);
+                $reviewerName = $reviewer ? trim($reviewer->nom . ' ' . $reviewer->prenom) : 'N/A';
+                SubmissionHistory::log(Candidat::class, $this->candidat->id, 'reviewer_assigned', null, $reviewerName, null);
+            }
+
+            $this->candidatSubmissions->refresh();
+            $this->candidat = Candidat::with('reviewer')->findOrFail($this->candidatId);
+            $this->loadFormData();
+
+            AdminActivityLog::log(
+                'candidat_review_submitted',
+                "Submitted review for candidat: {$this->candidat->nom} {$this->candidat->prenom} (status: {$this->reviewStatus})",
+                Candidat::class,
+                $this->candidat->id
+            );
+
+            $this->showReviewModal = false;
+            session()->flash('success', 'Révision assignée avec succès.');
+        } catch (\Throwable $e) {
+            report($e);
+            session()->flash('error', 'Impossible d’enregistrer la révision. Veuillez réessayer.');
+        }
+    }
+
+    public function saveComment(): void
+    {
+        $this->validate([
+            'workflowSubmissionId' => 'required|integer|exists:dynamic_form_submissions,id',
+            'workflowComment' => 'required|string|min:3|max:2000',
+        ], [
+            'workflowComment.required' => 'Un commentaire est obligatoire.',
         ]);
 
-        // Log history
-        if ($oldStatus !== $this->reviewStatus) {
-            SubmissionHistory::log(Candidat::class, $this->candidat->id, 'status_changed', $oldStatus, $this->reviewStatus, $this->reviewNotes);
-        }
-        if ($oldReviewer != $this->reviewerId) {
-            $reviewer = User::find($this->reviewerId);
-            $reviewerName = $reviewer ? trim($reviewer->nom . ' ' . $reviewer->prenom) : 'N/A';
-            SubmissionHistory::log(Candidat::class, $this->candidat->id, 'reviewer_assigned', null, $reviewerName, null);
-        }
+        $submission = DynamicFormSubmission::findOrFail($this->workflowSubmissionId);
+        $oldComment = $submission->review_notes;
 
-        // Reload candidat with fresh reviewer relation
-        $this->candidat = Candidat::with('reviewer')->findOrFail($this->candidatId);
+        $submission->update([
+            'review_notes' => $this->workflowComment,
+            'reviewed_at' => now(),
+            'reviewed_by' => auth()->id(),
+        ]);
 
-        AdminActivityLog::log(
-            'candidat_review_submitted',
-            "Submitted review for candidat: {$this->candidat->nom} {$this->candidat->prenom} (status: {$this->reviewStatus})",
-            Candidat::class,
-            $this->candidat->id
+        SubmissionHistory::log(
+            DynamicFormSubmission::class,
+            $submission->id,
+            'submission_updated',
+            (string) $oldComment,
+            (string) $this->workflowComment,
+            $this->workflowComment
         );
 
-        $this->showReviewModal = false;
-        session()->flash('success', 'Révision assignée avec succès.');
+        $this->loadFormData();
+        $this->candidatSubmissions->refresh();
+
+        session()->flash('success', 'Commentaire enregistré.');
     }
 
     public function loadFormData(): void
@@ -178,11 +241,21 @@ class CandidatSubmissions extends Component
             ->keyBy('formulaire_id');
 
         // Optimized: Fetch all relevant submissions once (Fixing N+1)
-        $submissionsMap = DynamicFormSubmission::with('reviewer')
+        $submissions = DynamicFormSubmission::with('reviewer')
             ->where('programe_id', $this->projectId)
             ->where('candidat_id', $this->candidatId)
+            ->get();
+
+        $submissionsMap = $submissions->keyBy('dynamic_form_id');
+        $submissionIds = $submissions->pluck('id')->filter()->values()->all();
+
+        // Fetch history for each submission once
+        $submissionHistories = SubmissionHistory::where('subject_type', DynamicFormSubmission::class)
+            ->whereIn('subject_id', $submissionIds)
+            ->with('changedByUser')
+            ->latest()
             ->get()
-            ->keyBy('dynamic_form_id');
+            ->groupBy('subject_id');
 
         // Optimized: Fetch programe_formulaire data once
         $programeFormulaires = DB::table('programe_formulaire')
@@ -252,6 +325,14 @@ class CandidatSubmissions extends Component
                 'created_at'       => $sub?->created_at?->format('d/m/Y H:i'),
                 'submitted_at'     => $sub?->submitted_at?->format('d/m/Y H:i'),
                 'review_notes'     => $sub?->review_notes,
+                'history' => collect($submissionHistories->get($sub?->id ?? 0) ?? [])->map(function ($h) {
+                    return [
+                        'by' => $h->changedByUser ? trim($h->changedByUser->nom . ' ' . $h->changedByUser->prenom) : 'Système',
+                        'at' => $h->created_at?->format('d/m/Y H:i'),
+                        'notes' => $h->notes,
+                        'action' => $h->action,
+                    ];
+                })->values()->toArray(),
                 'all_stages_validated' => $this->allWorkflowStagesValidated($sub?->workflow_stages),
                 'next_form_allowed' => $this->isNextFormAllowed($sub?->workflow_stages),
             ];
@@ -429,63 +510,69 @@ class CandidatSubmissions extends Component
             'workflowComment.required' => 'Un commentaire est obligatoire à chaque changement.',
         ]);
 
-        $submission = DynamicFormSubmission::findOrFail($this->workflowSubmissionId);
-        $oldStatus = $submission->status;
-        $existingStages = is_array($submission->workflow_stages) ? $submission->workflow_stages : [];
-        $nextFormAllowed = $oldStatus === $this->workflowStatus
-            ? (bool) ($existingStages['next_form_allowed'] ?? false)
-            : false;
+        try {
+            $submission = DynamicFormSubmission::findOrFail($this->workflowSubmissionId);
+            $oldStatus = $submission->status;
+            $existingStages = is_array($submission->workflow_stages) ? $submission->workflow_stages : [];
+            $nextFormAllowed = $oldStatus === $this->workflowStatus
+                ? (bool) ($existingStages['next_form_allowed'] ?? false)
+                : false;
 
-        $newWorkflowStages = [
-            'formation_validated' => $this->stageFormationValidated,
-            'candidate_in_formation' => $this->stageCandidateInFormation,
-            'administrative_validated' => $this->stageAdministrativeValidated,
-            'next_form_allowed' => $nextFormAllowed,
-        ];
+            $newWorkflowStages = [
+                'formation_validated' => $this->stageFormationValidated,
+                'candidate_in_formation' => $this->stageCandidateInFormation,
+                'administrative_validated' => $this->stageAdministrativeValidated,
+                'next_form_allowed' => $nextFormAllowed,
+            ];
 
-        if ($this->workflowStatus === 'approved') {
-            $newWorkflowStages['next_form_allowed'] = true;
+            if ($this->workflowStatus === 'approved') {
+                $newWorkflowStages['next_form_allowed'] = true;
+            }
+
+            $updatePayload = [
+                'status' => $this->workflowStatus,
+                'workflow_stages' => $newWorkflowStages,
+                'review_notes' => $this->workflowComment,
+                'reviewed_at' => now(),
+                'reviewed_by' => auth()->id(),
+            ];
+
+            if ($this->workflowStatus === 'rejected') {
+                $updatePayload['is_submitted'] = false;
+            }
+
+            $submission->update($updatePayload);
+
+            if ($oldStatus !== $this->workflowStatus) {
+                SubmissionHistory::log(
+                    DynamicFormSubmission::class,
+                    $submission->id,
+                    'status_changed',
+                    (string) $oldStatus,
+                    (string) $this->workflowStatus,
+                    $this->workflowComment
+                );
+            } else {
+                SubmissionHistory::log(
+                    DynamicFormSubmission::class,
+                    $submission->id,
+                    'submission_updated',
+                    null,
+                    null,
+                    $this->workflowComment
+                );
+            }
+
+            $this->loadFormData();
+            ProjectsSubmission::syncFinishedStatusFor((int) $submission->candidat_id, (int) $submission->programe_id);
+            $this->candidatSubmissions->refresh();
+            $this->showWorkflowModal = false;
+            $this->workflowComment = '';
+            session()->flash('success', 'Étapes / statut mis à jour.');
+        } catch (\Throwable $e) {
+            report($e);
+            session()->flash('error', 'Impossible d’enregistrer la mise à jour du statut.');
         }
-
-        $updatePayload = [
-            'status' => $this->workflowStatus,
-            'workflow_stages' => $newWorkflowStages,
-            'review_notes' => $this->workflowComment,
-            'reviewed_at' => now(),
-            'reviewed_by' => auth()->id(),
-        ];
-
-        if ($this->workflowStatus === 'rejected') {
-            $updatePayload['is_submitted'] = false; 
-        }
-
-        $submission->update($updatePayload);
-
-        if ($oldStatus !== $this->workflowStatus) {
-            SubmissionHistory::log(
-                DynamicFormSubmission::class,
-                $submission->id,
-                'status_changed',
-                (string) $oldStatus,
-                (string) $this->workflowStatus,
-                $this->workflowComment
-            );
-        } else {
-            SubmissionHistory::log(
-                DynamicFormSubmission::class,
-                $submission->id,
-                'submission_updated',
-                null,
-                null,
-                $this->workflowComment
-            );
-        }
-
-        $this->loadFormData();
-        ProjectsSubmission::syncFinishedStatusFor((int) $submission->candidat_id, (int) $submission->programe_id);
-        $this->candidatSubmissions->refresh();
-        $this->openWorkflowModal($submission->id);
-        session()->flash('success', 'Étapes / statut mis à jour.');
     }
 
     public function allowNextFormulaire(int $submissionId): void

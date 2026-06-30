@@ -8,7 +8,15 @@
     }
 @endphp
 
-<div x-data="{ showSubmitConfirm: false }" @if($isArabic) dir="rtl" @endif >
+<div x-data="{
+    showSubmitConfirm: false,
+    openSubmitConfirm() { this.showSubmitConfirm = true; },
+    closeSubmitConfirm() { this.showSubmitConfirm = false; },
+    confirmSubmit() {
+        this.showSubmitConfirm = false;
+        this.$dispatch('submit-confirmed');
+    }
+}" @if($isArabic) dir="rtl" @endif >
 
     {{-- ===== FORM CARD ===== --}}
     <div >
@@ -429,9 +437,15 @@
                             @endif
                         @endfor
                         {{-- next arrow --}}
-                        <button wire:click="nextStep" @if($currentStep >= $totalSteps) disabled @endif
-                                class="btn btn-sm rounded-circle p-0 d-flex align-items-center justify-content-center border-0"
-                                style="width:30px;height:30px;background:{{ $currentStep<$totalSteps ? '#f1f5f9' : 'transparent' }};color:#374151;">
+                        @php
+                            $isLastStep = $currentStep >= $totalSteps;
+                        @endphp
+
+                        <button
+                            wire:click="nextStep"
+                            {{ $isLastStep ? 'disabled' : '' }}
+                            class="btn btn-sm rounded-circle p-0 d-flex align-items-center justify-content-center border-0"
+                            style="width:30px;height:30px;background:{{ !$isLastStep ? '#f1f5f9' : 'transparent' }};color:#374151;">
                             <i class="ri-arrow-right-s-line"></i>
                         </button>
                     </div>
@@ -448,7 +462,7 @@
                     @endif
 
                     @if($currentStep == $totalSteps && !$isReadOnly)
-                    <button type="button" @click="showSubmitConfirm = true"
+                    <button type="button" @click="openSubmitConfirm()"
                             class="btn btn-sm rounded-3 fw-bold d-inline-flex align-items-center gap-1"
                             style="background:#0f2441;color:#fff;border:0;font-size:.84rem;padding:.42rem 1.1rem;">
                         <i class="ri-send-plane-fill me-1"></i>{{ $tr('Soumettre','إرسال') }}
@@ -509,7 +523,7 @@
                             <i class="ri-shield-check-line me-2" style="color: {{ $form->color ?? '#2f5496' }};"></i>
                             {{ $tr('Confirmer l\'envoi', 'تأكيد الإرسال') }}
                         </h5>
-                        <button type="button" class="btn-close" @click="showSubmitConfirm = false"></button>
+                        <button type="button" class="btn-close" @click="closeSubmitConfirm()"></button>
                     </div>
 
                     <div class="px-4 px-md-5 py-4 text-secondary" style="line-height: 1.7;">
@@ -517,13 +531,13 @@
                     </div>
 
                     <div class="px-4 rounded-b-xl px-md-5 py-3 bg-light border-top d-flex flex-column flex-md-row justify-content-end gap-2">
-                        <button type="button" class="btn btn-outline-secondary" @click="showSubmitConfirm = false">
+                        <button type="button" class="btn btn-outline-secondary" @click="closeSubmitConfirm()">
                             {{ $tr('Annuler', 'إلغاء') }}
                         </button>
                         <button type="button"
                                 class="btn text-white"
                                 style="background-color: {{ $form->color ?? '#2f5496' }};"
-                                @click="$wire.submit(); showSubmitConfirm = false">
+                                @click="confirmSubmit()">
                             <i class="ri-send-plane-fill me-1"></i> {{ $tr('Oui, soumettre', 'نعم، إرسال') }}
                         </button>
                     </div>

@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use App\Services\ProjectEligibilityService;
+use Livewire\Attributes\On;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 
@@ -619,6 +620,7 @@ class ProjectFormulaireView extends Component
         return $existing;
     }
 
+    #[On('submit-confirmed')]
     public function submit()
     {
         if ($this->isReadOnly) return;
