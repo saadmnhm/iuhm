@@ -1,8 +1,7 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-[#f8f9fc] min-h-screen font-sans">
+<div class="max-w-7xl mx-auto bg-[#f8f9fc] min-h-screen font-sans">
     
     {{-- Header & Actions --}}
     <div class="flex items-center justify-between mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Gestion des Submissions</h1>
        
     </div>
 
@@ -35,10 +34,17 @@
                 </div>
                 
                 <div class="flex-1 w-full">
-                    <span class="inline-block text-[10px] font-bold tracking-wider px-3 py-1 rounded-full bg-green-100 text-green-600 mb-4 uppercase">
-                        Candidat Actif
-                    </span>
-                    <h2 class="text-3xl font-extrabold text-[#0a1128] mb-8">{{ $candidat->prenom }} {{ $candidat->nom }}</h2>
+                    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
+                        <div>
+                            <span class="inline-block text-[10px] font-bold tracking-wider px-3 py-1 rounded-full bg-green-100 text-green-600 mb-4 uppercase">
+                                Candidat Actif
+                            </span>
+                            <h2 class="text-3xl font-extrabold text-[#0a1128]">{{ $candidat->prenom }} {{ $candidat->nom }}</h2>
+                        </div>
+                        <a href="{{ route('admin.candidats.edit', $candidat->id) }}" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-50 border border-gray-200 rounded-full hover:bg-gray-100 transition-colors">
+                            <i class="ri-edit-2-line"></i> Edit info
+                        </a>
+                    </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6 text-sm">
                         <div class="flex items-start gap-4">
@@ -105,7 +111,7 @@
                                     @if($sub['status_label'] === 'Brouillon')
                                         <span class="px-4 py-2 text-xs font-bold rounded-full bg-gray-50 text-gray-600 border border-gray-200">Brouillon</span>
                                     @else
-                                    <div class="flex flex-wrap items-center gap-3">
+                                    <div class="flex  items-center gap-3">
                                         {{-- Badge de Statut --}}
                                         @if($sub['actual_status'] === 'in_review')
                                             <span class="px-4 py-2 text-xs font-bold rounded-full bg-yellow-50 text-yellow-700 border border-yellow-300">En révision</span>
@@ -118,9 +124,9 @@
                                         @endif
 
                                         @if($sub['submission_id'])
-                                            <button wire:click="openWorkflowModal({{ $sub['submission_id'] }})" class="px-4 py-2 text-xs font-bold text-gray-700 bg-gray-50 border border-gray-200 hover:bg-gray-100 rounded-full transition-colors flex items-center gap-2">
+                                            <a href="{{ route('admin.formulaires.submission.detail', ['id' => $sub['submission_id']]) }}" wire:navigate class="px-4 py-2 text-xs font-bold text-gray-700 bg-gray-50 border border-gray-200 hover:bg-gray-100 rounded-full transition-colors flex items-center gap-2">
                                                 <i class="ri-eye-line"></i> Ouvrir
-                                            </button>
+                                            </a>
                                             
                                             {{-- Bouton Approuver - Désactivé si commentaire vide (< 3 chars) --}}
                                             <button 

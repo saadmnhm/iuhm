@@ -20,7 +20,10 @@
                     @endif
                 </div>
             </div>
-            <div class="flex gap-2">
+            <div class="flex gap-2 flex-wrap">
+                <a href="{{ route('admin.candidats.edit', $submission->candidat->id) }}" class="flex items-center justify-center gap-1 px-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold rounded-lg border border-blue-200 transitioninline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-50 border border-gray-200 rounded-full hover:bg-gray-100 transition-colors">
+                    <i class="ri-edit-2-line"></i> Edit info
+                </a>
                 <a href="{{ route('admin.candidat.submission.export', ['candidatId' => $submission->candidat_id ?? $submission->candidat->id, 'id' => $submission->id]) }}" target="_blank"
                                 class="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-semibold rounded-lg border border-red-200 transition">
                     <i class="ri-file-pdf-line"></i> Export PDF
@@ -100,7 +103,15 @@
                                     @endforeach
                                 </div>
                             @else
-                                <p class="text-gray-900">{{ $rawAnswer ?: 'N/A' }}</p>
+                                <div class="mt-1 flex items-start iuhm_input_div gap-2">
+                                    <p class="text-gray-900 flex-1">{{ $rawAnswer ?: 'N/A' }}</p>
+                                    <button type="button"
+                                            wire:click="openEditAnswerModal('field', '{{ $field->field_key }}', null, null, null, {{ json_encode((string) ($rawAnswer ?? '')) }})"
+                                            class="inline-flex items-center justify-center w-8 h-8 rounded-full text-gray-500 hover:bg-gray-100 hover:text-indigo-600 transition"
+                                            title="Modifier la réponse">
+                                        <i class="ri-pencil-line"></i>
+                                    </button>
+                                </div>
                             @endif
                         </div>
                     @endif
@@ -130,13 +141,23 @@
                                                 @foreach($table->columns->sortBy('sort_order') as $col)
                                                     <td class="border border-gray-200 px-3 py-2 text-gray-900">
                                                         @php $val = $tableData[$ri][$col->column_key] ?? 'N/A'; @endphp
-                                                        @if($col->input_type === 'checkbox')
-                                                            @if($val && $val !== 'N/A') <i class="ri-checkbox-circle-fill text-green-500"></i>
-                                                            @else <i class="ri-checkbox-blank-circle-line text-gray-300"></i>
-                                                            @endif
-                                                        @else
-                                                            {{ $val }}
-                                                        @endif
+                                                        <div class="flex items-center justify-between gap-2">
+                                                            <div class="flex-1">
+                                                                @if($col->input_type === 'checkbox')
+                                                                    @if($val && $val !== 'N/A') <i class="ri-checkbox-circle-fill text-green-500"></i>
+                                                                    @else <i class="ri-checkbox-blank-circle-line text-gray-300"></i>
+                                                                    @endif
+                                                                @else
+                                                                    {{ $val }}
+                                                                @endif
+                                                            </div>
+                                                            <button type="button"
+                                                                    wire:click="openEditAnswerModal('table', null, '{{ $table->table_key }}', {{ $ri }}, '{{ $col->column_key }}', {{ json_encode((string) $val) }})"
+                                                                    class="inline-flex items-center justify-center w-7 h-7 rounded-full text-gray-400 hover:bg-gray-100 hover:text-indigo-600 transition"
+                                                                    title="Modifier cette valeur">
+                                                                <i class="ri-pencil-line text-sm"></i>
+                                                            </button>
+                                                        </div>
                                                     </td>
                                                 @endforeach
                                             </tr>
@@ -147,13 +168,23 @@
                                                 @foreach($table->columns->sortBy('sort_order') as $col)
                                                     <td class="border border-gray-200 px-3 py-2 text-gray-900">
                                                         @php $val = $rowData[$col->column_key] ?? 'N/A'; @endphp
-                                                        @if($col->input_type === 'checkbox')
-                                                            @if($val && $val !== 'N/A') <i class="ri-checkbox-circle-fill text-green-500"></i>
-                                                            @else <i class="ri-checkbox-blank-circle-line text-gray-300"></i>
-                                                            @endif
-                                                        @else
-                                                            {{ $val }}
-                                                        @endif
+                                                        <div class="flex items-center justify-between gap-2">
+                                                            <div class="flex-1">
+                                                                @if($col->input_type === 'checkbox')
+                                                                    @if($val && $val !== 'N/A') <i class="ri-checkbox-circle-fill text-green-500"></i>
+                                                                    @else <i class="ri-checkbox-blank-circle-line text-gray-300"></i>
+                                                                    @endif
+                                                                @else
+                                                                    {{ $val }}
+                                                                @endif
+                                                            </div>
+                                                            <button type="button"
+                                                                    wire:click="openEditAnswerModal('table', null, '{{ $table->table_key }}', {{ $ri }}, '{{ $col->column_key }}', {{ json_encode((string) $val) }})"
+                                                                    class="inline-flex items-center justify-center w-7 h-7 rounded-full text-gray-400 hover:bg-gray-100 hover:text-indigo-600 transition"
+                                                                    title="Modifier cette valeur">
+                                                                <i class="ri-pencil-line text-sm"></i>
+                                                            </button>
+                                                        </div>
                                                     </td>
                                                 @endforeach
                                             </tr>
@@ -172,6 +203,31 @@
     </div>
 
 
+
+    @if($showEditAnswerModal)
+    <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+         wire:click.self="closeEditAnswerModal">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4">
+            <div class="px-6 py-4 border-b border-gray-100">
+                <h3 class="text-lg font-semibold text-gray-800">Modifier la réponse</h3>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Valeur</label>
+                    <textarea wire:model="editAnswerValue" rows="4"
+                        class="w-full iuhm_textarea rounded-lg "
+                        placeholder="Saisissez la nouvelle réponse..."></textarea>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3">
+                <button wire:click="closeEditAnswerModal"
+                    class="px-5 py-2.5 text-sm text-gray-600 hover:bg-gray-50 rounded-lg transition">Annuler</button>
+                <button wire:click="saveEditedAnswer"
+                    class="px-5 py-2.5 text-sm text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+    @endif
 
     {{-- Status Change Modal --}}
     @if($showStatusModal)
