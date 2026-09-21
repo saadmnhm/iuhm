@@ -34,7 +34,7 @@
 				<div class="flex items-center justify-between bg-[#FBF8FD]  p-4 rounded-lg ">
 					<div>
 						<div class="font-semibold">Nouveau projet soumis</div>
-						<div class="text-sm text-gray-500">Rénovation Parc Al Amal</div>
+						<div class="text-sm text-gray-500">------</div>
 					</div>
 					<div class="text-sm text-gray-400">Il y a 2h</div>
 				</div>
@@ -42,7 +42,7 @@
 				<div class="flex items-center justify-between p-4 bg-[#FBF8FD] rounded-lg ">
 					<div>
 						<div class="font-semibold">Nouvel utilisateur admin</div>
-						<div class="text-sm text-gray-500">Fatima Zahra - Coordination</div>
+						<div class="text-sm text-gray-500">-----</div>
 					</div>
 					<div class="text-sm text-gray-400">Il y a 5h</div>
 				</div>

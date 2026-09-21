@@ -31,7 +31,8 @@
     font-size: 14px;
     margin-bottom: 10px;
     position: absolute;
-    top: 50px;
+    top: 30px;
+    left: 30px;
 }
 
 h1 {

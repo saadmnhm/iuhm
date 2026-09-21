@@ -86,4 +86,9 @@ class AdminActivityLog extends Model
         }
         return 'Unknown';
     }
+
+
+    // public function ActionLog(){
+        
+    // }
 }

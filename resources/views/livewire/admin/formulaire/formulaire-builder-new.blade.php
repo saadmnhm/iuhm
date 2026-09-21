@@ -246,10 +246,9 @@
                                             <div class="group rounded-[22px] border border-slate-100 bg-slate-50 px-4 py-4 transition hover:border-emerald-200 hover:bg-emerald-50/40">
                                                 <div class="flex flex-wrap items-center justify-between gap-3">
                                                     <div>
-                                                        <div class="text-sm font-black text-slate-900">{{ $field->label }}</div>
                                                         <div class="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                                                            <div class="text-sm font-black text-slate-900">{{ $field->label }}</div>
                                                             <span class="rounded-full bg-white px-2.5 py-1 font-semibold text-[#0f1d57] shadow-sm">{{ $field->type }}</span>
-                                                            <span class="font-mono">{{ $field->field_key }}</span>
                                                         </div>
                                                     </div>
                                                     <div class="flex items-center gap-1">
@@ -522,11 +521,9 @@
                         <input type="text" wire:model.blur="tableForm.title_ar" class="w-full rounded-2xl iuhm_input" placeholder="نوع الخدمة">
                     </div>
 
-                    <div>
-                        <label class="mb-2 block text-sm font-bold text-slate-700">Clé du tableau</label>
-                        <input type="text" wire:model.blur="tableForm.table_key" class="w-full rounded-2xl iuhm_input" placeholder="table_key">
-                        @error('tableForm.table_key') <p class="mt-1 text-xs font-medium text-rose-600">{{ $message }}</p> @enderror
-                    </div>
+                        
+                    
+
                     <div class="grid grid-cols-2 gap-3">
                         <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
                             <div class="mb-2 text-xs font-black uppercase tracking-[0.16em] text-slate-400">Type</div>
@@ -552,6 +549,9 @@
                         <label class="mb-2 block text-sm font-bold text-slate-700">Nombre maximum de lignes</label>
                         <input type="number" wire:model.blur="tableForm.max_rows" class="w-full rounded-2xl iuhm_input">
                     </div>
+
+                    <input type="hidden" wire:model.blur="tableForm.table_key" class="w-full rounded-2xl iuhm_input" placeholder="table_key">
+                    @error('tableForm.table_key') <p class="mt-1 text-xs font-medium text-rose-600">{{ $message }}</p> @enderror
                 </div>
 
                 <div class="flex items-center justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4 lg:px-7">
@@ -584,11 +584,7 @@
                         <input type="text" wire:model.blur="columnForm.header_ar" class="w-full rounded-2xl iuhm_input" placeholder="نوع الخدمة">
                     </div>
 
-                    <div>
-                        <label class="mb-2 block text-sm font-bold text-slate-700">Clé de colonne</label>
-                        <input type="text" wire:model.blur="columnForm.column_key" class="w-full rounded-2xl iuhm_input" placeholder="column_key">
-                        @error('columnForm.column_key') <p class="mt-1 text-xs font-medium text-rose-600">{{ $message }}</p> @enderror
-                    </div>
+                        
                     <div>
                         <label class="mb-2 block text-sm font-bold text-slate-700">Type</label>
                         <select wire:model.live="columnForm.input_type" class="w-full rounded-[18px] iuhm_input">
@@ -636,6 +632,9 @@
                             <div class="h-6 w-11 rounded-full bg-slate-200 transition peer-checked:bg-emerald-600 peer-checked:after:translate-x-full after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-['']"></div>
                         </label>
                     </div>
+
+                    <input type="hidden" wire:model.blur="columnForm.column_key" class="w-full rounded-2xl iuhm_input" placeholder="column_key">
+                        @error('columnForm.column_key') <p class="mt-1 text-xs font-medium text-rose-600">{{ $message }}</p> @enderror
                 </div>
 
                 <div class="flex items-center justify-end gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4 lg:px-7">

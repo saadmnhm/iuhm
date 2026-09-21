@@ -256,6 +256,7 @@ class UserManagement extends Component
                 'nom' => 'required|string|max:255',
                 'prenom' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email,' . $this->editId,
+                'phone' => [ 'required', 'string', 'regex:/^(?:\+212|0)([5-7])[0-9]{8}$/', ],
                 'role' => 'required|exists:roles,name',
                 'is_active' => 'sometimes|boolean',
             ];
@@ -272,6 +273,7 @@ class UserManagement extends Component
                     'nom' => $validated['nom'],
                     'prenom' => $validated['prenom'],
                     'email' => $validated['email'],
+                    'phone' => $validated['phone'],
                     'role' => $validated['role'],
                     'is_active' => (bool) $this->is_active,
                 ];
@@ -307,7 +309,7 @@ class UserManagement extends Component
                 'nom' => 'required|string|max:255',
                 'prenom' => 'required|string|max:255',
                 'email' => 'required|email|unique:candidat,email,' . $this->editId,
-                'phone' => 'required|string|max:20',
+                'phone' => [ 'required', 'string', 'regex:/^(?:\+212|0)([5-7])[0-9]{8}$/', ],
                 'is_active' => 'sometimes|boolean',
             ]);
 
@@ -341,6 +343,7 @@ class UserManagement extends Component
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required|string|min:6|confirmed',
                 'role' => 'required|exists:roles,name',
+                'phone' => [ 'required', 'string', 'regex:/^(?:\+212|0)([5-7])[0-9]{8}$/', ],
             ]);
 
             try {
@@ -348,6 +351,7 @@ class UserManagement extends Component
                     'nom' => $validated['nom'],
                     'prenom' => $validated['prenom'],
                     'email' => $validated['email'],
+                    'phone' => $validated['phone'],
                     'password' => Hash::make($validated['password']),
                     'role' => $validated['role'],
                         'is_active' => (bool) $this->is_active,
@@ -367,7 +371,7 @@ class UserManagement extends Component
                 'nom' => 'required|string|max:255',
                 'prenom' => 'required|string|max:255',
                 'email' => 'required|email|unique:candidat,email',
-                'phone' => 'required|string|max:20',
+                'phone' => [ 'required', 'string', 'regex:/^(?:\+212|0)([5-7])[0-9]{8}$/', ],
                 'password' => 'required|string|min:6|confirmed',
             ]);
 
@@ -415,6 +419,7 @@ class UserManagement extends Component
                 $queryAdmin->where(function ($q) {
                                         $q->where('nom', 'like', '%' . $this->adminSearch . '%')
                                             ->orWhere('prenom', 'like', '%' . $this->adminSearch . '%')
+                                            ->orWhere('phone', 'like', '%' . $this->adminSearch . '%')
                                             ->orWhere('email', 'like', '%' . $this->adminSearch . '%');
                 });
             }
@@ -424,7 +429,7 @@ class UserManagement extends Component
             }
 
             $users = $queryAdmin
-                ->select(['id', 'nom', 'prenom', 'email', 'role', 'is_active', 'created_at', 'updated_at'])
+                ->select(['id', 'nom', 'prenom', 'email', 'phone', 'role', 'is_active', 'created_at', 'updated_at'])
                 ->orderBy('id')
                 ->paginate(10, ['*'], 'adminsPage');
 
