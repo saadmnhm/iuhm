@@ -5,7 +5,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Association Initiative Urbaine | Admin Panel</title>
-    <link rel="shortcut icon" href="{{ asset('assets/admin/image/favicon.png') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('assets/admin/image/iuhm_logo.png') }}" type="image/x-icon">
     <meta name="description" content="Association Initiative Urbaine | Casablanca">
     <meta name="robots" content="noindex, nofollow">
     <link rel="stylesheet" href="{{ asset('assets/admin/css/style.css') }}">

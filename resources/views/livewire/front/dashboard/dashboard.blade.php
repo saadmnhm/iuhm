@@ -20,7 +20,7 @@
 <div class="p-6 font-sans">
 
     {{-- ── HERO BANNER ── --}}
-    <div class="bg-gradient-to-r from-[#0f2441] to-[#15304a] text-white p-9 rounded-xl h-[248px] shadow-lg flex items-center justify-between">
+    <div class="bg-gradient-to-r from-[#0f2441] to-[#15304a] text-white p-5 rounded-xl  shadow-lg flex items-center justify-between">
         <div>
             <h1 class="text-3xl text-[48px] font-bold">
                 {{ $tr('Bienvenue,', 'مرحباً،') }} {{ $candidat->prenom }} {{ $candidat->nom }}
@@ -57,7 +57,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-6">
 
         {{-- Recent Activity --}}
-        <div class="lg:col-span-2 bg-[#F5F3F7] p-5 rounded-lg shadow-sm">
+        <div class="lg:col-span-2 bg-[#F5F3F7] sm:p-1 p-3 rounded-lg shadow-sm">
             <div class="flex items-center justify-between mb-4">
                 <h4 class="text-lg font-semibold">{{ $tr('Activité Récente', 'النشاط الأخير') }}</h4>
                 <a href="{{ route('user.projects.list') }}" class="text-green-600">{{ $tr('Voir tout', 'عرض الكل') }}</a>
