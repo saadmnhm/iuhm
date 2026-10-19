@@ -8,10 +8,32 @@ use App\Livewire\Front\Dashboard\Dashboard;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\ActualiteController;
+use App\Http\Controllers\ServicesController;
+use App\Http\Controllers\ResourcesController;
+use App\Http\Controllers\LocaleController;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+// Public Routes (merged from site_iuhm)
+Route::post('locale/{locale}', [LocaleController::class, 'update'])->name('locale.update');
+
+Route::get('/', [PageController::class, 'home'])->name('home');
+Route::get('articles', [ArticleController::class, 'index'])->name('articles.index');
+Route::get('articles/{slug}', [ArticleController::class, 'show'])->name('articles.show');
+Route::get('actualite', [ActualiteController::class, 'index'])->name('actualite.index');
+Route::get('actualite/{slug}', [ActualiteController::class, 'show'])->name('actualite.show');
+Route::get('services', [ServicesController::class, 'index'])->name('services.index');
+Route::get('resources', [ResourcesController::class, 'index'])->name('resources.index');
+Route::get('contact', [PageController::class, 'contact'])->name('contact.index');
+Route::get('history', [PageController::class, 'history'])->name('history.index');
+Route::get('projects', [PageController::class, 'projects'])->name('projects.index');
+Route::get('projects/{slug}', [PageController::class, 'projectShow'])->name('projects.show');
+
 
 // Admin Routes
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -84,6 +106,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/all-submissions', \App\Livewire\Admin\Submissions\AllSubmissions::class)->name('all.submissions')->middleware('module:all_submissions');
         Route::get('/association-parameters', \App\Livewire\Admin\Settings\AssociationParameters::class)->name('association.parameters')->middleware('module:association_parameters');
         
+
         // media
         Route::get('/media/article', \App\Livewire\Admin\Article\ArticleManagement::class)->name('article.index')->middleware('module:article');
         Route::get('/media/article/{id}', \App\Livewire\Admin\Article\ArticleForm::class)->name('article.form')->middleware('module:article');
@@ -94,8 +117,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/media/newsletters', \App\Livewire\Admin\Newsletter\NewsletterManagement::class)->name('newsletters.index')->middleware('module:blog');
         Route::get('/media/contact', \App\Livewire\Admin\Contact\ContactManagement::class)->name('contact.index');
         Route::get('/media', \App\Livewire\Admin\Media\MediaManagement::class)->name('media.index')->middleware('module:media');
+        Route::get('/media/project', \App\Livewire\Admin\Project\ProjectManagement::class)->name('project.index')->middleware('module:project');
         Route::get('/media/apropos', \App\Livewire\Admin\Apropos\Apropos::class)->name('apropos.index')->middleware('module:apropos');
-
         
         Route::get('/history-audit', \App\Livewire\Admin\Submissions\HistoryAudit::class)->name('history.audit')->middleware('module:history_audit');
         Route::get('/support-tickets', \App\Livewire\Admin\Support\SupportTickets::class)->name('support.tickets')->middleware('module:support');
@@ -179,6 +202,9 @@ Route::prefix('user')->name('user.')->group(function () {
     });
 
 
+
+
+
     
     Route::get('/email/verify', function () {
         if (!Auth::guard('candidat')->check()) {
@@ -187,7 +213,7 @@ Route::prefix('user')->name('user.')->group(function () {
         if (Auth::guard('candidat')->user()->hasVerifiedEmail()) {
             return redirect()->route('user.dashboard');
         }
-        return view('livewire.front.auth.verify-email');
+        return view('livewire.candidat.auth.verify-email');
     })->name('verification.notice');
 
     Route::get('/email/verify/{id}/{hash}', function (Request $request, $id, $hash) {

@@ -22,7 +22,7 @@ class FrontAuthController extends Controller
             }
         }
         
-        return view('livewire.front.auth.login');
+        return view('livewire.candidat.auth.login');
     }
 
     public function login(Request $request)
@@ -110,7 +110,7 @@ class FrontAuthController extends Controller
         }
         
         $addresses = \App\Models\Address::orderBy('address_line1')->get();
-        return view('livewire.front.auth.register', compact('addresses'));
+        return view('livewire.candidat.auth.register', compact('addresses'));
     }
 
     public function register(Request $request)
@@ -179,7 +179,7 @@ class FrontAuthController extends Controller
         if (Auth::guard('candidat')->check()) {
             return redirect()->route('user.dashboard');
         }
-        return view('livewire.front.auth.forgot-password');
+        return view('livewire.candidat.auth.forgot-password');
     }
 
     public function sendResetLink(Request $request)
@@ -196,7 +196,7 @@ class FrontAuthController extends Controller
 
     public function showResetPassword(Request $request, string $token)
     {
-        return view('livewire.front.auth.reset-password', [
+        return view('livewire.candidat.auth.reset-password', [
             'token' => $token,
             'email' => $request->query('email', ''),
         ]);

@@ -140,7 +140,7 @@ class ProjectList extends Component
 
         ];
 
-        return view('livewire.front.programe.project-list', [
+        return view('livewire.candidat.programe.project-list', [
             'state_card' => $state_card,
             'rows'    => $paginated,
             'total' => $total,

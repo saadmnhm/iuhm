@@ -63,6 +63,6 @@ class Navbar extends Component
 
     public function render()
     {
-        return view('livewire.front.dashboard.navbar');
+        return view('livewire.candidat.dashboard.navbar');
     }
 }

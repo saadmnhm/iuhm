@@ -140,65 +140,77 @@
 
     </div>
 
-    {{-- Detail Modal --}}
-    @if($showModal && $selected)
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
-        <div class="w-full max-w-xl rounded-2xl bg-white shadow-xl flex flex-col">
-            <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
-                <h3 class="text-lg font-bold text-slate-800">Message de {{ $selected->name }}</h3>
-                <button wire:click="$set('showModal', false)" class="text-slate-400 hover:text-slate-600">
-                    <i class="ri-close-line text-2xl"></i>
-                </button>
-            </div>
+    {{-- Detail Modal (Alpine for open/close) --}}
+    <div x-data="{ open: @entangle('showModal').live }" x-cloak>
+        <div
+            x-show="open"
+            x-transition:enter="ease-out duration-200"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="ease-in duration-150"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+            @click.outside="open = false"
+        >
+            <div class="w-full max-w-xl rounded-2xl bg-white shadow-xl flex flex-col" @click.stop>
+                <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+                    <h3 class="text-lg font-bold text-slate-800">
+                        {{ $selected ? 'Message de ' . $selected->name : '' }}
+                    </h3>
+                    <button @click="open = false" class="text-slate-400 hover:text-slate-600">
+                        <i class="ri-close-line text-2xl"></i>
+                    </button>
+                </div>
 
-            <div class="p-6 space-y-4">
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <p class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">Nom</p>
-                        <p class="text-sm font-semibold text-slate-800">{{ $selected->name }}</p>
+                <div x-show="$wire.showModal && $wire.selected" class="p-6 space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">Nom</p>
+                            <p class="text-sm font-semibold text-slate-800">{{ $selected?->name }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">Email</p>
+                            <a href="mailto:{{ $selected?->email }}" class="text-sm font-semibold text-blue-600 hover:underline">{{ $selected?->email }}</a>
+                        </div>
+                        @if($selected?->phone)
+                        <div>
+                            <p class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">Téléphone</p>
+                            <p class="text-sm font-semibold text-slate-800">{{ $selected->phone }}</p>
+                        </div>
+                        @endif
+                        @if($selected?->subject)
+                        <div>
+                            <p class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">Sujet</p>
+                            <p class="text-sm font-semibold text-slate-800">{{ $selected->subject }}</p>
+                        </div>
+                        @endif
+                        <div class="col-span-2">
+                            <p class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">Reçu le</p>
+                            <p class="text-sm text-slate-600">{{ $selected?->created_at->format('d M Y à H:i') }}</p>
+                        </div>
                     </div>
+
                     <div>
-                        <p class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">Email</p>
-                        <a href="mailto:{{ $selected->email }}" class="text-sm font-semibold text-blue-600 hover:underline">{{ $selected->email }}</a>
-                    </div>
-                    @if($selected->phone)
-                    <div>
-                        <p class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">Téléphone</p>
-                        <p class="text-sm font-semibold text-slate-800">{{ $selected->phone }}</p>
-                    </div>
-                    @endif
-                    @if($selected->subject)
-                    <div>
-                        <p class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">Sujet</p>
-                        <p class="text-sm font-semibold text-slate-800">{{ $selected->subject }}</p>
-                    </div>
-                    @endif
-                    <div class="col-span-2">
-                        <p class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-1">Reçu le</p>
-                        <p class="text-sm text-slate-600">{{ $selected->created_at->format('d M Y à H:i') }}</p>
+                        <p class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-2">Message</p>
+                        <div class="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{{ $selected?->message }}</div>
                     </div>
                 </div>
 
-                <div>
-                    <p class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 mb-2">Message</p>
-                    <div class="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm text-slate-700 leading-relaxed whitespace-pre-wrap">{{ $selected->message }}</div>
-                </div>
-            </div>
-
-            <div class="border-t border-slate-100 px-6 py-4 flex justify-between items-center gap-3 rounded-b-2xl bg-slate-50">
-                <button type="button" wire:click="delete({{ $selected->id }})"
-                        wire:confirm="Supprimer ce message définitivement ?"
-                        class="inline-flex items-center gap-2 rounded-full bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-600 hover:bg-rose-600 hover:text-white transition">
-                    <i class="ri-delete-bin-line"></i> Supprimer
-                </button>
-                <div class="flex gap-2">
-                    <a href="mailto:{{ $selected->email }}" class="inline-flex items-center gap-2 rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-600 hover:text-white transition">
-                        <i class="ri-reply-line"></i> Répondre
-                    </a>
-                    <button wire:click="$set('showModal', false)" type="button" class="rounded-full px-5 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-200 transition">Fermer</button>
+                <div x-show="$wire.showModal && $wire.selected" class="border-t border-slate-100 px-6 py-4 flex justify-between items-center gap-3 rounded-b-2xl bg-slate-50">
+                    <button type="button" wire:click="delete($selected?->id)"
+                            wire:confirm="Supprimer ce message définitivement ?"
+                            class="inline-flex items-center gap-2 rounded-full bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-600 hover:bg-rose-600 hover:text-white transition">
+                        <i class="ri-delete-bin-line"></i> Supprimer
+                    </button>
+                    <div class="flex gap-2">
+                        <a href="mailto:{{ $selected?->email }}" class="inline-flex items-center gap-2 rounded-full bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-600 hover:text-white transition">
+                            <i class="ri-reply-line"></i> Répondre
+                        </a>
+                        <button @click="open = false" type="button" class="rounded-full px-5 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-200 transition">Fermer</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    @endif
 </div>

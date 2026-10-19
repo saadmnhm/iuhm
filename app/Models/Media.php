@@ -111,8 +111,8 @@ class Media extends Model
     protected static function booted()
     {
         static::deleting(function ($media) {
-            if (file_exists(public_path($media->file_path))) {
-                unlink(public_path($media->file_path));
+            if (file_exists(base_path($media->file_path))) {
+                unlink(base_path($media->file_path));
             }
         });
     }

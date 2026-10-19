@@ -37,7 +37,7 @@ class BlogList extends Component
         $categories = BlogPost::published()->whereNotNull('category')
             ->select('category')->distinct()->pluck('category');
 
-        return view('livewire.front.blog.blog-list', compact('posts', 'categories'))
+        return view('livewire.candidat.blog.blog-list', compact('posts', 'categories'))
             ->layout('layouts.app', ['pageTitle' => 'Actualités']);
     }
 }

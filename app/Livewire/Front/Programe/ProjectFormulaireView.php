@@ -693,7 +693,7 @@ class ProjectFormulaireView extends Component
 
         $project = $this->existingSubmission?->programe ?: $this->project;
 
-        return view('livewire.front.programe.project-formulaire-view', [
+        return view('livewire.candidat.programe.project-formulaire-view', [
             'currentStepData' => $currentStepData,
             'totalSteps' => $totalSteps,
             'project' => $project,

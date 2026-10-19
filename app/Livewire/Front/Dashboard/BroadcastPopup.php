@@ -77,6 +77,6 @@ class BroadcastPopup extends Component
 
     public function render()
     {
-        return view('livewire.front.dashboard.broadcast-popup');
+        return view('livewire.candidat.dashboard.broadcast-popup');
     }
 }

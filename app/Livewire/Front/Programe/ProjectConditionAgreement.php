@@ -56,7 +56,7 @@ class ProjectConditionAgreement extends Component
 
     public function render()
     {
-        return view('livewire.front.programe.project-condition-agreement', [
+        return view('livewire.candidat.programe.project-condition-agreement', [
             'candidat' => Auth::guard('candidat')->user()
         ])->layout('layouts.app', ['title' => 'Conditions du projet']);
     }

@@ -5,6 +5,9 @@ namespace App\Livewire\Front\Dashboard;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Auth;
+use App\Models\ProjectsList;
+
+#[Layout('layouts.app')]
 class Aside extends Component
 {
     public $showCompleteProfileModal = false;
@@ -59,6 +62,6 @@ class Aside extends Component
 
     public function render()
     {
-        return view('livewire.front.dashboard.aside');
+        return view('livewire.candidat.dashboard.aside');
     }
 }

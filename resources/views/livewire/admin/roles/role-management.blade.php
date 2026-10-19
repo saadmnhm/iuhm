@@ -10,7 +10,7 @@
                     </p>
                 </div>
 
-                <button type="button" wire:click="openCreate()" class="inline-flex items-center gap-2 self-start rounded-full bg-[#0f1d57] px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(15,23,42,0.22)] transition hover:bg-[#14256f]">
+                <button type="button" @click="openRole = true" class="inline-flex items-center gap-2 self-start rounded-full bg-[#0f1d57] px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(15,23,42,0.22)] transition hover:bg-[#14256f]">
                     <span class="flex h-6 w-6 items-center justify-center rounded-full border border-white/25 bg-white/10">
                         <i class="ri-user-add-line text-sm"></i>
                     </span>
@@ -194,6 +194,7 @@
              MODALS CONTAINER
         ══════════════════════════════════════════════════════════ --}}
         <div class="modals-container">
+    <div x-data="{ openRole: @entangle('showRoleModal').live, openDelete: @entangle('showDeleteModal').live }" x-cloak>
     @if($showRoleModal)
     @php
         $wizardSteps = [
@@ -203,7 +204,7 @@
         ];
         $selectedPermissionCount = count($roleWizardPerms);
     @endphp
-    <div x-show="$wire.showRoleModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-2 md:p-4 backdrop-blur-sm overflow-y-auto" wire:click.self="$set('showRoleModal', false)" style="display: none;">
+    <div x-show="openRole" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-2 md:p-4 backdrop-blur-sm overflow-y-auto" @click.self="openRole = false">
         <div class="w-full max-w-lg md:max-w-2xl lg:max-w-3xl overflow-hidden rounded-2xl md:rounded-[20px] bg-white shadow-[0_30px_90px_rgba(0,0,0,0.35)] my-4 md:my-0 flex flex-col max-h-[90vh]" wire:key="role-modal">
             <div class="flex items-start justify-between gap-2 px-4 md:px-6 pb-3 md:pb-4 pt-4 md:pt-5 shrink-0">
                 <div class="flex-1 min-w-0">
@@ -212,7 +213,7 @@
                     </h3>
                     <p class="mt-0.5  text-[16px]  text-[#45464E]">Définissez les niveaux d'accès pour ce profil.</p>
                 </div>
-                <button type="button" type="button" wire:click="$set('showRoleModal', false)" class="inline-flex h-8 md:h-9 w-8 md:w-9 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 flex-shrink-0">
+                <button type="button" @click="openRole = false" class="inline-flex h-8 md:h-9 w-8 md:w-9 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700 flex-shrink-0">
                     <i class="ri-close-line text-lg md:text-xl"></i>
                 </button>
             </div>
@@ -316,7 +317,7 @@
             </div>
 
             <div class="flex flex-col gap-2 md:gap-3 border-t border-slate-200 px-4 md:px-6 py-4 md:py-5 sm:flex-row sm:items-center sm:justify-between sm:px-8 shrink-0 bg-slate-50">
-                <button type="button" wire:click="$set('showRoleModal', false)" class="rounded-full border border-slate-300 px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm font-medium text-slate-700 transition hover:bg-slate-50">Annuler</button>
+                <button type="button" @click="openRole = false" class="rounded-full border border-slate-300 px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm font-medium text-slate-700 transition hover:bg-slate-50">Annuler</button>
                 <div class="flex items-center gap-2 md:gap-3">
                     @if($roleModalStep > 1)
                     <button type="button" wire:click="previousRoleStep()" class="flex-1 sm:flex-none rounded-full border border-slate-300 px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm font-medium text-slate-700 transition hover:bg-slate-50">Précédent</button>
@@ -336,10 +337,10 @@
     @endif
 
     @if($showDeleteModal)
-    <div x-show="$wire.showDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm" wire:click.self="$set('showDeleteModal', false)" style="display: none;">
+    <div x-show="openDelete" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm" @click.self="openDelete = false">
         <div class="w-full max-w-md rounded-2xl md:rounded-[18px] bg-white shadow-[0_30px_90px_rgba(0,0,0,0.35)] overflow-hidden flex flex-col max-h-[90vh]">
             <div class="flex justify-end px-4 md:px-6 pt-4 md:pt-5 shrink-0">
-                <button type="button" wire:click="$set('showDeleteModal', false)" class="inline-flex h-8 md:h-9 w-8 md:w-9 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
+                <button type="button" @click="openDelete = false" class="inline-flex h-8 md:h-9 w-8 md:w-9 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
                     <i class="ri-close-line text-lg md:text-xl"></i>
                 </button>
             </div>
@@ -362,7 +363,7 @@
             </div>
 
             <div class="flex flex-col sm:flex-row gap-2 md:gap-3 items-center justify-between border-t border-slate-200 px-4 md:px-6 py-4 md:py-5 shrink-0 bg-slate-50">
-                <button wire:click="$set('showDeleteModal', false)" class="w-full sm:w-auto rounded-full border border-slate-300 px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm font-medium text-slate-700 transition hover:bg-slate-50">Annuler</button>
+                <button @click="openDelete = false" class="w-full sm:w-auto rounded-full border border-slate-300 px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm font-medium text-slate-700 transition hover:bg-slate-50">Annuler</button>
                 <button wire:click="deleteRole()" wire:loading.attr="disabled" class="w-full sm:w-auto rounded-full bg-rose-600 px-4 md:px-5 py-2 md:py-2.5 text-xs md:text-sm font-semibold text-white transition hover:bg-rose-700 disabled:opacity-50">
                     <span wire:loading.remove wire:target="deleteRole">Désactiver</span>
                     <span wire:loading wire:target="deleteRole"><i class="ri-loader-4-line animate-spin mr-1"></i>...</span>
@@ -371,4 +372,5 @@
         </div>
     </div>
     @endif
+    </div>
 

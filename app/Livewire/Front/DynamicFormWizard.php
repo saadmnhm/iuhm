@@ -575,7 +575,7 @@ class DynamicFormWizard extends Component
             ? $form->title_ar
             : $form->title;
 
-        return view('livewire.front.dynamic_form.wizard', [
+        return view('livewire.candidat.dynamic_form.wizard', [
             'form' => $form,
             'project' => $project,
             'currentStep' => $currentStep,

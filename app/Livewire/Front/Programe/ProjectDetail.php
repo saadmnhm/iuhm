@@ -196,7 +196,7 @@ class ProjectDetail extends Component
     public function render()
     {
         $candidat = Auth::guard('candidat')->user();
-        return view('livewire.front.programe.project-detail', [
+        return view('livewire.candidat.programe.project-detail', [
             'candidat' => $candidat,
         ])->layout('layouts.app', ['title' => $this->project->project_name]);
     }

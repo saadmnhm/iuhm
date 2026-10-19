@@ -87,6 +87,7 @@ class PublicationManagement extends Component
             'total' => [
                 'label' => 'TOTAL PUBLIÉS',
                 'icon' => 'ri-article-line',
+                'color' => 'text-slate-600',
                 'data' => Publication::count(),
             ],
             'published' => [
@@ -98,6 +99,7 @@ class PublicationManagement extends Component
             'draft' => [
                 'label' => 'NON PUBLIÉS',
                 'icon' => 'ri-mail-send-line',
+                'color' => 'text-amber-600',
                 'data' => Publication::where('status', 'completed')->count(),
             ],
 

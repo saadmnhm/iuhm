@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Resources\Api\ArticleResource;
+use App\Http\Resources\Api\ArticleCollection;
 use App\Models\Article;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
-class BlogPostApiController
+class BlogPostApiController extends BaseApiController
 {
     /**
      * Get all published blog posts
@@ -15,32 +17,17 @@ class BlogPostApiController
     {
         $query = Article::published();
 
-        if ($request->has('category')) {
-            $query->where('category', $request->category);
-        }
-
-        if ($request->has('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('excerpt', 'like', "%{$search}%")
-                  ->orWhere('content', 'like', "%{$search}%");
-            });
-        }
-
-        $per_page = $request->get('per_page', 15);
-        $posts = $query->with('author:id,nom,prenom,email')->latest('published_at')->paginate($per_page);
-
-        return response()->json([
-            'status' => 'success',
-            'data' => $posts->items(),
-            'pagination' => [
-                'total' => $posts->total(),
-                'per_page' => $posts->perPage(),
-                'current_page' => $posts->currentPage(),
-                'last_page' => $posts->lastPage(),
-            ]
+        $this->applyFilters($query, $request, [
+            'category' => 'category',
         ]);
+
+        $this->applySearch($query, $request, ['title', 'excerpt', 'content']);
+        $this->applySort($query, $request, ['published_at', 'created_at', 'views_count'], 'published_at', 'desc');
+
+        $perPage = $this->getPerPage($request);
+        $posts = $query->with('author:id,nom,prenom,email')->paginate($perPage);
+
+        return $this->paginated($posts->load('author'));
     }
 
     /**
@@ -50,13 +37,10 @@ class BlogPostApiController
     {
         $post = Article::where('slug', $slug)->published()->with('author:id,nom,prenom,email')->firstOrFail();
         
-        // Increment view count
         $post->increment('views_count');
+        $post->refresh();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $post
-        ]);
+        return $this->success(new ArticleResource($post));
     }
 
     /**
@@ -66,11 +50,9 @@ class BlogPostApiController
     {
         $post = Article::where('id', $id)->published()->with('author:id,nom,prenom,email')->firstOrFail();
         $post->increment('views_count');
+        $post->refresh();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $post
-        ]);
+        return $this->success(new ArticleResource($post));
     }
 
     /**
@@ -90,14 +72,10 @@ class BlogPostApiController
             })
             ->with('author:id,nom,prenom,email')
             ->latest('published_at')
-            ->limit(10)
+            ->limit($this->getLimit($request))
             ->get();
 
-        return response()->json([
-            'status' => 'success',
-            'count' => $posts->count(),
-            'data' => $posts
-        ]);
+        return $this->success(ArticleResource::collection($posts));
     }
 
     /**
@@ -105,23 +83,14 @@ class BlogPostApiController
      */
     public function getByCategory(string $category, Request $request): JsonResponse
     {
-        $per_page = $request->get('per_page', 15);
+        $perPage = $this->getPerPage($request);
         $posts = Article::published()
             ->where('category', $category)
             ->with('author:id,nom,prenom,email')
             ->latest('published_at')
-            ->paginate($per_page);
+            ->paginate($perPage);
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $posts->items(),
-            'pagination' => [
-                'total' => $posts->total(),
-                'per_page' => $posts->perPage(),
-                'current_page' => $posts->currentPage(),
-                'last_page' => $posts->lastPage(),
-            ]
-        ]);
+        return $this->paginated($posts->load('author'));
     }
 
     /**
@@ -129,17 +98,27 @@ class BlogPostApiController
      */
     public function trending(Request $request): JsonResponse
     {
-        $limit = $request->get('limit', 10);
+        $limit = $this->getLimit($request);
         $posts = Article::published()
             ->with('author:id,nom,prenom,email')
             ->orderBy('views_count', 'desc')
             ->limit($limit)
             ->get();
 
-        return response()->json([
-            'status' => 'success',
-            'count' => $posts->count(),
-            'data' => $posts
-        ]);
+        return $this->success(ArticleResource::collection($posts));
+    }
+
+    /**
+     * Get all categories
+     */
+    public function categories(): JsonResponse
+    {
+        $categories = Article::published()
+            ->distinct()
+            ->pluck('category')
+            ->filter()
+            ->values();
+
+        return $this->success($categories);
     }
 }

@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Resources\Api\PublicationResource;
 use App\Models\Publication;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
-class DeliverableApiController
+class DeliverableApiController extends BaseApiController
 {
     /**
      * Get all published deliverables
@@ -15,35 +16,18 @@ class DeliverableApiController
     {
         $query = Publication::published();
 
-        if ($request->has('category')) {
-            $query->where('category', $request->category);
-        }
-
-        if ($request->has('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->has('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%");
-            });
-        }
-
-        $per_page = $request->get('per_page', 15);
-        $deliverables = $query->with('author:id,nom,prenom,email')->latest('published_at')->paginate($per_page);
-
-        return response()->json([
-            'status' => 'success',
-            'data' => $deliverables->items(),
-            'pagination' => [
-                'total' => $deliverables->total(),
-                'per_page' => $deliverables->perPage(),
-                'current_page' => $deliverables->currentPage(),
-                'last_page' => $deliverables->lastPage(),
-            ]
+        $this->applyFilters($query, $request, [
+            'category' => 'category',
+            'status' => 'status',
         ]);
+
+        $this->applySearch($query, $request, ['title', 'description']);
+        $this->applySort($query, $request, ['published_at', 'created_at', 'downloads_count'], 'published_at', 'desc');
+
+        $perPage = $this->getPerPage($request);
+        $deliverables = $query->with('author:id,nom,prenom,email')->paginate($perPage);
+
+        return $this->paginated($deliverables->load('author'));
     }
 
     /**
@@ -53,11 +37,9 @@ class DeliverableApiController
     {
         $deliverable = Publication::where('slug', $slug)->published()->with('author:id,nom,prenom,email')->firstOrFail();
         $deliverable->increment('downloads_count');
+        $deliverable->refresh();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $deliverable
-        ]);
+        return $this->success(new PublicationResource($deliverable));
     }
 
     /**
@@ -67,11 +49,9 @@ class DeliverableApiController
     {
         $deliverable = Publication::where('id', $id)->published()->with('author:id,nom,prenom,email')->firstOrFail();
         $deliverable->increment('downloads_count');
+        $deliverable->refresh();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $deliverable
-        ]);
+        return $this->success(new PublicationResource($deliverable));
     }
 
     /**
@@ -90,14 +70,10 @@ class DeliverableApiController
             })
             ->with('author:id,nom,prenom,email')
             ->latest('published_at')
-            ->limit(10)
+            ->limit($this->getLimit($request))
             ->get();
 
-        return response()->json([
-            'status' => 'success',
-            'count' => $deliverables->count(),
-            'data' => $deliverables
-        ]);
+        return $this->success(PublicationResource::collection($deliverables));
     }
 
     /**
@@ -105,23 +81,14 @@ class DeliverableApiController
      */
     public function getByCategory(string $category, Request $request): JsonResponse
     {
-        $per_page = $request->get('per_page', 15);
+        $perPage = $this->getPerPage($request);
         $deliverables = Publication::published()
             ->where('category', $category)
             ->with('author:id,nom,prenom,email')
             ->latest('published_at')
-            ->paginate($per_page);
+            ->paginate($perPage);
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $deliverables->items(),
-            'pagination' => [
-                'total' => $deliverables->total(),
-                'per_page' => $deliverables->perPage(),
-                'current_page' => $deliverables->currentPage(),
-                'last_page' => $deliverables->lastPage(),
-            ]
-        ]);
+        return $this->paginated($deliverables->load('author'));
     }
 
     /**
@@ -129,23 +96,14 @@ class DeliverableApiController
      */
     public function getByStatus(string $status, Request $request): JsonResponse
     {
-        $per_page = $request->get('per_page', 15);
+        $perPage = $this->getPerPage($request);
         $deliverables = Publication::published()
             ->where('status', $status)
             ->with('author:id,nom,prenom,email')
             ->latest('published_at')
-            ->paginate($per_page);
+            ->paginate($perPage);
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $deliverables->items(),
-            'pagination' => [
-                'total' => $deliverables->total(),
-                'per_page' => $deliverables->perPage(),
-                'current_page' => $deliverables->currentPage(),
-                'last_page' => $deliverables->lastPage(),
-            ]
-        ]);
+        return $this->paginated($deliverables->load('author'));
     }
 
     /**
@@ -153,17 +111,41 @@ class DeliverableApiController
      */
     public function popular(Request $request): JsonResponse
     {
-        $limit = $request->get('limit', 10);
+        $limit = $this->getLimit($request);
         $deliverables = Publication::published()
             ->with('author:id,nom,prenom,email')
             ->orderBy('downloads_count', 'desc')
             ->limit($limit)
             ->get();
 
-        return response()->json([
-            'status' => 'success',
-            'count' => $deliverables->count(),
-            'data' => $deliverables
-        ]);
+        return $this->success(PublicationResource::collection($deliverables));
+    }
+
+    /**
+     * Get all categories
+     */
+    public function categories(): JsonResponse
+    {
+        $categories = Publication::published()
+            ->distinct()
+            ->pluck('category')
+            ->filter()
+            ->values();
+
+        return $this->success($categories);
+    }
+
+    /**
+     * Get all statuses
+     */
+    public function statuses(): JsonResponse
+    {
+        $statuses = Publication::published()
+            ->distinct()
+            ->pluck('status')
+            ->filter()
+            ->values();
+
+        return $this->success($statuses);
     }
 }

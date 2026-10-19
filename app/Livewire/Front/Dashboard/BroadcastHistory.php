@@ -56,7 +56,7 @@ class BroadcastHistory extends Component
             ->latest()
             ->paginate(10);
 
-        return view('livewire.front.dashboard.broadcast-history', [
+        return view('livewire.candidat.dashboard.broadcast-history', [
             'broadcasts' => $broadcasts,
             'readIds'    => $readIds,
         ])->layout('layouts.app', ['pageTitle' => 'Historique des messages']);

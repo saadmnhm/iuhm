@@ -56,7 +56,7 @@ class Support extends Component
             ->latest()
             ->paginate(10);
 
-        return view('livewire.front.dashboard.support', [
+        return view('livewire.candidat.dashboard.support', [
             'tickets' => $tickets,
         ]);
     }

@@ -45,6 +45,29 @@ class Actualite extends Model
         return $query->where('is_published', true)->whereNotNull('published_at')->where('published_at', '<=', now());
     }
 
+    /**
+     * Get the localized value of a field based on the current locale.
+     */
+    public function getLocalized(string $field): ?string
+    {
+        $locale = app()->getLocale();
+        $localizedField = $field.'_ar';
+
+        if ($locale === 'ar' && filled($this->{$localizedField})) {
+            return $this->{$localizedField};
+        }
+
+        return $this->{$field};
+    }
+
+    /**
+     * Get the translated content based on the current locale.
+     */
+    public function getTranslatedContent(): ?string
+    {
+        return $this->getLocalized('content');
+    }
+
     public static function generateSlug(string $title): string
     {
         $slug = Str::slug($title);

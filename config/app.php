@@ -85,6 +85,10 @@ return [
 
     'locale_path' => resource_path('lang'),
 
+    'supported_locales' => ['ar', 'fr', 'en'],
+
+    'rtl_locales' => ['ar'],
+
     /*
     |--------------------------------------------------------------------------
     | Encryption Key

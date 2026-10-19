@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Contact;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 
-class ContactApiController
+class ContactApiController extends BaseApiController
 {
     public function store(Request $request): JsonResponse
     {
@@ -18,18 +18,12 @@ class ContactApiController
             'message' => 'required|string|max:2000',
         ]);
 
-        $contact = Contact::create([
-            'name'    => $validated['name'],
-            'email'   => $validated['email'],
-            'phone'   => $validated['phone'] ?? null,
-            'subject' => $validated['subject'] ?? null,
-            'message' => $validated['message'],
-        ]);
+        $contact = Contact::create($validated);
 
-        return response()->json([
-            'status'  => 'success',
-            'message' => 'Message received.',
-            'data'    => ['id' => $contact->id],
-        ], 201);
+        return $this->success(
+            ['id' => $contact->id],
+            'Message received.',
+            201
+        );
     }
 }

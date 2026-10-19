@@ -17,7 +17,7 @@ class BlogShow extends Component
 
     public function render()
     {
-        return view('livewire.front.blog.blog-show')
+        return view('livewire.candidat.blog.blog-show')
             ->layout('layouts.app', ['pageTitle' => $this->post->title]);
     }
 }

@@ -2,279 +2,190 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Resources\Api\MediaResource;
 use App\Models\Media;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
 
-class MediaApiController
+class MediaApiController extends BaseApiController
 {
     /**
      * Get all public media with pagination
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        $perPage = $request->query('per_page', 15);
-        $category = $request->query('category');
-        $type = $request->query('type');
-        $search = $request->query('search');
-
         $query = Media::where('is_public', true);
 
-        if ($category) {
-            $query->byCategory($category);
-        }
-
-        if ($type) {
-            $query->byType($type);
-        }
-
-        if ($search) {
-            $query->search($search);
-        }
-
-        $media = $query->latest()->paginate($perPage);
-
-        return response()->json([
-            'status' => 'success',
-            'data' => $media->items(),
-            'pagination' => [
-                'total' => $media->total(),
-                'per_page' => $media->perPage(),
-                'current_page' => $media->currentPage(),
-                'last_page' => $media->lastPage(),
-            ],
+        $this->applyFilters($query, $request, [
+            'category' => 'category',
+            'type' => 'file_type',
         ]);
+
+        $this->applySearch($query, $request, ['title', 'description', 'tags']);
+        $this->applySort($query, $request, ['created_at', 'usage_count', 'file_size'], 'created_at', 'desc');
+
+        $perPage = $this->getPerPage($request);
+        $media = $query->paginate($perPage);
+
+        return $this->paginated($media);
     }
 
     /**
      * Get media by ID
      */
-    public function show($id)
+    public function show(int $id): JsonResponse
     {
         $media = Media::where('is_public', true)->findOrFail($id);
-
-        // Increment usage count
         $media->increment('usage_count');
+        $media->refresh();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $media,
-        ]);
+        return $this->success(new MediaResource($media));
     }
 
     /**
-     * Get media by ID (including file URL)
+     * Get media by ID (alias for show)
      */
-    public function getById($id)
+    public function getById(int $id): JsonResponse
     {
-        $media = Media::where('is_public', true)->findOrFail($id);
-
-        $media->increment('usage_count');
-
-        return response()->json([
-            'status' => 'success',
-            'data' => [
-                'id' => $media->id,
-                'title' => $media->title,
-                'title_ar' => $media->title_ar,
-                'description' => $media->description,
-                'description_ar' => $media->description_ar,
-                'category' => $media->category,
-                'tags' => $media->tags,
-                'file_url' => asset($media->file_path),
-                'file_size' => $media->file_size_formatted,
-                'file_type' => $media->file_type,
-                'usage_count' => $media->usage_count,
-                'created_at' => $media->created_at->toIso8601String(),
-            ],
-        ]);
+        return $this->show($id);
     }
 
     /**
      * Search media
      */
-    public function search(Request $request)
+    public function search(Request $request): JsonResponse
     {
-        $search = $request->query('q');
-        $perPage = $request->query('per_page', 15);
-
-        if (!$search) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Search query required',
-            ], 400);
-        }
-
-        $media = Media::where('is_public', true)
-                      ->search($search)
-                      ->latest()
-                      ->paginate($perPage);
-
-        return response()->json([
-            'status' => 'success',
-            'data' => $media->items(),
-            'pagination' => [
-                'total' => $media->total(),
-                'per_page' => $media->perPage(),
-                'current_page' => $media->currentPage(),
-                'last_page' => $media->lastPage(),
-            ],
+        $validated = $request->validate([
+            'q' => 'required|string|min:2|max:255',
         ]);
+
+        $perPage = $this->getPerPage($request);
+        $media = Media::where('is_public', true)
+            ->search($validated['q'])
+            ->latest()
+            ->paginate($perPage);
+
+        return $this->paginated($media);
     }
 
     /**
      * Get media by category
      */
-    public function getByCategory($category, Request $request)
+    public function getByCategory(string $category, Request $request): JsonResponse
     {
-        $perPage = $request->query('per_page', 15);
-
+        $perPage = $this->getPerPage($request);
         $media = Media::where('is_public', true)
-                      ->byCategory($category)
-                      ->latest()
-                      ->paginate($perPage);
+            ->byCategory($category)
+            ->latest()
+            ->paginate($perPage);
 
-        if ($media->isEmpty()) {
-            return response()->json([
-                'status' => 'success',
-                'message' => 'No media found in this category',
-                'data' => [],
-            ]);
-        }
-
-        return response()->json([
-            'status' => 'success',
-            'data' => $media->items(),
-            'pagination' => [
-                'total' => $media->total(),
-                'per_page' => $media->perPage(),
-                'current_page' => $media->currentPage(),
-                'last_page' => $media->lastPage(),
-            ],
-        ]);
+        return $this->paginated($media);
     }
 
     /**
      * Get media by type (mime type)
      */
-    public function getByType($type, Request $request)
+    public function getByType(string $type, Request $request): JsonResponse
     {
-        $perPage = $request->query('per_page', 15);
-
+        $perPage = $this->getPerPage($request);
         $media = Media::where('is_public', true)
-                      ->byType($type)
-                      ->latest()
-                      ->paginate($perPage);
+            ->byType($type)
+            ->latest()
+            ->paginate($perPage);
 
-        if ($media->isEmpty()) {
-            return response()->json([
-                'status' => 'success',
-                'message' => 'No media found of this type',
-                'data' => [],
-            ]);
-        }
-
-        return response()->json([
-            'status' => 'success',
-            'data' => $media->items(),
-            'pagination' => [
-                'total' => $media->total(),
-                'per_page' => $media->perPage(),
-                'current_page' => $media->currentPage(),
-                'last_page' => $media->lastPage(),
-            ],
-        ]);
+        return $this->paginated($media);
     }
 
     /**
      * Get most used media
      */
-    public function mostUsed(Request $request)
+    public function mostUsed(Request $request): JsonResponse
     {
-        $limit = $request->query('limit', 10);
-        $perPage = $request->query('per_page', 15);
-
+        $limit = $this->getLimit($request);
         $media = Media::where('is_public', true)
-                      ->orderBy('usage_count', 'desc')
-                      ->limit($limit)
-                      ->get();
+            ->orderBy('usage_count', 'desc')
+            ->limit($limit)
+            ->get();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $media,
-        ]);
+        return $this->success(MediaResource::collection($media));
     }
 
     /**
      * Get latest media
      */
-    public function latest(Request $request)
+    public function latest(Request $request): JsonResponse
     {
-        $limit = $request->query('limit', 10);
-
+        $limit = $this->getLimit($request);
         $media = Media::where('is_public', true)
-                      ->latest()
-                      ->limit($limit)
-                      ->get();
+            ->latest()
+            ->limit($limit)
+            ->get();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $media,
-        ]);
+        return $this->success(MediaResource::collection($media));
     }
 
     /**
      * Get all available categories
      */
-    public function categories()
+    public function categories(): JsonResponse
     {
         $categories = Media::where('is_public', true)
-                           ->distinct()
-                           ->pluck('category')
-                           ->filter()
-                           ->values();
+            ->distinct()
+            ->pluck('category')
+            ->filter()
+            ->values();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $categories,
-        ]);
+        return $this->success($categories);
+    }
+
+    /**
+     * Get all available types
+     */
+    public function types(): JsonResponse
+    {
+        $types = Media::where('is_public', true)
+            ->distinct()
+            ->pluck('file_type')
+            ->filter()
+            ->values();
+
+        return $this->success($types);
     }
 
     /**
      * Get media statistics
      */
-    public function stats()
+    public function stats(): JsonResponse
     {
-        return response()->json([
-            'status' => 'success',
-            'data' => [
-                'total' => Media::count(),
-                'public' => Media::where('is_public', true)->count(),
-                'private' => Media::where('is_public', false)->count(),
-                'by_category' => Media::where('is_public', true)
-                                      ->selectRaw('category, COUNT(*) as count')
-                                      ->groupBy('category')
-                                      ->pluck('count', 'category'),
-                'most_used' => Media::where('is_public', true)
-                                    ->orderBy('usage_count', 'desc')
-                                    ->limit(5)
-                                    ->pluck('title', 'id'),
-            ],
+        return $this->success([
+            'total' => Media::count(),
+            'public' => Media::where('is_public', true)->count(),
+            'private' => Media::where('is_public', false)->count(),
+            'by_category' => Media::where('is_public', true)
+                ->selectRaw('category, COUNT(*) as count')
+                ->groupBy('category')
+                ->pluck('count', 'category'),
+            'by_type' => Media::where('is_public', true)
+                ->selectRaw('file_type, COUNT(*) as count')
+                ->groupBy('file_type')
+                ->pluck('count', 'file_type'),
+            'most_used' => Media::where('is_public', true)
+                ->orderBy('usage_count', 'desc')
+                ->limit(5)
+                ->pluck('title', 'id'),
         ]);
     }
 
     /**
      * Download media file
      */
-    public function download($id)
+    public function download(int $id): JsonResponse
     {
         $media = Media::where('is_public', true)->findOrFail($id);
 
         if (!$media->file_path || !file_exists(public_path($media->file_path))) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'File not found',
-            ], 404);
+            return $this->error('File not found', 404);
         }
 
         $media->increment('usage_count');

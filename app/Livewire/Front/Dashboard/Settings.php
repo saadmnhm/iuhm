@@ -255,7 +255,7 @@ class Settings extends Component
                 ->pluck('prefecture');
         }
 
-        return view('livewire.front.dashboard.settings', [
+        return view('livewire.candidat.dashboard.settings', [
             'regions' => $regions,
             'cities' => $cities,
             'prefectures' => $prefectures,

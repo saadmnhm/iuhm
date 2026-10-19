@@ -51,7 +51,7 @@ class Chat extends Component
         // Also mark as read on every render (polling)
         ChatMessage::markAdminMessagesRead(Auth::guard('candidat')->id());
 
-        return view('livewire.front.dashboard.chat', [
+        return view('livewire.candidat.dashboard.chat', [
             'messages' => $messages,
             'candidat' => Auth::guard('candidat')->user(),
         ]);

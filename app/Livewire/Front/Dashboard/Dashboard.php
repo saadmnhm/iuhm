@@ -229,7 +229,7 @@ class Dashboard extends Component
             ['label' => $tr('Mon Profil', 'ملفي الشخصي') , 'description' => $tr('METTEZ À JOUR VOS INFORMATIONS PERSONNELLES', 'قم بتحديث معلوماتك الشخصية'), 'icon' => 'ri-user-3-line', 'route' =>  route('user.settings')],
         ];
 
-        return view('livewire.front.dashboard.dashboard', [
+        return view('livewire.candidat.dashboard.dashboard', [
             'stats'                   => $stats,
             'filteredSubmissions'     => $filteredSubmissions->values()->toArray(),
             'projectInsights'         => $projectInsights->toArray(),

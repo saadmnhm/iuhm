@@ -14,7 +14,7 @@
                     <h1 class="text-3xl font-bold text-gray-900">Gestion Newsletter</h1>
                     <p class="text-gray-600 mt-2">Gérez les abonnés à la newsletter. Ajoutez, activez ou supprimez des abonnés.</p>
                 </div>
-                <button wire:click="openCreate"
+                <button type="button" @click="open = true"
                     class="inline-flex items-center gap-2 rounded-xl bg-[#04103A] px-5 py-3 text-sm font-semibold text-white shadow hover:bg-[#04103acc] transition">
                     <i class="ri-add-line text-base"></i>
                     Ajouter un abonné
@@ -118,16 +118,23 @@
 
     </div>
 
-    {{-- Create / Edit Modal --}}
-    @if ($showModal)
-        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-             x-data x-on:keydown.escape.window="$wire.showModal = false">
-            <div class="w-full max-w-md rounded-2xl bg-white shadow-2xl" @click.outside="$wire.showModal = false">
+    {{-- Create / Edit Modal (Alpine - opens without backend request) --}}
+    <div x-data="{ open: false }" x-cloak>
+        <div
+            x-show="open"
+            x-transition:enter="ease-out duration-200"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="ease-in duration-150"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+            @click.outside="open = false"
+        >
+            <div class="w-full max-w-md rounded-2xl bg-white shadow-2xl" @click.stop>
                 <div class="flex items-center justify-between border-b border-gray-100 px-6 py-5">
-                    <h2 class="text-lg font-bold text-gray-900">
-                        {{ $editMode ? 'Modifier un abonné' : 'Ajouter un abonné' }}
-                    </h2>
-                    <button wire:click="$set('showModal', false)" class="text-gray-400 hover:text-gray-600">
+                    <h2 class="text-lg font-bold text-gray-900">Ajouter un abonné</h2>
+                    <button @click="open = false" class="text-gray-400 hover:text-gray-600">
                         <i class="ri-close-line text-xl"></i>
                     </button>
                 </div>
@@ -150,7 +157,7 @@
                 </div>
 
                 <div class="flex justify-end gap-3 border-t border-gray-100 px-6 py-4">
-                    <button wire:click="$set('showModal', false)"
+                    <button @click="open = false"
                         class="rounded-xl border border-gray-200 px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
                         Annuler
                     </button>
@@ -164,5 +171,5 @@
                 </div>
             </div>
         </div>
-    @endif
+    </div>
 </div>

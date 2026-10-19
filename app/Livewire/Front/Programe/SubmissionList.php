@@ -214,7 +214,7 @@ class SubmissionList extends Component
         $perPage   = 10;
         $paginated = $rows->values()->forPage($page, $perPage);
 
-        return view('livewire.front.programe.submission-list', [
+        return view('livewire.candidat.programe.submission-list', [
             'state_card' => $state_card,
             'rows'        => $paginated,
             'grouped'     => $grouped,

@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Resources\Api\ActualiteResource;
 use App\Models\Actualite;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
-class NewsApiController
+class NewsApiController extends BaseApiController
 {
     /**
      * Get all published news
@@ -15,31 +16,17 @@ class NewsApiController
     {
         $query = Actualite::published();
 
-        if ($request->has('category')) {
-            $query->where('category', $request->category);
-        }
-
-        if ($request->has('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('excerpt', 'like', "%{$search}%");
-            });
-        }
-
-        $per_page = $request->get('per_page', 15);
-        $news = $query->with('author:id,nom,prenom,email')->latest('published_at')->paginate($per_page);
-
-        return response()->json([
-            'status' => 'success',
-            'data' => $news->items(),
-            'pagination' => [
-                'total' => $news->total(),
-                'per_page' => $news->perPage(),
-                'current_page' => $news->currentPage(),
-                'last_page' => $news->lastPage(),
-            ]
+        $this->applyFilters($query, $request, [
+            'category' => 'category',
         ]);
+
+        $this->applySearch($query, $request, ['title', 'excerpt']);
+        $this->applySort($query, $request, ['published_at', 'created_at', 'views_count'], 'published_at', 'desc');
+
+        $perPage = $this->getPerPage($request);
+        $news = $query->with('author:id,nom,prenom,email')->paginate($perPage);
+
+        return $this->paginated($news->load('author'));
     }
 
     /**
@@ -49,11 +36,9 @@ class NewsApiController
     {
         $news = Actualite::where('slug', $slug)->published()->with('author:id,nom,prenom,email')->firstOrFail();
         $news->increment('views_count');
+        $news->refresh();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $news
-        ]);
+        return $this->success(new ActualiteResource($news));
     }
 
     /**
@@ -63,11 +48,9 @@ class NewsApiController
     {
         $news = Actualite::where('id', $id)->published()->with('author:id,nom,prenom,email')->firstOrFail();
         $news->increment('views_count');
+        $news->refresh();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $news
-        ]);
+        return $this->success(new ActualiteResource($news));
     }
 
     /**
@@ -87,14 +70,10 @@ class NewsApiController
             })
             ->with('author:id,nom,prenom,email')
             ->latest('published_at')
-            ->limit(10)
+            ->limit($this->getLimit($request))
             ->get();
 
-        return response()->json([
-            'status' => 'success',
-            'count' => $news->count(),
-            'data' => $news
-        ]);
+        return $this->success(ActualiteResource::collection($news));
     }
 
     /**
@@ -102,23 +81,14 @@ class NewsApiController
      */
     public function getByCategory(string $category, Request $request): JsonResponse
     {
-        $per_page = $request->get('per_page', 15);
+        $perPage = $this->getPerPage($request);
         $news = Actualite::published()
             ->where('category', $category)
             ->with('author:id,nom,prenom,email')
             ->latest('published_at')
-            ->paginate($per_page);
+            ->paginate($perPage);
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $news->items(),
-            'pagination' => [
-                'total' => $news->total(),
-                'per_page' => $news->perPage(),
-                'current_page' => $news->currentPage(),
-                'last_page' => $news->lastPage(),
-            ]
-        ]);
+        return $this->paginated($news->load('author'));
     }
 
     /**
@@ -126,17 +96,27 @@ class NewsApiController
      */
     public function latest(Request $request): JsonResponse
     {
-        $limit = $request->get('limit', 10);
+        $limit = $this->getLimit($request);
         $news = Actualite::published()
             ->with('author:id,nom,prenom,email')
             ->latest('published_at')
             ->limit($limit)
             ->get();
 
-        return response()->json([
-            'status' => 'success',
-            'count' => $news->count(),
-            'data' => $news
-        ]);
+        return $this->success(ActualiteResource::collection($news));
+    }
+
+    /**
+     * Get all categories
+     */
+    public function categories(): JsonResponse
+    {
+        $categories = Actualite::published()
+            ->distinct()
+            ->pluck('category')
+            ->filter()
+            ->values();
+
+        return $this->success($categories);
     }
 }

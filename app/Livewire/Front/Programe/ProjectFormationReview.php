@@ -75,7 +75,7 @@ class ProjectFormationReview extends Component
 
     public function render()
     {
-        return view('livewire.front.programe.project-formation-review')
+        return view('livewire.candidat.programe.project-formation-review')
             ->layout('layouts.app', ['title' => __('Avis de formation')]);
     }
 }
