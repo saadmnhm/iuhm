@@ -49,7 +49,8 @@ class PageController extends Controller
     public function projectShow(string $slug): View
     {
         $project = Project::published()->where('slug', $slug)->firstOrFail();
+        $relatedProjects = Project::published()->where('id', '!=', $project->id)->orderBy('sort_order')->limit(3)->get();
 
-        return view('livewire.site.projects.show', compact('project'));
+        return view('livewire.site.projects.show', compact('project', 'relatedProjects'));
     }
 }

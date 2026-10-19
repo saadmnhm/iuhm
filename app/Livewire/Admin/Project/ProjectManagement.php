@@ -4,6 +4,8 @@ namespace App\Livewire\Admin\Project;
 
 use App\Models\Project;
 use App\Models\AdminActivityLog;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
@@ -35,7 +37,7 @@ class ProjectManagement extends Component
             'description_ar'      => 'nullable|string',
             'short_description'   => 'nullable|string|max:500',
             'short_description_ar'=> 'nullable|string|max:500',
-            'slug'                => 'nullable|string|max:255|unique:project,slug',
+            'slug'                => 'nullable|string|max:255|unique:projects,slug',
             'featured_image'      => 'nullable|string|max:255',
             'newImage'            => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
             'status'              => 'nullable|string|max:50',
@@ -62,12 +64,12 @@ class ProjectManagement extends Component
     {
         $project = Project::findOrFail($id);
         $this->projectId = $project->id;
-        $this->title = $project->title;
-        $this->title_ar = $project->title_ar;
-        $this->description = $project->description;
-        $this->description_ar = $project->description_ar;
-        $this->short_description = $project->short_description;
-        $this->short_description_ar = $project->short_description_ar;
+        $this->title = is_array($project->title) ? ($project->title['fr'] ?? $project->title['ar'] ?? reset($project->title) ?? '') : ($project->title ?? '');
+        $this->title_ar = is_array($project->title) ? ($project->title['ar'] ?? '') : '';
+        $this->description = is_array($project->description) ? ($project->description['fr'] ?? $project->description['ar'] ?? reset($project->description) ?? '') : ($project->description ?? '');
+        $this->description_ar = is_array($project->description) ? ($project->description['ar'] ?? '') : '';
+        $this->short_description = is_array($project->short_description) ? ($project->short_description['fr'] ?? $project->short_description['ar'] ?? reset($project->short_description) ?? '') : ($project->short_description ?? '');
+        $this->short_description_ar = is_array($project->short_description) ? ($project->short_description['ar'] ?? '') : '';
         $this->slug = $project->slug;
         $this->featured_image = $project->featured_image;
         $this->status = $project->status;
@@ -87,12 +89,9 @@ class ProjectManagement extends Component
         $this->validate();
 
         $data = [
-            'title'               => $this->title,
-            'title_ar'            => $this->title_ar ?: null,
-            'description'         => $this->description ?: null,
-            'description_ar'      => $this->description_ar ?: null,
-            'short_description'   => $this->short_description ?: null,
-            'short_description_ar'=> $this->short_description_ar ?: null,
+            'title'               => ['fr' => $this->title, 'ar' => $this->title_ar ?: null],
+            'description'         => ['fr' => $this->description, 'ar' => $this->description_ar ?: null],
+            'short_description'   => ['fr' => $this->short_description, 'ar' => $this->short_description_ar ?: null],
             'slug'                => $this->slug ?: Project::generateSlug($this->title),
             'featured_image'      => $this->featured_image ?: null,
             'status'              => $this->status ?: 'planned',
@@ -106,9 +105,21 @@ class ProjectManagement extends Component
         ];
 
         if ($this->newImage) {
-            $filename = uniqid('project_') . '.' . $this->newImage->getClientOriginalExtension();
-            $this->newImage->storeAs('project', $filename, 'uploads');
-            $data['featured_image'] = 'uploads/project/' . $filename;
+            try {
+                // Ensure upload directory exists
+                $uploadPath = 'uploads/project';
+                if (!file_exists(storage_path('app/' . $uploadPath))) {
+                    Storage::makeDirectory($uploadPath, 0755, true);
+                }
+
+                $filename = uniqid('project_') . '.' . $this->newImage->getClientOriginalExtension();
+                $this->newImage->storeAs($uploadPath, $filename, 'uploads');
+                $data['featured_image'] = $uploadPath . '/' . $filename;
+            } catch (\Exception $e) {
+                Log::error('Project image upload error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+                session()->flash('error', 'Erreur lors de l\'upload de l\'image.');
+                return;
+            }
         }
 
         try {
@@ -123,11 +134,14 @@ class ProjectManagement extends Component
                 session()->flash('success', 'Projet créé avec succès!');
             }
 
-            $this->resetForm();
+            $this->dispatch('close-project-modal');
 
         } catch (\Exception $e) {
+            Log::error('Project save error: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
             session()->flash('error', 'Une erreur est survenue lors de l\'enregistrement.');
         }
+
+        $this->resetForm();
     }
 
     public function togglePublish(int $id): void
@@ -152,7 +166,7 @@ class ProjectManagement extends Component
         session()->flash('success', 'Projet supprimé avec succès!');
     }
 
-    protected function resetForm(): void
+    public function resetForm(): void
     {
         $this->reset(['projectId', 'title', 'title_ar', 'description', 'description_ar', 'short_description', 'short_description_ar', 'slug', 'featured_image', 'newImage', 'status', 'location', 'partner', 'tags_input', 'external_link', 'sort_order', 'is_published', 'is_featured']);
         $this->editMode = false;

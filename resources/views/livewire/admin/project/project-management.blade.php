@@ -1,5 +1,5 @@
 
-<div>
+<div x-data="{ open: false }" x-cloak @window.close-project-modal="open = false">
 
     {{-- ═══════ LIST VIEW ═══════ --}}
     <div class="px-6 pb-6 pt-8 sm:px-8 sm:pb-8 sm:pt-10">
@@ -13,7 +13,7 @@
                     Ajoutez, modifiez et publiez les projets qui apparaîtront sur le site web.
                 </p>
             </div>
-            <button type="button" wire:click="openCreate()"
+            <button type="button" @click="open = true"
                     class="inline-flex items-center gap-2 self-start rounded-full bg-[#0f1d57] px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(15,23,42,0.22)] transition hover:bg-[#14256f]">
                 <span class="flex h-6 w-6 items-center justify-center rounded-full border border-white/25 bg-white/10">
                     <i class="ri-add-line text-sm"></i>
@@ -91,10 +91,10 @@
                                         <i class="ri-file-line text-indigo-300"></i>
                                     </div>
                                     @endif
-                                    <span class="max-w-[220px] truncate text-[14px] font-semibold text-[#04103A]">{{ $project->title }}</span>
+                                    <span class="max-w-[220px] truncate text-[14px] font-semibold text-[#04103A]">{{ $project->getLocalized('title') }}</span>
                                 </div>
                             </td>
-                            <td class="px-6 py-5 text-[14px] text-slate-600">{{ $project->title }}</td>
+                            <td class="px-6 py-5 text-[14px] text-slate-600">{{ $project->getLocalized('title') }}</td>
                             <td class="px-6 py-5 text-[14px] text-slate-600">{{ $project->location ?? '—' }}</td>
                             <td class="px-6 py-5">
                                 <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ring-1
@@ -111,7 +111,7 @@
                             </td>
                             <td class="px-6 py-5">
                                 <div class="flex items-center justify-center gap-2">
-                                    <button type="button" wire:click="openEdit({{ $project->id }})"
+                                    <button type="button" @click="open = true" wire:click="openEdit({{ $project->id }})"
                                             class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#0f1d57]/5 text-[#0f1d57] transition hover:bg-[#0f1d57] hover:text-white" title="Modifier">
                                         <i class="ri-edit-2-line text-base"></i>
                                     </button>
@@ -150,5 +150,134 @@
             </div>
         </div>
 
+    {{-- Create / Edit Modal (Alpine - opens without backend request) --}}
+    <div
+        x-show="open"
+        x-transition:enter="ease-out duration-200"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="ease-in duration-150"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+        @click.outside="open = false"
+    >
+        <div class="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl" @click.stop>
+            <div class="p-6 border-b border-slate-200 flex items-center justify-between">
+                <h2 class="text-xl font-bold text-slate-900">{{ $editMode ? 'Modifier le projet' : 'Nouveau projet' }}</h2>
+                <button @click="open = false" class="text-slate-400 hover:text-slate-600">
+                    <i class="ri-close-line text-2xl"></i>
+                </button>
+            </div>
+
+            <form wire:submit.prevent="save" class="p-6 space-y-6">
+                {{-- Title --}}
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Titre (FR) <span class="text-red-500">*</span></label>
+                    <input type="text" wire:model="title" placeholder="Titre du projet"
+                           class="w-full rounded-xl iuhm_input">
+                    @error('title') <p class="mt-1 text-xs text-red-500">{{ $message }}</p> @enderror
+                </div>
+
+                {{-- Title AR --}}
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Titre (AR)</label>
+                    <input type="text" wire:model="title_ar" placeholder="Titre en arabe"
+                           class="w-full rounded-xl iuhm_input">
+                </div>
+
+                {{-- Slug --}}
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Slug</label>
+                    <input type="text" wire:model="slug" placeholder="mon-projet"
+                           class="w-full rounded-xl iuhm_input">
+                </div>
+
+                {{-- Short Description --}}
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Description courte (FR)</label>
+                    <textarea wire:model="short_description" rows="3"
+                              class="w-full rounded-xl iuhm_input"></textarea>
+                </div>
+
+                {{-- Description --}}
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Description (FR)</label>
+                    <textarea wire:model="description" rows="5"
+                              class="w-full rounded-xl iuhm_input"></textarea>
+                </div>
+
+                {{-- Location --}}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">Lieu</label>
+                        <input type="text" wire:model="location" placeholder="Casablanca, Maroc"
+                               class="w-full rounded-xl iuhm_input">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">Partenaire</label>
+                        <input type="text" wire:model="partner" placeholder="Nom du partenaire"
+                               class="w-full rounded-xl iuhm_input">
+                    </div>
+                </div>
+
+                {{-- Status --}}
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Statut</label>
+                    <select wire:model="status"
+                            class="w-full rounded-xl iuhm_input">
+                        <option value="planned">Planifié</option>
+                        <option value="in_progress">En cours</option>
+                        <option value="completed">Terminé</option>
+                        <option value="archived">Archivé</option>
+                    </select>
+                </div>
+
+                {{-- Image --}}
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Image mise en avant</label>
+                    <input type="file" wire:model="newImage"
+                           class="w-full rounded-xl iuhm_input"
+                           accept="image/*">
+                    @if(isset($featured_image) && $featured_image)
+                    <div class="mt-2">
+                        <img src="{{ \Illuminate\Support\Str::startsWith($featured_image, ['http','https']) ? $featured_image : asset($featured_image) }}"
+                             class="h-24 w-auto rounded-lg object-cover border border-slate-200" alt="">
+                        <p class="mt-1 text-xs text-slate-500">Image actuelle</p>
+                    </div>
+                    @endif
+                </div>
+
+                {{-- Toggle switches --}}
+                <div class="flex items-center gap-6 pt-4 border-t border-slate-200">
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" wire:model="is_published" id="is_published"
+                               class="w-5 h-5 rounded border-slate-300 text-[#10752d] focus:ring-[#10752d]">
+                        <label for="is_published" class="text-sm font-medium text-slate-700">Publié sur le site</label>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" wire:model="is_featured" id="is_featured"
+                               class="w-5 h-5 rounded border-slate-300 text-[#10752d] focus:ring-[#10752d]">
+                        <label for="is_featured" class="text-sm font-medium text-slate-700">À la une (Featured)</label>
+                    </div>
+                </div>
+
+                {{-- Footer --}}
+                <div class="flex justify-end gap-3 pt-4 border-t border-slate-200">
+                    <button type="button" @click="open = false"
+                            class="px-5 py-3 text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl font-medium transition-colors">
+                        Annuler
+                    </button>
+                    <button type="submit"
+                            class="px-5 py-3 text-white bg-[#10752d] hover:bg-[#0c5921] rounded-xl font-semibold shadow-lg shadow-[#10752d]/30 transition-colors">
+                        <span wire:loading.remove wire:target="save">
+                            {{ $editMode ? 'Mettre à jour' : 'Créer le projet' }}
+                        </span>
+                        <span wire:loading wire:target="save">Enregistrement...</span>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
+</div>
 </div>

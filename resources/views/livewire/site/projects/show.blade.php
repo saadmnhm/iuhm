@@ -153,6 +153,40 @@
                             </div>
                         </div>
                     </div>
+
+                    {{-- Related Projects --}}
+                    @if($relatedProjects && $relatedProjects->count() > 0)
+                    <div class="bg-[#FBF8FD] rounded-2xl p-6">
+                        <h3 class="text-lg font-semibold text-[#16254d] mb-4">{{ __('ui.related_projects') ?? 'Projets similaires' }}</h3>
+                        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            @foreach($relatedProjects as $related)
+                            <a href="{{ route('projects.show', $related->slug) }}" class="group block bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg transition-shadow">
+                                @if($related->featured_image)
+                                <div class="aspect-[4/3] bg-slate-100 overflow-hidden">
+                                    <img src="{{ \Illuminate\Support\Str::startsWith($related->featured_image, ['http','https']) ? $related->featured_image : asset($related->featured_image) }}"
+                                         alt="{{ $related->getLocalized('title') }}"
+                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                </div>
+                                @else
+                                <div class="aspect-[4/3] bg-slate-100 flex items-center justify-center">
+                                    <i class="ri-file-line text-4xl text-slate-300"></i>
+                                </div>
+                                @endif
+                                <div class="p-4">
+                                    <h4 class="text-sm font-bold text-[#16254d] group-hover:text-[#214f95] transition mb-1">{{ $related->getLocalized('title') }}</h4>
+                                    <p class="text-xs text-slate-500 line-clamp-2">{{ $related->getLocalized('short_description') ?? '' }}</p>
+                                    <div class="mt-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                                        <span>{{ $related->getStatusLabel() }}</span>
+                                        @if($related->location)
+                                        <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">{{ $related->location }}</span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </a>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
                 </div>
             </div>
         </section>

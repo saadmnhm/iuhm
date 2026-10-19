@@ -10,6 +10,7 @@ class Project extends Model
 {
     use SoftDeletes;
 
+    protected $table = 'projects';
     protected $fillable = [
         'title',
         'title_ar',
@@ -35,6 +36,9 @@ class Project extends Model
     protected $casts = [
         'gallery' => 'array',
         'tags' => 'array',
+        'title' => 'array',
+        'description' => 'array',
+        'short_description' => 'array',
         'start_date' => 'date',
         'end_date' => 'date',
         'is_published' => 'boolean',
@@ -53,13 +57,13 @@ class Project extends Model
     public function getLocalized(string $field): ?string
     {
         $locale = app()->getLocale();
-        $localizedField = $field.'_ar';
+        $value = $this->{$field};
 
-        if ($locale === 'ar' && filled($this->{$localizedField})) {
-            return $this->{$localizedField};
+        if (is_array($value)) {
+            return $value[$locale] ?? $value['fr'] ?? reset($value) ?? null;
         }
 
-        return $this->{$field};
+        return $value;
     }
 
     public function scopeFeatured($query)
