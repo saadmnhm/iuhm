@@ -222,6 +222,8 @@ class RoleManagement extends Component
         $this->roleModalStep = 1;
         $this->successMsg    = 'Rôle enregistré avec succès.';
         $this->errorMsg      = null;
+
+        $this->dispatch('closeRoleModal');
     }
 
     public function openDeleteModal(int $id): void
@@ -261,6 +263,8 @@ class RoleManagement extends Component
         $this->deletingRoleSystem = false;
         $this->successMsg         = "Rôle \"{$label}\" supprimé.";
         $this->errorMsg           = null;
+
+        $this->dispatch('closeDeleteModal');
     }
 
     // ── Permissions ───────────────────────────────────────────────────────────

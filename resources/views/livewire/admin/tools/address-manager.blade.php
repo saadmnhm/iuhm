@@ -1,4 +1,5 @@
-<div>
+<div x-data="{ open: false }">
+    <style>[x-cloak] { display: none !important; }</style>
     <div class="">
 
 
@@ -9,7 +10,7 @@
                     <h1 class="text-[36px] font-bold text-[#04103A]">Gestion des localisations</h1>
                     <p class="text-gray-600 text-[18px] mt-2">Gérer les hiérarchies organisationnelles en créant des autorisations granulaires pour les membres de l'équipe au sein de l'écosystème Initiative Urbaine</p>
                 </div>
-                <button wire:click="openModal" class="w-95 h-12.5 text-center p-2 content-center bg-[#1B264F] text-white text-[16px] font-normal rounded-full hover:bg-gray-800 transition">
+                <button @click="open = true; $wire.region = ''; $wire.city = ''; $wire.prefecture = ''; $wire.editMode = false; $wire.locationId = '';" class="w-95 h-12.5 text-center p-2 content-center bg-[#1B264F] text-white text-[16px] font-normal rounded-full hover:bg-gray-800 transition">
                     <i class="ri-shield-user-line text-[19px] relative right-1"></i> Créer une localisation
             </div>
         </div>
@@ -96,21 +97,20 @@
         </div>
     </div>
 
-    {{-- MODAL --}}
-    @if($modalOpen)
-    <div x-show="$wire.modalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 md:p-6 backdrop-blur-sm" wire:click.self="closeModal" style="display: none;">
+    {{-- MODAL — controlled by Alpine.js (no backend request to open) --}}
+    <div x-show="open" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 md:p-6 backdrop-blur-sm" @click.away="open = false;">
         <div class="overflow-hidden rounded-2xl bg-white my-4 md:my-0">
             <div class="flex items-start justify-between gap-2 px-6 py-4 ">
                 <div class="flex-1 min-w-0 text-center">
                     <h3 class="text-[30px] font-bold tracking-tight text-[#04103A]">{{ $editMode ? 'Modifier la localisation' : 'Nouvelle localisation' }}</h3>
                     <p class="mt-0.5 text-[16px] text-[#45464E]">Complétez les formulaires suivants pour créer une nouvelle localisation</p>
                 </div>
-                <button type="button" wire:click="closeModal" class="inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
+                <button type="button" @click="open = false" class="inline-flex h-8 w-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
                     <i class="ri-close-line text-lg"></i>
                 </button>
             </div>
 
-            <form wire:submit.prevent="save" class="p-6 space-y-4">
+            <form wire:submit.prevent="save" class="p-6 space-y-4" @closeAddressModal.window="open = false;">
                 <div>
                     <label class="iuhm_label_2 mb-1">Région *</label>
                     <input type="text" wire:model="region" placeholder="Entrez le nom complet"
@@ -132,12 +132,11 @@
                 </div>
 
                 <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                    <button type="button" wire:click="closeModal" class="px-4 py-2 text-sm font-semibold text-gray-700 h-12.5 text-center rounded-full hover:bg-gray-200 transition-colors">Cancel</button>
+                    <button type="button" @click="open = false" class="px-4 py-2 text-sm font-semibold text-gray-700 h-12.5 text-center rounded-full hover:bg-gray-200 transition-colors">Cancel</button>
                     <button type="submit" class="gap-2 px-4 py-2 h-12.5 text-center rounded-full w-37.5 text-sm font-semibold text-white bg-[#1B264F] hover:bg-[#0f1a3a] transition-colors disabled:opacity-60">Confirmer</button>
                 </div>
             </form>
         </div>
     </div>
-    @endif
 </div>
 

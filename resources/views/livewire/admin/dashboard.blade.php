@@ -27,34 +27,101 @@
 		<div class="lg:col-span-2 bg-[#F5F3F7]  p-5 rounded-lg shadow-sm">
 			<div class="flex items-center justify-between mb-4">
 				<h4 class="text-lg font-semibold">Activité Récente</h4>
-				<a href="#" class="text-green-600">Voir tout</a>
+				<a href="{{ route('admin.all.submissions') }}" class="text-green-600">Voir tout</a>
 			</div>
 
 			<div class="space-y-3">
+				@forelse($recentActivities as $activity)
 				<div class="flex items-center justify-between bg-[#FBF8FD]  p-4 rounded-lg ">
-					<div>
-						<div class="font-semibold">Nouveau projet soumis</div>
-						<div class="text-sm text-gray-500">------</div>
+					<div class="flex items-center gap-3">
+						<div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 text-sm">
+							<i class="{{ $activity['icon'] }}"></i>
+						</div>
+						<div>
+							<div class="font-semibold text-[#04103A]">{{ $activity['title'] }}</div>
+							<div class="text-sm text-gray-500">{{ $activity['subtitle'] }}</div>
+						</div>
 					</div>
-					<div class="text-sm text-gray-400">Il y a 2h</div>
+					<div class="text-sm text-gray-400">{{ $activity['time'] }}</div>
 				</div>
-
-				<div class="flex items-center justify-between p-4 bg-[#FBF8FD] rounded-lg ">
-					<div>
-						<div class="font-semibold">Nouvel utilisateur admin</div>
-						<div class="text-sm text-gray-500">-----</div>
-					</div>
-					<div class="text-sm text-gray-400">Il y a 5h</div>
-				</div>
-
-				<div class="text-sm text-gray-400">Plus d'éléments d'activité ici...</div>
+				@empty
+				<div class="text-sm text-gray-400 text-center py-8">Aucune activité récente.</div>
+				@endforelse
 			</div>
 		</div>
 
 		<div class="bg-[#EAE7EB] content-center h-[200px] p-5 rounded-lg">
 			<h4 class="text-[16px] text-[#04103A] font-bold">Support Technique</h4>
 			<p class="text-sm text-gray-500 mt-2 font-semibold">Besoin d'aide avec l'ERP? Contactez l'IT.</p>
-			<a href="#" class="mt-4 inline-block w-full border-2 border-[#C6C5D0] text-[#04103A] font-bold  text-center hover:bg-[#04103A] transition hover:text-white  px-4 py-2 rounded-[50px]">Ouvrir un Ticket</a>
+			<button wire:click="openCreateTicketModal" class="mt-4 inline-block w-full border-2 border-[#C6C5D0] text-[#04103A] font-bold  text-center hover:bg-[#04103A] transition hover:text-white  px-4 py-2 rounded-[50px]">Ouvrir un Ticket</button>
 		</div>
 	</div>
+
+    {{-- Ticket creation modal (inside Livewire root div) --}}
+    @if($showCreateTicketModal)
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" role="dialog" aria-modal="true">
+        <div class="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div class="p-6 border-b border-gray-100">
+                <h5 class="text-lg font-bold flex items-center gap-2">
+                    <i class="ri-chat-3-line text-blue-600"></i>Ouvrir un ticket pour l'équipe de développement
+                </h5>
+            </div>
+            <div class="p-6">
+                <form wire:submit.prevent="createTicket" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Sujet du ticket</label>
+                        <input type="text" wire:model="ticketSubject" placeholder="ex: Bug sur l'export PDF des formulaires"
+                               class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#0f1d57] focus:ring-4 focus:ring-[#0f1d57]/10">
+                        @error('ticketSubject') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Message / Description</label>
+                        <textarea wire:model="ticketMessage" rows="4" placeholder="Décrivez le problème ou la demande de correction..."
+                                  class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#0f1d57] focus:ring-4 focus:ring-[#0f1d57]/10"></textarea>
+                        @error('ticketMessage') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Capture d'écran / Pièce jointe</label>
+                        <input type="file" wire:model="ticketImage" accept="image/*"
+                               class="w-full block text-sm text-slate-500
+                                       @error('ticketImage') text-red-500 @enderror
+                                       rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#0f1d57] focus:ring-4 focus:ring-[#0f1d57]/10">
+                        @error('ticketImage') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                        <p class="text-xs text-slate-400 mt-1">JPG, PNG, WEBP (max 10 Mo)</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Catégorie</label>
+                            <select wire:model="ticketCategory" class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#0f1d57]">
+                                <option value="technical">Technique</option>
+                                <option value="bug">Bug</option>
+                                <option value="general">Général</option>
+                                <option value="account">Compte</option>
+                                <option value="form">Formulaire</option>
+                                <option value="other">Autre</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Priorité</label>
+                            <select wire:model="ticketPriority" class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-[#0f1d57]">
+                                <option value="low">Basse</option>
+                                <option value="medium">Moyenne</option>
+                                <option value="high">Haute</option>
+                                <option value="urgent">Urgente</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                        <button type="button" wire:click="closeCreateTicketModal" class="px-4 py-2 text-sm font-semibold text-gray-700 rounded-full hover:bg-gray-200 transition-colors">Annuler</button>
+                        <button type="submit" class="px-4 py-2 text-sm font-semibold text-white rounded-full bg-[#0f1d57] hover:bg-[#14256f] transition-colors">Créer le Ticket</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>

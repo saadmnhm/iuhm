@@ -15,6 +15,7 @@ class SupportTicket extends Model
         'assigned_to',
         'subject',
         'message',
+        'image',
         'admin_response',
         'status',
         'priority',

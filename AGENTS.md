@@ -1,13 +1,14 @@
 # IUHM ERP - Agent Instructions
 
-Laravel 12 application with Livewire 4, Tailwind CSS 4, Vite. Manages candidates, projects, forms, finance, materials, HR, and content.
+Laravel 12 app with Livewire 4, Tailwind CSS 4, Vite. Manages candidates, projects, forms, finance, materials, HR, and content. Dual admin (`web` guard) / candidate (`candidat` guard) auth.
 
 ## Commands
+
 | Task | Command |
 |------|---------|
-| First-time setup | `composer run setup` (composer install, copy `.env`, key:generate, migrate, npm install, npm run build) |
-| Dev server (all) | `composer run dev` (runs `serve` + `queue:listen` + `vite` via concurrently) |
-| Tests | `composer run test` (runs `config:clear` then `php artisan test`) or `php artisan test` |
+| First-time setup | `composer run setup` (composer install, copy `.env`, key:generate, migrate --force, npm install, npm run build) |
+| Dev server (all) | `composer run dev` (`serve` + `queue:listen --tries=1` + `vite` via concurrently) |
+| Tests | `composer run test` (runs `config:clear` then `php artisan test`) |
 | Single test | `php artisan test --filter=FormulaireSubmissionDetailTest` |
 | Lint (Pint) | `vendor/bin/pint` |
 | Migrate | `php artisan migrate` |
@@ -16,38 +17,42 @@ Laravel 12 application with Livewire 4, Tailwind CSS 4, Vite. Manages candidates
 | Queue worker | `php artisan queue:listen --tries=1` |
 | Build assets | `npm run build` |
 
+`composer run test` runs `config:clear` first — don't skip it, cached config can change test behavior.
+
 ## Architecture
-- **Dual auth guards**: `web` (admin/User model) and `candidat` (Candidat model). Admin routes live under `/admin` (guard `web`); candidate routes under `/user` (guard `candidat`).
-- **Role/Permission**: custom `Role` + `RolePermission` models (not spatie/laravel-permission). Module keys are defined in `config/modules.php`.
-- **Module access**: route middleware `module:key` (e.g. `module:finance`) checks `Role::canAccess()`; Blade directive `@canModule('key')`. If a module key is not in `config/modules.php`, access is granted to all admins.
-- **Development lock**: `Role::isDevelopmentAccessLocked()` blocks admin/candidat access unless the role can bypass (`super_admin` always bypasses).
-- **BaseModel**: auto-loads `$autoRelations` via a global scope.
-- **Locale**: `SetLocale` middleware is global (registered in `bootstrap/app.php`) and uses `config('app.locale')` from `APP_LOCALE` (`.env` = `en`); `AppServiceProvider::boot()` defaults the session locale to `fr`.
+
+- **Auth guards**: `web` (admin, `User` model) under `/admin`; `candidat` (`Candidat` model) under `/user`. Route aliases: `admin`, `candidat`, `module`, `super_admin`.
+- **Permissions**: custom `Role` + `RolePermission` (not spatie). Module keys in `config/modules.php`; to add a module, add an entry there, protect its route with `module:key`, and wrap its sidebar link. Permissions are managed via the "Gestion des Rôles" UI — no code changes.
+- **Module access**: `->middleware('module:rh')` checks `Role::canAccess()`; Blade `@canModule('module')`. super_admin always has full access.
+- **Development lock**: `Role::isDevelopmentAccessLocked()` (stored in `association_parameters`, cached 1hr) blocks the admin panel unless the role can bypass (`super_admin` always bypasses); the candidat area is locked out entirely. Clear cache with `Role::clearPermissionCache()`.
+- **BaseModel**: auto-loads `$autoRelations` via a global scope — don't eager-load what's already in `$autoRelations`.
+- **Locale**: `SetLocale` middleware is global (reads `session('locale', config('app.locale'))`). `AppServiceProvider::boot()` defaults the session locale to `'fr'` **even though `.env` has `APP_LOCALE=en`** — the site renders French by default. Routes `/lang/{locale}` and `locale/{locale}` (POST) store the session locale.
+- **API**: `routes/api.php` is mounted inside the `web` middleware group (per `bootstrap/app.php`), with CSRF disabled for `api/v1/*`. Public read-only endpoints under `api/v1/{blog,news,deliverables,media,pages,navigation,projects,history}` (throttle 60/min); write endpoints under `api/v1/{newsletters,contacts}` (throttle 10/min).
+- **PDF**: `barryvdh/laravel-dompdf` via `PrintController` (e.g. `/candidats/{id}/print/*`, `/finance/transaction/{id}/print`).
 
 ## Directories
-- `app/Livewire/Admin/` — admin panel components (users, finance, material, rh, formulaires, ...)
-- `app/Livewire/Front/` — candidate-facing components (dashboard, projets, blog, forms)
+
+- `app/Livewire/Admin/` — admin components (users, finance, material, rh, formulaires, ...)
+- `app/Livewire/Front/` — candidate components (dashboard, projets, blog, forms)
 - `app/Models/` — 50+ models, all extend `BaseModel`
 - `app/Http/Middleware/` — AdminMiddleware, CandidatMiddleware, ModuleAccess, SetLocale, SuperAdminMiddleware
-- `routes/web.php` — all web routes (admin + front); `routes/api.php` — public API v1; `routes/console.php` — artisan commands
-- `uploads/` — file uploads (NOT `storage/app/public`), served via `/uploads/{path}` with auth check
+- `routes/web.php` — all web routes; `routes/api.php` — public API v1; `routes/console.php` — artisan commands
+- `uploads/` — file uploads (NOT `storage/app/public`), served via `/uploads/{path}` and `/uploads/{path}/download`; both require an authenticated `web` or `candidat` guard (403 otherwise).
 
 ## Testing
+
 - PHPUnit with SQLite `:memory:` (`phpunit.xml`). Tests extend `Tests\TestCase`.
-- Feature tests build their own schema in `setUp()` (no migrations run for those tables); `RefreshDatabase` trait is available.
+- Feature tests build their own schema in `setUp()` (no migrations run); `RefreshDatabase` trait is available.
 - Run one test: `php artisan test --filter=FormulaireSubmissionDetailTest`
 
 ## Frontend
+
 - Vite entry: `resources/css/app.css`, `resources/js/app.js`; Tailwind CSS 4 via `@tailwindcss/vite`.
 - Dev assets: `npm run dev` (or via `composer run dev`); production: `npm run build`.
 
-## PDF
-- `barryvdh/laravel-dompdf` via `PrintController` (e.g. `/candidats/{id}/print/*`, `/finance/transaction/{id}/print`).
-
 ## Environment / Gotchas
+
 - Copy `.env.example` to `.env`; default DB is MySQL (testing uses SQLite `:memory:`).
-- Queue: `database` connection; mail: `log` driver by default.
-- Role permission cache: 1hr TTL; clear with `Role::clearPermissionCache()`.
+- Queue: `database` connection. Mail driver default per `.env.example` is `log`.
 - `CANDIDAT_MASTER_PASSWORD` env var exists (`.env`).
-- Uploads require an authenticated `web` or `candidat` guard (403 otherwise).
-- No CI workflows or `opencode.json` in this repo.
+- No CI workflows and no `opencode.json` in this repo.

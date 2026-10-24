@@ -1,4 +1,4 @@
-<div>
+<div x-data="{ open: @entangle('showModal'), editMode: @entangle('editMode') }" x-cloak>
 
     {{-- ═══════ HEADER ═══════ --}}
     <div class="px-6 pb-6 pt-8 sm:px-8 sm:pb-8 sm:pt-10">
@@ -326,7 +326,7 @@
         @endif
 
         {{-- Modal (Alpine - opens without backend request) --}}
-        <div x-data="{ open: @entangle('showModal').live, editMode: @entangle('editMode').live }" x-cloak>
+        <div x-cloak>
         <div
             x-show="open"
             x-transition:enter="ease-out duration-200"
@@ -344,7 +344,7 @@
                         <i class="ri-close-line text-2xl"></i>
                     </button>
                 </div>
-                <form @submit.prevent="save" class="p-6 space-y-6" enctype="multipart/form-data">
+                <form wire:submit.prevent="save" class="p-6 space-y-6" enctype="multipart/form-data">
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-2">Titre (FR) <span class="text-red-500">*</span></label>
                         <input type="text" wire:model="title" required

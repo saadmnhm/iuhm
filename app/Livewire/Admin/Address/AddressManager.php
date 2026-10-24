@@ -135,6 +135,8 @@ class AddressManager extends Component
         }
 
         $this->closeModal();
+
+        $this->dispatch('closeAddressModal');
     }
 
     public function delete($id)

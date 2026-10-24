@@ -1,4 +1,5 @@
-    <div class="">
+    <div x-data="{ openRole: @entangle('showRoleModal'), openDelete: @entangle('showDeleteModal') }" x-cloak class="">
+    <style>[x-cloak] { display: none !important; }</style>
 
         <div class="px-6 pb-6 pt-8 sm:px-8 sm:pb-8 sm:pt-10">
             <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
@@ -10,7 +11,7 @@
                     </p>
                 </div>
 
-                <button type="button" @click="openRole = true" class="inline-flex items-center gap-2 self-start rounded-full bg-[#0f1d57] px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(15,23,42,0.22)] transition hover:bg-[#14256f]">
+                <button type="button" @click="openRole = true; $wire.roleName = ''; $wire.roleLabel = ''; $wire.roleColor = 'blue'; $wire.canAccessAdmin = true; $wire.roleModalStep = 1; $wire.roleWizardPerms = []; $wire.editingRoleId = null; $wire.editingIsSystem = false; $wire.successMsg = null; $wire.errorMsg = null;" class="inline-flex items-center gap-2 self-start rounded-full bg-[#0f1d57] px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(15,23,42,0.22)] transition hover:bg-[#14256f]">
                     <span class="flex h-6 w-6 items-center justify-center rounded-full border border-white/25 bg-white/10">
                         <i class="ri-user-add-line text-sm"></i>
                     </span>
@@ -101,10 +102,10 @@
                                 </td>
                                 <td class="px-6 py-6">
                                     <div class="flex items-center justify-center gap-2 text-[#0f1d57]">
-                                        <button type="button" wire:click="openEdit({{ $role->id }})" class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#0f1d57]/5 transition hover:bg-[#0f1d57] hover:text-white" title="Modifier">
+                                        <button type="button" @click="openRole = true" wire:click="openEdit({{ $role->id }})" class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#0f1d57]/5 transition hover:bg-[#0f1d57] hover:text-white" title="Modifier">
                                             <i class="ri-edit-2-line text-base"></i>
                                         </button>
-                                        <button type="button" wire:click="openDeleteModal({{ $role->id }})" class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-rose-50 text-rose-600 transition hover:bg-rose-600 hover:text-white" title="Supprimer">
+                                        <button type="button" @click="openDelete = true" wire:click="openDeleteModal({{ $role->id }})" class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-rose-50 text-rose-600 transition hover:bg-rose-600 hover:text-white" title="Supprimer">
                                             <i class="ri-delete-bin-2-fill text-base"></i>
                                         </button>
                                     </div>
@@ -194,8 +195,7 @@
              MODALS CONTAINER
         ══════════════════════════════════════════════════════════ --}}
         <div class="modals-container">
-    <div x-data="{ openRole: @entangle('showRoleModal').live, openDelete: @entangle('showDeleteModal').live }" x-cloak>
-    @if($showRoleModal)
+    <div x-cloak>
     @php
         $wizardSteps = [
             1 => 'Nom du rôle',
@@ -204,7 +204,7 @@
         ];
         $selectedPermissionCount = count($roleWizardPerms);
     @endphp
-    <div x-show="openRole" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-2 md:p-4 backdrop-blur-sm overflow-y-auto" @click.self="openRole = false">
+    <div x-show="openRole" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-2 md:p-4 backdrop-blur-sm overflow-y-auto" @click.self="openRole = false" @closeRoleModal.window="openRole = false">
         <div class="w-full max-w-lg md:max-w-2xl lg:max-w-3xl overflow-hidden rounded-2xl md:rounded-[20px] bg-white shadow-[0_30px_90px_rgba(0,0,0,0.35)] my-4 md:my-0 flex flex-col max-h-[90vh]" wire:key="role-modal">
             <div class="flex items-start justify-between gap-2 px-4 md:px-6 pb-3 md:pb-4 pt-4 md:pt-5 shrink-0">
                 <div class="flex-1 min-w-0">
@@ -334,10 +334,8 @@
             </div>
         </div>
     </div>
-    @endif
 
-    @if($showDeleteModal)
-    <div x-show="openDelete" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm" @click.self="openDelete = false">
+    <div x-show="openDelete" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm" @click.self="openDelete = false" @closeDeleteModal.window="openDelete = false">
         <div class="w-full max-w-md rounded-2xl md:rounded-[18px] bg-white shadow-[0_30px_90px_rgba(0,0,0,0.35)] overflow-hidden flex flex-col max-h-[90vh]">
             <div class="flex justify-end px-4 md:px-6 pt-4 md:pt-5 shrink-0">
                 <button type="button" @click="openDelete = false" class="inline-flex h-8 md:h-9 w-8 md:w-9 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
@@ -371,6 +369,7 @@
             </div>
         </div>
     </div>
-    @endif
     </div>
+</div>
+</div>
 
