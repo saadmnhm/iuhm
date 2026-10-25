@@ -159,7 +159,7 @@
             </nav>
 
             <div class="flex items-center gap-2 sm:gap-3">
-                @include('.site.partials.switcher')
+                @include('livewire..site.partials.language-switcher')
 
                 <a
                     href="https://dev.iuhm.org/user/login" target="_blank" rel="noopener noreferrer"
