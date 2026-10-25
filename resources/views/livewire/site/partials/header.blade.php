@@ -159,7 +159,7 @@
             </nav>
 
             <div class="flex items-center gap-2 sm:gap-3">
-                @include('.site.partials.language-switcher')
+                @include('.site.partials.switcher')
 
                 <a
                     href="https://dev.iuhm.org/user/login" target="_blank" rel="noopener noreferrer"
