@@ -42,9 +42,14 @@ class AppServiceProvider extends ServiceProvider
         // Livewire sends $set as a server method call; SupportMagicActions should catch it,
         // but this listener ensures $set is handled client-side without a MethodNotFoundException.
         $this->app->booted(function () {
-            on('call', function ($component, $method, $params, $componentContext, $returnEarly, $context) {
-                if ($method === '$set') {
-                    $returnEarly();
+            on('call', function (...$args) {
+                if (isset($args[1]) && $args[1] === '$set') {
+                    foreach ($args as $arg) {
+                        if ($arg instanceof \Closure) {
+                            $arg();
+                            break;
+                        }
+                    }
                 }
             });
         });
