@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use App\Models\User;
 
 class Project extends Model
 {
@@ -31,6 +32,9 @@ class Project extends Model
         'sort_order',
         'is_published',
         'is_featured',
+        'published_at',
+        'views_count',
+        'author_id',
     ];
 
     protected $casts = [
@@ -44,6 +48,8 @@ class Project extends Model
         'is_published' => 'boolean',
         'is_featured' => 'boolean',
         'sort_order' => 'integer',
+        'published_at' => 'datetime',
+        'views_count' => 'integer',
     ];
 
     public function scopePublished($query)
@@ -52,11 +58,19 @@ class Project extends Model
     }
 
     /**
+     * Get the author of the project.
+     */
+    public function author()
+    {
+        return $this->belongsTo(User::class, 'author_id');
+    }
+
+    /**
      * Get the localized value of a field based on the current locale.
      */
-    public function getLocalized(string $field): ?string
+    public function getLocalized(string $field, ?string $locale = null): ?string
     {
-        $locale = app()->getLocale();
+        $locale = $locale ?? app()->getLocale();
         $value = $this->{$field};
 
         if (is_array($value)) {
@@ -89,6 +103,17 @@ class Project extends Model
             'completed' => 'Completed',
             'archived' => 'Archived',
             default => $this->status,
+        };
+    }
+
+    public function getStatusColor(): string
+    {
+        return match ($this->status) {
+            'planned' => 'bg-amber-100 text-amber-700',
+            'in_progress' => 'bg-blue-100 text-blue-700',
+            'completed' => 'bg-emerald-100 text-emerald-700',
+            'archived' => 'bg-slate-100 text-slate-700',
+            default => 'bg-slate-100 text-slate-700',
         };
     }
 

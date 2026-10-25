@@ -21,10 +21,7 @@
                 </a>
 
                 {{-- Projects Accordion --}}
-                @php
-                    $isProjectActive = request()->routeIs('user.projects.*') || request()->routeIs('user.submissions.*') || request()->routeIs('user.project.detail');
-                @endphp
-                <div x-data="{ open: {{ $isProjectActive ? 'true' : 'false' }} }" class="space-y-1">
+                <div x-data="{ open: false }" class="space-y-1">
                     <button @click="open = !open" 
                             class="flex w-full items-center justify-between gap-x-3 px-3.5 py-2.5 rounded-lg text-base text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors">
                         <div class="flex items-center gap-x-3">

@@ -118,6 +118,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/media/contact', \App\Livewire\Admin\Contact\ContactManagement::class)->name('contact.index');
         Route::get('/media', \App\Livewire\Admin\Media\MediaManagement::class)->name('media.index')->middleware('module:media');
         Route::get('/media/project', \App\Livewire\Admin\Project\ProjectManagement::class)->name('project.index')->middleware('module:project');
+        Route::get('/media/project/{id}', \App\Livewire\Admin\Project\ProjectForm::class)->name('project.form')->middleware('module:project');
         Route::get('/media/apropos', \App\Livewire\Admin\Apropos\Apropos::class)->name('apropos.index')->middleware('module:apropos');
         
         Route::get('/history-audit', \App\Livewire\Admin\Submissions\HistoryAudit::class)->name('history.audit')->middleware('module:history_audit');
@@ -275,10 +276,6 @@ Route::get('/uploads/{path}/download', function ($path) {
 })->where('path', '.*')->name('uploads.download');
 
 Route::get('/uploads/{path}', function ($path) {
-    if (!Auth::guard('web')->check() && !Auth::guard('candidat')->check()) {
-        abort(403);
-    }
-
     $filePath = base_path('uploads/' . $path);
 
     if (!file_exists($filePath)) {

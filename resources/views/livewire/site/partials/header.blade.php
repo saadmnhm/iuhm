@@ -64,16 +64,25 @@
                         @endif
                     @endforeach
                     {{-- Project Dropdown --}}
-                    <div class="relative inline-block">
-                        <button class="text-sm font-semibold text-[#214f95] transition hover:text-[#122f58] flex items-center gap-1.5">
+                    <div class="relative inline-block" x-data="{ projectDropdownOpen: false }">
+                        <button
+                            @click="projectDropdownOpen = !projectDropdownOpen"
+                            @click.outside="projectDropdownOpen = false"
+                            class="text-sm font-semibold text-[#214f95] transition hover:text-[#122f58] flex items-center gap-1.5"
+                            :aria-expanded="projectDropdownOpen.toString()"
+                        >
                             {{ __('ui.nav_projects') }}
                             <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="m6 9 6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </button>
-                        <div class="absolute left-0 top-full mt-2 min-w-[200px] bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-50">
+                        <div
+                            x-show="projectDropdownOpen"
+                            x-transition
+                            class="absolute left-0 top-full mt-2 min-w-[200px] bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-50"
+                        >
                             @foreach($projects as $project)
-                                <a href="{{ route('admin.project.index') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 hover:text-[#214f95] transition-colors">
+                                <a href="{{ route('projects.show', $project->slug) }}" @click="projectDropdownOpen = false" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 hover:text-[#214f95] transition-colors">
                                     {{ $project->getLocalized('title') }}
                                 </a>
                             @endforeach
@@ -122,16 +131,25 @@
                         @endif
                     </div>
                     {{-- Project Dropdown --}}
-                    <div class="relative inline-block">
-                        <button class="text-sm font-semibold text-[#214f95] transition hover:text-[#122f58] flex items-center gap-1.5">
+                    <div class="relative inline-block" x-data="{ projectDropdownOpen: false }">
+                        <button
+                            @click="projectDropdownOpen = !projectDropdownOpen"
+                            @click.outside="projectDropdownOpen = false"
+                            class="text-sm font-semibold text-[#214f95] transition hover:text-[#122f58] flex items-center gap-1.5"
+                            :aria-expanded="projectDropdownOpen.toString()"
+                        >
                             {{ __('ui.nav_projects') }}
                             <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="m6 9 6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </button>
-                        <div class="absolute left-0 top-full mt-2 min-w-[200px] bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-50">
+                        <div
+                            x-show="projectDropdownOpen"
+                            x-transition
+                            class="absolute left-0 top-full mt-2 min-w-[200px] bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-50"
+                        >
                             @foreach($projects as $project)
-                                <a href="{{ route('admin.project.index') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 hover:text-[#214f95] transition-colors">
+                                <a href="{{ route('projects.show', $project->slug) }}" @click="projectDropdownOpen = false" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 hover:text-[#214f95] transition-colors">
                                     {{ $project->getLocalized('title') }}
                                 </a>
                             @endforeach
@@ -216,16 +234,23 @@
                         @endif
                     @endforeach
                     {{-- Project Dropdown --}}
-                    <div class="relative inline-block">
-                        <button class="w-full flex items-center justify-between rounded-xl px-3 py-2 text-sm font-semibold text-[#214f95] hover:bg-slate-100">
+                    <div class="relative inline-block" x-data="{ mobileProjectDropdownOpen: false }">
+                        <button
+                            @click="mobileProjectDropdownOpen = !mobileProjectDropdownOpen"
+                            class="w-full flex items-center justify-between rounded-xl px-3 py-2 text-sm font-semibold text-[#214f95] hover:bg-slate-100"
+                        >
                             {{ __('ui.nav_projects') }}
                             <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="m6 9 6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </button>
-                        <div class="pl-4 pt-2 space-y-1">
+                        <div
+                            x-show="mobileProjectDropdownOpen"
+                            x-transition
+                            class="pl-4 pt-2 space-y-1"
+                        >
                             @foreach($projects as $project)
-                                <a href="{{ route('projects.show', $project->slug) }}" class="block px-3 py-2 text-sm text-slate-600 hover:text-[#214f95] rounded-lg hover:bg-slate-100 transition-colors">
+                                <a href="{{ route('projects.show', $project->slug) }}" @click="mobileProjectDropdownOpen = false" class="block px-3 py-2 text-sm text-slate-600 hover:text-[#214f95] rounded-lg hover:bg-slate-100 transition-colors">
                                     {{ $project->getLocalized('title') }}
                                 </a>
                             @endforeach
@@ -249,16 +274,23 @@
                         {{ __('ui.history') }}
                     </a>
                     {{-- Project Dropdown --}}
-                    <div class="relative inline-block">
-                        <button class="w-full flex items-center justify-between rounded-xl px-3 py-2 text-sm font-semibold text-[#214f95] hover:bg-slate-100">
+                    <div class="relative inline-block" x-data="{ mobileProjectDropdownOpen: false }">
+                        <button
+                            @click="mobileProjectDropdownOpen = !mobileProjectDropdownOpen"
+                            class="w-full flex items-center justify-between rounded-xl px-3 py-2 text-sm font-semibold text-[#214f95] hover:bg-slate-100"
+                        >
                             {{ __('ui.nav_projects') }}
                             <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="m6 9 6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </button>
-                        <div class="pl-4 pt-2 space-y-1">
+                        <div
+                            x-show="mobileProjectDropdownOpen"
+                            x-transition
+                            class="pl-4 pt-2 space-y-1"
+                        >
                             @foreach($projects as $project)
-                                <a href="{{ route('projects.show', $project->slug) }}" class="block px-3 py-2 text-sm text-slate-600 hover:text-[#214f95] rounded-lg hover:bg-slate-100 transition-colors">
+                                <a href="{{ route('projects.show', $project->slug) }}" @click="mobileProjectDropdownOpen = false" class="block px-3 py-2 text-sm text-slate-600 hover:text-[#214f95] rounded-lg hover:bg-slate-100 transition-colors">
                                     {{ $project->getLocalized('title') }}
                                 </a>
                             @endforeach

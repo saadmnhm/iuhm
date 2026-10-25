@@ -36,6 +36,8 @@ class MediaManagement extends Component
     public $is_public = true;
     public $file = null;
     public $existingFile = '';
+    public $existingFileUrl = '';
+    public $removeExistingFile = false;
 
     protected $queryString = ['search', 'typeFilter', 'categoryFilter', 'perPage'];
     protected $paginationTheme = 'tailwind';
@@ -77,6 +79,7 @@ class MediaManagement extends Component
         $this->tags = is_array($media->tags) ? implode(', ', $media->tags) : $media->tags;
         $this->is_public = $media->is_public;
         $this->existingFile = $media->file_path;
+        $this->existingFileUrl = asset($media->file_path);
         $this->editMode = true;
         $this->showModal = true;
     }
@@ -95,6 +98,18 @@ class MediaManagement extends Component
             'is_public' => $this->is_public,
             'uploaded_by' => Auth::id(),
         ];
+
+        // Handle file removal without replacement
+        if ($this->removeExistingFile && $this->existingFile) {
+            if (file_exists(base_path($this->existingFile))) {
+                unlink(base_path($this->existingFile));
+            }
+            $data['file_path'] = null;
+            $data['file_name'] = null;
+            $data['file_size'] = null;
+            $data['file_type'] = null;
+            $data['mime_type'] = null;
+        }
 
         if ($this->file) {
             // Delete old file if exists
@@ -156,6 +171,8 @@ class MediaManagement extends Component
         $this->is_public = true;
         $this->file = null;
         $this->existingFile = '';
+        $this->existingFileUrl = '';
+        $this->removeExistingFile = false;
         $this->mediaId = null;
         $this->editMode = false;
         $this->resetValidation();

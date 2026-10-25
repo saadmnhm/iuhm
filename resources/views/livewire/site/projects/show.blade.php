@@ -2,218 +2,146 @@
 
 @section('title', $project->getLocalized('title') .' | '.config('app.name'))
 
+@php
+    $image = $project->featured_image ?: 'https://images.unsplash.com/photo-1549488344-1f9b8d2bd1f3?auto=format&fit=crop&w=2000&q=80';
+    $date = $project->created_at?->translatedFormat('d F Y') ?? '14 Octobre 2024';
+    $category = "PROJET";
+@endphp
+
 @section('content')
-    <article class="bg-white">
-        {{-- Hero --}}
-        @if($project->featured_image)
-            <section class="relative overflow-hidden h-[400px] sm:h-[500px]">
-                <img src="{{ $project->featured_image }}" alt="{{ $project->getLocalized('title') }}" class="absolute inset-0 w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                <div class="relative h-full flex items-end">
-                    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-12">
-                        <div class="flex flex-wrap items-center gap-2 mb-4">
-                            <span class="inline-flex items-center rounded-full bg-white/90 px-3 py-1 text-sm font-medium text-slate-900 backdrop-blur">
+<main class="bg-[#FAFAFC] pb-20 pt-6">
+    <div class="iu-container">
+        
+        <!-- Back Link -->
+        <div class="mb-8">
+            <a href="{{ route('projects.index') }}" class="inline-flex items-center gap-2 text-[0.8rem] font-extrabold uppercase tracking-widest text-[#4A5568] hover:text-[#0B1528] transition-colors">
+                <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                RETOUR AUX PROJETS
+            </a>
+        </div>
+
+        <!-- Featured Image -->
+        <div class="relative w-full h-[400px] md:h-[500px] lg:h-[600px] rounded-[2rem] overflow-hidden shadow-lg mb-10 md:mb-16">
+            <img src="{{ \Illuminate\Support\Str::startsWith($project->featured_image, ['http','https']) ? $project->featured_image : asset($project->featured_image) }}" alt="{{ $project->getLocalized('title') }}" class="w-full h-full object-cover">
+            <span class="absolute bottom-6 md:bottom-10 left-6 md:left-10 z-10 inline-flex items-center rounded-full bg-[#82E682] px-4 py-2 text-[0.7rem] font-extrabold uppercase tracking-widest text-[#0a471b] shadow-md backdrop-blur-sm">
+                {{ $category }}
+            </span>
+            <div class="absolute inset-0 bottom-0 top-1/2 bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
+        </div>
+
+        <!-- Content Layout -->
+        <div class="grid lg:grid-cols-[1fr_320px] gap-12 lg:gap-20">
+            
+            <!-- Main Content Area -->
+            <article class="lg:pl-4 mx-auto lg:mx-0 w-full">
+                <!-- Title & Meta -->
+                <header class="mb-12">
+                    <h1 class="text-[2.5rem] md:text-[3.2rem] font-bold text-[#0B1528] leading-[1.1] mb-8">
+                        {{ $project->getLocalized('title') }}
+                    </h1>
+                    
+                    <div class="flex flex-wrap items-center gap-6 md:gap-8 pt-6 border-t border-slate-200/80">
+                        <!-- Date -->
+                        <div class="flex items-center gap-2 text-slate-500 font-medium text-[0.85rem]">
+                            <svg class="size-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            {{ $date }}
+                        </div>
+                        
+                        <!-- Location -->
+                        @if($project->location)
+                        <div class="flex items-center gap-2 text-slate-500 font-medium text-[0.85rem]">
+                            <svg class="size-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            {{ $project->location }}
+                        </div>
+                        @endif
+                        
+                        <!-- Status -->
+                        <div class="flex items-center gap-2 text-slate-500 font-medium text-[0.85rem]">
+                            <span class="inline-flex items-center rounded-full px-2 py-1 text-xs font-bold {{ $project->getStatusColor() }}">
                                 {{ $project->getStatusLabel() }}
                             </span>
-                            @if($project->is_featured)
-                                <span class="inline-flex items-center rounded-full bg-yellow-400 px-3 py-1 text-sm font-medium text-slate-900">{{ __('ui.featured') }}</span>
-                            @endif
                         </div>
-                        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white">{{ $project->getLocalized('title') }}</h1>
+                    </div>
+                </header>
+
+                <div class="prose prose-lg prose-slate max-w-none prose-headings:text-[#0B1528] prose-headings:font-bold prose-p:text-[#4A5568] prose-p:leading-relaxed prose-a:text-[#214f95] marker:bg-[#82E682]">
+                    @php
+                        $desc = trim($project->getLocalized('description', 'fr'));
+                        if ($desc && strpos($desc, '<') !== 0) {
+                            $desc = '<p>' . $desc . '</p>';
+                        }
+                    @endphp
+                    <div class="whitespace-pre-wrap text-[#4A5568] leading-relaxed">{!! $desc !!}</div>
+                </div>
+
+                {{-- Gallery --}}
+                @if($project->gallery && count($project->gallery) > 0)
+                <div>
+                    <h2 class="text-3xl md:text-[2.5rem] font-bold text-[#0B1528] leading-[1.2] mb-6 capitalize">{{ __('ui.gallery') }}</h2>
+                    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        @foreach($project->gallery as $image)
+                        <a href="{{ \Illuminate\Support\Str::startsWith($image, ['http','https']) ? $image : asset($image) }}" target="_blank" class="block rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg transition-shadow">
+                            <img src="{{ \Illuminate\Support\Str::startsWith($image, ['http','https']) ? $image : asset($image) }}" alt="{{ $project->getLocalized('title') }}" class="w-full h-64 object-cover hover:scale-105 transition-transform duration-300">
+                        </a>
+                        @endforeach
                     </div>
                 </div>
-            </section>
-        @else
-            <section class="bg-[#FBF8FD] py-20 sm:py-24">
-                <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div class="flex flex-wrap items-center gap-2 mb-4">
-                        <span class="inline-flex items-center rounded-full bg-white/90 px-3 py-1 text-sm font-medium text-slate-900 backdrop-blur">
-                            {{ $project->getStatusLabel() }}
-                        </span>
-                        @if($project->is_featured)
-                            <span class="inline-flex items-center rounded-full bg-yellow-400 px-3 py-1 text-sm font-medium text-slate-900">{{ __('ui.featured') }}</span>
-                        @endif
-                    </div>
-                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#16254d]">{{ $project->getLocalized('title') }}</h1>
-                </div>
-            </section>
-        @endif
+                @endif
 
-        {{-- Content --}}
-        <section class="bg-white py-20 sm:py-24">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div class="grid lg:grid-cols-3 gap-12">
-                    <div class="lg:col-span-2 space-y-8">
-                        {{-- Description --}}
-                        <div class="prose prose-slate max-w-none">
-                            @foreach(['en', 'fr', 'ar'] as $lang)
-                                @if($project->getLocalized('description', $lang))
-                                    <div class="mb-8">
-                                        <h2 class="text-xl font-bold text-[#16254d] mb-4 capitalize">{{ $lang }} ({{ ['en' => 'English', 'fr' => 'French', 'ar' => 'Arabic'][$lang] }})</h2>
-                                        <div class="whitespace-pre-wrap text-slate-700">{{ $project->getLocalized('description', $lang) }}</div>
-                                    </div>
-                                @endif
-                            @endforeach
-                        </div>
-
-                        {{-- Gallery --}}
-                        @if($project->gallery && count($project->gallery) > 0)
-                            <div>
-                                <h2 class="text-2xl font-bold text-[#16254d] mb-6">{{ __('ui.gallery') }}</h2>
-                                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                                    @foreach($project->gallery as $image)
-                                        <a href="{{ $image }}" target="_blank" class="block rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg transition-shadow">
-                                            <img src="{{ $image }}" alt="{{ $project->getLocalized('title') }}" class="w-full h-64 object-cover hover:scale-105 transition-transform duration-300">
-                                        </a>
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endif
-                    </div>
-
-                    {{-- Sidebar --}}
-                    <div class="space-y-6">
-                        {{-- Info Card --}}
-                        <div class="bg-[#FBF8FD] rounded-2xl p-6">
-                            <h3 class="text-lg font-semibold text-[#16254d] mb-4">{{ __('ui.project_details') }}</h3>
-                            <dl class="space-y-4">
-                                @if($project->location)
-                                    <div>
-                                        <dt class="text-sm text-slate-500">{{ __('ui.location') }}</dt>
-                                        <dd class="text-sm font-medium text-slate-900 mt-1 flex items-center gap-2">
-                                            <svg class="size-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            </svg>
-                                            {{ $project->location }}
-                                        </dd>
-                                    </div>
-                                @endif
-                                
-                                @if($project->partner)
-                                    <div>
-                                        <dt class="text-sm text-slate-500">{{ __('ui.partner') }}</dt>
-                                        <dd class="text-sm font-medium text-slate-900 mt-1">{{ $project->partner }}</dd>
-                                    </div>
-                                @endif
-                                
-                                <div>
-                                    <dt class="text-sm text-slate-500">{{ __('ui.duration') }}</dt>
-                                    <dd class="text-sm font-medium text-slate-900 mt-1">
-                                        @if($project->start_date && $project->end_date)
-                                            {{ $project->start_date->format('M Y') }} – {{ $project->end_date->format('M Y') }}
-                                        @elseif($project->start_date)
-                                            {{ __('ui.started') }} {{ $project->start_date->format('M Y') }}
-                                        @else
-                                            -
-                                        @endif
-                                    </dd>
-                                </div>
-                                
-                                @if($project->tags && count($project->tags) > 0)
-                                    <div>
-                                        <dt class="text-sm text-slate-500">{{ __('ui.tags') }}</dt>
-                                        <dd class="mt-1 flex flex-wrap gap-1">
-                                            @foreach($project->tags as $tag)
-                                                <span class="inline-flex items-center rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700">{{ $tag }}</span>
-                                            @endforeach
-                                        </dd>
-                                    </div>
-                                @endif
-                                
-                                @if($project->external_link)
-                                    <div>
-                                        <dt class="text-sm text-slate-500">{{ __('ui.external_link') }}</dt>
-                                        <dd class="mt-1">
-                                            <a href="{{ $project->external_link }}" target="_blank" class="inline-flex items-center gap-2 text-sm font-medium text-[#214f95] hover:text-[#1a3d7a]">
-                                                {{ __('ui.visit_website') ?? 'Visit Website' }}
-                                                <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                                                </svg>
-                                            </a>
-                                        </dd>
-                                    </div>
-                                @endif
-                            </dl>
-                        </div>
-
-                        {{-- Share --}}
-                        <div class="bg-[#FBF8FD] rounded-2xl p-6">
-                            <h3 class="text-lg font-semibold text-[#16254d] mb-4">{{ __('ui.share_project') }}</h3>
-                            <div class="flex gap-3">
-                                <button onclick="shareProject('twitter')" class="flex-1 rounded-xl bg-[#1DA1F2] px-4 py-2 text-sm font-medium text-white hover:bg-[#0d8bd9] transition">
-                                    <svg class="size-5" viewBox="0 0 24 24" fill="currentColor"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg>
-                                </button>
-                                <button onclick="shareProject('facebook')" class="flex-1 rounded-xl bg-[#1877F2] px-4 py-2 text-sm font-medium text-white hover:bg-[#166fe5] transition">
-                                    <svg class="size-5" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12S0 5.446 0 12.073c0 5.992 3.858 11.028 9.126 11.896v-8.305H7.078v-3.47h2.048V9.43c0-2.03 1.236-3.145 3.03-3.145.864 0 1.707.063 1.934.092v2.16h-1.324c-1.039 0-1.237.491-1.237 1.213v1.517h2.321l-.312 2.37H14.9v8.188c-.142.026-.287.04-.434.04-7.046 0-12.762-5.716-12.762-12.762 0-2.534.67-4.91 1.846-6.99z"/></svg>
-                                </button>
-                                <button onclick="shareProject('linkedin')" class="flex-1 rounded-xl bg-[#0A66C2] px-4 py-2 text-sm font-medium text-white hover:bg-[#095599] transition">
-                                    <svg class="size-5" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Related Projects --}}
-                    @if($relatedProjects && $relatedProjects->count() > 0)
-                    <div class="bg-[#FBF8FD] rounded-2xl p-6">
-                        <h3 class="text-lg font-semibold text-[#16254d] mb-4">{{ __('ui.related_projects') ?? 'Projets similaires' }}</h3>
-                        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                            @foreach($relatedProjects as $related)
-                            <a href="{{ route('projects.show', $related->slug) }}" class="group block bg-white rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg transition-shadow">
-                                @if($related->featured_image)
-                                <div class="aspect-[4/3] bg-slate-100 overflow-hidden">
-                                    <img src="{{ \Illuminate\Support\Str::startsWith($related->featured_image, ['http','https']) ? $related->featured_image : asset($related->featured_image) }}"
-                                         alt="{{ $related->getLocalized('title') }}"
-                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                                </div>
-                                @else
-                                <div class="aspect-[4/3] bg-slate-100 flex items-center justify-center">
-                                    <i class="ri-file-line text-4xl text-slate-300"></i>
-                                </div>
-                                @endif
-                                <div class="p-4">
-                                    <h4 class="text-sm font-bold text-[#16254d] group-hover:text-[#214f95] transition mb-1">{{ $related->getLocalized('title') }}</h4>
-                                    <p class="text-xs text-slate-500 line-clamp-2">{{ $related->getLocalized('short_description') ?? '' }}</p>
-                                    <div class="mt-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                                        <span>{{ $related->getStatusLabel() }}</span>
-                                        @if($related->location)
-                                        <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">{{ $related->location }}</span>
-                                        @endif
-                                    </div>
-                                </div>
-                            </a>
-                            @endforeach
-                        </div>
-                    </div>
+                <!-- Tags -->
+                <div class="mt-16 pt-8 flex flex-wrap gap-3">
+                    @if($project->tags && count($project->tags) > 0)
+                        @foreach($project->tags as $tag)
+                            <span class="inline-flex rounded-full bg-[#EAECEF] px-4 py-2 text-[0.8rem] font-bold text-slate-600 transition hover:bg-slate-200 cursor-pointer">#{{ $tag }}</span>
+                        @endforeach
+                    @else
+                        <span class="inline-flex rounded-full bg-[#EAECEF] px-4 py-2 text-[0.8rem] font-bold text-slate-600">#Projet</span>
                     @endif
                 </div>
-            </div>
-        </section>
-    </article>
+            </article>
 
-@push('scripts')
-<script>
-function shareProject(platform) {
-    const url = encodeURIComponent(window.location.href);
-    const title = encodeURIComponent('{{ $project->getLocalized('title') }}');
-    
-    let shareUrl = '';
-    switch(platform) {
-        case 'twitter':
-            shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${title}`;
-            break;
-        case 'facebook':
-            shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
-            break;
-        case 'linkedin':
-            shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
-            break;
-    }
-    
-    if (shareUrl) {
-        window.open(shareUrl, '_blank', 'width=600,height=400');
-    }
-}
-</script>
-@endpush
+            <!-- Sidebar -->
+            <aside class="space-y-10 w-full">
+                <!-- Share -->
+                <div class="bg-white rounded-[2rem] p-8 shadow-sm shadow-slate-200 border border-slate-100">
+                    <h3 class="text-[1.1rem] font-bold text-[#0B1528] mb-6">Partager le projet</h3>
+                    <div class="flex gap-4">
+                        <button class="size-11 rounded-full bg-[#0B1528] text-white flex items-center justify-center hover:bg-[#162D5A] shadow-md shadow-slate-800/20 transition">
+                            <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 110 2.684 3 3 0 00-5.367-2.684z"/></svg>
+                        </button>
+                        <button class="size-11 rounded-full bg-[#EAECEF] text-slate-600 flex items-center justify-center hover:bg-slate-200 transition">
+                            <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                        </button>
+                        <button class="size-11 rounded-full bg-[#EAECEF] text-slate-600 flex items-center justify-center hover:bg-slate-200 transition">
+                            <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Related Projects -->
+                <div>
+                    <h3 class="text-[1.1rem] font-bold text-[#0B1528] mb-6">Projets similaires</h3>
+                    <div class="flex flex-col gap-4">
+                        @foreach($relatedProjects as $related)
+                        <a href="{{ route('projects.show', $related->slug) }}" class="bg-[#F8F9FA] rounded-[1.5rem] p-6 transition hover:bg-[#EAECEF] hover:shadow-sm group border border-slate-100">
+                            <span class="text-[0.65rem] font-extrabold uppercase tracking-widest text-[#23803B] mb-2 block">{{ $related->getStatusLabel() }}</span>
+                            <h4 class="text-[1rem] font-bold text-[#0A1A3A] leading-[1.3] group-hover:text-[#214f95] transition-colors">{{ $related->getLocalized('title') }}</h4>
+                            @if($related->location)
+                            <p class="text-[0.8rem] text-slate-500 mt-2">{{ $related->location }}</p>
+                            @endif
+                        </a>
+                        @endforeach
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+</main>
+@endsection

@@ -406,10 +406,39 @@
                         <label class="block text-sm font-medium text-slate-700 mb-2">
                             Fichier {{ $editMode ? '(laisser vide pour conserver l\'actuel)' : '<span class="text-red-500">*</span>' }}
                         </label>
+
+                        {{-- Existing file preview (edit mode) --}}
+                        @if($editMode && $existingFileUrl)
+                        <div class="mb-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-medium text-slate-600 uppercase">Fichier actuel</span>
+                                <input type="checkbox" wire:model="removeExistingFile" class="rounded text-slate-600 focus:ring-slate-500">
+                                <span class="text-xs text-red-500 font-medium">Supprimer ce fichier</span>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                @php
+                                    $ext = strtolower(pathinfo($existingFile, PATHINFO_EXTENSION));
+                                    $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg']);
+                                @endphp
+                                @if($isImage)
+                                <img src="{{ $existingFileUrl }}" alt="{{ $title }}" class="w-32 h-32 rounded-lg object-cover border border-slate-200">
+                                @else
+                                <div class="w-32 h-32 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
+                                    <i class="ri-file-text-line text-3xl text-slate-400"></i>
+                                </div>
+                                @endif
+                                <div>
+                                    <p class="text-sm font-medium text-slate-900 truncate max-w-xs" title="{{ $existingFile }}">{{ $existingFile }}</p>
+                                    <p class="text-xs text-slate-500">{{ $existingFileUrl }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+
                         <input type="file" wire:model="file"
                                class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-green-500"
                                accept="image/*,video/*,audio/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,.zip,.rar">
-                        @if($existingFile)
+                        @if($existingFile && !$editMode)
                             <p class="mt-2 text-sm text-slate-500">Fichier actuel : {{ $existingFile }}</p>
                         @endif
                         @error('file') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror

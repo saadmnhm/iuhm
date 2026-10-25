@@ -26,7 +26,7 @@ Laravel 12 app with Livewire 4, Tailwind CSS 4, Vite. Manages candidates, projec
 - **Module access**: `->middleware('module:rh')` checks `Role::canAccess()`; Blade `@canModule('module')`. super_admin always has full access.
 - **Development lock**: `Role::isDevelopmentAccessLocked()` (stored in `association_parameters`, cached 1hr) blocks the admin panel unless the role can bypass (`super_admin` always bypasses); the candidat area is locked out entirely. Clear cache with `Role::clearPermissionCache()`.
 - **BaseModel**: auto-loads `$autoRelations` via a global scope — don't eager-load what's already in `$autoRelations`.
-- **Locale**: `SetLocale` middleware is global (reads `session('locale', config('app.locale'))`). `AppServiceProvider::boot()` defaults the session locale to `'fr'` **even though `.env` has `APP_LOCALE=en`** — the site renders French by default. Routes `/lang/{locale}` and `locale/{locale}` (POST) store the session locale.
+- **Locale**: `SetLocale` middleware is global (reads `session('locale', config('app.locale'))`). `AppServiceProvider::boot()` defaults the session locale to `'fr'` **even though `.env` has `APP_LOCALE=en`** — the site renders French by default. `GET /lang/{locale}` and `POST /locale/{locale}` store the session locale.
 - **API**: `routes/api.php` is mounted inside the `web` middleware group (per `bootstrap/app.php`), with CSRF disabled for `api/v1/*`. Public read-only endpoints under `api/v1/{blog,news,deliverables,media,pages,navigation,projects,history}` (throttle 60/min); write endpoints under `api/v1/{newsletters,contacts}` (throttle 10/min).
 - **PDF**: `barryvdh/laravel-dompdf` via `PrintController` (e.g. `/candidats/{id}/print/*`, `/finance/transaction/{id}/print`).
 
@@ -52,7 +52,7 @@ Laravel 12 app with Livewire 4, Tailwind CSS 4, Vite. Manages candidates, projec
 
 ## Environment / Gotchas
 
-- Copy `.env.example` to `.env`; default DB is MySQL (testing uses SQLite `:memory:`).
+- `.env` is committed (copy from `.env.example` is a no-op if present; composer `setup` script guards with `file_exists('.env')`). Default DB is MySQL (testing uses SQLite `:memory:`).
 - Queue: `database` connection. Mail driver default per `.env.example` is `log`.
 - `CANDIDAT_MASTER_PASSWORD` env var exists (`.env`).
 - No CI workflows and no `opencode.json` in this repo.
