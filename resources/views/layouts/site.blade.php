@@ -17,6 +17,7 @@
         @unless (app()->runningUnitTests())
             @vite(['resources/css/app.css', 'resources/js/app.js'])
         @endunless
+        @livewireStyles
     </head>
     <body class="site-shell">
         <div class="relative min-h-screen">
@@ -32,5 +33,6 @@
 
         @stack('modals')
         @stack('scripts')
+        @livewireScripts
     </body>
 </html>

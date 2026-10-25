@@ -9,7 +9,7 @@
                 <span>{{ __('ui.brand_name') }}</span>
             </a>
 
-            <nav class="hidden items-center gap-6 lg:flex" x-data="navigation()">
+            <nav class="hidden items-center gap-6 lg:flex">
                 @if(count($navigation))
                     @foreach($navigation as $item)
                         @if($item['type'] === 'divider')
@@ -78,6 +78,7 @@
                         </button>
                         <div
                             x-show="projectDropdownOpen"
+                            x-cloak
                             x-transition
                             class="absolute left-0 top-full mt-2 min-w-[200px] bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-50"
                         >
@@ -145,6 +146,7 @@
                         </button>
                         <div
                             x-show="projectDropdownOpen"
+                            x-cloak
                             x-transition
                             class="absolute left-0 top-full mt-2 min-w-[200px] bg-white rounded-xl shadow-lg border border-slate-200 py-2 z-50"
                         >
@@ -191,7 +193,7 @@
             x-transition.opacity.duration.150ms
             class="border-t border-slate-200 py-4 lg:hidden"
         >
-            <nav class="flex flex-col gap-1" x-data="navigation()">
+            <nav class="flex flex-col gap-1">
                 @if(count($navigation))
                     @foreach($navigation as $item)
                         @if($item['type'] === 'divider')
@@ -246,6 +248,7 @@
                         </button>
                         <div
                             x-show="mobileProjectDropdownOpen"
+                            x-cloak
                             x-transition
                             class="pl-4 pt-2 space-y-1"
                         >
@@ -286,6 +289,7 @@
                         </button>
                         <div
                             x-show="mobileProjectDropdownOpen"
+                            x-cloak
                             x-transition
                             class="pl-4 pt-2 space-y-1"
                         >
@@ -303,16 +307,4 @@
             </nav>
         </div>
     </div>
-
-    @push('scripts')
-    <script>
-    document.addEventListener('alpine:init', () => {
-        Alpine.data('navigation', () => ({
-            init() {
-                // Navigation data is passed from Blade
-            }
-        }));
-    });
-    </script>
-    @endpush
 </header>
