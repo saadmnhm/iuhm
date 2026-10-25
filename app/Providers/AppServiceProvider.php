@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
+use function Livewire\on;
 use App\Models\ProjectsList;
 use App\Models\Address;
 use App\Models\NavigationItem;
@@ -36,6 +37,17 @@ class AppServiceProvider extends ServiceProvider
         // Set locale from session or default to 'fr'
         $locale = session('locale', 'fr');
         app()->setLocale($locale);
+
+        // Safety net for Livewire's $set magic action (wire:click="$set('key', value)").
+        // Livewire sends $set as a server method call; SupportMagicActions should catch it,
+        // but this listener ensures $set is handled client-side without a MethodNotFoundException.
+        $this->app->booted(function () {
+            on('call', function ($component, $method, $params, $componentContext, $returnEarly, $context) {
+                if ($method === '$set') {
+                    $returnEarly();
+                }
+            });
+        });
 
         // Share navigation and public pages with public views
         View::composer(['layouts.site', 'livewire.site.partials.header'], function ($view): void {
