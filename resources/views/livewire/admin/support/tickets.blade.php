@@ -1,274 +1,449 @@
 <div>
-    <!-- Flash Messages -->
+    {{-- Page header --}}
+    <div class="mb-8">
+        <div class="green_title_1">SUPPORT &amp; ASSISTANCE</div>
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            <div class="max-w-3xl">
+                <h1 class="iuhm_title_1">Gestion des tickets</h1>
+                <p class="text-[18px] text-gray-600">
+                    Gérez les demandes envoyées par les candidats ainsi que les tickets internes créés par l'administration.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    {{-- Flash message --}}
     @if (session()->has('success'))
-        <div class="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700">
-            {{ session('success') }}
+        <div class="mb-6 flex items-center gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 shadow-sm">
+            <i class="ri-check-line text-lg text-emerald-600"></i>
+            <span>{{ session('success') }}</span>
         </div>
     @endif
 
-    <!-- Statistics -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-            <div class="text-2xl font-bold text-gray-800">{{ $statistics['total'] }}</div>
-            <div class="text-sm text-gray-500">Total Tickets</div>
-        </div>
-        <div class="bg-white rounded-xl shadow-sm p-4 border border-yellow-200">
-            <div class="text-2xl font-bold text-yellow-600">{{ $statistics['open'] }}</div>
-            <div class="text-sm text-gray-500">Ouverts</div>
-        </div>
-        <div class="bg-white rounded-xl shadow-sm p-4 border border-blue-200">
-            <div class="text-2xl font-bold text-blue-600">{{ $statistics['in_progress'] }}</div>
-            <div class="text-sm text-gray-500">En cours</div>
-        </div>
-        <div class="bg-white rounded-xl shadow-sm p-4 border border-green-200">
-            <div class="text-2xl font-bold text-green-600">{{ $statistics['resolved'] }}</div>
-            <div class="text-sm text-gray-500">Résolus</div>
-        </div>
-    </div>
+    {{-- Statistics (scoped to the active tab) --}}
+    @php
+        $statCards = [
+            ['label' => 'Total tickets', 'value' => $statistics['total'], 'icon' => 'ri-ticket-2-line'],
+            ['label' => 'Ouverts', 'value' => $statistics['open'], 'icon' => 'ri-mail-open-line'],
+            ['label' => 'En cours', 'value' => $statistics['in_progress'], 'icon' => 'ri-time-line'],
+            ['label' => 'Résolus', 'value' => $statistics['resolved'], 'icon' => 'ri-checkbox-circle-line'],
+        ];
+    @endphp
 
-    <!-- Filters -->
-    <div class="bg-white rounded-xl shadow-sm p-4 mb-6 border border-gray-100">
-        <div class="flex flex-wrap gap-4">
-            <div class="flex-1 min-w-[200px]">
-                <input wire:model.live.debounce.300ms="search" type="text" 
-                    placeholder="Rechercher par sujet ou candidat..." 
-                    class="w-full rounded-lg border-gray-300  focus:border-indigo-500 focus:ring-indigo-500 text-sm">
-            </div>
-            <div>
-                <select wire:model.live="statusFilter" class="rounded-lg border-gray-300 shadow-sm text-sm">
-                    <option value="all">Tous les statuts</option>
-                    <option value="open">Ouvert</option>
-                    <option value="in_progress">En cours</option>
-                    <option value="resolved">Résolu</option>
-                    <option value="closed">Fermé</option>
-                </select>
-            </div>
-            <div>
-                <select wire:model.live="priorityFilter" class="rounded-lg border-gray-300 shadow-sm text-sm">
-                    <option value="all">Toutes priorités</option>
-                    <option value="low">Basse</option>
-                    <option value="medium">Moyenne</option>
-                    <option value="high">Haute</option>
-                    <option value="urgent">Urgente</option>
-                </select>
-            </div>
-        </div>
-    </div>
-
-    <!-- Tickets Table -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <table class="w-full text-sm">
-            <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-4 py-3 text-left font-medium text-gray-600">#</th>
-                    <th class="px-4 py-3 text-left font-medium text-gray-600">Candidat</th>
-                    <th class="px-4 py-3 text-left font-medium text-gray-600">Sujet</th>
-                    <th class="px-4 py-3 text-left font-medium text-gray-600">Catégorie</th>
-                    <th class="px-4 py-3 text-left font-medium text-gray-600">Priorité</th>
-                    <th class="px-4 py-3 text-left font-medium text-gray-600">Statut</th>
-                    <th class="px-4 py-3 text-left font-medium text-gray-600">Responsable</th>
-                    <th class="px-4 py-3 text-left font-medium text-gray-600">Date</th>
-                    <th class="px-4 py-3 text-center font-medium text-gray-600">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-100">
-                @forelse($tickets as $ticket)
-                <tr class="hover:bg-gray-50 transition">
-                    <td class="px-4 py-3 text-gray-500">{{ $ticket->id }}</td>
-                    <td class="px-4 py-3">
-                        <div class="font-medium text-gray-800">{{ $ticket->candidat->nom ?? 'N/A' }} {{ $ticket->candidat->prenom ?? '' }}</div>
-                        <div class="text-xs text-gray-400">{{ $ticket->candidat->email ?? '' }}</div>
-                    </td>
-                    <td class="px-4 py-3 text-gray-700">{{ Str::limit($ticket->subject, 40) }}</td>
-                    <td class="px-4 py-3">
-                        <span class="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">{{ ucfirst($ticket->category) }}</span>
-                    </td>
-                    <td class="px-4 py-3">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $ticket->priority_badge }}">
-                            {{ ucfirst($ticket->priority) }}
-                        </span>
-                    </td>
-                    <td class="px-4 py-3">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $ticket->status_badge }}">
-                            {{ $ticket->status_label }}
-                        </span>
-                        {{-- Quick status actions --}}
-                        <div class="flex gap-1 mt-1">
-                            @if($ticket->status !== 'in_progress')
-                            <button wire:click="changeStatus({{ $ticket->id }}, 'in_progress')"
-                                class="text-xs px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition" title="Marquer en cours">
-                                <i class="ri-time-line"></i>
-                            </button>
-                            @endif
-                            @if($ticket->status !== 'resolved')
-                            <button wire:click="changeStatus({{ $ticket->id }}, 'resolved')"
-                                class="text-xs px-1.5 py-0.5 bg-green-50 text-green-600 rounded hover:bg-green-100 transition" title="Résoudre">
-                                <i class="ri-check-line"></i>
-                            </button>
-                            @endif
-                            @if($ticket->status !== 'closed')
-                            <button wire:click="changeStatus({{ $ticket->id }}, 'closed')"
-                                class="text-xs px-1.5 py-0.5 bg-gray-100 text-gray-500 rounded hover:bg-gray-200 transition" title="Fermer">
-                                <i class="ri-close-line"></i>
-                            </button>
-                            @endif
-                        </div>
-                    </td>
-                    <td class="px-4 py-3">
-                        @if($ticket->assignedAdmin)
-                        <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-xs">
-                                {{ strtoupper(substr($ticket->assignedAdmin->name, 0, 1)) }}
-                            </div>
-                            <span class="text-xs text-gray-700">{{ $ticket->assignedAdmin->name }}</span>
-                        </div>
-                        @else
-                        <span class="text-xs text-gray-400 italic">Non assigné</span>
-                        @endif
-                    </td>
-                    <td class="px-4 py-3 text-gray-500 text-xs">{{ $ticket->created_at->format('d/m/Y H:i') }}</td>
-                    <td class="px-4 py-3 text-center">
-                        <button wire:click="openResponseModal({{ $ticket->id }})" 
-                            class="inline-flex items-center px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 transition text-xs font-medium">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
-                            </svg>
-                        </button>
-                        <button wire:click="opendeleteConfirmation({{ $ticket->id }})"
-                            class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 text-center">
-                            Delete
-                        </button>
-                        
-
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="9" class="px-4 py-8 text-center text-gray-400">
-                        Aucun ticket trouvé.
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-        <div class="px-4 py-3 border-t border-gray-100">
-            {{ $tickets->links() }}
-        </div>
-    </div>
-
-    <!-- Response Modal -->
-    @if($showResponseModal)
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
-        {{-- Backdrop --}}
-        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" wire:click="closeModal"></div>
-        {{-- Modal panel --}}
-        <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-lg z-10">
-            <div class="p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-gray-800">
-                        <i class="ri-reply-line mr-2 text-indigo-500"></i>Répondre au Ticket #{{ $selectedTicketId }}
-                    </h3>
-                    <button wire:click="closeModal" class="text-gray-400 hover:text-gray-600 text-xl">
-                        <i class="ri-close-line"></i>
-                    </button>
-                </div>
-                
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Réponse</label>
-                    <textarea wire:model="adminResponse" rows="5" 
-                        class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none transition"
-                        placeholder="Votre réponse..."></textarea>
-                    @error('adminResponse') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                </div>
-
-                <div class="flex gap-3 justify-end">
-                    <button wire:click="closeModal" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm">
-                        Annuler
-                    </button>
-                    <button wire:click="respondToTicket" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm">
-                        <i class="ri-send-plane-line mr-1"></i> Envoyer la réponse
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endif
-
-    <!-- Delete Confirmation Modal -->
-    <div x-data="{ open: @entangle('showDeleteModal') }" x-cloak>
-        <div
-            x-show="open"
-            x-transition:enter="ease-out duration-200"
-            x-transition:enter-start="opacity-0"
-            x-transition:enter-end="opacity-100"
-            x-transition:leave="ease-in duration-150"
-            x-transition:leave-start="opacity-100"
-            x-transition:leave-end="opacity-0"
-            class="fixed inset-0 z-50 flex items-center justify-center"
-        >
-            {{-- Backdrop --}}
-            <div class="absolute inset-0 bg-black/50" @click="open = false"></div>
-
-            {{-- Panel --}}
-            <div
-                x-show="open"
-                x-transition:enter="ease-out duration-200"
-                x-transition:enter-start="opacity-0 scale-95"
-                x-transition:enter-end="opacity-100 scale-100"
-                x-transition:leave="ease-in duration-150"
-                x-transition:leave-start="opacity-100 scale-100"
-                x-transition:leave-end="opacity-0 scale-95"
-                class="relative bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 z-10 overflow-hidden"
-                @click.stop
-            >
-                {{-- Header --}}
-                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
-                            <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                            </svg>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-900">Delete Ticket</h3>
+    <div class="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        @foreach ($statCards as $card)
+            <div class="rounded-2xl bg-white p-5 shadow-sm">
+                <div class="mb-3 flex justify-between">
+                    <p class="mt-0.5 text-[14px] font-bold uppercase tracking-[0.05em] text-[#45464E]">{{ $card['label'] }}</p>
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-[#9AF89330]">
+                        <i class="{{ $card['icon'] }} text-xl text-[#04103A]"></i>
                     </div>
-                    <button @click="open = false" class="text-gray-400 hover:text-gray-600 transition-colors">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
+                </div>
+                <p class="text-2xl font-black text-slate-900">{{ $card['value'] }}</p>
+            </div>
+        @endforeach
+    </div>
+
+    {{-- Tabs --}}
+    <div class="mb-6 border-b border-gray-100">
+        <div class="flex gap-1 overflow-x-auto">
+            <button type="button" wire:click="setTab('candidats')"
+                class="whitespace-nowrap border-b-2 px-6 py-4 text-[18px] font-bold text-[#172554] transition
+                    {{ $tab === 'candidats' ? 'border-green-600' : 'border-transparent hover:text-gray-700' }}">
+                Tickets candidats
+                <span class="ml-2 inline-flex items-center rounded-full bg-[#9AF89330] px-2.5 py-0.5 text-xs font-bold text-[#066E1B]">
+                    {{ $candidateCount }}
+                </span>
+            </button>
+            <button type="button" wire:click="setTab('admin')"
+                class="whitespace-nowrap border-b-2 px-6 py-4 text-[18px] font-bold text-[#172554] transition
+                    {{ $tab === 'admin' ? 'border-green-600' : 'border-transparent hover:text-gray-700' }}">
+                Tickets administration
+                <span class="ml-2 inline-flex items-center rounded-full bg-[#9AF89330] px-2.5 py-0.5 text-xs font-bold text-[#066E1B]">
+                    {{ $adminCount }}
+                </span>
+            </button>
+        </div>
+    </div>
+
+    {{-- Filters --}}
+    <div class="mb-6 flex flex-col gap-3 lg:flex-row lg:flex-wrap lg:items-center">
+        <div class="relative min-w-[220px] flex-1">
+            <i class="ri-search-line pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-400"></i>
+            <input type="text" wire:model.live.debounce.300ms="search"
+                placeholder="Rechercher par sujet, message, candidat ou responsable..."
+                class="iuhm_search h-11 w-full rounded-full border border-gray-300 bg-white pl-10 pr-4 text-sm outline-none">
+        </div>
+
+        <select wire:model.live="statusFilter"
+            class="iuhm_select h-11 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm">
+            <option value="all">Tous les statuts</option>
+            <option value="open">Ouvert</option>
+            <option value="in_progress">En cours</option>
+            <option value="resolved">Résolu</option>
+            <option value="closed">Fermé</option>
+        </select>
+
+        <select wire:model.live="priorityFilter"
+            class="iuhm_select h-11 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm">
+            <option value="all">Toutes les priorités</option>
+            <option value="low">Basse</option>
+            <option value="medium">Moyenne</option>
+            <option value="high">Haute</option>
+            <option value="urgent">Urgente</option>
+        </select>
+
+        <select wire:model.live="categoryFilter"
+            class="iuhm_select h-11 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm">
+            <option value="all">Toutes les catégories</option>
+            <option value="general">Général</option>
+            <option value="technical">Technique</option>
+            <option value="account">Compte</option>
+            <option value="form">Formulaire</option>
+            <option value="bug">Bug</option>
+            <option value="other">Autre</option>
+        </select>
+
+        <select wire:model.live="assignedFilter"
+            class="iuhm_select h-11 rounded-full border border-gray-300 bg-white px-4 py-2 text-sm">
+            <option value="all">Tous les responsables</option>
+            <option value="unassigned">Non assigné</option>
+            @foreach ($admins as $admin)
+                <option value="{{ $admin->id }}">{{ $admin->name }}</option>
+            @endforeach
+        </select>
+
+        <button type="button" wire:click="resetFilters"
+            class="inline-flex h-[50px] items-center justify-center gap-2 rounded-full border border-gray-300 bg-white px-5 text-sm font-semibold text-[#04103A] transition hover:bg-gray-50">
+            <i class="ri-refresh-line"></i>
+            Réinitialiser
+        </button>
+    </div>
+
+    {{-- Tickets table --}}
+    <div class="overflow-hidden rounded-[22px] bg-white shadow-sm">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-slate-200">
+                <thead class="bg-[#04103A] text-white">
+                    <tr>
+                        <th class="px-6 py-5 text-left text-xs font-semibold uppercase">#</th>
+                        <th class="px-6 py-5 text-left text-xs font-semibold uppercase">{{ $tab === 'candidats' ? 'Candidat' : 'Administration' }}</th>
+                        <th class="px-6 py-5 text-left text-xs font-semibold uppercase">Sujet</th>
+                        <th class="px-6 py-5 text-left text-xs font-semibold uppercase">Pièce jointe</th>
+                        <th class="px-6 py-5 text-left text-xs font-semibold uppercase">Catégorie</th>
+                        <th class="px-6 py-5 text-left text-xs font-semibold uppercase">Priorité</th>
+                        <th class="px-6 py-5 text-left text-xs font-semibold uppercase">Statut</th>
+                        <th class="px-6 py-5 text-left text-xs font-semibold uppercase">Responsable</th>
+                        <th class="px-6 py-5 text-left text-xs font-semibold uppercase">Date</th>
+                        <th class="px-6 py-5 text-center text-xs font-semibold uppercase">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @forelse ($tickets as $ticket)
+                        <tr wire:key="ticket-{{ $ticket->id }}" class="bg-white transition-colors hover:bg-gray-50">
+                            <td class="px-6 py-4 text-sm font-semibold text-[#04103A]">#{{ $ticket->id }}</td>
+                            <td class="px-6 py-4 text-sm">
+                                @if ($ticket->candidat)
+                                    <div class="font-semibold text-[#04103A]">
+                                        {{ $ticket->candidat->nom }} {{ $ticket->candidat->prenom }}
+                                    </div>
+                                    <div class="mt-1 text-xs text-slate-500">{{ $ticket->candidat->email }}</div>
+                                @elseif ($ticket->candidat_id)
+                                    <div class="flex items-center gap-2">
+                                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500">
+                                            <i class="ri-user-unfollow-line"></i>
+                                        </span>
+                                        <div>
+                                            <div class="font-semibold text-[#04103A]">Candidat supprimé</div>
+                                            <div class="text-xs text-slate-500">Compte introuvable</div>
+                                        </div>
+                                    </div>
+                                @else
+                                    <div class="flex items-center gap-2">
+                                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-[#9AF89330] text-[#066E1B]">
+                                            <i class="ri-admin-line"></i>
+                                        </span>
+                                        <div>
+                                            <div class="font-semibold text-[#04103A]">Administration</div>
+                                            <div class="text-xs text-slate-500">Ticket interne</div>
+                                        </div>
+                                    </div>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="text-sm font-semibold text-slate-900">{{ Str::limit($ticket->subject, 45) }}</div>
+                                <div class="mt-1 text-xs text-slate-500">{{ Str::limit($ticket->message, 65) }}</div>
+                            </td>
+                            <td class="px-6 py-4">
+                                @if ($ticket->image)
+                                    <a href="{{ route('uploads.show', ['path' => $ticket->image]) }}" target="_blank" rel="noopener"
+                                        class="inline-block" title="Voir la pièce jointe">
+                                        <img src="{{ route('uploads.show', ['path' => $ticket->image]) }}" alt="Pièce jointe"
+                                            class="h-12 w-12 rounded-xl object-cover ring-1 ring-slate-200">
+                                    </a>
+                                @else
+                                    <span class="text-xs text-slate-300">—</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-600">
+                                    {{ $ticket->category_label }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex rounded-full px-3 py-1 text-xs font-bold {{ $ticket->priority_badge }}">
+                                    {{ $ticket->priority_label }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex rounded-full px-3 py-1 text-xs font-bold {{ $ticket->status_badge }}">
+                                    {{ $ticket->status_label }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-sm">
+                                @if ($ticket->assignedAdmin)
+                                    <div class="flex items-center gap-2">
+                                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-[#9AF89330] text-xs font-bold text-[#066E1B]">
+                                            {{ strtoupper(substr($ticket->assignedAdmin->name, 0, 1)) }}
+                                        </span>
+                                        <span class="text-sm font-semibold text-[#04103A]">{{ $ticket->assignedAdmin->name }}</span>
+                                    </div>
+                                @else
+                                    <span class="text-xs italic text-slate-400">Non assigné</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 text-sm text-slate-500">{{ $ticket->created_at->format('d/m/Y H:i') }}</td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center justify-center gap-2">
+                                    <button type="button" wire:click="openTicketModal({{ $ticket->id }})"
+                                        class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#0f1d57]/5 text-[#0f1d57] transition hover:bg-[#0f1d57] hover:text-white"
+                                        title="Voir le ticket">
+                                        <i class="ri-eye-line text-base"></i>
+                                    </button>
+                                    <button type="button" wire:click="openDeleteModal({{ $ticket->id }})"
+                                        class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-rose-50 text-rose-600 transition hover:bg-rose-600 hover:text-white"
+                                        title="Supprimer le ticket">
+                                        <i class="ri-delete-bin-2-fill text-base"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="10" class="px-6 py-16 text-center">
+                                <i class="ri-inbox-line mb-3 block text-4xl text-slate-200"></i>
+                                <p class="text-sm font-semibold text-slate-500">Aucun ticket trouvé.</p>
+                                <p class="mt-1 text-xs text-slate-400">Les tickets correspondant à ces critères apparaîtront ici.</p>
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <div class="flex flex-col gap-4 bg-white px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+            <p class="text-sm text-slate-500">
+                Affichage de {{ $tickets->firstItem() ?? 0 }} à {{ $tickets->lastItem() ?? 0 }} sur {{ $tickets->total() }} tickets
+            </p>
+            <div>{{ $tickets->links() }}</div>
+        </div>
+    </div>
+
+    {{-- Ticket detail modal --}}
+    @if ($showTicketModal && $selectedTicket)
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4 backdrop-blur-sm">
+            <div class="relative flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl bg-white shadow-xl">
+                {{-- Header --}}
+                <div class="flex items-start justify-between border-b border-slate-100 px-6 py-4">
+                    <div class="min-w-0">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <span class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400">Ticket #{{ $selectedTicket->id }}</span>
+                            <span class="inline-flex rounded-full px-3 py-1 text-xs font-bold {{ $selectedTicket->status_badge }}">
+                                {{ $selectedTicket->status_label }}
+                            </span>
+                            <span class="inline-flex rounded-full px-3 py-1 text-xs font-bold {{ $selectedTicket->priority_badge }}">
+                                {{ $selectedTicket->priority_label }}
+                            </span>
+                        </div>
+                        <h3 class="mt-2 truncate text-lg font-bold text-[#04103A]">{{ $selectedTicket->subject }}</h3>
+                        <p class="mt-1 text-xs text-slate-500">
+                            {{ $selectedTicket->created_at->format('d/m/Y H:i') }} · {{ $selectedTicket->category_label }}
+                        </p>
+                    </div>
+                    <button type="button" wire:click="closeTicketModal" class="text-slate-400 transition hover:text-slate-600">
+                        <i class="ri-close-line text-2xl"></i>
+                    </button>
+                </div>
+
+                {{-- Body --}}
+                <div class="flex-1 space-y-5 overflow-y-auto px-6 py-5">
+                    {{-- Requester --}}
+                    <div class="flex items-center gap-3 rounded-2xl bg-slate-50 p-4">
+                        @if ($selectedTicket->candidat)
+                            <span class="flex h-11 w-11 items-center justify-center rounded-full bg-[#9AF89330] text-sm font-bold text-[#066E1B]">
+                                {{ strtoupper(substr($selectedTicket->candidat->nom ?? 'C', 0, 1)) }}
+                            </span>
+                            <div class="min-w-0">
+                                <div class="truncate text-sm font-semibold text-[#04103A]">
+                                    {{ $selectedTicket->candidat->nom }} {{ $selectedTicket->candidat->prenom }}
+                                </div>
+                                <div class="truncate text-xs text-slate-500">{{ $selectedTicket->candidat->email }}</div>
+                            </div>
+                        @elseif ($selectedTicket->candidat_id)
+                            <span class="flex h-11 w-11 items-center justify-center rounded-full bg-slate-100 text-slate-500">
+                                <i class="ri-user-unfollow-line"></i>
+                            </span>
+                            <div class="min-w-0">
+                                <div class="text-sm font-semibold text-[#04103A]">Candidat supprimé</div>
+                                <div class="text-xs text-slate-500">Le compte associé à ce ticket n'existe plus.</div>
+                            </div>
+                        @else
+                            <span class="flex h-11 w-11 items-center justify-center rounded-full bg-[#9AF89330] text-[#066E1B]">
+                                <i class="ri-admin-line text-lg"></i>
+                            </span>
+                            <div class="min-w-0">
+                                <div class="text-sm font-semibold text-[#04103A]">Administration</div>
+                                <div class="text-xs text-slate-500">Ticket interne créé par l'administration</div>
+                            </div>
+                        @endif
+                    </div>
+
+                    {{-- Original message --}}
+                    <div>
+                        <p class="mb-2 text-[11px] font-extrabold uppercase tracking-widest text-slate-400">Message</p>
+                        <div class="whitespace-pre-line rounded-2xl rounded-tl-sm bg-slate-100 p-4 text-sm leading-6 text-slate-700">
+                            {{ $selectedTicket->message }}
+                        </div>
+                    </div>
+
+                    {{-- Uploaded image --}}
+                    @if ($selectedTicket->image)
+                        <div>
+                            <p class="mb-2 text-[11px] font-extrabold uppercase tracking-widest text-slate-400">Pièce jointe</p>
+                            <a href="{{ route('uploads.show', ['path' => $selectedTicket->image]) }}" target="_blank" rel="noopener"
+                                class="inline-block overflow-hidden rounded-2xl border border-slate-200">
+                                <img src="{{ route('uploads.show', ['path' => $selectedTicket->image]) }}" alt="Pièce jointe"
+                                    class="max-h-72 w-auto object-contain">
+                            </a>
+                        </div>
+                    @endif
+
+                    {{-- Admin response --}}
+                    @if ($selectedTicket->admin_response)
+                        <div>
+                            <p class="mb-2 text-[11px] font-extrabold uppercase tracking-widest text-slate-400">Réponse de l'administration</p>
+                            <div class="ml-auto max-w-[92%] whitespace-pre-line rounded-2xl rounded-tr-sm bg-emerald-50 p-4 text-sm leading-6 text-emerald-900">
+                                {{ $selectedTicket->admin_response }}
+                            </div>
+                            @if ($selectedTicket->responded_at)
+                                <p class="mt-1 text-right text-xs text-slate-400">
+                                    {{ $selectedTicket->responded_at->format('d/m/Y H:i') }}
+                                </p>
+                            @endif
+                        </div>
+                    @endif
+
+                    {{-- Status update --}}
+                    <div class="rounded-2xl border border-slate-200 p-4">
+                        <p class="mb-3 flex items-center gap-2 text-sm font-bold text-[#04103A]">
+                            <i class="ri-flag-line text-[#066E1B]"></i>
+                            Changer le statut
+                        </p>
+                        <div class="flex flex-col gap-3 sm:flex-row">
+                            <select wire:model="newStatus"
+                                class="iuhm_select w-full rounded-full border border-gray-300 bg-white px-4 py-2 text-sm sm:flex-1">
+                                <option value="open">Ouvert</option>
+                                <option value="in_progress">En cours</option>
+                                <option value="resolved">Résolu</option>
+                                <option value="closed">Fermé</option>
+                            </select>
+                            <button type="button" wire:click="updateStatus"
+                                class="inline-flex h-[50px] items-center justify-center gap-2 whitespace-nowrap rounded-full bg-[#1B264F] px-6 text-sm font-semibold text-white transition hover:bg-gray-800">
+                                <i class="ri-check-line"></i>
+                                Mettre à jour
+                            </button>
+                        </div>
+                        @error('newStatus')
+                            <span class="mt-2 block text-xs font-semibold text-red-500">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    {{-- Reply --}}
+                    <div class="rounded-2xl border border-slate-200 p-4">
+                        <p class="mb-3 flex items-center gap-2 text-sm font-bold text-[#04103A]">
+                            <i class="ri-reply-line text-[#066E1B]"></i>
+                            Répondre au ticket
+                        </p>
+                        <textarea wire:model="adminResponse" rows="4"
+                            placeholder="Écrivez votre réponse au candidat ou à l'équipe..."
+                            class="iuhm_textarea w-full rounded-2xl border border-gray-300 text-sm"></textarea>
+                        @error('adminResponse')
+                            <span class="mt-2 block text-xs font-semibold text-red-500">{{ $message }}</span>
+                        @enderror
+                        <div class="mt-3 flex justify-end">
+                            <button type="button" wire:click="respondToTicket"
+                                class="inline-flex h-[50px] items-center justify-center gap-2 rounded-full bg-[#1B264F] px-6 text-sm font-semibold text-white transition hover:bg-gray-800">
+                                <i class="ri-send-plane-line"></i>
+                                Envoyer la réponse
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Footer --}}
+                <div class="flex items-center justify-between gap-3 border-t border-slate-100 bg-slate-50 px-6 py-4">
+                    <button type="button" wire:click="openDeleteModal({{ $selectedTicket->id }})"
+                        class="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-rose-600 transition hover:bg-rose-50">
+                        <i class="ri-delete-bin-2-fill"></i>
+                        Supprimer
+                    </button>
+                    <button type="button" wire:click="closeTicketModal"
+                        class="rounded-full border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50">
+                        Fermer
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- Delete confirmation modal --}}
+    @if ($showDeleteModal)
+        <div class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4">
+            <div class="relative w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-xl">
+                {{-- Header --}}
+                <div class="flex items-center justify-between border-b border-gray-100 px-6 py-4">
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
+                            <i class="ri-error-warning-line text-xl text-red-600"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-[#04103A]">Supprimer le ticket</h3>
+                    </div>
+                    <button type="button" wire:click="closeDeleteModal" class="text-gray-400 transition hover:text-gray-600">
+                        <i class="ri-close-line text-2xl"></i>
                     </button>
                 </div>
 
                 {{-- Body --}}
                 <div class="px-6 py-5">
-                    <p class="text-gray-600 text-sm">
-                        Are you sure you want to delete
-                        <span class="font-semibold text-gray-900">this ticket</span>?
-                        This action is permanent and cannot be undone.
+                    <p class="text-sm text-gray-600">
+                        Voulez-vous vraiment supprimer ce ticket ? Cette action est définitive et ne peut pas être annulée.
                     </p>
                 </div>
 
                 {{-- Footer --}}
-                <div class="flex justify-end gap-3 px-6 py-4 bg-gray-50 border-t border-gray-100">
-                    <button
-                        @click="open = false"
-                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-                    >
-                        Cancel
+                <div class="flex justify-end gap-3 border-t border-gray-100 bg-gray-50 px-6 py-4">
+                    <button type="button" wire:click="closeDeleteModal"
+                        class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-200">
+                        Annuler
                     </button>
-                    <button
-                        wire:click="deleteTicket"
-                        wire:loading.attr="disabled"
-                        class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-60"
-                    >
-                        <svg wire:loading wire:target="deleteTicket" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
-                        </svg>
-                        Delete Ticket
+                    <button type="button" wire:click="deleteTicket" wire:loading.attr="disabled"
+                        class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-60">
+                        <i class="ri-delete-bin-2-fill" wire:loading.remove wire:target="deleteTicket"></i>
+                        <i class="ri-loader-4-line animate-spin" wire:loading wire:target="deleteTicket"></i>
+                        Supprimer
                     </button>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
 </div>

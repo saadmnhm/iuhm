@@ -69,4 +69,28 @@ class SupportTicket extends Model
             default => 'bg-gray-100 text-gray-800',
         };
     }
+
+    public function getPriorityLabelAttribute(): string
+    {
+        return match($this->priority) {
+            'low' => 'Basse',
+            'medium' => 'Moyenne',
+            'high' => 'Haute',
+            'urgent' => 'Urgente',
+            default => ucfirst((string) $this->priority),
+        };
+    }
+
+    public function getCategoryLabelAttribute(): string
+    {
+        return match($this->category) {
+            'general' => 'Général',
+            'technical' => 'Technique',
+            'account' => 'Compte',
+            'form' => 'Formulaire',
+            'bug' => 'Bug',
+            'other' => 'Autre',
+            default => ucfirst((string) $this->category),
+        };
+    }
 }
