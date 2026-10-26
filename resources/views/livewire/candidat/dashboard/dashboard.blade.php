@@ -64,9 +64,9 @@
             <div class="space-y-3">
                 @forelse(array_slice($filteredSubmissions, 0, 5) as $sub)
                     <div class="flex items-center justify-between bg-white p-4 rounded-xl border border-gray-100">
-                        <div>
-                            <div class="font-semibold text-gray-900">{{ $sub['form_title'] }}</div>
-                            <div class="text-sm text-gray-500">{{ $sub['programe_name'] ?: $tr('Formulaire général', 'استمارة عامة') }}</div>
+                        <div class="min-w-0">
+                            <div class="truncate font-semibold text-gray-900">{{ $sub['form_title'] }}</div>
+                            <div class="truncate text-sm text-gray-500">{{ $sub['programe_name'] ?: $tr('Formulaire général', 'استمارة عامة') }}</div>
                         </div>
                         <div class="flex items-center gap-2 flex-shrink-0">
                             <span class="text-xs font-semibold px-2 py-1 rounded-full border" style="background:{{ $sub['status_badge_color'] ?? '#6b7280' }}22; color:{{ $sub['status_badge_color'] ?? '#6b7280' }}; border-color:{{ $sub['status_badge_color'] ?? '#6b7280' }}44;">
@@ -97,43 +97,5 @@
     </div>
 
 </div>
-
-    {{-- Profile complete modal --}}
-    @if($showCompleteProfileModal)
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" role="dialog" aria-modal="true" aria-labelledby="profile-modal-title-dashboard">
-        <div class="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden">
-            <div class="p-6 border-b border-gray-100">
-                <h5 id="profile-modal-title-dashboard" class="text-lg font-bold flex items-center gap-2">
-                    <i class="ri-information-line text-amber-500"></i>{{ $tr('Complétez votre profil', 'أكمل ملفك الشخصي') }}
-                </h5>
-            </div>
-            <div class="p-6">
-                <div class="text-center mb-6">
-                    <i class="ri-user-settings-line text-6xl text-green-600"></i>
-                    <h5 class="mt-3 mb-2 text-lg font-semibold">{{ $tr('Votre profil est incomplet', 'ملفك الشخصي غير مكتمل') }}</h5>
-                    <p class="text-sm text-gray-500 mb-0">
-                        {{ $tr('Veuillez compléter vos informations pour accéder à toutes les fonctionnalités.', 'يرجى إكمال معلوماتك للوصول إلى جميع الميزات.') }}
-                    </p>
-                </div>
-                <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-start gap-3">
-                    <i class="ri-lightbulb-line text-blue-500 mt-1"></i>
-                    <div>
-                        <strong>{{ $tr('Pourquoi compléter votre profil ?', 'لماذا يجب إكمال ملفك الشخصي؟') }}</strong>
-                        <ul class="mb-0 mt-2 pl-4 space-y-1 text-sm">
-                            <li>{{ $tr("Améliorer la précision des critères d'éligibilité", 'تحسين دقة معايير الأهلية') }}</li>
-                            <li>{{ $tr('Recevoir des notifications personnalisées', 'تلقي إشعارات مخصصة') }}</li>
-                            <li>{{ $tr('Accélérer le traitement de vos demandes', 'تسريع معالجة طلباتك') }}</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="px-6 py-4 border-t border-gray-100">
-                <button type="button" wire:click="goToSettings" class="btn w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold text-white transition-colors" style="background:#648454;">
-                    <i class="ri-settings-3-line"></i>{{ $tr('Compléter le profil', 'إكمال الملف الشخصي') }}
-                </button>
-            </div>
-        </div>
-    </div>
-    @endif
 
 </div>

@@ -53,7 +53,12 @@ class Settings extends Component
     public function mount()
     {
         $this->candidat = Auth::guard('candidat')->user();
-        
+
+        $tab = request()->query('tab');
+        if (in_array($tab, ['profile', 'password'], true)) {
+            $this->activeTab = $tab;
+        }
+
         $this->nom = $this->candidat->nom;
         $this->prenom = $this->candidat->prenom;
         $this->email = $this->candidat->email;

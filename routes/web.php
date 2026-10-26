@@ -189,14 +189,14 @@ Route::prefix('user')->name('user.')->group(function () {
         Route::get('/settings', \App\Livewire\Front\Dashboard\Settings::class)->name('settings');
         Route::get('/support', \App\Livewire\Front\Dashboard\Support::class)->name('support');
         Route::get('/chat', \App\Livewire\Front\Dashboard\Chat::class)->name('chat');
-        Route::get('/f/{slug}', \App\Livewire\Front\DynamicFormWizard::class)->name('dynamic_form');
+        Route::get('/f/{slug}', \App\Livewire\Front\DynamicFormWizard::class)->name('dynamic_form')->middleware('profile.complete');
         // Project Routes
-        Route::get('/projects', \App\Livewire\Front\Programe\ProjectList::class)->name('projects.list');
-        Route::get('/submissions', \App\Livewire\Front\Programe\SubmissionList::class)->name('submissions.list');
-        Route::get('/projects/{id}/conditions', \App\Livewire\Front\Programe\ProjectConditionAgreement::class)->name('project.conditions');
-        Route::get('/projects/{id}', \App\Livewire\Front\Programe\ProjectDetail::class)->name('project.detail');
-        Route::get('/projects/{id}/review', \App\Livewire\Front\Programe\ProjectFormationReview::class)->name('project.review');
-        Route::get('/projects/{projectId}/formulaire/{formulaireSlug}/{order}', \App\Livewire\Front\Programe\ProjectFormulaireView::class)->name('project.formulaire');
+        Route::get('/projects', \App\Livewire\Front\Programe\ProjectList::class)->name('projects.list')->middleware('profile.complete');
+        Route::get('/submissions', \App\Livewire\Front\Programe\SubmissionList::class)->name('submissions.list')->middleware('profile.complete');
+        Route::get('/projects/{id}/conditions', \App\Livewire\Front\Programe\ProjectConditionAgreement::class)->name('project.conditions')->middleware('profile.complete');
+        Route::get('/projects/{id}', \App\Livewire\Front\Programe\ProjectDetail::class)->name('project.detail')->middleware('profile.complete');
+        Route::get('/projects/{id}/review', \App\Livewire\Front\Programe\ProjectFormationReview::class)->name('project.review')->middleware('profile.complete');
+        Route::get('/projects/{projectId}/formulaire/{formulaireSlug}/{order}', \App\Livewire\Front\Programe\ProjectFormulaireView::class)->name('project.formulaire')->middleware('profile.complete');
         Route::get('/blog', \App\Livewire\Front\Blog\BlogList::class)->name('blog');
         Route::get('/blog/{slug}', \App\Livewire\Front\Blog\BlogShow::class)->name('blog.show');
             Route::get('/broadcasts', \App\Livewire\Front\Dashboard\BroadcastHistory::class)->name('broadcasts.history');

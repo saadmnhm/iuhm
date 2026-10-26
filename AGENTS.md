@@ -35,7 +35,7 @@ Laravel 12 app with Livewire 4, Tailwind CSS 4, Vite. Manages candidates, projec
 - `app/Livewire/Admin/` — admin components (users, finance, material, rh, formulaires, ...)
 - `app/Livewire/Front/` — candidate components (dashboard, projets, blog, forms)
 - `app/Models/` — ~45 models + `BaseModel`, all domain models extend `BaseModel`
-- `app/Http/Middleware/` — AdminMiddleware, CandidatMiddleware, ModuleAccess, SetLocale, SuperAdminMiddleware
+- `app/Http/Middleware/` — AdminMiddleware, CandidatMiddleware, EnsureCandidatProfileComplete, ModuleAccess, SetLocale, SuperAdminMiddleware
 - `routes/web.php` — all web routes; `routes/api.php` — public API v1; `routes/console.php` — artisan commands
 - `uploads/` — file uploads (NOT `storage/app/public`), served via `/uploads/{path}` and `/uploads/{path}/download`; both require an authenticated `web` or `candidat` guard (403 otherwise).
 

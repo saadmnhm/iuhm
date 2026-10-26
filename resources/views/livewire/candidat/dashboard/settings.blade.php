@@ -5,6 +5,15 @@
 
 <div @if($isArabic) dir="rtl" @endif class="p-4 sm:p-6 lg:p-8 font-sans">
 
+@if (session('profile_incomplete'))
+    <div class="flex items-start gap-3 bg-amber-50 border border-amber-200 text-amber-900 rounded-xl px-4 py-3 mb-6 text-sm" role="alert">
+        <i class="ri-alert-line text-lg mt-0.5"></i>
+        <p class="mb-0">
+            {{ $tr('Votre profil est incomplet. Complétez tous les champs obligatoires (*) pour accéder aux projets et aux soumissions.', 'ملفك الشخصي غير مكتمل. أكمل جميع الحقول الإلزامية (*) للوصول إلى المشاريع والترشحات.') }}
+        </p>
+    </div>
+@endif
+
 @if($activeTab === 'profile')
 <div>
     <h2 class="text-2xl font-bold text-gray-900 mb-6">{{ $tr('Votre Espace Candidat', 'فضاء المترشح') }}</h2>

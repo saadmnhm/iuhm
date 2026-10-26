@@ -253,7 +253,7 @@
                     @if($table->columns->isNotEmpty())
                     <div class="rounded-xl overflow-hidden border border-gray-200">
                         <div class="overflow-x-auto">
-                        <table class="w-full text-sm">
+                        <table class="w-full min-w-[600px] text-sm">
                             <thead>
                                 <tr class="bg-[#0f2441] text-white">
                                     @if(!$table->has_dynamic_rows && $table->fixedRows->isNotEmpty())

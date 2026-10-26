@@ -77,6 +77,48 @@ class Candidat extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Fields that must be filled before a candidat can apply to a project.
+     *
+     * Mirrors the required rules in Settings::updateProfile().
+     */
+    public const PROFILE_REQUIRED_FIELDS = [
+        'nom',
+        'prenom',
+        'email',
+        'cin',
+        'date_naissance',
+        'phone',
+        'gender',
+        'niveau_etude',
+        'specialite',
+        'selected_region',
+        'selected_city',
+        'selected_prefecture',
+        'address_detail',
+    ];
+
+    /**
+     * Determine whether the candidat's personal information is complete.
+     */
+    public function isProfileComplete(): bool
+    {
+        return $this->missingProfileFields() === [];
+    }
+
+    /**
+     * Get the required profile fields that are still empty.
+     *
+     * @return array<int, string>
+     */
+    public function missingProfileFields(): array
+    {
+        return array_values(array_filter(
+            self::PROFILE_REQUIRED_FIELDS,
+            fn (string $field): bool => blank($this->getAttribute($field))
+        ));
+    }
+
+    /**
      * Send the email verification notification using the candidat-specific route.
      */
     public function sendEmailVerificationNotification(): void

@@ -1,5 +1,5 @@
 ﻿@if(!request()->routeIs('user.dashboard') && !request()->routeIs('user.dynamic_form'))
-    <aside class="aside-admin w-64 min-h-screen  border-e border-gray-200 flex flex-col justify-between"> 
+    <aside class="aside-admin flex h-full w-full flex-col justify-between overflow-y-auto border-e border-gray-200">
         
         <div>
             {{-- Logo Section --}}
@@ -59,7 +59,7 @@
                 {{-- Admin Chat Accordion --}}
                 @php
                     $isChatActive = request()->routeIs('user.chat*') || request()->routeIs('user.broadcasts.*');
-                    $unreadChat = \App\Models\ChatMessage::unreadForCandidat(Auth::guard('candidat')->id());
+                    $unreadChat = $unreadChat ?? \App\Models\ChatMessage::unreadForCandidat(Auth::guard('candidat')->id());
                 @endphp
                 <div x-data="{ open: {{ $isChatActive ? 'true' : 'false' }} }" class="space-y-1">
                     <button @click="open = !open" 
@@ -93,6 +93,8 @@
                 {{-- Settings Accordion --}}
                 @php
                     $isSettingsActive = request()->routeIs('user.settings');
+                    $profileComplete = Auth::guard('candidat')->user()?->isProfileComplete() ?? true;
+                    $passwordTabActive = $isSettingsActive && request('tab') === 'password';
                 @endphp
                 <div x-data="{ open: {{ $isSettingsActive ? 'true' : 'false' }} }" class="space-y-1">
                     <button @click="open = !open" 
@@ -100,21 +102,25 @@
                         <div class="flex items-center gap-x-3">
                             <i class="ri-settings-3-line text-xl"></i>
                             <span>{{ $tr('Paramètres', 'الإعدادات') }}</span>
+                            @if(!$profileComplete)
+                                <span class="inline-block w-2 h-2 rounded-full bg-red-500" title="{{ $tr('Profil incomplet', 'الملف غير مكتمل') }}"></span>
+                            @endif
                         </div>
                         <i class="ri-arrow-down-s-line text-lg transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
                     </button>
                     
                     <div x-show="open" x-collapse class="ps-8 pe-1 space-y-1">
-                        <button wire:click="$dispatch('set-active-tag', { tab: 'profile' })" 
-                                type="button" 
-                                class="w-full text-start px-3 py-2 rounded-md text-sm transition-colors {{ isset($activeTab) && $activeTab === 'profile' ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                            <i class="ri-user-3-line me-1.5 text-base"></i> {{ $tr('Votre Espace Candidat', 'فضاء المترشح') }}
-                        </button>
-                        <button wire:click="$dispatch('set-active-tag', { tab: 'password' })" 
-                                type="button" 
-                                class="w-full text-start px-3 py-2 rounded-md text-sm transition-colors {{ isset($activeTab) && $activeTab === 'password' ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                        <a wire:navigate href="{{ route('user.settings') }}"
+                           class="block px-3 py-2 rounded-md text-sm transition-colors {{ $isSettingsActive && !$passwordTabActive ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                            <i class="ri-user-3-line me-1.5 text-base"></i> {{ $tr('Informations personnelles', 'المعلومات الشخصية') }}
+                            @if(!$profileComplete)
+                                <span class="inline-block w-2 h-2 rounded-full bg-red-500 align-middle ms-1"></span>
+                            @endif
+                        </a>
+                        <a wire:navigate href="{{ route('user.settings', ['tab' => 'password']) }}"
+                           class="block px-3 py-2 rounded-md text-sm transition-colors {{ $passwordTabActive ? 'bg-emerald-50 text-emerald-700 font-semibold' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
                             <i class="ri-shield-check-line me-1.5 text-base"></i> {{ $tr('Sécurité', 'الأمان') }}
-                        </button>
+                        </a>
                     </div>
                 </div>
 
@@ -131,15 +137,22 @@
 
         {{-- Footer Profile Area --}}
         <div class="p-4 border-t border-gray-100">
-            <div class="flex items-center gap-x-3 px-2 py-1">
-                <div class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm">
-                    {{ strtoupper(substr(Auth::guard('candidat')->user()->name ?? 'U', 0, 2)) }}
+            <a wire:navigate href="{{ route('user.settings') }}" class="flex items-center gap-x-3 px-2 py-1 rounded-lg hover:bg-gray-50 transition-colors" title="{{ $tr('Mon profil', 'ملفي الشخصي') }}">
+                <div class="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm overflow-hidden flex-shrink-0">
+                    @if($candidat?->profile_image)
+                        <img src="{{ route('uploads.show', ['path' => $candidat->profile_image]) }}" alt="Profile" class="w-full h-full object-cover">
+                    @else
+                        {{ strtoupper(substr($candidat?->prenom ?? 'U', 0, 1)) }}{{ strtoupper(substr($candidat?->nom ?? '', 0, 1)) }}
+                    @endif
                 </div>
                 <div class="truncate text-sm">
-                    <p class="font-medium text-gray-800 truncate">{{ Auth::guard('candidat')->user()->name ?? 'Utilisateur' }}</p>
-                    <p class="text-xs text-gray-400 truncate">{{ Auth::guard('candidat')->user()->email ?? '' }}</p>
+                    <p class="font-medium text-gray-800 truncate">{{ trim(($candidat?->prenom ?? '') . ' ' . ($candidat?->nom ?? '')) ?: 'Utilisateur' }}</p>
+                    <p class="text-xs text-gray-400 truncate">{{ $candidat?->email ?? '' }}</p>
                 </div>
-            </div>
+                @if(!($candidat?->isProfileComplete() ?? true))
+                    <span class="ms-auto inline-block w-2 h-2 rounded-full bg-red-500 flex-shrink-0" title="{{ $tr('Profil incomplet', 'الملف غير مكتمل') }}"></span>
+                @endif
+            </a>
         </div>
 
     </aside>

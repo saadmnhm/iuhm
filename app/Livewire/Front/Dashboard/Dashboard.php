@@ -21,7 +21,6 @@ class Dashboard extends Component
     public $candidat;
     public $projects = [];
     public $dynamicSubmissions = [];
-    public $showCompleteProfileModal = false;
     public $activeFilter = null;
     public $searchQuery = '';
     protected $formSubmissionService;
@@ -128,11 +127,6 @@ class Dashboard extends Component
         } else {
             return redirect()->route('user.dynamic_form', $sub['form_slug']);
         }
-    }
-
-    public function goToSettings()
-    {
-        return redirect()->route('user.settings');
     }
 
     public function getFormTypesProperty()

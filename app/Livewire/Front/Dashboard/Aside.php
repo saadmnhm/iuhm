@@ -45,14 +45,9 @@ class Aside extends Component
 
     public function checkProfileCompletion()
     {
-        if ($this->isSettingsPage) {
-            $this->showCompleteProfileModal = false;
-            return;
-        }
-        
-        if (!$this->candidat || !$this->candidat->phone || !$this->candidat->selected_prefecture || !$this->candidat->date_naissance || !$this->candidat->niveau_etude || !$this->candidat->specialite || !$this->candidat->gender || !$this->candidat->address_detail) {
-            $this->showCompleteProfileModal = true;
-        }
+        $this->showCompleteProfileModal = ! $this->isSettingsPage
+            && $this->candidat
+            && ! $this->candidat->isProfileComplete();
     }
 
     public function goToSettings()

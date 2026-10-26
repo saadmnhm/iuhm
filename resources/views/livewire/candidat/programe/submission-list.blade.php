@@ -42,15 +42,15 @@
     <div class="rounded-2xl overflow-hidden mb-4 bg-white border border-gray-100 shadow-sm">
 
         {{-- TABS --}}
-        <div class="flex items-center gap-4 mb-4 border-b border-gray-100 px-4 py-3" style="width: 100%;">
+        <div class="flex items-center gap-4 mb-4 overflow-x-auto border-b border-gray-100 px-4 py-3" style="width: 100%;">
             <button wire:click="setTab('all')" 
-                    class="pb-3 text-sm font-semibold transition-colors duration-150 px-2 relative border-0 bg-transparent {{ $activeTab === 'all' ? 'text-green-600 font-bold' : 'text-gray-700' }}"
+                    class="whitespace-nowrap pb-3 text-sm font-semibold transition-colors duration-150 px-2 relative border-0 bg-transparent {{ $activeTab === 'all' ? 'text-green-600 font-bold' : 'text-gray-700' }}"
                     style="outline: none; font-size: 1.05rem; cursor: pointer; border-bottom: 3px solid {{ $activeTab === 'all' ? '#16a34a' : 'transparent' }} !important; margin-bottom: -1px;">
                 <i class="ri-file-list-3-line mr-1"></i>
                 {{ $tr('Tous les formulaires', 'جميع الاستمارات') }}
             </button>
             <button wire:click="setTab('project')" 
-                    class="pb-3 text-sm font-semibold transition-colors duration-150 px-2 relative border-0 bg-transparent {{ $activeTab === 'project' ? 'text-green-600 font-bold' : 'text-gray-700' }}"
+                    class="whitespace-nowrap pb-3 text-sm font-semibold transition-colors duration-150 px-2 relative border-0 bg-transparent {{ $activeTab === 'project' ? 'text-green-600 font-bold' : 'text-gray-700' }}"
                     style="outline: none; font-size: 1.05rem; cursor: pointer; border-bottom: 3px solid {{ $activeTab === 'project' ? '#16a34a' : 'transparent' }} !important; margin-bottom: -1px;">
                 <i class="ri-folders-line mr-1"></i>
                 {{ $tr('Formulaires groupés par projet', 'حسب المشاريع') }}
@@ -92,7 +92,7 @@
     </div>
 
     <div class="overflow-x-auto">
-        <table class="w-full">
+        <table class="w-full min-w-[720px]">
 
             {{-- HEADER --}}
             <thead>
@@ -209,7 +209,7 @@
     </div>
 
     <div class="overflow-x-auto">
-        <table class="w-full">
+        <table class="w-full min-w-[720px]">
 
             {{-- HEADER --}}
             <thead>

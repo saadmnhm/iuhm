@@ -98,7 +98,7 @@
                     @error('subject') <span class="text-red-500 text-xs block mt-1">{{ $message }}</span> @enderror
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1">{{ $tr('Catégorie', 'الفئة') }}</label>
                         <select wire:model="category" class="w-full iuhm_select rounded-xl border-gray-200">

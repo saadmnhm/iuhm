@@ -27,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'super_admin' => \App\Http\Middleware\SuperAdminMiddleware::class,
             'candidat' => \App\Http\Middleware\CandidatMiddleware::class,
+            'profile.complete' => \App\Http\Middleware\EnsureCandidatProfileComplete::class,
             'module' => \App\Http\Middleware\ModuleAccess::class,
         ]);
     })
