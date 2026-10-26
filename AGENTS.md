@@ -42,7 +42,7 @@ Laravel 12 app with Livewire 4, Tailwind CSS 4, Vite. Manages candidates, projec
 ## Testing
 
 - PHPUnit with SQLite `:memory:` (`phpunit.xml`). Tests extend `Tests\TestCase`.
-- Feature tests build their own schema in `setUp()` (no migrations run); `RefreshDatabase` trait is available.
+- Feature tests either build their own schema in `setUp()` (e.g. `FormulaireSubmissionDetailTest`) or use `RefreshDatabase` (e.g. `ExampleTest`, which runs migrations). The MySQL-only enum migration is driver-guarded so migrations run on SQLite.
 - Run one test: `php artisan test --filter=<TestName>`
 
 ## Frontend

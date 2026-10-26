@@ -6,13 +6,11 @@
     $t = [
         'page_title'    => $isAr ? 'تسجيل الدخول' : 'Connexion — IUHM',
         'signin_title'  => $isAr ? 'تسجيل الدخول' : 'Connexion',
-        'or_account'    => $isAr ? 'أو استخدم حسابك' : 'ou utilisez votre compte',
         'login_ph'      => $isAr ? 'البريد الإلكتروني أو اسم المستخدم' : 'Email ou Login',
         'password_ph'   => $isAr ? 'كلمة المرور' : 'Mot de passe',
         'forgot'        => $isAr ? 'نسيت كلمة المرور؟' : 'Mot de passe oublié ?',
         'signin_btn'    => $isAr ? 'دخول' : 'Connexion',
         'signup_title'  => $isAr ? 'إنشاء حساب' : 'Créer un compte',
-        'or_email'      => $isAr ? 'أو استخدم بريدك الإلكتروني للتسجيل' : 'ou utilisez votre email pour vous inscrire',
         'nom_ph'        => $isAr ? 'النسب' : 'Nom',
         'prenom_ph'     => $isAr ? 'الاسم' : 'Prénom',
         'login_field_ph'=> $isAr ? 'اسم المستخدم' : 'Login',
@@ -33,23 +31,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $t['page_title'] }}</title>
+    <!-- Remix Icons -->
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
         :root {
             --main-color: #648454;
+            --main-hover: #547246;
             --secondary-color: #edffe4;
+            --bg-light: #f8fafc;
+            --text-dark: #1e293b;
         }
 
         * { box-sizing: border-box; }
 
         body {
-            background: #f6f5f7;
+            background: var(--bg-light);
             font-family: "Nunito", sans-serif;
             display: flex;
             flex-direction: column;
@@ -57,98 +60,116 @@
             justify-content: center;
             min-height: 100vh;
             margin: 0;
-            padding: 1rem;
+            padding: 1.5rem;
+            color: var(--text-dark);
         }
 
-        h1 { font-weight: bold; margin: 0; font-size: 1.5rem; }
-        p { font-size: 14px; font-weight: 400; line-height: 20px; letter-spacing: 0.5px; margin: 20px 0 30px; }
-        span { font-size: 12px; }
-        a { color: #333; font-size: 14px; text-decoration: none; margin: 15px 0; }
+        h1 { font-weight: 800; margin: 0 0 10px 0; font-size: 1.75rem; color: #111827; }
+        p { font-size: 14px; font-weight: 400; line-height: 22px; margin: 10px 0 25px; color: #4b5563; }
+        a { color: #4b5563; font-size: 14px; text-decoration: none; transition: color 0.2s; }
         a:hover { color: var(--main-color); }
 
-        button {
-            cursor: pointer;
-            border-radius: 9999px;
-            border: 1px solid var(--main-color);
-            background: var(--main-color);
-            color: #fff;
-            font-size: 12px;
-            font-weight: bold;
-            padding: 12px 45px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            transition: all 0.2s ease;
-        }
-
-        button:hover { background: var(--secondary-color); color: var(--main-color); }
-        button:focus { outline: none; }
-        button:focus-visible { outline: 2px solid var(--main-color); outline-offset: 2px; }
-
-        button.ghost {
-            background-color: transparent;
-            border-color: #fff;
-            color: #fff;
-        }
-        button.ghost:hover { background: #fff; color: var(--main-color); }
-
+        /* Form & Inputs */
         form {
             background-color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            padding: 0 30px;
+            padding: 0 35px;
             height: 100%;
             text-align: center;
-        }
-
-        input {
-            background-color: #eee;
-            border: none;
-            padding: 12px 15px;
-            margin: 8px 0;
             width: 100%;
-            font-family: inherit;
+            transform: translateZ(0);
+        }
+
+        .input-field {
+            width: 100%;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            padding: 13px 18px;
+            margin: 8px 0;
             border-radius: 9999px;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.25s ease;
         }
-        input:focus { outline: 2px solid var(--main-color); outline-offset: 2px; }
-
-        .social-container { margin: 20px 0; }
-        .social-container a {
-            border: 1px solid #dddddd;
-            border-radius: 50%;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0 5px;
-            height: 40px;
-            width: 40px;
-            transition: all 0.3s ease;
+        .input-field:focus {
+            outline: none;
+            background: #fff;
+            border-color: var(--main-color);
+            box-shadow: 0 0 0 4px rgba(100, 132, 84, 0.12);
         }
-        .social-container a:hover { border-color: var(--main-color); color: var(--main-color); }
 
+        /* Buttons */
+        .btn-primary {
+            cursor: pointer;
+            border-radius: 9999px;
+            border: none;
+            background: var(--main-color);
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 13px 32px;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            transition: all 0.25s ease;
+            width: 100%;
+            box-shadow: 0 4px 12px rgba(100, 132, 84, 0.25);
+        }
+        .btn-primary:hover {
+            background: var(--main-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(100, 132, 84, 0.35);
+        }
+        .btn-primary:active { transform: translateY(0); }
+
+        .btn-ghost {
+            cursor: pointer;
+            border-radius: 9999px;
+            background: transparent;
+            border: 2px solid #fff;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 13px 35px;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            transition: all 0.25s ease;
+        }
+        .btn-ghost:hover {
+            background: #fff;
+            color: var(--main-color);
+            transform: translateY(-1px);
+        }
+
+        /* Alerts */
         .alert {
             width: 100%;
             padding: 12px 16px;
             margin-bottom: 15px;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 13px;
             display: flex;
-            align-items: center;
-            gap: 8px;
+            align-items: flex-start;
+            gap: 10px;
+            text-align: left;
         }
+        [dir="rtl"] .alert { text-align: right; }
         .alert-danger { background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
         .alert-success { background-color: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
 
+        /* Main Container */
         .container {
             background-color: #fff;
-            border-radius: 16px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.03);
             position: relative;
             overflow: hidden;
             width: 100%;
             max-width: 420px;
-            min-height: 580px;
+            min-height: 520px;
+            transform: translateZ(0);
         }
 
         .form-container {
@@ -156,21 +177,24 @@
             top: 0;
             width: 100%;
             height: 100%;
-            transition: all 0.6s ease-in-out;
-            padding: 2rem;
+            transition: all 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+            padding: 2rem 1.5rem;
+            will-change: transform, opacity;
+            backface-visibility: hidden;
         }
 
         .sign-in-container { left: 0; z-index: 2; opacity: 1; }
-        .sign-up-container { left: 0; z-index: 1; opacity: 0; }
+        .sign-up-container { left: 0; z-index: 1; opacity: 0; pointer-events: none; }
 
-        .container.right-panel-active .sign-in-container { opacity: 0; z-index: 1; }
-        .container.right-panel-active .sign-up-container { opacity: 1; z-index: 5; animation: show 0.6s; }
+        .container.right-panel-active .sign-in-container { opacity: 0; z-index: 1; pointer-events: none; }
+        .container.right-panel-active .sign-up-container { opacity: 1; z-index: 5; pointer-events: auto; animation: show 0.6s; }
 
         @keyframes show {
             0%, 49.99% { opacity: 0; z-index: 1; }
             50%, 100% { opacity: 1; z-index: 5; }
         }
 
+        /* Overlay */
         .overlay-container {
             position: absolute;
             left: 0;
@@ -178,128 +202,95 @@
             height: 100%;
             width: 100%;
             overflow: hidden;
-            transition: transform 0.6s ease-in-out;
+            transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
             z-index: 100;
+            pointer-events: none;
+            will-change: transform;
+            backface-visibility: hidden;
         }
 
         .overlay {
             background: var(--main-color);
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-position: 0 0;
             color: #fff;
             position: relative;
             width: 100%;
             height: 100%;
-            padding: 2rem;
+            padding: 2.5rem;
             text-align: center;
-            transition: transform 0.6s ease-in-out;
             display: flex;
             align-items: center;
             justify-content: center;
+            transform: translateZ(0);
+            will-change: transform;
         }
 
-        .overlay-panel { width: 100%; text-align: center; }
-        .overlay-panel h1 { font-size: 1.5rem; margin-bottom: 10px; }
-        .overlay-panel p { margin: 10px 0 20px; font-size: 13px; }
+        .overlay-panel { 
+            width: 100%; 
+            text-align: center; 
+            transform: translateZ(0);
+            backface-visibility: hidden;
+        }
+        .overlay-panel h1 { color: #fff; font-size: 1.75rem; margin-bottom: 12px; }
+        .overlay-panel p { color: rgba(255, 255, 255, 0.9); margin: 10px 0 25px; }
 
-        .mobile-toggle { display: block; text-align: center; padding: 20px; color: var(--main-color); font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .mobile-toggle {
+            display: block;
+            text-align: center;
+            padding: 15px 0 5px;
+            color: var(--main-color);
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .mobile-toggle:hover { color: var(--main-hover); text-decoration: underline; }
 
-        .password-wrapper { position: relative; width: 100%; }
-        .password-wrapper input { padding-right: 45px; }
+        /* Password Wrapper */
+        .password-wrapper { position: relative; width: 100%; margin: 8px 0; }
+        .password-wrapper .input-field { margin: 0; padding-right: 45px; }
         .password-toggle {
             position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
-            background: none; border: none; cursor: pointer; padding: 5px; color: #666; font-size: 18px; transition: color 0.3s ease;
+            background: none; border: none; cursor: pointer; padding: 5px; color: #9ca3af; font-size: 16px; transition: color 0.2s;
         }
         .password-toggle:hover { color: var(--main-color); }
-        .password-toggle:focus { outline: none; }
 
+        /* Desktop View */
         @media (min-width: 768px) {
             body { padding: 20px; }
-            h1 { font-size: 2rem; }
-            form { padding: 0 50px; }
-            .container { width: 768px; max-width: 100%; height: 520px; min-height: auto; }
-            .form-container { width: 50%; height: 100%; }
+            .container { width: 850px; max-width: 100%; height: 500px; min-height: auto; }
+            .form-container { width: 50%; padding: 2.5rem 3rem; }
             .sign-in-container { left: 0; width: 50%; }
-            .container.right-panel-active .sign-in-container { transform: translateX(100%); opacity: 1; }
+            .container.right-panel-active .sign-in-container { transform: translateX(100%); }
             .sign-up-container { left: 0; width: 50%; }
             .container.right-panel-active .sign-up-container { transform: translateX(100%); }
-            .overlay-container { left: 50%; width: 50%; }
+            .overlay-container { left: 50%; width: 50%; pointer-events: auto; transform: translateX(0); }
             .container.right-panel-active .overlay-container { transform: translateX(-100%); }
-            .overlay { left: -100%; width: 200%; padding: 0; }
+            .overlay { left: -100%; width: 200%; padding: 0; transform: translateX(0); transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1); }
             .container.right-panel-active .overlay { transform: translateX(50%); }
-            .overlay-panel { position: absolute; top: 0; height: 100%; width: 50%; padding: 0 40px; }
-            .overlay-left { transform: translateX(-20%); }
-            .container.right-panel-active .overlay-left { transform: translateX(0); }
-            .overlay-right { right: 0; top: 0; left: 50%; transform: translateX(0); }
-            .container.right-panel-active .overlay-right { transform: translateX(20%); }
+            .overlay-panel { position: absolute; top: 0; height: 100%; width: 50%; padding: 0 50px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+            .overlay-left {  left: 0; }
+            .overlay-right { right: 0; left: 50%; }
             .mobile-toggle { display: none; }
         }
 
-        /* RTL content adjustments */
+        /* RTL Adjustments */
         [dir="rtl"] .container { direction: ltr; }
         [dir="rtl"] form { direction: rtl; text-align: right; }
         [dir="rtl"] form h1, [dir="rtl"] form span, [dir="rtl"] form .alert, [dir="rtl"] form .mobile-toggle { text-align: center; }
-        [dir="rtl"] .password-wrapper input { padding-right: 15px; padding-left: 45px; }
+        [dir="rtl"] .password-wrapper .input-field { padding-right: 18px; padding-left: 45px; }
         [dir="rtl"] .password-toggle { right: auto; left: 15px; }
-
-        /* Custom button styles for auth */
-        .btn-primary {
-            background: var(--main-color);
-            color: white;
-            border: none;
-            padding: 14px 32px;
-            border-radius: 9999px;
-            font-weight: 700;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: all 0.2s ease;
-            width: 100%;
-        }
-        .btn-primary:hover { background: #547246; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(100, 132, 84, 0.3); }
-        .btn-primary:focus { outline: none; }
-        .btn-primary:focus-visible { outline: 2px solid var(--main-color); outline-offset: 2px; }
-        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-
-        .btn-ghost {
-            background: transparent;
-            color: white;
-            border: 2px solid white;
-            padding: 14px 32px;
-            border-radius: 9999px;
-            font-weight: 700;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: all 0.2s ease;
-        }
-        .btn-ghost:hover { background: white; color: var(--main-color); }
-
-        .input-field {
-            width: 100%;
-            background: #f3f4f6;
-            border: 1px solid transparent;
-            padding: 14px 16px;
-            margin: 10px 0;
-            border-radius: 9999px;
-            font-family: inherit;
-            font-size: 14px;
-            transition: all 0.2s ease;
-        }
-        .input-field:focus { outline: none; background: white; border-color: var(--main-color); box-shadow: 0 0 0 3px rgba(100, 132, 84, 0.1); }
     </style>
 </head>
 
 <body>
     {{-- Language Switcher --}}
-    <div style="position:fixed;top:16px;{{ $isAr ? 'left' : 'right' }}:16px;z-index:1000;display:flex;gap:8px;">
+    <div style="position:fixed;top:20px;{{ $isAr ? 'left' : 'right' }}:20px;z-index:1000;display:flex;gap:8px;">
         <a href="{{ route('lang.switch', 'fr') }}"
-           class="inline-flex items-center gap-2 px-4 py-2 rounded-full border-2 text-sm font-bold text-decoration-none {{ $locale==='fr' ? 'border-green-600 bg-green-600 text-white' : 'border-gray-300 bg-white text-gray-600' }}">
+           class="inline-flex items-center gap-2 px-4 py-2 rounded-full border-2 text-xs font-bold text-decoration-none transition-all {{ $locale==='fr' ? 'border-[#648454] bg-[#648454] text-white shadow-sm' : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300' }}">
             🇫🇷 FR
         </a>
         <a href="{{ route('lang.switch', 'ar') }}"
-           class="inline-flex items-center gap-2 px-4 py-2 rounded-full border-2 text-sm font-bold text-decoration-none {{ $locale==='ar' ? 'border-green-600 bg-green-600 text-white' : 'border-gray-300 bg-white text-gray-600' }}">
+           class="inline-flex items-center gap-2 px-4 py-2 rounded-full border-2 text-xs font-bold text-decoration-none transition-all {{ $locale==='ar' ? 'border-[#648454] bg-[#648454] text-white shadow-sm' : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300' }}">
             🇲🇦 AR
         </a>
     </div>
@@ -310,15 +301,10 @@
             <form method="POST" action="{{ route('user.register.post') }}">
                 @csrf
                 <h1>{{ $t['signup_title'] }}</h1>
-                <div class="social-container">
-                    <a href="#" class="social" aria-label="Apple"><i class="fab fa-apple"></i></a>
-                    <a href="#" class="social" aria-label="Google"><i class="fab fa-google"></i></a>
-                </div>
-                <span class="block mb-4 text-gray-500">{{ $t['or_email'] }}</span>
                 
                 @if ($errors->any())
                     <div class="alert alert-danger" role="alert">
-                        <i class="ri-error-warning-line"></i>
+                        <i class="ri-error-warning-line text-lg mt-0.5"></i>
                         <div>
                             @foreach ($errors->all() as $error)
                                 <div>{{ $error }}</div>
@@ -327,7 +313,7 @@
                     </div>
                 @endif
                 
-                <div style="display: flex; gap: 10px;">
+                <div style="display: flex; gap: 10px; width: 100%;">
                     <input type="text" name="nom" placeholder="{{ $t['nom_ph'] }}" value="{{ old('nom') }}" required class="input-field" />
                     <input type="text" name="prenom" placeholder="{{ $t['prenom_ph'] }}" value="{{ old('prenom') }}" required class="input-field" />
                 </div>
@@ -341,7 +327,7 @@
                     </button>
                 </div>
 
-                <button type="submit" class="btn-primary mt-4">{{ $t['signup_btn'] }}</button>
+                <button type="submit" class="btn-primary" style="margin-top: 15px;">{{ $t['signup_btn'] }}</button>
                 
                 <div class="mobile-toggle" id="mobileSignIn">{{ $t['mobile_have'] }}</div>
             </form>
@@ -352,15 +338,10 @@
             <form method="POST" action="{{ route('user.login.post') }}">
                 @csrf
                 <h1>{{ $t['signin_title'] }}</h1>
-                <div class="social-container">
-                    <a href="#" class="social" aria-label="Apple"><i class="fab fa-apple"></i></a>
-                    <a href="#" class="social" aria-label="Google"><i class="fab fa-google"></i></a>
-                </div>
-                <span class="block mb-4 text-gray-500">{{ $t['or_account'] }}</span>
                 
                 @if ($errors->any())
                     <div class="alert alert-danger" role="alert">
-                        <i class="ri-error-warning-line"></i>
+                        <i class="ri-error-warning-line text-lg mt-0.5"></i>
                         <div>
                             @foreach ($errors->all() as $error)
                                 <div>{{ $error }}</div>
@@ -371,7 +352,8 @@
 
                 @if (session('success'))
                     <div class="alert alert-success" role="alert">
-                        <i class="ri-checkbox-circle-line"></i> {{ session('success') }}
+                        <i class="ri-checkbox-circle-line text-lg mt-0.5"></i> 
+                        <div>{{ session('success') }}</div>
                     </div>
                 @endif
 
@@ -384,8 +366,11 @@
                     </button>
                 </div>
                 
-                <a href="{{ route('user.password.request') }}" class="block text-right mb-4 text-sm text-green-600 hover:text-green-700">{{ $t['forgot'] }}</a>
-                <button type="submit" class="btn-primary">{{ $t['signin_btn'] }}</button>
+                <div style="width: 100%; text-align: {{ $isAr ? 'left' : 'right' }}; margin: 5px 0 15px;">
+                    <a href="{{ route('user.password.request') }}" style="font-size: 13px; font-weight: 600;">{{ $t['forgot'] }}</a>
+                </div>
+
+                <button type="submit" class="btn-primary" style="margin-top: 5px;">{{ $t['signin_btn'] }}</button>
                 
                 <div class="mobile-toggle" id="mobileSignUp">{{ $t['mobile_no'] }}</div>
             </form>
