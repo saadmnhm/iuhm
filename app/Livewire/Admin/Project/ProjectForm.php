@@ -13,7 +13,7 @@ class ProjectForm extends Component
 {
     use WithFileUploads;
 
-    public ?int $projectId = null;
+    public $projectId = null;
     public bool $editMode = false;
 
     public $title, $title_ar, $short_description, $short_description_ar, $description, $description_ar;
@@ -49,9 +49,13 @@ class ProjectForm extends Component
     {
         if ($id && $id !== 'new') {
             $this->editMode = true;
-            $this->projectId = $id;
 
-            $project = Project::findOrFail($id);
+            // The edit link passes the numeric ID, but accept a slug too.
+            $project = is_numeric($id)
+                ? Project::findOrFail($id)
+                : Project::where('slug', $id)->firstOrFail();
+
+            $this->projectId = $project->id;
             $this->title = is_array($project->title) ? ($project->title['fr'] ?? $project->title['ar'] ?? reset($project->title) ?? '') : ($project->title ?? '');
             $this->title_ar = is_array($project->title) ? ($project->title['ar'] ?? '') : '';
             $this->short_description = is_array($project->short_description) ? ($project->short_description['fr'] ?? $project->short_description['ar'] ?? reset($project->short_description) ?? '') : ($project->short_description ?? '');
@@ -76,6 +80,17 @@ class ProjectForm extends Component
 
     public function save()
     {
+        // Safety net: if the form was opened as "new" but the submitted slug
+        // already belongs to a project, treat it as an update instead of
+        // silently creating a duplicate.
+        if (! $this->projectId && filled($this->slug)) {
+            $existing = Project::where('slug', $this->slug)->first();
+            if ($existing) {
+                $this->projectId = $existing->id;
+                $this->editMode = true;
+            }
+        }
+
         $this->validate();
 
         $data = [
@@ -106,36 +121,47 @@ class ProjectForm extends Component
         }
 
         try {
-            if ($this->editMode) {
-                $project = Project::findOrFail($this->projectId);
+            // The project ID is the source of truth: if it is present, update.
+            // Never rely solely on editMode, which can be lost on a stale page.
+            $project = $this->projectId ? Project::find($this->projectId) : null;
+
+            if ($project) {
                 $project->update($data);
-                AdminActivityLog::log('project_updated', "Updated project: {$project->title}", Project::class, $project->id);
+                $this->editMode = true;
+                $this->projectId = $project->id;
+
+                $title = $project->getLocalized('title') ?: ('Projet #' . $project->id);
+                AdminActivityLog::log('project_updated', "Updated project: {$title}", Project::class, $project->id);
+
+                if ($this->newImage) {
+                    $this->featured_image = $data['featured_image'];
+                    $this->newImage = null;
+                }
+
                 $this->dispatch('alert', [
                     'type' => 'success',
                     'title' => 'Succès',
                     'message' => 'Projet mis à jour avec succès!'
                 ]);
-            } else {
-                $data['author_id'] = auth()->id();
-                $project = Project::create($data);
-                AdminActivityLog::log('project_created', "Created project: {$project->title}", Project::class, $project->id);
 
-                $this->editMode = true;
-                $this->projectId = $project->id;
-
-                $this->dispatch('alert', [
-                    'type' => 'success',
-                    'title' => 'Succès',
-                    'message' => 'Projet créé avec succès!'
-                ]);
+                return;
             }
 
-            if ($this->newImage) {
-                $this->featured_image = $data['featured_image'];
-                $this->newImage = null;
-            }
+            $data['author_id'] = auth()->id();
+            $project = Project::create($data);
+
+            $title = $project->getLocalized('title') ?: ('Projet #' . $project->id);
+            AdminActivityLog::log('project_created', "Created project: {$title}", Project::class, $project->id);
+
+            // Redirect to the edit URL so a reload or later save updates this
+            // project instead of creating another one from the /new URL.
+            session()->flash('success', 'Projet créé avec succès!');
+
+            return redirect()->route('admin.project.form', ['id' => $project->id]);
 
         } catch (\Exception $e) {
+            report($e);
+
             $this->dispatch('alert', [
                 'type' => 'error',
                 'title' => 'Erreur',

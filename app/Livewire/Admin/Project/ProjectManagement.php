@@ -23,13 +23,15 @@ class ProjectManagement extends Component
         $project = Project::findOrFail($id);
         $project->update(['is_published' => !$project->is_published]);
         $status = $project->is_published ? 'published' : 'unpublished';
-        AdminActivityLog::log("project_{$status}", "Toggled project: {$project->title} → {$status}", Project::class, $project->id);
+        $title = $project->getLocalized('title') ?: ('Projet #' . $project->id);
+        AdminActivityLog::log("project_{$status}", "Toggled project: {$title} → {$status}", Project::class, $project->id);
     }
 
     public function delete(int $id): void
     {
         $project = Project::findOrFail($id);
-        AdminActivityLog::log('project_deleted', "Deleted project: {$project->title}", Project::class, $project->id);
+        $title = $project->getLocalized('title') ?: ('Projet #' . $project->id);
+        AdminActivityLog::log('project_deleted', "Deleted project: {$title}", Project::class, $project->id);
         $project->delete();
         session()->flash('success', 'Projet supprimé avec succès!');
     }

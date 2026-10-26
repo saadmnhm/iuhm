@@ -136,7 +136,7 @@ class Dashboard extends Component
             ['label' => 'Admin Console', 'icon' => 'ri-dashboard-line', 'route' =>  route('admin.users.index')],
             ['label' => 'Gestion des Projets', 'icon' => 'ri-network-line', 'route' => route('admin.programe')],
             ['label' => 'Gestion des Submissions', 'icon' => 'ri-briefcase-line', 'route' => route('admin.all.submissions')],
-            ['label' => 'Media Management', 'icon' => 'ri-image-2-line', 'route' => route('admin.media.index')],
+            ['label' => 'Media Management', 'icon' => 'ri-image-2-line', 'route' => route('admin.article.index')],
         ];
 
         // ── Activité Récente (dynamic) ──

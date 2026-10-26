@@ -67,9 +67,7 @@
             @if(request()->is('admin/media/*') || request()->is('admin/media') )
 
                 @canmodule('media')
-                    <a wire:navigate href="{{ route('admin.media.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.media*') ? 'bg-[#DCFCE7]' : '' }}">
-                        <i class="ri-stack-line mr-1"></i> Médias   
-                    </a>                    
+                                  
                     <a wire:navigate href="{{ route('admin.article.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.article*') ? 'bg-[#DCFCE7]' : '' }}">
                         <i class="ri-article-line mr-1"></i> Articles
                     </a>
