@@ -56,9 +56,6 @@
                             <a href="{{ route('admin.candidats.edit', $candidat->id) }}" class="block px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
                                 <i class="ri-edit-line mr-1"></i> Éditer
                             </a>
-                            <a href="{{ route('admin.candidats.index') }}" class="block px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
-                                <i class="ri-arrow-left-line mr-1"></i> Retour
-                            </a>
                         </div>
                     </div>
                 </div>
