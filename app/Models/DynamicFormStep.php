@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 class DynamicFormStep extends Model
 {
@@ -31,18 +32,32 @@ class DynamicFormStep extends Model
     /**
      * Get all elements (fields + tables) merged and sorted by sort_order
      */
-    public function getElementsAttribute(): \Illuminate\Support\Collection
+    public function getElementsAttribute(): Collection
     {
         $fields = $this->fields->map(function ($f) {
             $f->element_type = 'field';
+            // element_type is a presentation-only attribute, never a column.
+            $f->syncOriginalAttribute('element_type');
+
             return $f;
         });
 
         $tables = $this->tables->map(function ($t) {
             $t->element_type = 'table';
+            $t->syncOriginalAttribute('element_type');
+
             return $t;
         });
 
-        return $fields->concat($tables)->sortBy('sort_order')->values();
+        // Questions and tables share the same sort_order sequence. created_at
+        // is used as a tie-breaker for records created before the shared
+        // ordering was introduced, so the original creation order is kept.
+        return $fields->concat($tables)
+            ->sortBy([
+                ['sort_order', 'asc'],
+                ['created_at', 'asc'],
+                ['id', 'asc'],
+            ])
+            ->values();
     }
 }

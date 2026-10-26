@@ -406,7 +406,11 @@ class FormulaireBuilder extends Component
                 'sort_order' => $field->sort_order,
             ];
         } else {
-            $maxSort = DynamicFormField::where('dynamic_form_step_id', $stepId)->max('sort_order') ?? 0;
+            // Questions and tables share one order sequence, so a new question
+            // must also be placed after the last table.
+            $maxFieldSort = DynamicFormField::where('dynamic_form_step_id', $stepId)->max('sort_order') ?? 0;
+            $maxTableSort = DynamicFormTable::where('dynamic_form_step_id', $stepId)->max('sort_order') ?? 0;
+
             $this->fieldForm = [
                 'id' => null,
                 'label' => '',
@@ -419,7 +423,7 @@ class FormulaireBuilder extends Component
                 'allow_multiple_files' => false,
                 'is_required' => false,
                 'is_full_width' => true,
-                'sort_order' => $maxSort + 1,
+                'sort_order' => max($maxFieldSort, $maxTableSort) + 1,
             ];
         }
 
@@ -510,21 +514,69 @@ class FormulaireBuilder extends Component
 
     public function moveField($fieldId, $direction)
     {
-        $fieldId = (int) $fieldId;
-        $field = DynamicFormField::findOrFail($fieldId);
-        $fields = DynamicFormField::where('dynamic_form_step_id', $field->dynamic_form_step_id)
-            ->orderBy('sort_order')->get();
+        $this->moveElement('field', (int) $fieldId, $direction);
+    }
 
-        $index = $fields->search(fn($f) => $f->id === $fieldId);
+    public function moveTable($tableId, $direction)
+    {
+        $this->moveElement('table', (int) $tableId, $direction);
+    }
 
-        if ($direction === 'up' && $index > 0) {
-            $currentSort = $fields[$index]->sort_order;
-            $fields[$index]->update(['sort_order' => $fields[$index - 1]->sort_order]);
-            $fields[$index - 1]->update(['sort_order' => $currentSort]);
-        } elseif ($direction === 'down' && $index < $fields->count() - 1) {
-            $currentSort = $fields[$index]->sort_order;
-            $fields[$index]->update(['sort_order' => $fields[$index + 1]->sort_order]);
-            $fields[$index + 1]->update(['sort_order' => $currentSort]);
+    /**
+     * Move a question or a table inside the step's shared order sequence.
+     */
+    public function moveElement(string $type, int $id, string $direction): void
+    {
+        if (! in_array($type, ['field', 'table'], true)) {
+            return;
+        }
+
+        $element = $type === 'field'
+            ? DynamicFormField::findOrFail($id)
+            : DynamicFormTable::findOrFail($id);
+
+        $stepId = $element->dynamic_form_step_id;
+        $step = DynamicFormStep::with(['fields', 'tables'])->findOrFail($stepId);
+
+        // Make sure every element has a distinct position before swapping.
+        $this->normalizeElementOrder($step);
+
+        $step = DynamicFormStep::with(['fields', 'tables'])->findOrFail($stepId);
+        $elements = $step->elements;
+
+        $index = $elements->search(
+            fn ($item) => $item->element_type === $type && (int) $item->id === $id
+        );
+
+        if ($index === false) {
+            return;
+        }
+
+        $targetIndex = $direction === 'up' ? $index - 1 : $index + 1;
+
+        if (! isset($elements[$targetIndex])) {
+            return;
+        }
+
+        $current = $elements[$index];
+        $target = $elements[$targetIndex];
+
+        $currentSort = $current->sort_order;
+        $current->update(['sort_order' => $target->sort_order]);
+        $target->update(['sort_order' => $currentSort]);
+    }
+
+    /**
+     * Renumber the merged fields + tables sequence from 1 to N.
+     */
+    protected function normalizeElementOrder(DynamicFormStep $step): void
+    {
+        foreach ($step->elements as $index => $element) {
+            $position = $index + 1;
+
+            if ((int) $element->sort_order !== $position) {
+                $element->update(['sort_order' => $position]);
+            }
         }
     }
 

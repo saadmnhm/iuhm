@@ -191,6 +191,7 @@
                         <div class="inline-flex rounded-full bg-slate-100 p-1 shadow-inner">
                             <button type="button" @click="editorTab = 'question'" class="rounded-full px-4 py-2 text-sm font-bold transition" :class="editorTab === 'question' ? 'bg-white text-[#0f1d57] shadow-sm' : 'text-slate-500'">Question</button>
                             <button type="button" @click="editorTab = 'table'" class="rounded-full px-4 py-2 text-sm font-bold transition" :class="editorTab === 'table' ? 'bg-white text-[#0f1d57] shadow-sm' : 'text-slate-500'">Tableau</button>
+                            <button type="button" @click="editorTab = 'order'" class="rounded-full px-4 py-2 text-sm font-bold transition" :class="editorTab === 'order' ? 'bg-white text-[#0f1d57] shadow-sm' : 'text-slate-500'">Ordre</button>
                         </div>
                     </div>
 
@@ -292,6 +293,8 @@
                                                         </div>
                                                     </div>
                                                     <div class="flex items-center gap-1">
+                                                        <button type="button" wire:click="moveTable({{ $table->id }}, 'up')" class="rounded-full p-2 text-slate-400 transition hover:bg-white hover:text-slate-700" title="Monter"><i class="ri-arrow-up-s-line"></i></button>
+                                                        <button type="button" wire:click="moveTable({{ $table->id }}, 'down')" class="rounded-full p-2 text-slate-400 transition hover:bg-white hover:text-slate-700" title="Descendre"><i class="ri-arrow-down-s-line"></i></button>
                                                         <button type="button"
                                                             @click="tableHasDynamicRows = {{ $table->has_dynamic_rows ? 'true' : 'false' }}; showTableModal = true; $wire.openTableModal({{ $activeStep->id }}, {{ $table->id }})"
                                                             class="rounded-full p-2 text-[#0f1d57] transition hover:bg-white"><i class="ri-settings-3-line text-sm"></i></button>
@@ -362,6 +365,48 @@
                                     <div class="rounded-[22px] border border-dashed border-slate-200 bg-slate-50 px-5 py-8 text-center">
                                         <p class="text-sm font-bold text-slate-500">Aucun tableau pour cette étape.</p>
                                         <p class="mt-1 text-xs text-slate-400">Cliquez sur « Ajouter un tableau » pour commencer.</p>
+                                    </div>
+                                @endif
+                            </div>
+
+                            <div x-show="editorTab === 'order'" x-cloak class="mt-5 space-y-4">
+                                <div>
+                                    <p class="text-sm font-black text-slate-900">Ordre des éléments</p>
+                                    <p class="text-xs text-slate-500">Placez les questions et les tableaux dans l'ordre souhaité.</p>
+                                </div>
+
+                                @if($activeStep->elements->isNotEmpty())
+                                    <div class="space-y-2 border-t border-slate-100 pt-4">
+                                        @foreach($activeStep->elements as $element)
+                                            <div class="flex items-center justify-between gap-3 rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+                                                <div class="flex min-w-0 items-center gap-3">
+                                                    <span class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-white text-[#0f1d57] shadow-sm">
+                                                        <i class="{{ $element->element_type === 'field' ? 'ri-question-line' : 'ri-table-line' }}"></i>
+                                                    </span>
+                                                    <div class="min-w-0">
+                                                        <p class="truncate text-sm font-bold text-slate-900">
+                                                            {{ $element->element_type === 'field' ? \Illuminate\Support\Str::limit($element->label, 70) : $element->title }}
+                                                        </p>
+                                                        <p class="text-xs text-slate-500">
+                                                            {{ $element->element_type === 'field' ? 'Question · ' . $element->type : 'Tableau' }}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex flex-shrink-0 items-center gap-1">
+                                                    <button type="button" wire:click="moveElement('{{ $element->element_type }}', {{ $element->id }}, 'up')" class="rounded-full p-2 text-slate-400 transition hover:bg-white hover:text-slate-700" title="Monter">
+                                                        <i class="ri-arrow-up-s-line"></i>
+                                                    </button>
+                                                    <button type="button" wire:click="moveElement('{{ $element->element_type }}', {{ $element->id }}, 'down')" class="rounded-full p-2 text-slate-400 transition hover:bg-white hover:text-slate-700" title="Descendre">
+                                                        <i class="ri-arrow-down-s-line"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <div class="rounded-[22px] border border-dashed border-slate-200 bg-slate-50 px-5 py-8 text-center">
+                                        <p class="text-sm font-bold text-slate-500">Aucun élément pour cette étape.</p>
+                                        <p class="mt-1 text-xs text-slate-400">Ajoutez une question ou un tableau pour commencer.</p>
                                     </div>
                                 @endif
                             </div>

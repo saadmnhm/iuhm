@@ -102,8 +102,11 @@
                 <p class="mb-6 text-gray-500 text-sm leading-relaxed">{{ $currentStep->description }}</p>
                 @endif
 
-                {{-- Fields --}}
-                @foreach($currentStep->fields->sortBy('sort_order') as $field)
+                {{-- Fields and tables, in the shared order --}}
+                @foreach($currentStep->elements as $element)
+
+                    @if($element->element_type === 'field')
+                    @php $field = $element; @endphp
 
                     @if($field->type === 'heading')
                         {{-- Section heading with left border accent --}}
@@ -271,10 +274,10 @@
                         </div>
                     @endif
 
-                @endforeach
+                    @else
+                    @php $table = $element; @endphp
 
-                {{-- Tables --}}
-                @foreach($currentStep->tables->sortBy('sort_order') as $table)
+                    {{-- Table --}}
                 <div class="mb-6">
                     <div class="flex items-center gap-3 mb-3">
                         <div style="width: 4px; height: 24px; background: {{ $form->color }}; border-radius: 2px; flex-shrink: 0;"></div>
@@ -450,7 +453,9 @@
                         <i class="ri-add-line"></i> {{ $tr('Ajouter une ligne', 'إضافة سطر') }}
                     </button>
                     @endif
+                    @endif
                 </div>
+                    @endif
                 @endforeach
 
             </div>

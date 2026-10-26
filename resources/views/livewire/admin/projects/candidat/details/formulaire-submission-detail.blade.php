@@ -62,7 +62,9 @@
                 {{ $step->title }}
             </h3>
             <div class="space-y-3">
-                @foreach($step->fields->sortBy('sort_order') as $field)
+                @foreach($step->elements as $element)
+                    @if($element->element_type === 'field')
+                    @php $field = $element; @endphp
                     @if($field->type === 'heading')
                         <h4 class="font-semibold text-gray-700 mt-2">{{ $field->label }}</h4>
                     @elseif($field->type === 'paragraph')
@@ -115,9 +117,8 @@
                             @endif
                         </div>
                     @endif
-                @endforeach
-
-                @foreach($step->tables->sortBy('sort_order') as $table)
+                    @else
+                    @php $table = $element; @endphp
                     @php $tableData = $submission->getTableData($table->table_key); @endphp
                     <div class="mt-4">
                         <label class="text-sm font-medium text-gray-600 block mb-2">{{ $table->title }}</label>
@@ -196,6 +197,7 @@
                             </table>
                         </div>
                     </div>
+                    @endif
                 @endforeach
             </div>
         </div>

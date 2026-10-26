@@ -100,7 +100,10 @@
                 {{-- ---- FIELDS ---- --}}
                 @php $fieldNum = 0; $halfFields = []; @endphp
 
-                @foreach($currentStepData->fields->sortBy('sort_order') as $field)
+                @foreach($currentStepData->elements as $element)
+
+                    @if($element->element_type === 'field')
+                    @php $field = $element; @endphp
 
                     {{-- HEADING --}}
                     @if($field->type === 'heading')
@@ -241,10 +244,10 @@
                     </div>
                     @endif
 
-                @endforeach
+                    @else
+                    @php $table = $element; @endphp
 
-                {{-- ---- TABLES ---- --}}
-                @foreach($currentStepData->tables->sortBy('sort_order') as $table)
+                    {{-- TABLE --}}
                 <div class="mb-6">
                     <div class="flex items-center gap-3 mb-3">
                         <div style="width: 4px; height: 22px; background: {{ $fColor }}; border-radius: 2px; flex-shrink: 0;"></div>
@@ -354,6 +357,7 @@
                     @endif
                     @endif
                 </div>
+                    @endif
                 @endforeach
 
             @endif
