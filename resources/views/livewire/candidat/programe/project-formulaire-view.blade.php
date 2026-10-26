@@ -295,7 +295,8 @@
                                     </tr>
                                     @endforeach
                                 @else
-                                    @for($ri = 0; $ri < ($tableRowCounts[$table->table_key] ?? $table->min_rows); $ri++)
+                                    @php $rowCount = (int) ($tableRowCounts[$table->table_key] ?? $table->min_rows); @endphp
+                                    @foreach($rowCount > 0 ? range(0, $rowCount - 1) : [] as $ri)
                                     <tr style="background: {{ $ri%2===0 ? '#fff' : '#f9fafb' }};">
                                         @foreach($table->columns->sortBy('sort_order') as $col)
                                         <td class="px-2 py-1" style="border-color: #f1f5f9;">
@@ -325,7 +326,7 @@
                                         </td>
                                         @endif
                                     </tr>
-                                    @endfor
+                                    @endforeach
                                 @endif
                                 @if($table->has_total_row)
                                 <tr style="background: #f0f9ff; font-weight: 700;">
@@ -414,7 +415,7 @@
                                 style="width: 30px; height: 30px; background: {{ $currentStep>1 ? '#f1f5f9' : 'transparent' }}; color: #374151;">
                             <i class="ri-arrow-left-s-line"></i>
                         </button>
-                        @for($s = 1; $s <= $totalSteps; $s++)
+                        @foreach(range(1, $totalSteps) as $s)
                             @if($s === $currentStep)
                                 <button type="button" disabled
                                         class="btn-sm rounded-full p-0 flex items-center justify-center fw-bold"
@@ -434,7 +435,7 @@
                                     {{ $s }}
                                 </button>
                             @endif
-                        @endfor
+                        @endforeach
                         {{-- next arrow --}}
                         @php
                             $isLastStep = $currentStep >= $totalSteps;
