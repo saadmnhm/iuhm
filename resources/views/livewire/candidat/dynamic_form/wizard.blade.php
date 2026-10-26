@@ -115,7 +115,7 @@
                         </div>
 
                     @elseif($field->type === 'paragraph')
-                        <p class="mb-4 text-gray-500 text-sm leading-relaxed">
+                        <p class="mb-4 whitespace-pre-line text-sm leading-relaxed text-gray-600">
                             {{ $displayLabel($field->label, $field->label_ar) }}
                         </p>
 

@@ -430,7 +430,13 @@ class FormulaireBuilder extends Component
     public function updatedFieldFormLabel()
     {
         if (!$this->fieldForm['id']) {
-            $this->fieldForm['field_key'] = Str::slug($this->fieldForm['label'], '_');
+            $slug = Str::slug($this->fieldForm['label'], '_');
+
+            // Paragraphs can be long and Arabic labels may produce an empty
+            // slug. Keep the generated key short and always non-empty.
+            $this->fieldForm['field_key'] = $slug !== ''
+                ? substr($slug, 0, 80)
+                : 'field_' . Str::lower(Str::random(8));
         }
     }
 
@@ -451,8 +457,13 @@ class FormulaireBuilder extends Component
     public function saveField()
     {
         try {
+            // Paragraphs are free-form text blocks, so they can be much
+            // longer than a regular question label.
+            $labelMax = $this->fieldForm['type'] === 'paragraph' ? 5000 : 255;
+
             $this->validate([
-                'fieldForm.label' => 'required|string|max:255',
+                'fieldForm.label' => 'required|string|max:' . $labelMax,
+                'fieldForm.label_ar' => 'nullable|string|max:' . $labelMax,
                 'fieldForm.field_key' => 'required|string|max:255',
                 'fieldForm.type' => 'required|in:text,textarea,number,email,date,select,radio,checkbox,file,heading,paragraph',
             ]);

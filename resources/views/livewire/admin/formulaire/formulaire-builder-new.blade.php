@@ -247,7 +247,7 @@
                                                 <div class="flex flex-wrap items-center justify-between gap-3">
                                                     <div>
                                                         <div class="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
-                                                            <div class="text-sm font-black text-slate-900">{{ $field->label }}</div>
+                                                            <div class="max-w-md truncate text-sm font-black text-slate-900" title="{{ $field->label }}">{{ \Illuminate\Support\Str::limit($field->label, 80) }}</div>
                                                             <span class="rounded-full bg-white px-2.5 py-1 font-semibold text-[#0f1d57] shadow-sm">{{ $field->type }}</span>
                                                         </div>
                                                     </div>
@@ -410,14 +410,26 @@
                 </div>
 
                 <div class="grid gap-5 px-6 py-6 lg:grid-cols-2 lg:px-7">
-                    <div>
-                        <label class="mb-2 block text-sm font-bold text-slate-700">Libellé (Français)</label>
-                        <input type="text" wire:model.blur="fieldForm.label" class="w-full rounded-[18px] iuhm_input" placeholder="Entrez votre question ici...">
+                    <div class="{{ $fieldForm['type'] === 'paragraph' ? 'lg:col-span-2' : '' }}">
+                        <label class="mb-2 block text-sm font-bold text-slate-700">
+                            {{ $fieldForm['type'] === 'paragraph' ? 'Contenu du paragraphe (Français)' : 'Libellé (Français)' }}
+                        </label>
+                        @if($fieldForm['type'] === 'paragraph')
+                            <textarea wire:model.blur="fieldForm.label" rows="6" class="w-full resize-y rounded-[18px] iuhm_textarea" placeholder="Écrivez votre paragraphe ici..."></textarea>
+                        @else
+                            <input type="text" wire:model.blur="fieldForm.label" class="w-full rounded-[18px] iuhm_input" placeholder="Entrez votre question ici...">
+                        @endif
                         @error('fieldForm.label') <p class="mt-1 text-xs font-medium text-rose-600">{{ $message }}</p> @enderror
                     </div>
-                    <div dir="rtl">
-                        <label class="mb-2 block text-sm font-bold text-slate-700">التسمية (العربية)</label>
-                        <input type="text" wire:model.blur="fieldForm.label_ar" class="w-full rounded-2xl iuhm_input" placeholder="أدخل سؤالك هنا...">
+                    <div dir="rtl" class="{{ $fieldForm['type'] === 'paragraph' ? 'lg:col-span-2' : '' }}">
+                        <label class="mb-2 block text-sm font-bold text-slate-700">
+                            {{ $fieldForm['type'] === 'paragraph' ? 'محتوى الفقرة (العربية)' : 'التسمية (العربية)' }}
+                        </label>
+                        @if($fieldForm['type'] === 'paragraph')
+                            <textarea wire:model.blur="fieldForm.label_ar" rows="6" class="w-full resize-y rounded-2xl iuhm_textarea" placeholder="اكتب فقرتك هنا..."></textarea>
+                        @else
+                            <input type="text" wire:model.blur="fieldForm.label_ar" class="w-full rounded-2xl iuhm_input" placeholder="أدخل سؤالك هنا...">
+                        @endif
                     </div>
 
                     <div class="lg:col-span-2">
@@ -451,21 +463,23 @@
                         </div>
                     @endif
 
-                    <div class="lg:col-span-2">
-                        <label class="mb-2 block text-sm font-bold text-slate-700">Bulle d'aide (Français)</label>
-                        <textarea wire:model.blur="fieldForm.help_text" rows="4" class="w-full resize-none rounded-[18px] iuhm_textarea" placeholder="Information complémentaire..."></textarea>
-                    </div>
-
-                    <div class="lg:col-span-2 flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50 px-4 py-4">
-                        <div>
-                            <p class="text-sm font-bold text-slate-900">Réponse obligatoire</p>
-                            <p class="text-xs text-slate-500">Activez si cette réponse doit être remplie par l'utilisateur.</p>
+                    @if(!in_array($fieldForm['type'], ['heading', 'paragraph'], true))
+                        <div class="lg:col-span-2">
+                            <label class="mb-2 block text-sm font-bold text-slate-700">Bulle d'aide (Français)</label>
+                            <textarea wire:model.blur="fieldForm.help_text" rows="4" class="w-full resize-none rounded-[18px] iuhm_textarea" placeholder="Information complémentaire..."></textarea>
                         </div>
-                        <label class="relative inline-flex cursor-pointer items-center">
-                            <input type="checkbox" wire:model.live="fieldForm.is_required" class="peer sr-only">
-                            <div class="h-6 w-11 rounded-full bg-slate-200 transition peer-checked:bg-emerald-600 peer-checked:after:translate-x-full after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-['']"></div>
-                        </label>
-                    </div>
+
+                        <div class="lg:col-span-2 flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50 px-4 py-4">
+                            <div>
+                                <p class="text-sm font-bold text-slate-900">Réponse obligatoire</p>
+                                <p class="text-xs text-slate-500">Activez si cette réponse doit être remplie par l'utilisateur.</p>
+                            </div>
+                            <label class="relative inline-flex cursor-pointer items-center">
+                                <input type="checkbox" wire:model.live="fieldForm.is_required" class="peer sr-only">
+                                <div class="h-6 w-11 rounded-full bg-slate-200 transition peer-checked:bg-emerald-600 peer-checked:after:translate-x-full after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-['']"></div>
+                            </label>
+                        </div>
+                    @endif
 
                     @if(in_array($fieldForm['type'], ['select', 'radio', 'checkbox'], true))
                         <div class="lg:col-span-2 rounded-3xl border border-slate-100 bg-slate-50 p-4">

@@ -41,9 +41,9 @@
                 {{ $displayLabel($form->title, $form->title_ar) }}
             </h3>
 
-            @if($form->description)
-            <p class="text-center mb-0 text-gray-500" style="font-size: 0.83rem; line-height: 1.6;">
-                {{ $displayLabel($form->description, $form->description_ar) }}
+            @if($form->introduction)
+            <p class="font-bold text-justify mb-1 text-gray-900" style="font-size: 0.83rem; line-height: 1.6;">
+                {{ $displayLabel($form->introduction, $form->introduction_ar) }}
             </p>
             @endif
 
@@ -113,7 +113,7 @@
 
                     {{-- PARAGRAPH --}}
                     @elseif($field->type === 'paragraph')
-                    <p class="mb-4 text-gray-500" style="font-size: 0.84rem; line-height: 1.6;">
+                    <p class="mb-4 whitespace-pre-line text-gray-600" style="font-size: 0.9rem; line-height: 1.75;">
                         {{ $displayLabel($field->label, $field->label_ar) }}
                     </p>
 

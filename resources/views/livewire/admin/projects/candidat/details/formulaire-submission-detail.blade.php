@@ -66,7 +66,7 @@
                     @if($field->type === 'heading')
                         <h4 class="font-semibold text-gray-700 mt-2">{{ $field->label }}</h4>
                     @elseif($field->type === 'paragraph')
-                        <p class="text-gray-500 text-sm">{{ $field->label }}</p>
+                        <p class="whitespace-pre-line text-sm text-gray-500">{{ $field->label }}</p>
                     @else
                         <div>
                             <label class="text-sm font-medium text-gray-600">{{ $field->label }}</label>
