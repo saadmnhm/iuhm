@@ -317,7 +317,7 @@
                     <input type="text" name="nom" placeholder="{{ $t['nom_ph'] }}" value="{{ old('nom') }}" required class="input-field" />
                     <input type="text" name="prenom" placeholder="{{ $t['prenom_ph'] }}" value="{{ old('prenom') }}" required class="input-field" />
                 </div>
-                <input type="text" name="login" placeholder="{{ $t['login_field_ph'] }}" value="{{ old('login') }}" required class="input-field" />
+                <!-- <input type="text" name="login" placeholder="{{ $t['login_field_ph'] }}" value="{{ old('login') }}" required class="input-field" /> -->
                 <input type="email" name="email" placeholder="{{ $t['email_ph'] }}" value="{{ old('email') }}" required class="input-field" />
                 
                 <div class="password-wrapper">
