@@ -104,7 +104,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/console/roles', \App\Livewire\Admin\Roles\RoleManagement::class)->name('roles.index')->middleware('module:gestion_roles');
         Route::get('/my-submissions', \App\Livewire\Admin\Submissions\MyAssignedSubmissions::class)->name('my.submissions')->middleware('module:my_submissions');
         Route::get('/all-submissions', \App\Livewire\Admin\Submissions\AllSubmissions::class)->name('all.submissions')->middleware('module:all_submissions');
-        Route::get('/association-parameters', \App\Livewire\Admin\Settings\AssociationParameters::class)->name('association.parameters')->middleware('module:association_parameters');
+        Route::get('/console/association-parameters', \App\Livewire\Admin\Settings\AssociationParameters::class)->name('association.parameters')->middleware('module:association_parameters');
         
 
         // media
@@ -121,13 +121,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/media/project/{id}', \App\Livewire\Admin\Project\ProjectForm::class)->name('project.form')->middleware('module:project');
         Route::get('/media/apropos', \App\Livewire\Admin\Apropos\Apropos::class)->name('apropos.index')->middleware('module:apropos');
         
-        Route::get('/history-audit', \App\Livewire\Admin\Submissions\HistoryAudit::class)->name('history.audit')->middleware('module:history_audit');
-        Route::get('/support-tickets', \App\Livewire\Admin\Support\SupportTickets::class)->name('support.tickets')->middleware('module:support');
+        Route::get('/console/history-audit', \App\Livewire\Admin\Submissions\HistoryAudit::class)->name('history.audit')->middleware('module:history_audit');
+        Route::get('/console/support-tickets', \App\Livewire\Admin\Support\SupportTickets::class)->name('support.tickets')->middleware('module:support');
 
         // Chat
-        Route::get('/chat', \App\Livewire\Admin\Chat\ChatList::class)->name('chat.list')->middleware('module:chat');
-        Route::get('/chat/{candidatId}', \App\Livewire\Admin\Chat\ChatConversation::class)->name('chat.conversation')->middleware('module:chat');
-        Route::get('/broadcast', \App\Livewire\Admin\Chat\BroadcastMessage::class)->name('chat.broadcast')->middleware('module:chat');
+        Route::get('/console/chat', \App\Livewire\Admin\Chat\ChatList::class)->name('chat.list')->middleware('module:chat');
+        Route::get('/console/chat/{candidatId}', \App\Livewire\Admin\Chat\ChatConversation::class)->name('chat.conversation')->middleware('module:chat');
+        Route::get('/console/broadcast', \App\Livewire\Admin\Chat\BroadcastMessage::class)->name('chat.broadcast')->middleware('module:chat');
 
         Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
         
@@ -140,19 +140,20 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/projects/candidat/{id}/project/{projectId}/evaluation', \App\Livewire\Admin\Candidat\CandidatEvaluationCreate::class)->name('candidat.evaluation.create')->middleware('module:programmes');
         Route::get('/projects/candidat/{candidatId}/submission/{id}/export-pdf', [\App\Http\Controllers\Admin\CandidatExportController::class, 'exportSingle'])->name('candidat.submission.export')->middleware('module:candidats');
         Route::get('/projects/candidat/{id}/export-all-pdf', [\App\Http\Controllers\Admin\CandidatExportController::class, 'exportAll'])->name('candidat.export-all')->middleware('module:candidats');
-Route::get('/uploads/{path}/download', function ($path) {
-    if (!Auth::guard('web')->check() && !Auth::guard('candidat')->check()) {
-        abort(403);
-    }
+       
+        Route::get('/uploads/{path}/download', function ($path) {
+            if (!Auth::guard('web')->check() && !Auth::guard('candidat')->check()) {
+                abort(403);
+            }
 
-    $filePath = base_path('uploads/' . $path);
+            $filePath = base_path('uploads/' . $path);
 
-    if (!file_exists($filePath)) {
-        abort(404);
-    }
+            if (!file_exists($filePath)) {
+                abort(404);
+            }
 
-    return response()->download($filePath, basename($filePath));
-})->where('path', '.*')->name('uploads.download');
+            return response()->download($filePath, basename($filePath));
+        })->where('path', '.*')->name('uploads.download');
         
 
         // Dynamic Form Builder (Referential)

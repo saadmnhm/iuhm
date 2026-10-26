@@ -11,7 +11,7 @@
 
     {{-- Centered modal card --}}
     <div class="fixed inset-0 z-[10001] flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-xl overflow-hidden w-full max-w-md">
+        <div class=" rounded-2xl shadow-xl overflow-hidden w-full max-w-md">
 
             {{-- Header --}}
             <div class="flex items-center gap-3 p-4 border-b border-gray-100" style="background: linear-gradient(135deg, #648454, #8baf74);">
@@ -30,7 +30,7 @@
             </div>
 
             {{-- Body --}}
-            <div class="p-5">
+            <div class="p-5 bg-white">
                 <h5 class="font-bold text-lg text-gray-900 mb-3">{{ $current->title }}</h5>
                 <p class="text-gray-500 text-base leading-relaxed mb-0">{{ $current->message }}</p>
             </div>

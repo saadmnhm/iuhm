@@ -146,6 +146,9 @@
     </div>
 </div>
 
+{{-- Admin broadcast popup (non-dismissible, polls for new broadcasts) --}}
+@livewire('front.dashboard.broadcast-popup')
+
 {{-- Incomplete profile modal (non-dismissible) --}}
 @if($showProfileModal)
 <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60" role="dialog" aria-modal="true" aria-labelledby="profile-modal-title">

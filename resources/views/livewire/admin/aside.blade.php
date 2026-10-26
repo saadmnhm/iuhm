@@ -33,6 +33,26 @@
                         <i class="ri-shield-user-line mr-1"></i> Gestion des Rôles
                     </a>
                     @endcanmodule
+                    @canmodule('history_audit')
+                    <a wire:navigate href="{{ route('admin.history.audit') }}" 
+                        class="flex items-center gap-3 px-4 py-3 rounded-lg transition {{ request()->routeIs('admin.history.audit') ? 'bg-white/20' : 'hover:bg-white/10' }}">
+                        <i class="ri-history-line text-lg"></i>
+                        <span>Historique & Audit</span>
+                    </a>
+                    @endcanmodule
+                    @canmodule('chat')
+                    <a wire:navigate href="{{ route('admin.chat.list') }}" class="block px-4 py-2 rounded hover:bg-white/10 {{ request()->routeIs('admin.chat.list') || (request()->routeIs('admin.chat.conversation')) ? 'bg-white/20 font-medium' : '' }}">
+                        <i class="ri-chat-3-line mr-1"></i> Conversations
+                    </a>
+                    <a wire:navigate href="{{ route('admin.chat.broadcast') }}" class="block px-4 py-2 rounded hover:bg-white/10 {{ request()->routeIs('admin.chat.broadcast') ? 'bg-white/20 font-medium' : '' }}">
+                        <i class="ri-broadcast-line mr-1"></i> Broadcast
+                    </a>
+                    @endcanmodule
+                    @canmodule('association_parameters')
+                    <a wire:navigate href="{{ route('admin.association.parameters') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.association*') ? 'bg-gray-100 font-medium' : '' }}">
+                        <i class="ri-settings-3-line mr-1"></i> Paramètres Association
+                    </a>
+                    @endcanmodule
             @endif
 
             @if(request()->is('admin/media/*') || request()->is('admin/media') )

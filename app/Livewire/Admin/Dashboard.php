@@ -9,9 +9,12 @@ use App\Models\ProjectsSubmission;
 use App\Models\ProjectsList;
 use App\Models\SupportTicket;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class Dashboard extends Component
 {
+    use WithFileUploads;
+
     public $projectId;
 
     // ── Ticket creation modal (admin opens tickets to devs) ──
