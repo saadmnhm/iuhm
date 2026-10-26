@@ -38,12 +38,14 @@ class AppServiceProvider extends ServiceProvider
         $locale = session('locale', 'fr');
         app()->setLocale($locale);
 
-        // Safety net for Livewire's $set magic action (wire:click="$set('key', value)").
-        // Livewire sends $set as a server method call; SupportMagicActions should catch it,
-        // but this listener ensures $set is handled client-side without a MethodNotFoundException.
+        // Safety net for Livewire magic actions ($set, $commit, $refresh, $sync).
+        // Livewire sends these as server method calls; SupportMagicActions should catch them,
+        // but this listener ensures they are handled without a MethodNotFoundException.
         $this->app->booted(function () {
             on('call', function (...$args) {
-                if (isset($args[1]) && $args[1] === '$set') {
+                $magicActions = ['$set', '$commit', '$refresh', '$sync'];
+
+                if (isset($args[1]) && in_array($args[1], $magicActions, true)) {
                     foreach ($args as $arg) {
                         if ($arg instanceof \Closure) {
                             $arg();

@@ -8,6 +8,7 @@ use App\Models\SupportTicket;
 use App\Models\User;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class AdminSupportTicketsTest extends TestCase
@@ -109,6 +110,17 @@ class AdminSupportTicketsTest extends TestCase
             'priority' => 'medium',
             'category' => 'general',
         ], $overrides));
+    }
+
+    public function test_commit_magic_action_is_available(): void
+    {
+        $admin = $this->makeAdmin();
+        $this->actingAs($admin);
+
+        $component = Livewire::test(SupportTickets::class);
+        $component->call('$commit');
+
+        $this->assertInstanceOf(SupportTickets::class, $component->instance());
     }
 
     public function test_candidate_and_admin_tickets_are_separated_into_tabs(): void
