@@ -50,12 +50,18 @@
                             <a href="{{ route('admin.candidat.submissions', $candidat->id) }}" class="block px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
                                 <i class="ri-flow-chart mr-1"></i> Gérer soumissions
                             </a>
-                            <form method="POST" action="{{ route('admin.candidats.formation-review', $candidat->id) }}">
-                                @csrf
-                                <button type="submit" @click="open = false" class="block w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
-                                    <i class="ri-feedback-line mr-1"></i> Faire remplir l'avis de formation
-                                </button>
-                            </form>
+                            @if($formationReview)
+                                <a href="{{ route('admin.project.print.avis_formation', ['id' => $candidat->id, 'projectId' => $formationReview->programe_id]) }}" target="_blank" class="block px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
+                                    <i class="ri-printer-line mr-1"></i> Imprimer l'avis de formation
+                                </a>
+                            @else
+                                <form method="POST" action="{{ route('admin.candidats.formation-review', $candidat->id) }}">
+                                    @csrf
+                                    <button type="submit" @click="open = false" class="block w-full text-left px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
+                                        <i class="ri-feedback-line mr-1"></i> Faire remplir l'avis de formation
+                                    </button>
+                                </form>
+                            @endif
                             <a href="{{ route('admin.candidats.print.fiche_inscription', $candidat->id) }}" target="_blank" class="block px-3 py-2 rounded hover:bg-gray-50 text-sm text-gray-700">
                                 <i class="ri-printer-line mr-1"></i> Imprimer fiche de renseignement
                             </a>

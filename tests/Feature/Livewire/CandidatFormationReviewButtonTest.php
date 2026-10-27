@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Livewire;
 
+use App\Livewire\Admin\Candidat\ShowCandidat;
 use App\Livewire\Front\Programe\ProjectFormationReview;
 use App\Models\Candidat;
 use App\Models\CandidatProjectAgreement;
@@ -136,6 +137,78 @@ class CandidatFormationReviewButtonTest extends TestCase
         Livewire::test(ProjectFormationReview::class, ['id' => $project->id])
             ->assertOk()
             ->assertSee('Avis de formation');
+    }
+
+    public function test_the_admin_candidate_page_shows_a_print_button_after_the_review_is_filled(): void
+    {
+        $admin = $this->createAdmin('admin6@example.test');
+        $candidat = $this->createCandidat('candidat6@example.test');
+        $project = $this->createProject($admin, 'Projet test 6', 'projet-test-6');
+
+        ProjectsSubmission::create([
+            'candidat_id' => $candidat->id,
+            'programe_id' => $project->id,
+            'review_status' => 'in_review',
+            'require_formation_review' => true,
+            'formation_review_rating' => 4,
+        ]);
+
+        $this->actingAs($admin);
+
+        Livewire::test(ShowCandidat::class, ['id' => $candidat->id])
+            ->assertOk()
+            ->assertSee("Imprimer l'avis de formation", false)
+            ->assertDontSee("Faire remplir l'avis de formation", false);
+    }
+
+    public function test_the_admin_candidate_page_shows_the_request_button_when_no_review_is_filled(): void
+    {
+        $admin = $this->createAdmin('admin7@example.test');
+        $candidat = $this->createCandidat('candidat7@example.test');
+        $project = $this->createProject($admin, 'Projet test 7', 'projet-test-7');
+
+        ProjectsSubmission::create([
+            'candidat_id' => $candidat->id,
+            'programe_id' => $project->id,
+            'review_status' => 'in_review',
+            'require_formation_review' => true,
+            'formation_review_rating' => null,
+        ]);
+
+        $this->actingAs($admin);
+
+        Livewire::test(ShowCandidat::class, ['id' => $candidat->id])
+            ->assertOk()
+            ->assertSee("Faire remplir l'avis de formation", false)
+            ->assertDontSee("Imprimer l'avis de formation", false);
+    }
+
+    public function test_the_formation_review_print_page_renders(): void
+    {
+        $admin = $this->createAdmin('admin8@example.test');
+        $candidat = $this->createCandidat('candidat8@example.test');
+        $project = $this->createProject($admin, 'Projet test 8', 'projet-test-8');
+
+        ProjectsSubmission::create([
+            'candidat_id' => $candidat->id,
+            'programe_id' => $project->id,
+            'review_status' => 'in_review',
+            'require_formation_review' => true,
+            'formation_review_rating' => 4,
+            'formation_review_feedback' => 'Test review',
+            'formation_review_answers' => [
+                'q1' => 3, 'q2' => 3, 'q3' => 3, 'q4' => 3,
+                'q5' => 3, 'q6' => 3, 'q7' => 3, 'q8' => 3,
+            ],
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('admin.project.print.avis_formation', [
+            'id' => $candidat->id,
+            'projectId' => $project->id,
+        ]));
+
+        $response->assertOk();
+        $response->assertSee('Test review', false);
     }
 
     private function createAdmin(string $email): User

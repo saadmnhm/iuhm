@@ -7,6 +7,7 @@ use App\Models\Candidat;
 use App\Models\AdminActivityLog;
 use App\Models\DynamicFormSubmission;
 use App\Models\ProjectsList;
+use App\Models\ProjectsSubmission;
 use App\Models\CandidatFormulaireOrder;
 use App\Services\ProjectEligibilityService;
 use Livewire\Component;
@@ -19,6 +20,7 @@ class ShowCandidat extends Component
     public $recentLogs;
     public $dynamicSubmissions;
     public $eligibleProjects;
+    public $formationReview;
 
     public bool $showRankingModal = false;
     public string $rankingStatus = 'pending';
@@ -89,6 +91,12 @@ class ShowCandidat extends Component
                     'reasons' => $check['reasons'] ?? [],
                 ];
             });
+
+        $this->formationReview = ProjectsSubmission::with('project')
+            ->where('candidat_id', $this->candidat->id)
+            ->whereNotNull('formation_review_rating')
+            ->latest('updated_at')
+            ->first();
     }
 
     public function toggleStatus()
