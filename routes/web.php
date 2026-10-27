@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AuthController;
-use App\Http\Controllers\Admin\CandidatEvaluationController;
+use App\Http\Controllers\Admin\CandidatFormationReviewController;
 use App\Http\Controllers\Admin\PrintController;
 use App\Http\Controllers\FrontAuthController ;
 use App\Livewire\Front\Dashboard\Dashboard;
@@ -65,7 +65,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/candidats/{id}', \App\Livewire\Admin\Candidat\ShowCandidat::class)->name('candidats.show')->middleware('module:candidats');
         Route::get('/candidats/{id}/edit', \App\Livewire\Admin\Candidat\EditCandidat::class)->name('candidats.edit')->middleware('module:candidats');
         Route::get('/candidats/{id}/print/fiche_inscription', [PrintController::class, 'fiche_inscription'])->name('candidats.print.fiche_inscription')->middleware('module:candidats');
-        Route::post('/candidats/{id}/evaluation-idee', [CandidatEvaluationController::class, 'start'])->name('candidats.evaluation-idee')->middleware('module:candidats');
+        Route::post('/candidats/{id}/formation-review', [CandidatFormationReviewController::class, 'start'])->name('candidats.formation-review')->middleware('module:candidats');
         Route::get('/candidats/{id}/project/{projectId}/print/avis_formation', [PrintController::class, 'avisformation'])->name('project.print.avis_formation')->middleware('module:candidats');
         Route::get('/candidats/{id}/project/{projectId}/print/fiche_inscription', [PrintController::class, 'projectFicheInscription'])->name('project.print.fiche')->middleware('module:candidats');
         Route::get('/candidats/{id}/project/{projectId}/print/agreement', [PrintController::class, 'projectAgreement'])->name('project.print.agreement')->middleware('module:candidats');

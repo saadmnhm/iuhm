@@ -30,20 +30,20 @@
         <div class="w-full sm:w-40 h-20 rounded-lg bg-gradient-to-br from-[#12345a] to-[#0b2340] opacity-95"></div>
     </div>
 
-    @if($pendingEvaluation)
+    @if($pendingFormationReview)
     <div class="mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-amber-300 bg-amber-50 px-5 py-4 text-amber-900">
         <div class="flex items-start gap-3">
-            <i class="ri-alert-line text-2xl text-amber-500"></i>
+            <i class="ri-feedback-line text-2xl text-amber-500"></i>
             <div>
-                <p class="font-semibold">{{ $tr('Action requise : évaluation d’idée de projet', 'إجراء مطلوب: تقييم فكرة المشروع') }}</p>
+                <p class="font-semibold">{{ $tr('Action requise : avis de formation', 'إجراء مطلوب: رأي التكوين') }}</p>
                 <p class="text-sm mt-1">
-                    {{ $tr('Veuillez remplir le formulaire d’évaluation d’idée pour le projet', 'يرجى ملء استمارة تقييم فكرة مشروع') }}
-                    « {{ $pendingEvaluation['project']->project_name }} ».
+                    {{ $tr("L'administration a demandé votre avis sur la formation pour le projet", 'طلبت الإدارة رأيك في التكوين الخاص بمشروع') }}
+                    « {{ $pendingFormationReview['project']->project_name }} ».
                 </p>
             </div>
         </div>
-        <a href="{{ $pendingEvaluation['url'] }}" class="inline-flex items-center justify-center gap-2 rounded-full bg-amber-500 px-5 py-2 text-sm font-bold text-white hover:bg-amber-600 transition-colors flex-shrink-0">
-            {{ $tr('Remplir maintenant', 'املأ الآن') }}
+        <a href="{{ $pendingFormationReview['url'] }}" class="inline-flex items-center justify-center gap-2 rounded-full bg-amber-500 px-5 py-2 text-sm font-bold text-white hover:bg-amber-600 transition-colors flex-shrink-0">
+            {{ $tr('Donner mon avis', 'إعطاء رأيي') }}
             <i class="ri-arrow-right-line"></i>
         </a>
     </div>
