@@ -275,11 +275,17 @@
                                     </td>
                                     <td class="px-6 py-4 text-sm text-center">
                                         <div class="flex justify-center gap-2">
-                                                                                         <button type="button" @click="$dispatch('user-modal-open', { mode: 'edit', id: {{ $item->id }}, userType: 'candidat', nom: @js($item->nom), prenom: @js($item->prenom), email: @js($item->email), phone: @js($item->phone ?? ''), is_active: {{ $item->is_active ? 'true' : 'false' }} })"
+                                            <a href="{{ route('admin.candidats.show', $item->id) }}"
+                                            class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-500 flex items-center justify-center transition"
+                                            title="Profil candidat">
+                                                <i class="ri-user-line text-sm"></i>
+                                            </a>
+                                            <button type="button" @click="$dispatch('user-modal-open', { mode: 'edit', id: {{ $item->id }}, userType: 'candidat', nom: @js($item->nom), prenom: @js($item->prenom), email: @js($item->email), phone: @js($item->phone ?? ''), is_active: {{ $item->is_active ? 'true' : 'false' }} })"
                                                class="p-2 text-gray-600 hover:text-[#04103A] hover:bg-gray-100 rounded-lg transition"
                                                title="Edit">
                                                 <i class="ri-pencil-line"></i>
                                             </button>
+                                            
                                             @if($currentUserRole === 'super_admin')
                                                 <button wire:click="openDeleteModal({{ $item->id }})"
                                                     class="p-2 text-red-600 hover:text-red-900 hover:bg-red-100 rounded-lg transition"
