@@ -3,7 +3,7 @@
     $languageLabels = [
         'ar' => __('ui.arabic'),
         'fr' => __('ui.french'),
-        'en' => __('ui.english'),
+        // 'en' => __('ui.english'),
     ];
 @endphp
 

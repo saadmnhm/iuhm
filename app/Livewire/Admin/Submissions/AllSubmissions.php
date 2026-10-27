@@ -8,6 +8,7 @@ use App\Models\ProjectsList;
 use App\Models\ProjectsSubmission;
 use App\Models\User;
 use App\Models\Candidat;
+use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -106,72 +107,8 @@ class AllSubmissions extends Component
 
     public function render()
     {
-        $query = DynamicFormSubmission::with(['candidat', 'form', 'programe', 'reviewer', 'ProjectsSubmission.reviewer']);
-
-
-        $submissions = $query->latest()->where('is_submitted', true)->paginate(15);
-
-        $projectQuery = ProjectsSubmission::with(['candidat', 'project', 'reviewer']);
-
-        if ($this->search) {
-            $projectQuery->where(function ($q) {
-                $q->whereHas('candidat', function ($c) {
-                    $c->where('nom', 'like', "%{$this->search}%")
-                      ->orWhere('prenom', 'like', "%{$this->search}%")
-                      ->orWhere('email', 'like', "%{$this->search}%")
-                      ->orWhere('matricule', 'like', "%{$this->search}%");
-                })->orWhereHas('project', function ($p) {
-                    $p->where('project_name', 'like', "%{$this->search}%");
-                });
-            });
-        }
-
-        if ($this->statusFilter !== 'all') {
-            $projectStatusMap = [
-                'submitted' => 'pending',
-                'in_review' => 'in_review',
-                'approved' => 'approved',
-                'rejected' => 'rejected',
-            ];
-
-            if (isset($projectStatusMap[$this->statusFilter])) {
-                $projectQuery->where('review_status', $projectStatusMap[$this->statusFilter]);
-            }
-        }
-
-        if ($this->programeFilter !== 'all') {
-            $projectQuery->where('programe_id', $this->programeFilter);
-        }
-
-        if ($this->responsableFilter !== 'all') {
-            if ($this->responsableFilter === 'none') {
-                $projectQuery->whereNull('reviewed_by');
-            } else {
-                $projectQuery->where('reviewed_by', $this->responsableFilter);
-            }
-        }
-
-        if ($this->genderFilter !== 'all') {
-            $projectQuery->whereHas('candidat', function ($q) {
-                $q->where('gender', $this->genderFilter);
-            });
-        }
-
-        if ($this->addressFilter !== 'all') {
-            $projectQuery->whereHas('candidat', function ($q) {
-                $q->where('address', $this->addressFilter);
-            });
-        }
-
-        if ($this->dateFrom) {
-            $projectQuery->whereDate('created_at', '>=', $this->dateFrom);
-        }
-
-        if ($this->dateTo) {
-            $projectQuery->whereDate('created_at', '<=', $this->dateTo);
-        }
-
-        $ProjectsSubmissions = $projectQuery->latest()->where('is_finished', true)->paginate(15, ['*'], 'projectPage');
+        $submissions = $this->formulaireQuery()->paginate(15);
+        $ProjectsSubmissions = $this->projectQuery()->paginate(15, ['*'], 'projectPage');
 
         $programmes  = ProjectsList::orderBy('project_name')->get(['id', 'project_name']);
         $formulaires = DynamicForm::orderBy('title')->get(['id', 'title']);
@@ -203,5 +140,132 @@ class AllSubmissions extends Component
         return view('livewire.admin.submissions.all-submissions', compact(
             'submissions', 'ProjectsSubmissions', 'programmes', 'formulaires', 'admins', 'addresses', 'stats', 'statCards'
         ))->layout('layouts.admin', ['header' => 'Toutes les Soumissions']);
+    }
+
+    protected function formulaireQuery(): Builder
+    {
+        $query = DynamicFormSubmission::with(['candidat', 'form', 'programe', 'reviewer', 'ProjectsSubmission.reviewer'])
+            ->where('is_submitted', true);
+
+        if ($this->search) {
+            $search = $this->search;
+
+            $query->where(function (Builder $q) use ($search) {
+                $q->whereHas('candidat', function (Builder $c) use ($search) {
+                    $c->where('nom', 'like', "%{$search}%")
+                        ->orWhere('prenom', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('matricule', 'like', "%{$search}%");
+                })->orWhereHas('programe', function (Builder $p) use ($search) {
+                    $p->where('project_name', 'like', "%{$search}%");
+                })->orWhereHas('form', function (Builder $f) use ($search) {
+                    $f->where('title', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        if ($this->statusFilter !== 'all') {
+            $query->where('status', $this->statusFilter);
+        }
+
+        if ($this->programeFilter !== 'all') {
+            $query->where('programe_id', $this->programeFilter);
+        }
+
+        if ($this->formulaireFilter !== 'all') {
+            $query->where('dynamic_form_id', $this->formulaireFilter);
+        }
+
+        if ($this->responsableFilter !== 'all') {
+            if ($this->responsableFilter === 'none') {
+                $query->whereNull('reviewed_by');
+            } else {
+                $query->where('reviewed_by', $this->responsableFilter);
+            }
+        }
+
+        $this->applyCommonFilters($query);
+
+        return $query->latest();
+    }
+
+    protected function projectQuery(): Builder
+    {
+        $query = ProjectsSubmission::with(['candidat', 'project', 'reviewer'])
+            ->where('is_finished', true);
+
+        if ($this->search) {
+            $search = $this->search;
+
+            $query->where(function (Builder $q) use ($search) {
+                $q->whereHas('candidat', function (Builder $c) use ($search) {
+                    $c->where('nom', 'like', "%{$search}%")
+                        ->orWhere('prenom', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('matricule', 'like', "%{$search}%");
+                })->orWhereHas('project', function (Builder $p) use ($search) {
+                    $p->where('project_name', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        if ($this->statusFilter !== 'all') {
+            $projectStatusMap = [
+                'submitted' => 'pending',
+                'in_review' => 'in_review',
+                'approved' => 'approved',
+                'rejected' => 'rejected',
+            ];
+
+            if (isset($projectStatusMap[$this->statusFilter])) {
+                $query->where('review_status', $projectStatusMap[$this->statusFilter]);
+            }
+        }
+
+        if ($this->programeFilter !== 'all') {
+            $query->where('programe_id', $this->programeFilter);
+        }
+
+        if ($this->formulaireFilter !== 'all') {
+            $query->whereIn('id', DynamicFormSubmission::query()
+                ->where('dynamic_form_id', $this->formulaireFilter)
+                ->whereNotNull('project_submission_id')
+                ->select('project_submission_id'));
+        }
+
+        if ($this->responsableFilter !== 'all') {
+            if ($this->responsableFilter === 'none') {
+                $query->whereNull('reviewed_by');
+            } else {
+                $query->where('reviewed_by', $this->responsableFilter);
+            }
+        }
+
+        $this->applyCommonFilters($query);
+
+        return $query->latest();
+    }
+
+    protected function applyCommonFilters(Builder $query): void
+    {
+        if ($this->genderFilter !== 'all') {
+            $query->whereHas('candidat', function (Builder $q) {
+                $q->where('gender', $this->genderFilter);
+            });
+        }
+
+        if ($this->addressFilter !== 'all') {
+            $query->whereHas('candidat', function (Builder $q) {
+                $q->where('address', $this->addressFilter);
+            });
+        }
+
+        if ($this->dateFrom) {
+            $query->whereDate('created_at', '>=', $this->dateFrom);
+        }
+
+        if ($this->dateTo) {
+            $query->whereDate('created_at', '<=', $this->dateTo);
+        }
     }
 }
