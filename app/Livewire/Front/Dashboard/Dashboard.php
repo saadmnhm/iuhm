@@ -4,6 +4,7 @@ namespace App\Livewire\Front\Dashboard;
 
 use Livewire\Component;
 use Livewire\Attributes\Layout;
+use App\Services\CandidatEvaluationService;
 use App\Services\FormSubmissionService;
 use App\Services\ProjectEligibilityService;
 use App\Models\Candidat;
@@ -25,11 +26,13 @@ class Dashboard extends Component
     public $searchQuery = '';
     protected $formSubmissionService;
     protected $eligibilityService;
+    protected CandidatEvaluationService $evaluationService;
 
-    public function boot(FormSubmissionService $formSubmissionService, ProjectEligibilityService $eligibilityService)
+    public function boot(FormSubmissionService $formSubmissionService, ProjectEligibilityService $eligibilityService, CandidatEvaluationService $evaluationService)
     {
         $this->formSubmissionService = $formSubmissionService;
         $this->eligibilityService = $eligibilityService;
+        $this->evaluationService = $evaluationService;
     }
 
     public function mount()
@@ -230,6 +233,7 @@ class Dashboard extends Component
             'projectEligibilityStats' => $projectEligibilityStats,
             'candidateAge'            => $candidateAge,
             'menu'                    => $menu,
+            'pendingEvaluation'       => $this->evaluationService->pendingFor($this->candidat),
         ]);
     }
 }

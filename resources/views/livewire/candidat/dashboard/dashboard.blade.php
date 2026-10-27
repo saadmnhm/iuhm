@@ -30,6 +30,25 @@
         <div class="w-full sm:w-40 h-20 rounded-lg bg-gradient-to-br from-[#12345a] to-[#0b2340] opacity-95"></div>
     </div>
 
+    @if($pendingEvaluation)
+    <div class="mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl border border-amber-300 bg-amber-50 px-5 py-4 text-amber-900">
+        <div class="flex items-start gap-3">
+            <i class="ri-alert-line text-2xl text-amber-500"></i>
+            <div>
+                <p class="font-semibold">{{ $tr('Action requise : évaluation d’idée de projet', 'إجراء مطلوب: تقييم فكرة المشروع') }}</p>
+                <p class="text-sm mt-1">
+                    {{ $tr('Veuillez remplir le formulaire d’évaluation d’idée pour le projet', 'يرجى ملء استمارة تقييم فكرة مشروع') }}
+                    « {{ $pendingEvaluation['project']->project_name }} ».
+                </p>
+            </div>
+        </div>
+        <a href="{{ $pendingEvaluation['url'] }}" class="inline-flex items-center justify-center gap-2 rounded-full bg-amber-500 px-5 py-2 text-sm font-bold text-white hover:bg-amber-600 transition-colors flex-shrink-0">
+            {{ $tr('Remplir maintenant', 'املأ الآن') }}
+            <i class="ri-arrow-right-line"></i>
+        </a>
+    </div>
+    @endif
+
     {{-- APPS POUR VOUS --}}
     <h3 class="text-lg font-semibold text-gray-900 mt-10 mb-4">{{ $tr('Apps pour vous', 'التطبيقات لك') }}</h3>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
