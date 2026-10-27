@@ -85,7 +85,7 @@ return [
 
     'locale_path' => resource_path('lang'),
 
-    'supported_locales' => ['ar', 'fr'],
+    'supported_locales' => ['ar', 'fr'], 
 
     'rtl_locales' => ['ar'],
 
