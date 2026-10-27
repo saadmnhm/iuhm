@@ -90,7 +90,7 @@
                     </label>
 
                     <div class="flex items-center gap-2">
-                        @for($i = 1; $i <= 5; $i++)
+                        @foreach(range(1, 5) as $i)
                             <button type="button"
                                 wire:click="$set('reviewRating', {{ $i }})"
                                 @mouseenter="hoverStar = {{ $i }}"
@@ -102,7 +102,7 @@
 
                                 <i class="ri-star-fill text-lg"></i>
                             </button>
-                        @endfor
+                        @endforeach
 
                         <span class="text-sm text-gray-500 ms-2">
                             {{ $reviewRating ? $reviewRating.'/5' : $tr('Choisissez', 'اختر') }}

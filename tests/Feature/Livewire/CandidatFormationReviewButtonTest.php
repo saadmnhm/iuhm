@@ -2,12 +2,14 @@
 
 namespace Tests\Feature\Livewire;
 
+use App\Livewire\Front\Programe\ProjectFormationReview;
 use App\Models\Candidat;
 use App\Models\CandidatProjectAgreement;
 use App\Models\ProjectsList;
 use App\Models\ProjectsSubmission;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 class CandidatFormationReviewButtonTest extends TestCase
@@ -114,6 +116,26 @@ class CandidatFormationReviewButtonTest extends TestCase
 
         $response->assertOk();
         $response->assertDontSee('Action requise', false);
+    }
+
+    public function test_the_formation_review_page_renders_for_the_candidate(): void
+    {
+        $admin = $this->createAdmin('admin5@example.test');
+        $candidat = $this->createCandidat('candidat5@example.test');
+        $project = $this->createProject($admin, 'Projet test 5', 'projet-test-5');
+
+        ProjectsSubmission::create([
+            'candidat_id' => $candidat->id,
+            'programe_id' => $project->id,
+            'review_status' => 'in_review',
+            'require_formation_review' => true,
+        ]);
+
+        $this->actingAs($candidat, 'candidat');
+
+        Livewire::test(ProjectFormationReview::class, ['id' => $project->id])
+            ->assertOk()
+            ->assertSee('Avis de formation');
     }
 
     private function createAdmin(string $email): User
