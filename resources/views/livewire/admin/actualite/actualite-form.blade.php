@@ -24,7 +24,9 @@
     .jodit-wysiwyg table th { background: #f8fafc; font-weight: 700; }
     .jodit-status-bar { display: none !important; }
     /* ── Error toast ── */
-    #iuhm-editor-toast { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999; display: none; align-items: center; gap: 0.75rem; background: #1e293b; color: #fff; padding: 1rem 1.25rem; border-radius: 0.875rem; box-shadow: 0 8px 28px rgba(0,0,0,.3); max-width: 420px; font-size: 0.875rem; line-height: 1.45; }
+    #iuhm-editor-toast { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999; align-items: center; gap: 0.75rem; background: #1e293b; color: #fff; padding: 1rem 1.25rem; border-radius: 0.875rem; box-shadow: 0 8px 28px rgba(0,0,0,.3); max-width: 420px; font-size: 0.875rem; line-height: 1.45; visibility: hidden; }
+    #iuhm-editor-toast.visible { visibility: visible; }
+    #iuhm-editor-toast.hidden { visibility: hidden; }
     #iuhm-editor-toast svg { flex-shrink: 0; color: #f87171; }
     #iuhm-editor-toast .toast-msg { flex: 1; }
     #iuhm-editor-toast .toast-close { background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 1.2rem; line-height: 1; padding: 0 0 0 0.5rem; }
@@ -135,9 +137,13 @@ window.iuhmShowEditorError = function (msg) {
     const el = document.getElementById('iuhm-editor-toast');
     if (!el) return;
     el.querySelector('.toast-msg').textContent = msg;
-    el.style.display = 'flex';
+    el.classList.add('visible');
+    el.classList.remove('hidden');
     clearTimeout(window.__iuhmToastTimer);
-    window.__iuhmToastTimer = setTimeout(() => { el.style.display = 'none'; }, 7000);
+    window.__iuhmToastTimer = setTimeout(() => {
+        el.classList.add('hidden');
+        el.classList.remove('visible');
+    }, 7000);
 };
 
 // Livewire commit hook – catch server-side errors
@@ -163,7 +169,7 @@ document.addEventListener('livewire:init', () => {
     <div id="iuhm-editor-toast" role="alert">
         <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
         <span class="toast-msg"></span>
-        <button type="button" class="toast-close" onclick="document.getElementById('iuhm-editor-toast').style.display='none'" aria-label="Fermer">&#x2715;</button>
+        <button type="button" class="toast-close" onclick="const el = document.getElementById('iuhm-editor-toast'); if(el) { el.classList.add('hidden'); el.classList.remove('visible'); }" aria-label="Fermer">&#x2715;</button>
     </div>
     {{-- ═══════ CREATE / EDIT FORM ═══════ --}}
     <form wire:submit.prevent="save">

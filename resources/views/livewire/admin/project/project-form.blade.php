@@ -6,6 +6,10 @@
     .jodit-toolbar__box:not(:empty) { background: #f8fafc !important; border-bottom: 1px solid #e2e8f0 !important; }
     .jodit-wysiwyg { min-height: 460px !important; padding: 2rem 2.25rem !important; line-height: 1.85 !important; color: #4A5568 !important; font-family: inherit !important; font-size: 16px !important; }
     .jodit-status-bar { display: none !important; }
+    #iuhm-editor-toast { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999; align-items: center; gap: 0.75rem; background: #1e293b; color: #fff; padding: 1rem 1.25rem; border-radius: 0.875rem; box-shadow: 0 8px 28px rgba(0,0,0,.3); max-width: 420px; font-size: 0.875rem; line-height: 1.45; visibility: hidden; }
+    #iuhm-editor-toast.visible { visibility: visible; }
+    #iuhm-editor-toast.hidden { visibility: hidden; }
+    #iuhm-editor-toast svg { flex-shrink: 0; color: #f87171; }
 </style>
 
 <script>
@@ -107,9 +111,13 @@ window.iuhmShowEditorError = function (msg) {
     const el = document.getElementById('iuhm-editor-toast');
     if (!el) return;
     el.querySelector('.toast-msg').textContent = msg;
-    el.style.display = 'flex';
+    el.classList.add('visible');
+    el.classList.remove('hidden');
     clearTimeout(window.__iuhmToastTimer);
-    window.__iuhmToastTimer = setTimeout(() => { el.style.display = 'none'; }, 7000);
+    window.__iuhmToastTimer = setTimeout(() => {
+        el.classList.add('hidden');
+        el.classList.remove('visible');
+    }, 7000);
 };
 </script>
 @endpush
@@ -118,7 +126,7 @@ window.iuhmShowEditorError = function (msg) {
     <div id="iuhm-editor-toast" role="alert">
         <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
         <span class="toast-msg"></span>
-        <button type="button" class="toast-close" onclick="document.getElementById('iuhm-editor-toast').style.display='none'" aria-label="Fermer">&#x2715;</button>
+        <button type="button" class="toast-close" onclick="const el = document.getElementById('iuhm-editor-toast'); if(el) { el.classList.add('hidden'); el.classList.remove('visible'); }" aria-label="Fermer">&#x2715;</button>
     </div>
 
     <form wire:submit.prevent="save">
