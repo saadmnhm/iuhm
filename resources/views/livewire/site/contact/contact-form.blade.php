@@ -7,7 +7,7 @@
                 </svg>
             </div>
             <h3 class="text-lg font-bold text-[#0f172a] mb-2">Demande envoyée !</h3>
-            <p class="text-sm font-medium text-slate-500 max-w-xs">Nous avons bien re\u00e7u votre message et vous contacterons sous 48h ouvr\u00e9es.</p>
+            <p class="text-sm font-medium text-slate-500 max-w-xs">Nous avons bien reçu votre message et vous contacterons sous 48h ouvrées.</p>
             <button wire:click="$set('success', false)"
                     class="mt-6 rounded-xl bg-[#1e293b] hover:bg-[#0f172a] transition px-6 py-3 text-xs font-bold text-white">
                 Envoyer une autre demande
@@ -33,7 +33,7 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div class="space-y-2">
-                        <label class="block text-xs font-bold uppercase tracking-wide text-[#0f172a]">T\u00e9l\u00e9phone</label>
+                        <label class="block text-xs font-bold uppercase tracking-wide text-[#0f172a]">Téléphone</label>
                         <input type="tel" wire:model="phone" placeholder="06 00 00 00 00"
                                class="w-full rounded-xl bg-[#e9e9ee] px-5 py-4 text-sm text-[#0f172a] placeholder-[#8e8e9c] border-none focus:ring-2 focus:ring-[#10752d]">
                     </div>
@@ -44,9 +44,9 @@
                                     class="w-full appearance-none rounded-xl bg-[#e9e9ee] px-5 py-4 text-sm text-[#0f172a] border-none focus:ring-2 focus:ring-[#10752d]">
                                 <option value="">Choisir un service</option>
                                 <option value="\u00c9ducation">\u00c9ducation</option>
-                                <option value="Sant\u00e9">Sant\u00e9</option>
-                                <option value="S\u00e9curit\u00e9 Alimentaire">S\u00e9curit\u00e9 Alimentaire</option>
-                                <option value="Int\u00e9gration Sociale">Int\u00e9gration Sociale</option>
+                                <option value="Santé">Santé</option>
+                                <option value="Sécurité Alimentaire">Sécurité Alimentaire</option>
+                                <option value="Intégration Sociale">Intégration Sociale</option>
                             </select>
                             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-[#8e8e9c]">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
@@ -57,7 +57,7 @@
 
                 <div class="space-y-2">
                     <label class="block text-xs font-bold uppercase tracking-wide text-[#0f172a]">Message *</label>
-                    <textarea wire:model="message" placeholder="D\u00e9crivez votre demande..." rows="4"
+                    <textarea wire:model="message" placeholder="Décrivez votre demande..." rows="4"
                               class="w-full rounded-xl bg-[#e9e9ee] px-5 py-4 text-sm text-[#0f172a] placeholder-[#8e8e9c] border-none focus:ring-2 focus:ring-[#10752d] resize-none @error('message') ring-2 ring-rose-400 @enderror"></textarea>
                     @error('message') <p class="text-xs text-rose-500 font-medium">{{ $message }}</p> @enderror
                 </div>

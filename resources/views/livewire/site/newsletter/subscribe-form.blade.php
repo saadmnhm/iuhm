@@ -4,8 +4,8 @@
         <svg class="mx-auto size-10 text-[#82E682] mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
-        <p class="text-base font-bold text-white">Merci ! Vous \u00eates maintenant abonn\u00e9(e).</p>
-        <p class="text-sm text-slate-400 mt-1">Vous recevrez nos prochaines \u00e9ditions dans votre b\u00e2te mail.</p>
+        <p class="text-base font-bold text-white">Merci ! Vous \u00eates maintenant abonné(e).</p>
+        <p class="text-sm text-slate-400 mt-1">Vous recevrez nos prochaines éditions dans votre b\u00e2te mail.</p>
         <button wire:click="$set('success', false)"
                 class="mt-4 rounded-lg bg-[#82E682]/20 px-4 py-2 text-xs font-bold text-[#82E682] hover:bg-[#82E682]/30 transition">
             S'abonner avec un autre email
