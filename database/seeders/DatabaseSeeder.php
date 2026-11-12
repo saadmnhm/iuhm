@@ -18,7 +18,8 @@ class DatabaseSeeder extends Seeder
         User::query()->firstOrCreate(
             ['email' => 'test@example.com'],
             [
-                'name' => 'Test User',
+                'nom' => 'test',
+                'prenom' => 'admin',
                 'password' => bcrypt('password'),
             ]
         );
