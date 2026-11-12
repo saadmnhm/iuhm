@@ -2,18 +2,21 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\ResolvesMediaUrls;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class Article extends Model
 {
-    use SoftDeletes;
+    use ResolvesMediaUrls, SoftDeletes;
 
     protected $fillable = [
         'title', 'title_ar', 'slug', 'excerpt', 'content', 'image',
         'category', 'tags', 'is_published', 'published_at', 'author_id', 'views_count',
     ];
+
     protected $table = 'article';
 
     protected $casts = [
@@ -55,10 +58,88 @@ class Article extends Model
         return $this->getLocalized('content');
     }
 
+    /**
+     * Public URL of the cover image (null when no image is stored).
+     */
+    public function getImageUrlAttribute(): ?string
+    {
+        return $this->resolveMediaUrl($this->image);
+    }
+
+    /**
+     * Estimated reading time in minutes, based on the localized content.
+     */
+    public function getReadingTimeAttribute(): int
+    {
+        $words = Str::wordCount(strip_tags((string) $this->getTranslatedContent()));
+
+        return max(1, (int) ceil($words / 200));
+    }
+
+    /**
+     * Human readable category label for public pages.
+     */
+    public function getCategoryLabelAttribute(): ?string
+    {
+        if (blank($this->category)) {
+            return null;
+        }
+
+        $key = 'ui.category_'.$this->category;
+        $translated = __($key);
+
+        return $translated === $key ? Str::headline($this->category) : $translated;
+    }
+
+    /**
+     * Published articles that share a category or tags with this one.
+     * Falls back to the most recent articles so the section is never empty.
+     */
+    public function relatedArticles(int $limit = 3): Collection
+    {
+        $query = static::published()->where('id', '!=', $this->getKey());
+        $hasCriteria = false;
+
+        $query->where(function ($q) use (&$hasCriteria) {
+            if (filled($this->category)) {
+                $q->where('category', $this->category);
+                $hasCriteria = true;
+            }
+
+            foreach ((array) $this->tags as $tag) {
+                if (blank($tag)) {
+                    continue;
+                }
+
+                $q->orWhere('tags', 'like', '%'.$tag.'%');
+                $hasCriteria = true;
+            }
+        });
+
+        $related = $hasCriteria
+            ? $query->latest('published_at')->limit($limit)->get()
+            : collect();
+
+        if ($related->count() < $limit) {
+            $exclude = $related->pluck('id')->push($this->getKey())->all();
+
+            $related = $related->merge(
+                static::published()
+                    ->whereNotIn('id', $exclude)
+                    ->latest('published_at')
+                    ->limit($limit - $related->count())
+                    ->get()
+            );
+        }
+
+        return $related->take($limit)->values();
+    }
+
     public static function generateSlug(string $title): string
     {
         $slug = Str::slug($title);
-        $count = static::where('slug', 'like', $slug . '%')->count();
+        $count = static::where('slug', 'like', $slug.'%')->count();
+
         return $count ? "{$slug}-{$count}" : $slug;
     }
 }

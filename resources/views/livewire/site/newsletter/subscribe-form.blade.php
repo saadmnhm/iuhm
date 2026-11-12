@@ -8,7 +8,7 @@
         <p class="text-sm text-slate-400 mt-1">Vous recevrez nos prochaines \u00e9ditions dans votre b\u00e2te mail.</p>
         <button wire:click="$set('success', false)"
                 class="mt-4 rounded-lg bg-[#82E682]/20 px-4 py-2 text-xs font-bold text-[#82E682] hover:bg-[#82E682]/30 transition">
-            S\u2019abonner avec un autre email
+            S'abonner avec un autre email
         </button>
     </div>
 @else
@@ -20,7 +20,7 @@
             <button type="submit"
                     wire:loading.attr="disabled"
                     class="rounded-2xl bg-[#82E682] px-8 py-4 text-base font-bold text-[#083a15] hover:bg-[#6edc6e] transition-colors whitespace-nowrap shadow-lg shadow-[#82E682]/10 disabled:opacity-70 flex items-center justify-center gap-2 {{ $stack ? 'w-full' : '' }}">
-                <span wire:loading.remove wire:target="subscribe">S\u2019abonner</span>
+                <span wire:loading.remove wire:target="subscribe">S'abonner</span>
                 <span wire:loading wire:target="subscribe" class="flex items-center gap-2">
                     <svg class="size-4 animate-spin" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

@@ -40,7 +40,7 @@ class PageController extends Controller
 
     public function projects(): View
     {
-        $projects = Project::published()->ordered()->paginate(12);
+        $projects = Project::published()->ordered()->paginate(9)->withQueryString();
         $page = Page::where('slug', 'projects')->published()->first();
 
         return view('livewire.site.projects.index', compact('projects', 'page'));
@@ -49,7 +49,10 @@ class PageController extends Controller
     public function projectShow(string $slug): View
     {
         $project = Project::published()->where('slug', $slug)->firstOrFail();
-        $relatedProjects = Project::published()->where('id', '!=', $project->id)->orderBy('sort_order')->limit(3)->get();
+        $project->increment('views_count');
+        $project->refresh();
+
+        $relatedProjects = $project->relatedProjects(3);
 
         return view('livewire.site.projects.show', compact('project', 'relatedProjects'));
     }

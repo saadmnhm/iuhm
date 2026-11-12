@@ -28,8 +28,8 @@
                     <div class="relative w-[320px] sm:w-[380px] lg:w-[420px] aspect-square rounded-[2.5rem] bg-[#111827] shadow-lg shadow-slate-300/30 flex items-center justify-center p-12 overflow-hidden group">
                         <!-- Abstract icon for "L'Observateur Urbain" -->
                         <div class="absolute inset-0 bg-[#0f172a] rounded-[2.5rem]"></div>
-                        <div class="relative z-10 size-56 rounded-[2rem] bg-[#141d2f]/90 shadow-[0_5px_40px_rgb(0,0,0,0.4)] border border-slate-700/50 backdrop-blur flex items-center justify-center text-[7rem] text-[#64748b] font-serif italic group-hover:scale-105 transition-transform duration-700">
-                            ១
+                        <div class="relative z-10 size-56 rounded-[2rem] bg-[#141d2f]/90 shadow-[0_5px_40px_rgb(0,0,0,0.4)] border border-slate-700/50 backdrop-blur flex items-center justify-center text-[5rem] text-[#64748b] font-serif italic group-hover:scale-105 transition-transform duration-700">
+                            IU
                         </div>
                     </div>
                 </div>
@@ -49,10 +49,11 @@
                     Tous les articles
                 </button>
                 @foreach($categories as $category)
+                @php $catKey = 'ui.category_'.$category; $catLabel = __($catKey) === $catKey ? \Illuminate\Support\Str::headline($category) : __($catKey); @endphp
                 <button @click="setCategory('{{ $category }}')" 
                    :class="category === '{{ $category }}' ? 'bg-[#0B1528] text-white' : 'bg-[#EAECEF] text-slate-700 hover:bg-[#DEDFE2]'"
                    class="rounded-full px-5 py-2.5 text-[0.95rem] font-bold transition-all shadow-sm">
-                    {{ $category }}
+                    {{ $catLabel }}
                 </button>
                 @endforeach
             </div>
@@ -67,7 +68,7 @@
                     </div>
                     <input type="text" x-model.debounce.500ms="search" 
                         class="block w-full rounded-2xl border-none bg-[#EAECEF] py-2.5 pl-11 pr-4 text-[0.95rem] font-medium text-slate-900 placeholder:text-slate-500 focus:bg-white focus:ring-2 focus:ring-[#82E682] transition-all shadow-sm" 
-                        placeholder="Rechercher...">
+                        placeholder="{{ __('ui.search_placeholder') }}">
                 </div>
             </div>
         </div>
@@ -82,19 +83,14 @@
                 <article class="group flex flex-col bg-[#F8F9FA] rounded-[1.5rem] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                     <!-- Image -->
                     <div class="relative h-56 w-full overflow-hidden bg-slate-100 shrink-0">
-                        @if($post->page)
                         <div class="absolute top-4 left-4 z-20 rounded-full bg-[#82E682] px-3 py-1 text-[0.65rem] font-extrabold uppercase tracking-widest text-[#0a471b] shadow-sm backdrop-blur-sm">
-                            {{ $post->page->getLocalized('title') ?? 'ARTICLE' }}
+                            {{ $post->category_label ?? __('ui.nav_articles') }}
                         </div>
-                        @else
-                        <div class="absolute top-4 left-4 z-20 rounded-full bg-[#82E682] px-3 py-1 text-[0.65rem] font-extrabold uppercase tracking-widest text-[#0a471b] shadow-sm backdrop-blur-sm">
-                            ARTICLE
-                        </div>
-                        @endif
-                        
-                        <img src="{{ $post->image_url ?? 'https://images.unsplash.com/photo-1449844908441-8829872d2607?auto=format&fit=crop&w=800&q=80' }}" 
-                             alt="{{ $post->getLocalized('title') }}" 
-                             class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105">
+
+                        <x-cover-image :src="$post->image_url"
+                             :alt="$post->getLocalized('title')"
+                             class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                             icon-class="size-12" />
                     </div>
                     
                     <!-- Content -->
@@ -106,16 +102,16 @@
                             </a>
                         </h3>
                         <p class="text-[0.95rem] font-medium text-slate-500 leading-relaxed line-clamp-4 mb-8 flex-1">
-                            {{ $post->getLocalized('excerpt') ?? Str::limit(strip_tags($post->getLocalized('content') ?? ''), 150) }}
+                            {{ $post->getLocalized('excerpt') ?: Str::limit(strip_tags($post->getLocalized('content') ?? ''), 150) }}
                         </p>
                         
                         <!-- Meta Footer -->
                         <div class="flex items-center justify-between pt-6 border-t border-[#d5d7de] mt-auto">
                             <span class="text-[0.8rem] font-bold text-[#0B1528]">
-                                Par {{ $post->author?->name ?? 'Initiative Urbaine' }}
+                                {{ $post->author?->name ?? __('ui.brand_name') }}
                             </span>
                             <span class="text-[0.75rem] font-bold text-slate-400">
-                                {{ $post->published_at ? $post->published_at->format('d M Y') : '' }}
+                                {{ $post->published_at?->translatedFormat('d M Y') ?? '' }}
                             </span>
                         </div>
                     </div>

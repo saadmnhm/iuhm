@@ -62,12 +62,17 @@
                         <i class="ri-settings-3-line mr-1"></i> Paramètres IUHM
                     </a>
                     @endcanmodule
+                  
             @endif
 
             @if(request()->is('admin/media/*') || request()->is('admin/media') )
 
                 @canmodule('media')
-                                  
+                    @canmodule('statistics')
+                    <a wire:navigate href="{{ route('admin.website.analytics') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.website.analytics*') ? 'bg-[#DCFCE7]' : '' }}">
+                        <i class="ri-bar-chart-line mr-1"></i> Statistiques du site
+                    </a>
+                    @endcanmodule
                     <a wire:navigate href="{{ route('admin.article.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.article*') ? 'bg-[#DCFCE7]' : '' }}">
                         <i class="ri-article-line mr-1"></i> Articles
                     </a>

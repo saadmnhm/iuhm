@@ -2,16 +2,18 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\ResolvesMediaUrls;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use App\Models\User;
 
 class Project extends Model
 {
-    use SoftDeletes;
+    use ResolvesMediaUrls, SoftDeletes;
 
     protected $table = 'projects';
+
     protected $fillable = [
         'title',
         'title_ar',
@@ -128,10 +130,80 @@ class Project extends Model
         };
     }
 
+    protected function coverImageAttribute(): string
+    {
+        return 'featured_image';
+    }
+
+    /**
+     * Public URL of the featured image (null when no image is stored).
+     */
+    public function getFeaturedImageUrlAttribute(): ?string
+    {
+        return $this->resolveMediaUrl($this->featured_image);
+    }
+
+    public function getCoverImageUrlAttribute(): ?string
+    {
+        return $this->getFeaturedImageUrlAttribute();
+    }
+
+    /**
+     * Localized status label for public pages.
+     */
+    public function getStatusLabelLocalizedAttribute(): string
+    {
+        $key = 'ui.project_status_'.$this->status;
+        $translated = __($key);
+
+        return $translated === $key ? (string) $this->status : $translated;
+    }
+
+    /**
+     * Other published projects sharing tags or status with this one.
+     * Falls back to the most recent projects so the section is never empty.
+     */
+    public function relatedProjects(int $limit = 3): Collection
+    {
+        $query = static::published()->where('id', '!=', $this->getKey());
+        $hasCriteria = false;
+
+        $query->where(function ($q) use (&$hasCriteria) {
+            foreach ((array) $this->tags as $tag) {
+                if (blank($tag)) {
+                    continue;
+                }
+
+                $q->orWhere('tags', 'like', '%'.$tag.'%');
+                $hasCriteria = true;
+            }
+        });
+
+        $related = $hasCriteria
+            ? $query->orderByDesc('published_at')->orderByDesc('id')->limit($limit)->get()
+            : collect();
+
+        if ($related->count() < $limit) {
+            $exclude = $related->pluck('id')->push($this->getKey())->all();
+
+            $related = $related->merge(
+                static::published()
+                    ->whereNotIn('id', $exclude)
+                    ->orderByDesc('published_at')
+                    ->orderByDesc('id')
+                    ->limit($limit - $related->count())
+                    ->get()
+            );
+        }
+
+        return $related->take($limit)->values();
+    }
+
     public static function generateSlug(string $title): string
     {
         $slug = Str::slug($title);
-        $count = static::where('slug', 'like', $slug . '%')->count();
+        $count = static::where('slug', 'like', $slug.'%')->count();
+
         return $count ? "{$slug}-{$count}" : $slug;
     }
 }

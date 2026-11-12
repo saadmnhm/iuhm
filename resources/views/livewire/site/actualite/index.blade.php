@@ -23,10 +23,10 @@
                     
                     <div class="mt-10 flex flex-wrap gap-4">
                         <span class="inline-flex rounded-full bg-[#82E682] px-5 py-2.5 text-[0.8rem] font-bold text-[#0a471b] tracking-wide">
-                            Quartier Vivant
+                            {{ __('ui.nav_news') }}
                         </span>
                         <span class="inline-flex rounded-full bg-[#E2E4E9] px-5 py-2.5 text-[0.8rem] font-bold text-[#475569] tracking-wide">
-                            Impact 2024
+                            {{ $posts->total() }} {{ __('ui.nav_news') }}
                         </span>
                     </div>
                 </div>
@@ -39,8 +39,8 @@
                     
                     <!-- Floating Stats Card -->
                     <div class="absolute -bottom-8 left-8 rounded-3xl bg-white/90 backdrop-blur-md px-8 py-5 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-white">
-                        <div class="text-[1.75rem] font-extrabold text-[#0f172a] leading-none mb-1">12+</div>
-                        <div class="text-[0.65rem] font-bold uppercase tracking-wider text-slate-500">Événements ce mois</div>
+                        <div class="text-[1.75rem] font-extrabold text-[#0f172a] leading-none mb-1">{{ $posts->total() }}</div>
+                        <div class="text-[0.65rem] font-bold uppercase tracking-wider text-slate-500">{{ __('ui.nav_news') }}</div>
                     </div>
                 </div>
             </div>
@@ -67,23 +67,41 @@
                     </div>
                     <input type="text" x-model.debounce.500ms="search"
                         class="block w-full rounded-2xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-4 text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-[#82E682] transition-all shadow-sm"
-                        placeholder="Rechercher...">
+                        placeholder="{{ __('ui.search_placeholder') }}">
                 </div>
             </div>
+
+            <!-- Category filters -->
+            @if($categories->isNotEmpty())
+            <div class="mb-10 flex flex-wrap items-center gap-2">
+                <a href="{{ route('actualite.index', ['search' => $search ?: null]) }}"
+                   class="rounded-full px-5 py-2.5 text-[0.9rem] font-bold transition-all shadow-sm {{ blank($pageSlug) ? 'bg-[#0B1528] text-white' : 'bg-[#EAECEF] text-slate-700 hover:bg-[#DEDFE2]' }}">
+                    {{ __('ui.all_posts') }}
+                </a>
+                @foreach($categories as $category)
+                    @php $catKey = 'ui.category_'.$category; $label = __($catKey) === $catKey ? \Illuminate\Support\Str::headline($category) : __($catKey); @endphp
+                    <a href="{{ route('actualite.index', ['category' => $category, 'search' => $search ?: null]) }}"
+                       class="rounded-full px-5 py-2.5 text-[0.9rem] font-bold transition-all shadow-sm {{ $pageSlug === $category ? 'bg-[#0B1528] text-white' : 'bg-[#EAECEF] text-slate-700 hover:bg-[#DEDFE2]' }}">
+                        {{ $label }}
+                    </a>
+                @endforeach
+            </div>
+            @endif
 
             <!-- News grid -->
             <div id="news-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" :class="{ 'opacity-50 pointer-events-none': loading }">
                 @forelse($posts as $post)
                 <article class="group relative flex flex-col bg-[#F8F9FA] rounded-[2rem] overflow-hidden transition hover:shadow-lg hover:shadow-slate-200/50 border border-slate-100">
                     <div class="relative h-52 w-full overflow-hidden bg-slate-100 shrink-0">
-                        @if($post->page)
+                        @if($post->category_label)
                         <div class="absolute top-4 left-4 z-10 rounded-full bg-[#82E682] px-3 py-1 text-[0.65rem] font-extrabold uppercase tracking-widest text-[#0a471b] shadow-sm">
-                            {{ $post->page->getLocalized('title') }}
+                            {{ $post->category_label }}
                         </div>
                         @endif
-                        <img src="{{ $post->image_url ?? 'https://images.unsplash.com/photo-1599839619722-39751411ea63?auto=format&fit=crop&w=800&q=80' }}"
-                             alt="{{ $post->getLocalized('title') }}"
-                             class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105">
+                        <x-cover-image :src="$post->image_url"
+                                       :alt="$post->getLocalized('title')"
+                                       class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                       icon-class="size-12" />
                     </div>
                     <div class="flex flex-col flex-1 p-8">
                         <h3 class="text-[1.15rem] font-bold text-[#0f172a] leading-tight mb-3 group-hover:text-[#10752d] transition-colors line-clamp-2">
@@ -93,11 +111,11 @@
                             </a>
                         </h3>
                         <p class="text-sm text-slate-500 leading-relaxed line-clamp-3 mb-6 flex-1">
-                            {{ $post->getLocalized('excerpt') ?: Str::limit(strip_tags($post->getLocalized('content')), 130) }}
+                            {{ $post->getLocalized('excerpt') ?: \Illuminate\Support\Str::limit(strip_tags($post->getLocalized('content') ?? ''), 130) }}
                         </p>
                         <div class="flex items-center justify-between pt-5 border-t border-slate-200 mt-auto">
-                            <span class="text-[0.78rem] font-bold text-slate-500">{{ $post->author?->name ?? 'Initiative Urbaine' }}</span>
-                            <span class="text-[0.75rem] text-slate-400">{{ $post->published_at?->format('d M Y') ?? '' }}</span>
+                            <span class="text-[0.78rem] font-bold text-slate-500">{{ $post->author?->name ?? __('ui.brand_name') }}</span>
+                            <span class="text-[0.75rem] text-slate-400">{{ $post->published_at?->translatedFormat('d M Y') ?? '' }}</span>
                         </div>
                     </div>
                 </article>
@@ -135,8 +153,9 @@
 
                     <div class="space-y-4">
                         @forelse($deliverables as $index => $deliverable)
-                        <a href="{{ $deliverable->file_url ?? '#' }}"
-                           {{ $deliverable->file_url ? 'target="_blank" rel="noopener"' : '' }}
+                        @php $deliverableUrl = $deliverable->file_download_url; @endphp
+                        <a href="{{ $deliverableUrl ?? route('resources.index') }}"
+                           {{ $deliverableUrl ? 'target="_blank" rel="noopener"' : '' }}
                            class="group flex items-center gap-6 p-5 sm:p-6 rounded-[2rem] bg-[#F6F7F9] transition hover:bg-[#F0F1F4]">
                             <div class="flex flex-col items-center justify-center w-[4.5rem] h-[4.5rem] rounded-full shrink-0
                                         {{ $index === 0 ? 'bg-[#82E682] shadow-sm' : 'bg-[#EAECEF] border border-slate-200' }}">
@@ -153,7 +172,7 @@
                                     @endif
                                 </div>
                                 <h4 class="text-base font-bold text-[#0f172a] mb-1 group-hover:text-[#10752d] transition line-clamp-1">
-                                    {{ $deliverable->title }}
+                                    {{ $deliverable->getLocalized('title') }}
                                 </h4>
                                 <div class="flex items-center gap-4 text-[0.78rem] font-bold text-slate-400">
                                     @if($deliverable->file_type)
@@ -187,64 +206,39 @@
 
                 <!-- Right: Sidebar Cards -->
                 <div class="flex flex-col gap-6">
-                    <!-- Service Updates Card -->
+                    <!-- Categories Card -->
                     <div class="rounded-2xl p-8 sm:p-10 bg-[#0c132b] text-white shadow-xl shadow-slate-300/40">
-                        <h3 class="text-[1.35rem] font-medium mb-8">Mises à jour des Services</h3>
-                        
-                        <div class="space-y-6">
-                            <!-- Update 1 -->
-                            <div class="flex gap-4">
-                                <div class="shrink-0 mt-0.5">
-                                    <svg class="w-5 h-5 text-[#86e288]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                </div>
-                                <div>
-                                    <h4 class="text-sm font-bold mb-1">Espace Multimédia</h4>
-                                    <p class="text-xs text-white/70 font-medium leading-relaxed">Nouveaux horaires : Ouvert jusqu'à 20h les mardis et jeudis.</p>
-                                </div>
-                            </div>
-                            
-                            <!-- Update 2 -->
-                            <div class="flex gap-4">
-                                <div class="shrink-0 mt-0.5">
-                                    <svg class="w-5 h-5 text-[#86e288]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                </div>
-                                <div>
-                                    <h4 class="text-sm font-bold mb-1">Programme Jeunesse</h4>
-                                    <p class="text-xs text-white/70 font-medium leading-relaxed">Les inscriptions pour les camps de printemps sont maintenant ouvertes.</p>
-                                </div>
-                            </div>
+                        <h3 class="text-[1.35rem] font-medium mb-8">{{ __('ui.categories') }}</h3>
 
-                            <!-- Update 3 -->
-                            <div class="flex gap-4">
-                                <div class="shrink-0 mt-0.5">
-                                    <svg class="w-5 h-5 text-[#82E682]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                                </div>
-                                <div>
-                                    <h4 class="text-sm font-bold mb-1">Bureau Administratif</h4>
-                                    <p class="text-xs text-white/70 font-medium leading-relaxed">Fermeture exceptionnelle ce vendredi pour formation interne.</p>
-                                </div>
-                            </div>
+                        <div class="flex flex-wrap gap-3">
+                            @forelse($categories as $category)
+                                @php $catKey = 'ui.category_'.$category; $catLabel = __($catKey) === $catKey ? \Illuminate\Support\Str::headline($category) : __($catKey); @endphp
+                                <a href="{{ route('actualite.index', ['category' => $category]) }}"
+                                   class="rounded-full border border-white/20 bg-white/5 px-4 py-2 text-xs font-bold text-white transition hover:bg-white/10">
+                                    {{ $catLabel }}
+                                </a>
+                            @empty
+                                <p class="text-sm text-white/70">{{ __('ui.no_related_content') }}</p>
+                            @endforelse
                         </div>
 
-                        <button class="w-full mt-10 rounded-full border border-white/20 bg-white/5 py-4 text-xs font-bold text-white transition hover:bg-white/10 text-center">
-                            Consulter l'annuaire complet
-                        </button>
+                        <a href="{{ route('actualite.index') }}" class="mt-8 inline-flex items-center gap-2 text-xs font-bold text-[#86e288] hover:text-white transition">
+                            {{ __('ui.nav_news_short') }}
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </a>
                     </div>
 
-                    <!-- Impact Card -->
+                    <!-- Latest News Card -->
                     <div class="rounded-2xl p-8 sm:p-10 bg-[#9BFA9B] shadow-xl shadow-slate-300/40">
-                        <h3 class="text-xl font-medium text-[#0f172a] mb-2">Notre Impact</h3>
-                        <p class="text-sm font-medium text-[#10752d] leading-relaxed mb-6">Chaque action renforce les liens de notre tissu social.</p>
-                        
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="bg-[#B2FBB2] rounded-xl p-4">
-                                <div class="text-[1.35rem] leading-none mb-1 font-bold text-[#0f172a]">2.4k</div>
-                                <div class="text-[0.6rem] font-extrabold uppercase tracking-widest text-[#10752d]">MEMBRES ACTIFS</div>
-                            </div>
-                            <div class="bg-[#B2FBB2] rounded-xl p-4">
-                                <div class="text-[1.35rem] leading-none mb-1 font-bold text-[#0f172a]">150</div>
-                                <div class="text-[0.6rem] font-extrabold uppercase tracking-widest text-[#10752d]">ATELIERS / AN</div>
-                            </div>
+                        <h3 class="text-xl font-medium text-[#0f172a] mb-6">{{ __('ui.latest_news') }}</h3>
+
+                        <div class="space-y-4">
+                            @foreach($featuredPosts->take(3) as $latest)
+                                <a href="{{ route('actualite.show', $latest->slug) }}" class="block group">
+                                    <span class="text-[0.6rem] font-extrabold uppercase tracking-widest text-[#10752d]">#{{ $latest->category_label ?? __('ui.nav_news') }}</span>
+                                    <h4 class="text-sm font-bold text-[#0f172a] leading-snug group-hover:text-[#10752d] transition line-clamp-2">{{ $latest->getLocalized('title') }}</h4>
+                                </a>
+                            @endforeach
                         </div>
                     </div>
                 </div>

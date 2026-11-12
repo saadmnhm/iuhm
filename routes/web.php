@@ -86,7 +86,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/rh/{id}/print/attestation', [PrintController::class, 'rhAttestation'])->name('rh.print.attestation')->middleware('module:rh');
         Route::get('/rh/{id}/print/fiche', [PrintController::class, 'rhFiche'])->name('rh.print.fiche')->middleware('module:rh');
         Route::get('/rh/print/list', [PrintController::class, 'rhList'])->name('rh.print.list')->middleware('module:rh');
-
+        
         // Finance Module
         Route::get('/finance', \App\Livewire\Admin\Finance\FinanceDashboard::class)->name('finance.index')->middleware('module:finance');
         Route::get('/finance/transaction/create', \App\Livewire\Admin\Finance\TransactionCreate::class)->name('finance.create')->middleware('module:finance');
@@ -95,7 +95,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/finance/charge/create', \App\Livewire\Admin\Finance\ChargeCreate::class)->name('finance.charges.create')->middleware('module:finance');
         Route::get('/finance/transaction/{id}/print', [PrintController::class, 'financeTransaction'])->name('finance.print')->middleware('module:finance');
         Route::get('/finance/report', [PrintController::class, 'financeReport'])->name('finance.report')->middleware('module:finance');
-
+        
         // Material Module
         Route::get('/material', \App\Livewire\Admin\Material\MaterialDashboard::class)->name('material.index')->middleware('module:material');
         Route::get('/material/create', \App\Livewire\Admin\Material\MaterialCreate::class)->name('material.create')->middleware('module:material');
@@ -108,8 +108,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/all-submissions', \App\Livewire\Admin\Submissions\AllSubmissions::class)->name('all.submissions')->middleware('module:all_submissions');
         Route::get('/console/association-parameters', \App\Livewire\Admin\Settings\AssociationParameters::class)->name('association.parameters')->middleware('module:association_parameters');
         
-
+        
         // media
+        Route::get('/media/website-analytics', \App\Livewire\Admin\Statistics\WebsiteAnalytics::class)->name('website.analytics')->middleware('module:statistics');
         Route::get('/media/article', \App\Livewire\Admin\Article\ArticleManagement::class)->name('article.index')->middleware('module:article');
         Route::get('/media/article/{id}', \App\Livewire\Admin\Article\ArticleForm::class)->name('article.form')->middleware('module:article');
         Route::get('/media/actualite', \App\Livewire\Admin\Actualite\ActualiteManagement::class)->name('actualite.index')->middleware('module:actualite');

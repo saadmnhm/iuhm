@@ -1,12 +1,26 @@
+@php
+    $headerSettings = $siteSettings ?? [];
+    $headerBrandName = $headerSettings['association_name'] ?? __('ui.brand_name');
+    $headerLogo = $headerSettings['association_logo'] ?? null;
+
+    if (filled($headerLogo) && ! \Illuminate\Support\Str::startsWith($headerLogo, ['http://', 'https://', '//'])) {
+        $headerLogo = asset(ltrim($headerLogo, '/'));
+    }
+@endphp
+
 <header x-data="{ open: false }" class="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
     <div class="iu-container">
         <div class="flex h-20 items-center justify-between gap-4">
-            <a href="{{ route('home') }}" class="inline-flex items-center gap-2 text-lg font-semibold text-[#163260]">
-                <svg class="size-5 text-[#214f95]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path d="M4 11.5 12 4l8 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-                    <path d="M7.5 10.5V20h9v-9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-                <span>{{ __('ui.brand_name') }}</span>
+            <a href="{{ route('home') }}" class="inline-flex w-[180px] items-center gap-2 text-lg font-semibold text-[#163260]">
+                @if(filled($headerLogo))
+                    <img src="{{ $headerLogo }}" alt="{{ $headerBrandName }}" class="h-10 w-auto max-w-[8rem] object-contain">
+                @else
+                    <svg class="size-5 text-[#214f95]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M4 11.5 12 4l8 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M7.5 10.5V20h9v-9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                @endif
+                <img src="{{asset('assets/iuhm_pysage.png')}}" alt="IUHM Pysage">
             </a>
 
             <nav class="hidden items-center gap-6 lg:flex">
@@ -161,7 +175,7 @@
             </nav>
 
             <div class="flex items-center gap-2 sm:gap-3">
-                @include('livewire..site.partials.language-switcher')
+                @include('livewire.site.partials.language-switcher')
 
                 <a
                     href="https://zettat.iuhm.org/user/login" target="_blank" rel="noopener noreferrer"

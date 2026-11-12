@@ -2,23 +2,49 @@
 
 namespace App\Livewire\Admin\Project;
 
-use App\Models\Project;
 use App\Models\AdminActivityLog;
+use App\Models\Project;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Auth;
 
 class ProjectForm extends Component
 {
     use WithFileUploads;
 
     public $projectId = null;
+
     public bool $editMode = false;
 
-    public $title, $title_ar, $short_description, $short_description_ar, $description, $description_ar;
-    public $featured_image, $newImage;
-    public $slug, $status, $location, $partner, $tags_input, $external_link, $sort_order;
+    public $title;
+
+    public $title_ar;
+
+    public $short_description;
+
+    public $short_description_ar;
+
+    public $description;
+
+    public $description_ar;
+
+    public $featured_image;
+
+    public $newImage;
+
+    public $slug;
+
+    public $status;
+
+    public $location;
+
+    public $partner;
+
+    public $tags_input;
+
+    public $external_link;
+
+    public $sort_order;
+
     public $is_published = false;
 
     protected $paginationTheme = 'tailwind';
@@ -26,22 +52,22 @@ class ProjectForm extends Component
     protected function rules()
     {
         return [
-            'title'               => 'required|string|max:255',
-            'title_ar'            => 'nullable|string|max:255',
-            'short_description'   => 'nullable|string|max:500',
-            'short_description_ar'=> 'nullable|string|max:500',
-            'description'         => 'required|string',
-            'description_ar'      => 'nullable|string',
-            'slug'                => 'nullable|string|max:255|unique:projects,slug,' . $this->projectId,
-            'featured_image'      => 'nullable|string|max:255',
-            'newImage'            => 'nullable|file|mimes:jpg,jpeg,png,webp|max:2048',
-            'status'              => 'nullable|string|max:50',
-            'location'            => 'nullable|string|max:255',
-            'partner'             => 'nullable|string|max:255',
-            'tags_input'          => 'nullable|string|max:500',
-            'external_link'       => 'nullable|url|max:255',
-            'sort_order'          => 'nullable|integer',
-            'is_published'        => 'boolean',
+            'title' => 'required|string|max:255',
+            'title_ar' => 'nullable|string|max:255',
+            'short_description' => 'nullable|string|max:500',
+            'short_description_ar' => 'nullable|string|max:500',
+            'description' => 'required|string',
+            'description_ar' => 'nullable|string',
+            'slug' => 'nullable|string|max:255|unique:projects,slug,'.$this->projectId,
+            'featured_image' => 'nullable|string|max:255',
+            'newImage' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'status' => 'nullable|string|max:50',
+            'location' => 'nullable|string|max:255',
+            'partner' => 'nullable|string|max:255',
+            'tags_input' => 'nullable|string|max:500',
+            'external_link' => 'nullable|url|max:255',
+            'sort_order' => 'nullable|integer',
+            'is_published' => 'boolean',
         ];
     }
 
@@ -93,44 +119,42 @@ class ProjectForm extends Component
 
         $this->validate();
 
+        $project = $this->projectId ? Project::find($this->projectId) : null;
+
         $data = [
-            'title'               => ['fr' => $this->title, 'ar' => $this->title_ar ?: null],
-            'description'         => ['fr' => $this->description, 'ar' => $this->description_ar ?: null],
-            'short_description'   => ['fr' => $this->short_description, 'ar' => $this->short_description_ar ?: null],
-            'slug'                => $this->slug ?: Project::generateSlug($this->title),
-            'featured_image'      => $this->featured_image ?: null,
-            'status'              => $this->status ?: 'planned',
-            'location'            => $this->location ?: null,
-            'partner'             => $this->partner ?: null,
-            'tags'                => $this->tags_input ? array_map('trim', explode(',', $this->tags_input)) : null,
-            'external_link'       => $this->external_link ?: null,
-            'sort_order'          => $this->sort_order ?: 0,
-            'is_published'        => $this->is_published,
+            'title' => ['fr' => $this->title, 'ar' => $this->title_ar ?: null],
+            'description' => ['fr' => $this->description, 'ar' => $this->description_ar ?: null],
+            'short_description' => ['fr' => $this->short_description, 'ar' => $this->short_description_ar ?: null],
+            'slug' => $this->slug ?: Project::generateSlug($this->title),
+            'featured_image' => $this->featured_image ?: null,
+            'status' => $this->status ?: 'planned',
+            'location' => $this->location ?: null,
+            'partner' => $this->partner ?: null,
+            'tags' => $this->tags_input ? array_map('trim', explode(',', $this->tags_input)) : null,
+            'external_link' => $this->external_link ?: null,
+            'sort_order' => $this->sort_order ?: 0,
+            'is_published' => $this->is_published,
         ];
 
-        if ($this->is_published && empty($data['published_at'] ?? null)) {
-            $data['published_at'] = now();
-        } elseif (!$this->is_published) {
-            $data['published_at'] = null;
-        }
+        $data['published_at'] = $this->is_published
+            ? ($project?->published_at ?? now())
+            : null;
 
         if ($this->newImage) {
-            $filename = uniqid('project_') . '.' . $this->newImage->getClientOriginalExtension();
+            $filename = uniqid('project_').'.'.$this->newImage->getClientOriginalExtension();
             $this->newImage->storeAs('project', $filename, 'uploads');
-            $data['featured_image'] = 'uploads/project/' . $filename;
+            $data['featured_image'] = 'uploads/project/'.$filename;
+
+            $project?->deleteStoredMedia($project->featured_image);
         }
 
         try {
-            // The project ID is the source of truth: if it is present, update.
-            // Never rely solely on editMode, which can be lost on a stale page.
-            $project = $this->projectId ? Project::find($this->projectId) : null;
-
             if ($project) {
                 $project->update($data);
                 $this->editMode = true;
                 $this->projectId = $project->id;
 
-                $title = $project->getLocalized('title') ?: ('Projet #' . $project->id);
+                $title = $project->getLocalized('title') ?: ('Projet #'.$project->id);
                 AdminActivityLog::log('project_updated', "Updated project: {$title}", Project::class, $project->id);
 
                 if ($this->newImage) {
@@ -141,7 +165,7 @@ class ProjectForm extends Component
                 $this->dispatch('alert', [
                     'type' => 'success',
                     'title' => 'Succès',
-                    'message' => 'Projet mis à jour avec succès!'
+                    'message' => 'Projet mis à jour avec succès!',
                 ]);
 
                 return;
@@ -150,7 +174,7 @@ class ProjectForm extends Component
             $data['author_id'] = auth()->id();
             $project = Project::create($data);
 
-            $title = $project->getLocalized('title') ?: ('Projet #' . $project->id);
+            $title = $project->getLocalized('title') ?: ('Projet #'.$project->id);
             AdminActivityLog::log('project_created', "Created project: {$title}", Project::class, $project->id);
 
             // Redirect to the edit URL so a reload or later save updates this
@@ -165,7 +189,7 @@ class ProjectForm extends Component
             $this->dispatch('alert', [
                 'type' => 'error',
                 'title' => 'Erreur',
-                'message' => 'Une erreur est survenue lors de l\'enregistrement.'
+                'message' => 'Une erreur est survenue lors de l\'enregistrement.',
             ]);
         }
     }
@@ -175,10 +199,30 @@ class ProjectForm extends Component
         return redirect()->route('admin.project.index');
     }
 
+    public function removeImage(): void
+    {
+        $project = $this->projectId ? Project::find($this->projectId) : null;
+
+        if ($project && filled($project->featured_image)) {
+            $project->deleteStoredMedia($project->featured_image);
+            $project->update(['featured_image' => null]);
+        }
+
+        $this->featured_image = null;
+        $this->newImage = null;
+        $this->resetValidation('newImage');
+
+        $this->dispatch('alert', [
+            'type' => 'success',
+            'title' => 'Succès',
+            'message' => 'Image de couverture supprimée.',
+        ]);
+    }
+
     public function render()
     {
         return view('livewire.admin.project.project-form', [
-            
-        ])->layout('layouts.admin', ['header' => "Gestion des Projets"]);
+
+        ])->layout('layouts.admin', ['header' => 'Gestion des Projets']);
     }
 }

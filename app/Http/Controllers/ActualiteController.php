@@ -13,7 +13,6 @@ class ActualiteController extends Controller
     {
         $search = trim((string) $request->query('search', ''));
         $category = trim((string) $request->query('category', ''));
-        $page = (int) $request->query('page', 1);
 
         $query = Actualite::published()->latest('published_at');
 
@@ -30,7 +29,7 @@ class ActualiteController extends Controller
             $query->where('category', $category);
         }
 
-        $posts = $query->paginate(9, ['*'], 'page', $page);
+        $posts = $query->paginate(9)->withQueryString();
         $featuredPosts = Actualite::published()->latest('published_at')->limit(6)->get();
         $deliverables = Publication::published()->orderByDesc('downloads_count')->limit(4)->get();
         $categories = Actualite::published()->distinct()->pluck('category')->filter()->values();
@@ -47,12 +46,16 @@ class ActualiteController extends Controller
 
     public function show(string $slug): View
     {
-        $post = Actualite::where('slug', $slug)->published()->firstOrFail();
+        $post = Actualite::with('author')->where('slug', $slug)->published()->firstOrFail();
         $post->increment('views_count');
-        $post->refresh();
+        $post->refresh()->load('author');
 
-        $relatedPosts = Actualite::published()->where('id', '!=', $post->id)->latest('published_at')->limit(3)->get();
+        $relatedPosts = $post->relatedActualites(3);
 
-        return view('livewire.site.actualite.show', compact('post', 'relatedPosts'));
+        return view('livewire.site.actualite.show', [
+            'post' => $post,
+            'relatedPosts' => $relatedPosts,
+            'type' => 'actualite',
+        ]);
     }
 }

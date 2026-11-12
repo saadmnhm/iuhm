@@ -10,8 +10,11 @@ class NavigationItem extends Model
     use SoftDeletes;
 
     public const TYPE_PAGE_LINK = 'page_link';
+
     public const TYPE_EXTERNAL_LINK = 'external_link';
+
     public const TYPE_DROPDOWN = 'dropdown';
+
     public const TYPE_DIVIDER = 'divider';
 
     protected $fillable = [
@@ -72,7 +75,8 @@ class NavigationItem extends Model
             return $this->page->slug ? "/{$this->page->slug}" : '/';
         }
 
-        return $this->url ?? '#';
+        // Read the raw value: $this->url would re-enter this accessor.
+        return (string) ($this->attributes['url'] ?? '#');
     }
 
     public function getHasChildrenAttribute(): bool

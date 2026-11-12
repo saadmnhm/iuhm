@@ -2,15 +2,18 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\View;
-use function Livewire\on;
-use App\Models\ProjectsList;
 use App\Models\Address;
+use App\Models\AssociationParameter;
 use App\Models\NavigationItem;
 use App\Models\Page;
 use App\Models\Project;
-use App\Models\Section;
+use App\Models\ProjectsList;
+use App\Models\Role;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
+
+use function Livewire\on;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,9 +32,12 @@ class AppServiceProvider extends ServiceProvider
     {
         // @canModule('module_name') ... @endCanModule
         // Permissions are stored in role_permissions table. super_admin always has full access.
-        \Illuminate\Support\Facades\Blade::if('canmodule', function (string $module) {
-            if (!auth()->check()) return false;
-            return \App\Models\Role::canAccess(auth()->user()->role, $module);
+        Blade::if('canmodule', function (string $module) {
+            if (! auth()->check()) {
+                return false;
+            }
+
+            return Role::canAccess(auth()->user()->role, $module);
         });
 
         // Set locale from session or default to 'fr'
@@ -123,6 +129,43 @@ class AppServiceProvider extends ServiceProvider
                 'navigation' => $navigation,
                 'navigationPages' => $navigationPages,
                 'projects' => Project::published()->orderBy('sort_order')->orderBy('id', 'desc')->limit(20)->get(),
+                'siteSettings' => (function () {
+                    try {
+                        return AssociationParameter::query()
+                            ->whereNotNull('value')
+                            ->where('value', '!=', '')
+                            ->pluck('value', 'key')
+                            ->all();
+                    } catch (\Throwable) {
+                        return [];
+                    }
+                })(),
+                'footerNavLinks' => collect($navigation)
+                    ->filter(fn ($item) => ! in_array($item['type'], ['divider', 'dropdown'], true) && filled($item['url'] ?? null))
+                    ->map(fn ($item) => [
+                        'label' => app()->getLocale() === 'ar' && filled($item['label_ar'] ?? null)
+                            ? $item['label_ar']
+                            : $item['label'],
+                        'url' => $item['url'],
+                    ])
+                    ->values()
+                    ->all(),
+                'footerPages' => (function () {
+                    try {
+                        return Page::published()
+                            ->ordered()
+                            ->get(['slug', 'title'])
+                            ->map(fn (Page $page) => [
+                                'label' => $page->getLocalized('title'),
+                                'url' => url($page->slug),
+                            ])
+                            ->filter(fn ($page) => filled($page['label']))
+                            ->values()
+                            ->all();
+                    } catch (\Throwable) {
+                        return [];
+                    }
+                })(),
             ]);
         });
 

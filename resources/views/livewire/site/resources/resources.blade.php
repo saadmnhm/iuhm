@@ -50,8 +50,8 @@
                         @if($featuredDeliverable->description)
                         <p class="mt-4 text-lg text-white/70">{{ Str::limit($featuredDeliverable->description, 200) }}</p>
                         @endif
-                        @if($featuredDeliverable->file_url)
-                        <a href="{{ $featuredDeliverable->file_url }}" target="_blank" rel="noopener"
+                        @if($featuredDeliverable->file_download_url)
+                        <a href="{{ $featuredDeliverable->file_download_url }}" target="_blank" rel="noopener"
                            class="mt-8 inline-flex items-center gap-2 rounded-full bg-[#127027] px-6 py-3 font-semibold text-white transition hover:bg-[#0f5a1f]">
                             <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v7.586l2.293-2.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L9 11.586V4a1 1 0 011-1zM5 15a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z" clip-rule="evenodd" />
@@ -85,8 +85,8 @@
                                     @if($doc->downloads_count) • {{ $doc->downloads_count }} téléch. @endif
                                 </p>
                             </div>
-                            @if($doc->file_url)
-                            <a href="{{ $doc->file_url }}" target="_blank" rel="noopener" class="shrink-0 text-slate-400 group-hover:text-[#0e7025] transition">
+                            @if($doc->file_download_url)
+                            <a href="{{ $doc->file_download_url }}" target="_blank" rel="noopener" class="shrink-0 text-slate-400 group-hover:text-[#0e7025] transition">
                                 <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                             </a>
                             @endif
@@ -145,8 +145,8 @@
                         @if($doc->description)
                         <p class="text-sm text-slate-600 leading-relaxed line-clamp-3 flex-1">{{ $doc->description }}</p>
                         @endif
-                        @if($doc->file_url)
-                        <a href="{{ $doc->file_url }}" target="_blank" rel="noopener"
+                        @if($doc->file_download_url)
+                        <a href="{{ $doc->file_download_url }}" target="_blank" rel="noopener"
                            class="mt-4 inline-flex items-center gap-1.5 text-xs font-bold text-[#0e7025] hover:text-[#0a4d1a] transition">
                             <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                             Télécharger

@@ -9,6 +9,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <title>@yield('title', config('app.name'))</title>
+        <meta name="description" content="@yield('meta_description', __('ui.footer_tagline'))">
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,7 +21,7 @@
         @livewireStyles
     </head>
     <body class="site-shell">
-        <div class="relative min-h-screen">
+        <div id="top" class="relative min-h-screen">
             @include('livewire.site.partials.header')
 
             <main class="pb-16">
@@ -28,7 +29,7 @@
                 @yield('content')
             </main>
 
-            @include('.livewire.site.partials.footer')
+            @include('livewire.site.partials.footer')
         </div>
 
         @stack('modals')

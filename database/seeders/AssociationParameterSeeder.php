@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\AssociationParameter;
+use Illuminate\Database\Seeder;
 
 class AssociationParameterSeeder extends Seeder
 {
@@ -13,7 +13,7 @@ class AssociationParameterSeeder extends Seeder
             // General
             ['category' => 'general', 'key' => 'association_name',       'label' => 'Nom de l\'association',        'type' => 'text',     'sort_order' => 1],
             ['category' => 'general', 'key' => 'association_acronym',    'label' => 'Acronyme',                     'type' => 'text',     'sort_order' => 2],
-            ['category' => 'general', 'key' => 'association_description','label' => 'Description',                  'type' => 'textarea', 'sort_order' => 3],
+            ['category' => 'general', 'key' => 'association_description', 'label' => 'Description',                  'type' => 'textarea', 'sort_order' => 3],
             ['category' => 'general', 'key' => 'association_logo',       'label' => 'Logo URL',                     'type' => 'url',      'sort_order' => 4],
             ['category' => 'general', 'key' => 'association_founded',    'label' => 'Année de création',            'type' => 'number',   'sort_order' => 5],
             ['category' => 'general', 'key' => 'association_address',    'label' => 'Adresse du siège',             'type' => 'textarea', 'sort_order' => 6],
@@ -21,6 +21,8 @@ class AssociationParameterSeeder extends Seeder
             ['category' => 'general', 'key' => 'association_rc',         'label' => 'Registre de Commerce (RC)',    'type' => 'text',     'sort_order' => 8],
             ['category' => 'general', 'key' => 'association_if',         'label' => 'Identifiant Fiscal (IF)',      'type' => 'text',     'sort_order' => 9],
             ['category' => 'general', 'key' => 'association_ice',        'label' => 'ICE',                          'type' => 'text',     'sort_order' => 10],
+            ['category' => 'general', 'key' => 'footer_description',     'label' => 'Description du pied de page',  'type' => 'textarea', 'sort_order' => 11],
+            ['category' => 'general', 'key' => 'footer_copyright',       'label' => 'Texte de copyright',           'type' => 'text',     'sort_order' => 12],
 
             // Contact
             ['category' => 'contact', 'key' => 'contact_email',         'label' => 'Email principal',              'type' => 'email',    'sort_order' => 1],
@@ -31,6 +33,7 @@ class AssociationParameterSeeder extends Seeder
             ['category' => 'contact', 'key' => 'contact_instagram',     'label' => 'Instagram',                    'type' => 'url',      'sort_order' => 6],
             ['category' => 'contact', 'key' => 'contact_linkedin',      'label' => 'LinkedIn',                     'type' => 'url',      'sort_order' => 7],
             ['category' => 'contact', 'key' => 'contact_youtube',       'label' => 'YouTube',                      'type' => 'url',      'sort_order' => 8],
+            ['category' => 'contact', 'key' => 'contact_x',             'label' => 'X (Twitter)',                  'type' => 'url',      'sort_order' => 9],
 
             // Finance
             ['category' => 'finance', 'key' => 'finance_bank',          'label' => 'Banque',                       'type' => 'text',     'sort_order' => 1],

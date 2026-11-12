@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\ResolvesMediaUrls;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 class Page extends Model
 {
-    use SoftDeletes;
+    use ResolvesMediaUrls, SoftDeletes;
 
     protected $fillable = [
         'title',
@@ -29,10 +30,35 @@ class Page extends Model
     ];
 
     protected $casts = [
+        'title' => 'array',
+        'excerpt' => 'array',
+        'content' => 'array',
+        'hero_image' => 'string',
         'is_published' => 'boolean',
         'published_at' => 'datetime',
         'sort_order' => 'integer',
     ];
+
+    /**
+     * Get the localized value of a JSON field (fr fallback when locale missing).
+     */
+    public function getLocalized(string $field): ?string
+    {
+        $value = $this->{$field};
+
+        if (is_array($value)) {
+            $locale = app()->getLocale();
+
+            return $value[$locale] ?? $value['fr'] ?? reset($value) ?: null;
+        }
+
+        return $value;
+    }
+
+    public function getHeroImageUrlAttribute(): ?string
+    {
+        return $this->resolveMediaUrl($this->hero_image);
+    }
 
     public function sections()
     {
@@ -48,13 +74,14 @@ class Page extends Model
 
     public function scopeOrdered($query)
     {
-        return $query->orderBy('sort_order')->orderBy('title');
+        return $query->orderBy('sort_order')->orderBy('id');
     }
 
     public static function generateSlug(string $title): string
     {
         $slug = Str::slug($title);
-        $count = static::where('slug', 'like', $slug . '%')->count();
+        $count = static::where('slug', 'like', $slug.'%')->count();
+
         return $count ? "{$slug}-{$count}" : $slug;
     }
 

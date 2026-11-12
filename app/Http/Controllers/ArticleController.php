@@ -12,7 +12,6 @@ class ArticleController extends Controller
     {
         $search = trim((string) $request->query('search', ''));
         $category = trim((string) $request->query('category', ''));
-        $page = (int) $request->query('page', 1);
 
         $query = Article::published()->latest('published_at');
 
@@ -21,9 +20,7 @@ class ArticleController extends Controller
                 $q->where('title', 'like', "%{$search}%")
                     ->orWhere('title_ar', 'like', "%{$search}%")
                     ->orWhere('excerpt', 'like', "%{$search}%")
-                    ->orWhere('excerpt_ar', 'like', "%{$search}%")
-                    ->orWhere('content', 'like', "%{$search}%")
-                    ->orWhere('content_ar', 'like', "%{$search}%");
+                    ->orWhere('content', 'like', "%{$search}%");
             });
         }
 
@@ -31,11 +28,13 @@ class ArticleController extends Controller
             $query->where('category', $category);
         }
 
-        $posts = $query->paginate(9, ['*'], 'page', $page);
+        $posts = $query->paginate(9)->withQueryString();
+        $featuredPost = $posts->getCollection()->first();
         $categories = Article::published()->distinct()->pluck('category')->filter()->values();
 
         return view('livewire.site.articles.index', [
             'posts' => $posts,
+            'featuredPost' => $featuredPost,
             'categories' => $categories,
             'search' => $search,
             'pageSlug' => $category,
@@ -44,12 +43,16 @@ class ArticleController extends Controller
 
     public function show(string $slug): View
     {
-        $post = Article::where('slug', $slug)->published()->firstOrFail();
+        $post = Article::with('author')->where('slug', $slug)->published()->firstOrFail();
         $post->increment('views_count');
-        $post->refresh();
+        $post->refresh()->load('author');
 
-        $relatedPosts = Article::published()->where('id', '!=', $post->id)->latest('published_at')->limit(3)->get();
+        $relatedPosts = $post->relatedArticles(3);
 
-        return view('livewire.site.actualite.show', compact('post', 'relatedPosts'));
+        return view('livewire.site.actualite.show', [
+            'post' => $post,
+            'relatedPosts' => $relatedPosts,
+            'type' => 'article',
+        ]);
     }
 }

@@ -22,14 +22,14 @@ document.addEventListener('alpine:init', () => {
                 this.editor = Jodit.make(textarea, {
                     language: 'fr',
                     minHeight: 460,
-                    toolbarAdaptive: false,
+                    toolbarAdaptive: true,
                     showWordsCounter: false,
                     showCharsCounter: false,
                     showXPathInStatusbar: false,
                     buttons: [
                         'paragraph',
                         '|', 'bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript',
-                        '|', 'brush', 'font', 'fontsize',
+                        '|', 'brush', 'font', 'fontsize', 'forecolor', 'background',
                         '|', 'ul', 'ol', 'indent', 'outdent',
                         '|', 'align',
                         '|', 'link', 'image', 'video', 'table', 'file',
@@ -245,10 +245,16 @@ window.iuhmShowEditorError = function (msg) {
                 {{-- Featured Image --}}
                 <div class="rounded-[2rem] border border-slate-200/80 bg-white p-6 shadow-sm shadow-slate-200">
                     <p class="text-[0.65rem] font-extrabold uppercase tracking-widest text-[#23803B] mb-4">Image de couverture</p>
-                    @if($featured_image && !$newImage)
+                    @if($newImage)
+                    <div class="mb-4 overflow-hidden rounded-[1.25rem] relative h-40 w-full">
+                        <img src="{{ $newImage->temporaryUrl() }}"
+                             class="w-full h-full object-cover" alt="Aperçu de la nouvelle image">
+                        <span class="absolute top-3 left-3 inline-flex items-center rounded-full bg-[#214f95] px-3 py-1 text-[0.6rem] font-extrabold uppercase tracking-widest text-white shadow-sm">Nouvelle image</span>
+                    </div>
+                    @elseif($featured_image)
                     <div class="mb-4 overflow-hidden rounded-[1.25rem] relative h-40 w-full">
                         <img src="{{ \Illuminate\Support\Str::startsWith($featured_image, ['http','https']) ? $featured_image : asset($featured_image) }}"
-                             class="w-full h-full object-cover" alt="">
+                             class="w-full h-full object-cover" alt="Image de couverture actuelle">
                         <span class="absolute top-3 left-3 inline-flex items-center rounded-full bg-[#82E682] px-3 py-1 text-[0.6rem] font-extrabold uppercase tracking-widest text-[#0a471b] shadow-sm">Image actuelle</span>
                     </div>
                     @endif
@@ -258,11 +264,19 @@ window.iuhmShowEditorError = function (msg) {
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
                         </div>
-                        <p class="text-sm font-bold text-[#0B1528]">Télécharger la couverture</p>
-                        <p class="mt-1 text-xs text-slate-400">1200 × 630px recommandé</p>
-                        <input type="file" wire:model="newImage" accept="image/*" class="hidden">
+                        <p class="text-sm font-bold text-[#0B1528]">{{ $featured_image || $newImage ? 'Remplacer la couverture' : 'Télécharger la couverture' }}</p>
+                        <p class="mt-1 text-xs text-slate-400">JPG, PNG ou WebP — 2 Mo max · 1200 × 630px recommandé</p>
+                        <input type="file" wire:model="newImage" accept="image/jpeg,image/png,image/webp" class="hidden">
                     </label>
+                    <div wire:loading wire:target="newImage" class="mt-2 text-xs font-semibold text-[#214f95]">Téléversement en cours…</div>
                     @error('newImage') <p class="mt-2 text-xs text-rose-500 font-medium">{{ $message }}</p> @enderror
+                    @if($featured_image || $newImage)
+                        <button type="button" wire:click="removeImage"
+                                class="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-2 text-xs font-bold text-rose-600 transition hover:bg-rose-100">
+                            <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 7h12M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-8 0 1 13h6l1-13"/></svg>
+                            Supprimer l’image
+                        </button>
+                    @endif
                 </div>
 
                 {{-- Publication Status --}}

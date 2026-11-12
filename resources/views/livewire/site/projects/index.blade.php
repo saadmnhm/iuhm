@@ -26,8 +26,8 @@
                 <div class="relative flex justify-center lg:justify-end">
                     <div class="relative w-[320px] sm:w-[380px] lg:w-[420px] aspect-square rounded-[2.5rem] bg-[#111827] shadow-lg shadow-slate-300/30 flex items-center justify-center p-12 overflow-hidden group">
                         <div class="absolute inset-0 bg-[#0f172a] rounded-[2.5rem]"></div>
-                        <div class="relative z-10 size-56 rounded-[2rem] bg-[#141d2f]/90 shadow-[0_5px_40px_rgb(0,0,0,0.4)] border border-slate-700/50 backdrop-blur flex items-center justify-center text-[7rem] text-[#64748b] font-serif italic group-hover:scale-105 transition-transform duration-700">
-                            ១
+                        <div class="relative z-10 size-56 rounded-[2rem] bg-[#141d2f]/90 shadow-[0_5px_40px_rgb(0,0,0,0.4)] border border-slate-700/50 backdrop-blur flex items-center justify-center text-[5rem] text-[#64748b] font-serif italic group-hover:scale-105 transition-transform duration-700">
+                            IU
                         </div>
                     </div>
                 </div>
@@ -45,26 +45,17 @@
                     <article class="group flex flex-col bg-[#F8F9FA] rounded-[1.5rem] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                         <!-- Image -->
                         <div class="relative h-56 w-full overflow-hidden bg-slate-100 shrink-0">
-                            @if($project->featured_image)
-                            <div class="absolute top-4 left-4 z-20 rounded-full bg-[#82E682] px-3 py-1 text-[0.65rem] font-extrabold uppercase tracking-widest text-[#0a471b] shadow-sm backdrop-blur-sm">
-                                {{ $project->getStatusLabel() }}
-                            </div>
-                            @else
-                            <div class="absolute top-4 left-4 z-20 rounded-full bg-[#82E682] px-3 py-1 text-[0.65rem] font-extrabold uppercase tracking-widest text-[#0a471b] shadow-sm backdrop-blur-sm">
-                                PROJET
-                            </div>
-                            @endif
-                            
-                            <img src="{{ \Illuminate\Support\Str::startsWith($project->featured_image, ['http','https']) ? $project->featured_image : asset($project->featured_image ?? 'https://images.unsplash.com/photo-1449844908441-8829872d2607?auto=format&fit=crop&w=800&q=80') }}" 
-                                 alt="{{ $project->getLocalized('title') }}" 
-                                 class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105">
+                            <x-cover-image :src="$project->featured_image_url"
+                                 :alt="$project->getLocalized('title')"
+                                 class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                 icon-class="size-12" />
                         </div>
                         
                         <!-- Content -->
                         <div class="flex flex-col flex-1 p-8">
                             <div class="flex items-center gap-2 mb-3">
                                 <span class="inline-flex items-center rounded-full px-2 py-1 text-xs font-bold {{ $project->getStatusColor() }}">
-                                    {{ $project->getStatusLabel() }}
+                                    {{ $project->status_label_localized }}
                                 </span>
                                 @if($project->is_featured)
                                 <span class="inline-flex items-center rounded-full bg-yellow-100 px-2 py-1 text-xs font-bold text-yellow-800">{{ __('ui.featured') }}</span>
@@ -79,7 +70,7 @@
                             </h3>
                             
                             <p class="text-[0.95rem] font-medium text-slate-500 leading-relaxed line-clamp-4 mb-8 flex-1">
-                                {{ $project->getLocalized('short_description') ?? strip_tags($project->getLocalized('description')) }}
+                                {{ $project->getLocalized('short_description') ?: \Illuminate\Support\Str::limit(strip_tags($project->getLocalized('description') ?? ''), 160) }}
                             </p>
                             
                             <!-- Meta Footer -->
@@ -90,7 +81,7 @@
                                 </span>
                                 @endif
                                 <span class="text-[0.75rem] font-bold text-slate-400">
-                                    {{ $project->created_at?->format('d M Y') }}
+                                    {{ ($project->published_at ?? $project->created_at)?->translatedFormat('d M Y') }}
                                 </span>
                             </div>
                         </div>

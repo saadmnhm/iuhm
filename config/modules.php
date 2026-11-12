@@ -38,5 +38,6 @@ return [
         'finance'                => ['label' => 'Finance',                   'icon' => 'ri-wallet-line'],
         'material'               => ['label' => 'Matériel & Inventaire',     'icon' => 'ri-box-line'],
         'project'                => ['label' => 'Gestion Projets',          'icon' => 'ri-trello-fill'],
+        'statistics'            => ['label' => 'Statistiques du site',     'icon' => 'ri-bar-chart-line'],
         ],
 ];

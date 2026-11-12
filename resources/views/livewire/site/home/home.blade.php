@@ -171,7 +171,7 @@
                 <article class="rounded-2xl border border-slate-100 bg-white shadow-sm hover:shadow-md transition-shadow overflow-hidden group relative">
                     @if($item->image_url)
                     <div class="aspect-video overflow-hidden bg-slate-100">
-                        <img src="{{ $item->image_url }}" alt="{{ $item->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
+                        <img src="{{ $item->image_url }}" alt="{{ $item->getLocalized('title') }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
                     </div>
                     @endif
                     <div class="p-5">
@@ -181,11 +181,11 @@
                         <h3 class="mt-2 text-base font-bold text-[#16254d] leading-snug line-clamp-2 group-hover:text-[#1d6b35] transition-colors">
                             <a href="{{ route('actualite.show', $item->slug) }}" class="focus:outline-none">
                                 <span class="absolute inset-0" aria-hidden="true"></span>
-                                {{ $item->title }}
+                                {{ $item->getLocalized('title') }}
                             </a>
                         </h3>
-                        @if($item->excerpt)
-                        <p class="mt-2 text-sm text-slate-500 line-clamp-3">{{ strip_tags($item->excerpt) }}</p>
+                        @if($item->getLocalized('excerpt'))
+                        <p class="mt-2 text-sm text-slate-500 line-clamp-3">{{ strip_tags($item->getLocalized('excerpt')) }}</p>
                         @endif
                     </div>
                 </article>
