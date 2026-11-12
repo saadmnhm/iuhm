@@ -43,7 +43,7 @@
                             <select wire:model="subject"
                                     class="w-full appearance-none rounded-xl bg-[#e9e9ee] px-5 py-4 text-sm text-[#0f172a] border-none focus:ring-2 focus:ring-[#10752d]">
                                 <option value="">Choisir un service</option>
-                                <option value="\u00c9ducation">\u00c9ducation</option>
+                                <option value="éducation">Éducation</option>
                                 <option value="Santé">Santé</option>
                                 <option value="Sécurité Alimentaire">Sécurité Alimentaire</option>
                                 <option value="Intégration Sociale">Intégration Sociale</option>
