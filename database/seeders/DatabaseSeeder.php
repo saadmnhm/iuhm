@@ -15,18 +15,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::query()->firstOrCreate(
-            ['email' => 'test@example.com'],
-            [
-                'nom' => 'test',
-                'prenom' => 'admin',
-                'password' => bcrypt('password'),
-            ]
-        );
+        // User::query()->firstOrCreate(
+        //     ['email' => 'test@example.com'],
+        //     [
+        //         'nom' => 'test',
+        //         'prenom' => 'admin',
+        //         'password' => bcrypt('password'),
+        //     ]
+        // );
 
-        $this->call([
-            AssociationParameterSeeder::class,
-            WebsiteContentSeeder::class,
-        ]);
+        // $this->call([
+        //     AssociationParameterSeeder::class,
+        //     WebsiteContentSeeder::class,
+        // ]);
     }
 }

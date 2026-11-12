@@ -14,25 +14,25 @@ class AdminSeeder extends Seeder
     public function run(): void
     {
         // Create Super Admin
-        User::updateOrCreate(
-            ['email' => 'superadmin@admin.com'],
-            [
-                'nom' => 'Admin',
-                'prenom' => 'Super',
-                'password' => Hash::make('password'),
-                'role' => 'super_admin',
-            ]
-        );
+        // User::updateOrCreate(
+        //     ['email' => 'superadmin@admin.com'],
+        //     [
+        //         'nom' => 'Admin',
+        //         'prenom' => 'Super',
+        //         'password' => Hash::make('password'),
+        //         'role' => 'super_admin',
+        //     ]
+        // );
 
-        // Create Regular Admin
-        User::updateOrCreate(
-            ['email' => 'admin@admin.com'],
-            [
-                'nom' => 'Admin',
-                'prenom' => 'Regular',
-                'password' => Hash::make('password'),
-                'role' => 'admin',
-            ]
-        );
+        // // Create Regular Admin
+        // User::updateOrCreate(
+        //     ['email' => 'admin@admin.com'],
+        //     [
+        //         'nom' => 'Admin',
+        //         'prenom' => 'Regular',
+        //         'password' => Hash::make('password'),
+        //         'role' => 'admin',
+        //     ]
+        // );
     }
 }
