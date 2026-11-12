@@ -77,7 +77,7 @@
                             </div>
                         @endif
                     @endforeach
-                    {{-- Project Dropdown --}}
+                    <!-- {{-- Project Dropdown --}}
                     <div class="relative inline-block" x-data="{ projectDropdownOpen: false }">
                         <button
                             @click="projectDropdownOpen = !projectDropdownOpen"
@@ -102,7 +102,7 @@
                                 </a>
                             @endforeach
                         </div>
-                    </div>
+                    </div> -->
                 @else
                     {{-- Fallback to hardcoded navigation if no dynamic nav exists --}}
                     <div class="relative inline-block">
