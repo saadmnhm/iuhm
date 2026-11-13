@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 @php
     $locale = app()->getLocale();
     $isAr   = $locale === 'ar';
@@ -37,7 +38,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-    
+    <link rel="shortcut icon" href="{{ asset('assets/iuhm_logo.png') }}" type="image/x-icon">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
