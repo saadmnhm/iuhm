@@ -6,7 +6,9 @@ use App\Models\Actualite;
 use App\Models\Article;
 use App\Models\Page;
 use App\Models\Project;
+use App\Models\SeoRedirect;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class PageController extends Controller
 {
@@ -46,9 +48,20 @@ class PageController extends Controller
         return view('livewire.site.projects.index', compact('projects', 'page'));
     }
 
-    public function projectShow(string $slug): View
+    public function projectShow(string $slug): View|RedirectResponse
     {
-        $project = Project::published()->where('slug', $slug)->firstOrFail();
+        $project = Project::published()->where('slug', $slug)->first();
+
+        if (! $project) {
+            $redirect = SeoRedirect::targetFor('project', $slug);
+
+            if ($redirect && $redirect->new_slug !== $slug) {
+                return redirect()->to(route('projects.show', $redirect->new_slug), $redirect->status_code);
+            }
+
+            abort(404);
+        }
+
         $project->increment('views_count');
         $project->refresh();
 

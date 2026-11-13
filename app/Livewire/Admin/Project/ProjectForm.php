@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Project;
 
+use App\Livewire\Concerns\ManagesSeo;
 use App\Models\AdminActivityLog;
 use App\Models\Project;
 use Livewire\Component;
@@ -9,7 +10,7 @@ use Livewire\WithFileUploads;
 
 class ProjectForm extends Component
 {
-    use WithFileUploads;
+    use ManagesSeo, WithFileUploads;
 
     public $projectId = null;
 
@@ -51,14 +52,13 @@ class ProjectForm extends Component
 
     protected function rules()
     {
-        return [
+        return array_merge([
             'title' => 'required|string|max:255',
             'title_ar' => 'nullable|string|max:255',
             'short_description' => 'nullable|string|max:500',
             'short_description_ar' => 'nullable|string|max:500',
             'description' => 'required|string',
             'description_ar' => 'nullable|string',
-            'slug' => 'nullable|string|max:255|unique:projects,slug,'.$this->projectId,
             'featured_image' => 'nullable|string|max:255',
             'newImage' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'status' => 'nullable|string|max:50',
@@ -68,7 +68,7 @@ class ProjectForm extends Component
             'external_link' => 'nullable|url|max:255',
             'sort_order' => 'nullable|integer',
             'is_published' => 'boolean',
-        ];
+        ], $this->seoRules('projects', $this->projectId));
     }
 
     public function mount($id = 'new')
@@ -97,10 +97,13 @@ class ProjectForm extends Component
             $this->external_link = $project->external_link;
             $this->sort_order = $project->sort_order;
             $this->is_published = $project->is_published;
+            $this->loadSeo($project);
         } else {
             $this->editMode = false;
             $this->status = 'planned';
             $this->sort_order = 0;
+            $this->slugTouched = false;
+            $this->seoTitleTouched = false;
         }
     }
 
@@ -117,9 +120,10 @@ class ProjectForm extends Component
             }
         }
 
-        $this->validate();
-
         $project = $this->projectId ? Project::find($this->projectId) : null;
+
+        $this->prepareSeoSlug(Project::class, $project);
+        $this->validate();
 
         $data = [
             'title' => ['fr' => $this->title, 'ar' => $this->title_ar ?: null],
@@ -147,6 +151,8 @@ class ProjectForm extends Component
 
             $project?->deleteStoredMedia($project->featured_image);
         }
+
+        $data = array_merge($data, $this->seoAttributes(Project::class, $project));
 
         try {
             if ($project) {
@@ -221,8 +227,15 @@ class ProjectForm extends Component
 
     public function render()
     {
-        return view('livewire.admin.project.project-form', [
+        $seo = $this->seoEditorState([
+            'content' => $this->description,
+            'excerpt' => $this->short_description,
+            'image' => $this->newImage ? $this->newImage->temporaryUrl() : $this->seoMediaUrl($this->featured_image),
+            'base_url' => url('projects'),
+            'section' => 'Projets',
+        ]);
 
-        ])->layout('layouts.admin', ['header' => 'Gestion des Projets']);
+        return view('livewire.admin.project.project-form', ['seo' => $seo])
+            ->layout('layouts.admin', ['header' => 'Gestion des Projets']);
     }
 }

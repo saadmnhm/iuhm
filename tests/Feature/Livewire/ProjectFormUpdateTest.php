@@ -40,6 +40,33 @@ class ProjectFormUpdateTest extends TestCase
             $table->timestamp('published_at')->nullable();
             $table->unsignedBigInteger('author_id')->nullable();
             $table->unsignedInteger('views_count')->default(0);
+
+            // SEO columns (see add_seo_fields_to_website_content migration).
+            $table->string('seo_title')->nullable();
+            $table->text('meta_description')->nullable();
+            $table->string('meta_keywords')->nullable();
+            $table->string('canonical_url', 2048)->nullable();
+            $table->string('focus_keyword')->nullable();
+            $table->boolean('robots_index')->default(true);
+            $table->boolean('robots_follow')->default(true);
+            $table->string('og_title')->nullable();
+            $table->text('og_description')->nullable();
+            $table->string('og_image', 2048)->nullable();
+            $table->string('og_type', 30)->nullable();
+            $table->string('twitter_card', 40)->nullable();
+            $table->string('twitter_title')->nullable();
+            $table->text('twitter_description')->nullable();
+            $table->string('twitter_image', 2048)->nullable();
+            $table->string('seo_image', 2048)->nullable();
+            $table->string('schema_type', 60)->nullable();
+            $table->json('schema_data')->nullable();
+            $table->string('seo_author_name')->nullable();
+            $table->string('seo_publisher_name')->nullable();
+            $table->timestamp('schema_published_at')->nullable();
+            $table->timestamp('schema_modified_at')->nullable();
+            $table->string('breadcrumb_label')->nullable();
+            $table->boolean('breadcrumb_enabled')->default(true);
+
             $table->timestamps();
             $table->softDeletes();
         });

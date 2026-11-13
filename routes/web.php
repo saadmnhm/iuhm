@@ -15,6 +15,7 @@ use App\Http\Controllers\ActualiteController;
 use App\Http\Controllers\ServicesController;
 use App\Http\Controllers\ResourcesController;
 use App\Http\Controllers\LocaleController;
+use App\Http\Controllers\SitemapController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -22,6 +23,10 @@ Route::get('/', function () {
 
 // Public Routes (merged from site_iuhm)
 Route::post('locale/{locale}', [LocaleController::class, 'update'])->name('locale.update');
+
+// Search engine discovery.
+Route::get('sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('robots.txt', [SitemapController::class, 'robots'])->name('robots');
 
 Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('articles', [ArticleController::class, 'index'])->name('articles.index');

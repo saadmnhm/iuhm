@@ -1,6 +1,16 @@
 @extends('layouts.site')
 
-@section('title', $page?->getLocalized('title') ?? __('ui.projects_page_title') .' | '.config('app.name'))
+@section('seo')
+    <x-seo :data="\App\Support\Seo\SeoData::forPage(
+        title: $page?->getLocalized('title') ?: __('ui.nav_projects'),
+        description: __('ui.footer_tagline'),
+        breadcrumbs: [
+            ['name' => __('ui.home'), 'url' => route('home')],
+            ['name' => __('ui.nav_projects'), 'url' => route('projects.index')],
+        ],
+        schemaType: 'CollectionPage',
+    )" />
+@endsection
 
 @section('content')
 <main class="bg-[#FAFAFC] pb-24">

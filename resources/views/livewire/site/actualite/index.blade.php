@@ -1,6 +1,16 @@
 ﻿@extends('layouts.site')
 
-@section('title', __('ui.news').' | '.config('app.name'))
+@section('seo')
+    <x-seo :data="\App\Support\Seo\SeoData::forPage(
+        title: __('ui.nav_news'),
+        description: __('ui.footer_tagline'),
+        breadcrumbs: [
+            ['name' => __('ui.home'), 'url' => route('home')],
+            ['name' => __('ui.nav_news'), 'url' => route('actualite.index')],
+        ],
+        schemaType: 'CollectionPage',
+    )" />
+@endsection
 
 @section('content')
 <div class="bg-[#FAFAFC] pb-24">

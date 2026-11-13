@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Actualite;
 
+use App\Livewire\Concerns\ManagesSeo;
 use App\Models\Actualite;
 use App\Models\AdminActivityLog;
 use Livewire\Component;
@@ -10,7 +11,7 @@ use Livewire\WithPagination;
 
 class ActualiteForm extends Component
 {
-    use WithFileUploads, WithPagination;
+    use ManagesSeo, WithFileUploads, WithPagination;
 
     public ?int $newsId = null;
 
@@ -19,6 +20,8 @@ class ActualiteForm extends Component
     public $title;
 
     public $title_ar;
+
+    public $slug;
 
     public $excerpt;
 
@@ -46,7 +49,7 @@ class ActualiteForm extends Component
 
     protected function rules()
     {
-        return [
+        return array_merge([
             'title' => 'required|string|max:255',
             'title_ar' => 'nullable|string|max:255',
             'excerpt' => 'nullable|string|max:500',
@@ -57,7 +60,7 @@ class ActualiteForm extends Component
             'category' => 'nullable|string|max:100',
             'tags_input' => 'nullable|string|max:500',
             'is_published' => 'boolean',
-        ];
+        ], $this->seoRules('actualite', $this->newsId));
     }
 
     public function mount($id = 'new')
@@ -69,6 +72,7 @@ class ActualiteForm extends Component
             $post = Actualite::findOrFail($id);
             $this->title = $post->title;
             $this->title_ar = $post->title_ar;
+            $this->slug = $post->slug;
             $this->excerpt = $post->excerpt;
             $this->excerpt_ar = $post->excerpt_ar;
             $this->content = $post->content;
@@ -77,16 +81,20 @@ class ActualiteForm extends Component
             $this->tags_input = $post->tags ? implode(', ', $post->tags) : '';
             $this->is_published = $post->is_published;
             $this->image = $post->image;
+            $this->loadSeo($post);
         } else {
             $this->editMode = false;
+            $this->slugTouched = false;
+            $this->seoTitleTouched = false;
         }
     }
 
     public function save()
     {
-        $this->validate();
-
         $post = $this->newsId ? Actualite::find($this->newsId) : null;
+
+        $this->prepareSeoSlug(Actualite::class, $post);
+        $this->validate();
 
         $data = [
             'title' => $this->title,
@@ -112,6 +120,8 @@ class ActualiteForm extends Component
             $post?->deleteStoredMedia($post->image);
         }
 
+        $data = array_merge($data, $this->seoAttributes(Actualite::class, $post));
+
         try {
             if ($post) {
                 $post->update($data);
@@ -122,7 +132,6 @@ class ActualiteForm extends Component
                     'message' => 'Actualité mise à jour avec succès!',
                 ]);
             } else {
-                $data['slug'] = Actualite::generateSlug($this->title);
                 $data['author_id'] = auth()->id();
                 $post = Actualite::create($data);
                 AdminActivityLog::log('actualite_created', "Created actualite: {$post->title}", Actualite::class, $post->id);
@@ -181,10 +190,15 @@ class ActualiteForm extends Component
 
     public function render()
     {
-        $query = Actualite::with('author');
+        $seo = $this->seoEditorState([
+            'content' => $this->content,
+            'excerpt' => $this->excerpt,
+            'image' => $this->newImage ? $this->newImage->temporaryUrl() : $this->seoMediaUrl($this->image),
+            'base_url' => url('actualite'),
+            'section' => 'Actualités',
+        ]);
 
-        return view('livewire.admin.actualite.actualite-form', [
-
-        ])->layout('layouts.admin', ['header' => "Gestion d'actualités"]);
+        return view('livewire.admin.actualite.actualite-form', ['seo' => $seo])
+            ->layout('layouts.admin', ['header' => "Gestion d'actualités"]);
     }
 }

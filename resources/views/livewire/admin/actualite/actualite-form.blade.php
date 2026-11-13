@@ -23,6 +23,7 @@
     .jodit-wysiwyg table td, .jodit-wysiwyg table th { border: 1px solid #e2e8f0; padding: 0.6rem 0.9rem; }
     .jodit-wysiwyg table th { background: #f8fafc; font-weight: 700; }
     .jodit-status-bar { display: none !important; }
+    [x-cloak] { display: none !important; }
     /* ── Error toast ── */
     #iuhm-editor-toast { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999; align-items: center; gap: 0.75rem; background: #1e293b; color: #fff; padding: 1rem 1.25rem; border-radius: 0.875rem; box-shadow: 0 8px 28px rgba(0,0,0,.3); max-width: 420px; font-size: 0.875rem; line-height: 1.45; visibility: hidden; }
     #iuhm-editor-toast.visible { visibility: visible; }
@@ -225,8 +226,23 @@ document.addEventListener('livewire:init', () => {
         </div>
         @endif
 
-        {{-- Two-column grid --}}
-        <div class="grid gap-6 lg:grid-cols-3">
+        {{-- Form tabs --}}
+        <div x-data="{ formTab: 'content' }">
+            <div class="mb-6 inline-flex flex-wrap gap-1 rounded-full border border-slate-200 bg-white p-1 shadow-sm">
+                <button type="button" @click="formTab = 'content'"
+                        :class="formTab === 'content' ? 'bg-[#0B1528] text-white shadow-sm' : 'text-[#4A5568] hover:text-[#0B1528]'"
+                        class="rounded-full px-5 py-2 text-[0.78rem] font-extrabold transition-colors">
+                    Contenu &amp; médias
+                </button>
+                <button type="button" @click="formTab = 'seo'"
+                        :class="formTab === 'seo' ? 'bg-[#0B1528] text-white shadow-sm' : 'text-[#4A5568] hover:text-[#0B1528]'"
+                        class="inline-flex items-center gap-2 rounded-full px-5 py-2 text-[0.78rem] font-extrabold transition-colors">
+                    SEO &amp; partage
+                    <span class="rounded-full bg-[#82E682] px-2 py-0.5 text-[0.6rem] font-extrabold text-[#0a471b]">{{ $seo['analysis']['score'] }}</span>
+                </button>
+            </div>
+
+            <div x-show="formTab === 'content'" class="grid gap-6 lg:grid-cols-3">
 
             {{-- LEFT (2/3): Main content --}}
             <div class="space-y-6 lg:col-span-2">
@@ -370,6 +386,11 @@ document.addEventListener('livewire:init', () => {
                     </div>
                 </div>
 
+            </div>
+        </div>
+
+            <div x-show="formTab === 'seo'" x-cloak class="mt-6">
+                @include('livewire.admin.partials.seo-editor', ['seo' => $seo])
             </div>
         </div>
 

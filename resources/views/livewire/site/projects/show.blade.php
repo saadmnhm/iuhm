@@ -17,7 +17,9 @@
         ->map(fn ($path) => $project->resolveMediaUrl($path));
 @endphp
 
-@section('title', $title.' | '.config('app.name'))
+@section('seo')
+    <x-seo :data="$project" />
+@endsection
 
 @section('content')
 <main class="bg-[#FAFAFC] pb-20 pt-6">

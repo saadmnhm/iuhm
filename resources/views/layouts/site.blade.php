@@ -8,8 +8,18 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>@yield('title', config('app.name'))</title>
-        <meta name="description" content="@yield('meta_description', __('ui.footer_tagline'))">
+        @hasSection('seo')
+            @yield('seo')
+        @else
+            <title>@yield('title', config('app.name'))</title>
+            <meta name="description" content="@yield('meta_description', __('ui.footer_tagline'))">
+            <link rel="canonical" href="{{ url()->current() }}">
+            <meta name="robots" content="index, follow">
+            <meta property="og:type" content="website">
+            <meta property="og:site_name" content="{{ config('app.name') }}">
+            <meta property="og:title" content="@yield('title', config('app.name'))">
+            <meta property="og:url" content="{{ url()->current() }}">
+        @endif
 
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

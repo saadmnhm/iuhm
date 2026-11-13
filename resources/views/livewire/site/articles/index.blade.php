@@ -1,6 +1,16 @@
 ﻿@extends('layouts.site')
 
-@section('title', 'Articles | ' . config('app.name'))
+@section('seo')
+    <x-seo :data="\App\Support\Seo\SeoData::forPage(
+        title: __('ui.nav_articles'),
+        description: __('ui.footer_tagline'),
+        breadcrumbs: [
+            ['name' => __('ui.home'), 'url' => route('home')],
+            ['name' => __('ui.nav_articles'), 'url' => route('articles.index')],
+        ],
+        schemaType: 'CollectionPage',
+    )" />
+@endsection
 
 @section('content')
 <main class="bg-[#FAFAFC] pb-24" x-data="articlesFilter()">

@@ -19,8 +19,9 @@
     $shareUrl = route($showRoute, $post->slug);
 @endphp
 
-@section('title', $title.' | '.config('app.name'))
-@section('meta_description', \Illuminate\Support\Str::limit(strip_tags($post->getLocalized('excerpt') ?: $content), 155))
+@section('seo')
+    <x-seo :data="$post" />
+@endsection
 
 @section('content')
 <main class="bg-[#FAFAFC] pb-20 pt-6">

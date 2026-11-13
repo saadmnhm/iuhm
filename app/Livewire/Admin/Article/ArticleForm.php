@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Article;
 
+use App\Livewire\Concerns\ManagesSeo;
 use App\Models\AdminActivityLog;
 use App\Models\Article;
 use Livewire\Component;
@@ -10,7 +11,7 @@ use Livewire\WithPagination;
 
 class ArticleForm extends Component
 {
-    use WithFileUploads, WithPagination;
+    use ManagesSeo, WithFileUploads, WithPagination;
 
     public $search = '';
 
@@ -31,6 +32,8 @@ class ArticleForm extends Component
 
     public $title_ar;
 
+    public $slug;
+
     public $excerpt;
 
     public $content;
@@ -49,7 +52,7 @@ class ArticleForm extends Component
 
     protected function rules()
     {
-        return [
+        return array_merge([
             'title' => 'required|string|max:255',
             'title_ar' => 'nullable|string|max:255',
             'excerpt' => 'nullable|string|max:500',
@@ -58,7 +61,7 @@ class ArticleForm extends Component
             'category' => 'nullable|string|max:100',
             'tags_input' => 'nullable|string|max:500',
             'is_published' => 'boolean',
-        ];
+        ], $this->seoRules('article', $this->postId));
     }
 
     public function mount($id = 'new')
@@ -70,22 +73,27 @@ class ArticleForm extends Component
             $post = Article::findOrFail($id);
             $this->title = $post->title;
             $this->title_ar = $post->title_ar;
+            $this->slug = $post->slug;
             $this->excerpt = $post->excerpt;
             $this->content = $post->content;
             $this->category = $post->category;
             $this->tags_input = $post->tags ? implode(', ', $post->tags) : '';
             $this->is_published = $post->is_published;
             $this->image = $post->image;
+            $this->loadSeo($post);
         } else {
             $this->editMode = false;
+            $this->slugTouched = false;
+            $this->seoTitleTouched = false;
         }
     }
 
     public function save()
     {
-        $this->validate();
-
         $post = $this->postId ? Article::find($this->postId) : null;
+
+        $this->prepareSeoSlug(Article::class, $post);
+        $this->validate();
 
         $data = [
             'title' => $this->title,
@@ -109,6 +117,8 @@ class ArticleForm extends Component
             $post?->deleteStoredMedia($post->image);
         }
 
+        $data = array_merge($data, $this->seoAttributes(Article::class, $post));
+
         try {
             if ($post) {
                 $post->update($data);
@@ -119,7 +129,6 @@ class ArticleForm extends Component
                     'message' => 'Article mis à jour avec succès!',
                 ]);
             } else {
-                $data['slug'] = Article::generateSlug($this->title);
                 $data['author_id'] = auth()->id();
                 $post = Article::create($data);
                 AdminActivityLog::log('article_created', "Created article: {$post->title}", Article::class, $post->id);
@@ -178,9 +187,15 @@ class ArticleForm extends Component
 
     public function render()
     {
-        $query = Article::with('author');
+        $seo = $this->seoEditorState([
+            'content' => $this->content,
+            'excerpt' => $this->excerpt,
+            'image' => $this->newImage ? $this->newImage->temporaryUrl() : $this->seoMediaUrl($this->image),
+            'base_url' => url('articles'),
+            'section' => 'Articles',
+        ]);
 
-        return view('livewire.admin.article.article-form')
+        return view('livewire.admin.article.article-form', ['seo' => $seo])
             ->layout('layouts.admin', ['header' => 'Gestion des Articles']);
     }
 }

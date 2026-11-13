@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Actualite;
 use App\Models\Publication;
+use App\Models\SeoRedirect;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class ActualiteController extends Controller
@@ -44,9 +46,20 @@ class ActualiteController extends Controller
         ]);
     }
 
-    public function show(string $slug): View
+    public function show(string $slug): View|RedirectResponse
     {
-        $post = Actualite::with('author')->where('slug', $slug)->published()->firstOrFail();
+        $post = Actualite::with('author')->where('slug', $slug)->published()->first();
+
+        if (! $post) {
+            $redirect = SeoRedirect::targetFor('actualite', $slug);
+
+            if ($redirect && $redirect->new_slug !== $slug) {
+                return redirect()->to(route('actualite.show', $redirect->new_slug), $redirect->status_code);
+            }
+
+            abort(404);
+        }
+
         $post->increment('views_count');
         $post->refresh()->load('author');
 

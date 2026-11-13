@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasSeo;
 use App\Models\Concerns\ResolvesMediaUrls;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -10,11 +11,18 @@ use Illuminate\Support\Str;
 
 class Article extends Model
 {
-    use ResolvesMediaUrls, SoftDeletes;
+    use HasSeo, ResolvesMediaUrls, SoftDeletes;
 
     protected $fillable = [
         'title', 'title_ar', 'slug', 'excerpt', 'content', 'image',
         'category', 'tags', 'is_published', 'published_at', 'author_id', 'views_count',
+        'seo_title', 'meta_description', 'meta_keywords', 'canonical_url', 'focus_keyword',
+        'robots_index', 'robots_follow',
+        'og_title', 'og_description', 'og_image', 'og_type',
+        'twitter_card', 'twitter_title', 'twitter_description', 'twitter_image',
+        'seo_image', 'schema_type', 'schema_data',
+        'seo_author_name', 'seo_publisher_name', 'schema_published_at', 'schema_modified_at',
+        'breadcrumb_label', 'breadcrumb_enabled',
     ];
 
     protected $table = 'article';
@@ -23,6 +31,12 @@ class Article extends Model
         'tags' => 'array',
         'is_published' => 'boolean',
         'published_at' => 'datetime',
+        'robots_index' => 'boolean',
+        'robots_follow' => 'boolean',
+        'breadcrumb_enabled' => 'boolean',
+        'schema_data' => 'array',
+        'schema_published_at' => 'datetime',
+        'schema_modified_at' => 'datetime',
     ];
 
     public function author()
@@ -141,5 +155,46 @@ class Article extends Model
         $count = static::where('slug', 'like', $slug.'%')->count();
 
         return $count ? "{$slug}-{$count}" : $slug;
+    }
+
+    public function seoContentType(): string
+    {
+        return 'article';
+    }
+
+    public function seoRouteName(): string
+    {
+        return 'articles.show';
+    }
+
+    public function seoContentTitle(): string
+    {
+        return (string) $this->getLocalized('title');
+    }
+
+    public function seoContentExcerpt(): ?string
+    {
+        return $this->getLocalized('excerpt');
+    }
+
+    public function seoContentHtml(): ?string
+    {
+        return $this->getTranslatedContent();
+    }
+
+    public function seoContentImageUrl(): ?string
+    {
+        return $this->image_url;
+    }
+
+    /**
+     * @return array{label: string, url: string}
+     */
+    public function seoBreadcrumbSection(): array
+    {
+        return [
+            'label' => __('ui.nav_articles'),
+            'url' => route('articles.index'),
+        ];
     }
 }

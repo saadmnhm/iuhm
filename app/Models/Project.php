@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasSeo;
 use App\Models\Concerns\ResolvesMediaUrls;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -10,7 +11,7 @@ use Illuminate\Support\Str;
 
 class Project extends Model
 {
-    use ResolvesMediaUrls, SoftDeletes;
+    use HasSeo, ResolvesMediaUrls, SoftDeletes;
 
     protected $table = 'projects';
 
@@ -37,6 +38,13 @@ class Project extends Model
         'published_at',
         'views_count',
         'author_id',
+        'seo_title', 'meta_description', 'meta_keywords', 'canonical_url', 'focus_keyword',
+        'robots_index', 'robots_follow',
+        'og_title', 'og_description', 'og_image', 'og_type',
+        'twitter_card', 'twitter_title', 'twitter_description', 'twitter_image',
+        'seo_image', 'schema_type', 'schema_data',
+        'seo_author_name', 'seo_publisher_name', 'schema_published_at', 'schema_modified_at',
+        'breadcrumb_label', 'breadcrumb_enabled',
     ];
 
     protected $casts = [
@@ -52,6 +60,12 @@ class Project extends Model
         'sort_order' => 'integer',
         'published_at' => 'datetime',
         'views_count' => 'integer',
+        'robots_index' => 'boolean',
+        'robots_follow' => 'boolean',
+        'breadcrumb_enabled' => 'boolean',
+        'schema_data' => 'array',
+        'schema_published_at' => 'datetime',
+        'schema_modified_at' => 'datetime',
     ];
 
     public function scopePublished($query)
@@ -205,5 +219,46 @@ class Project extends Model
         $count = static::where('slug', 'like', $slug.'%')->count();
 
         return $count ? "{$slug}-{$count}" : $slug;
+    }
+
+    public function seoContentType(): string
+    {
+        return 'project';
+    }
+
+    public function seoRouteName(): string
+    {
+        return 'projects.show';
+    }
+
+    public function seoContentTitle(): string
+    {
+        return (string) $this->getLocalized('title');
+    }
+
+    public function seoContentExcerpt(): ?string
+    {
+        return $this->getLocalized('short_description');
+    }
+
+    public function seoContentHtml(): ?string
+    {
+        return $this->getLocalized('description');
+    }
+
+    public function seoContentImageUrl(): ?string
+    {
+        return $this->featured_image_url;
+    }
+
+    /**
+     * @return array{label: string, url: string}
+     */
+    public function seoBreadcrumbSection(): array
+    {
+        return [
+            'label' => __('ui.nav_projects'),
+            'url' => route('projects.index'),
+        ];
     }
 }
