@@ -13,31 +13,136 @@
  * Gestion des Rôles UI — no code changes needed.
  */
 
+
 return [
     'definitions' => [
-        // ── Top nav ───────────────────────────────────────────────────────────
-        'programmes'             => ['label' => 'Programmes (soumissions)',  'icon' => 'ri-group-line'],
-        'support'                => ['label' => 'Support Tickets',           'icon' => 'ri-customer-service-2-line'],
-        'chat'                   => ['label' => 'Chat & Broadcast',          'icon' => 'ri-chat-3-line'],
-        'my_submissions'         => ['label' => 'Mes Assignations',          'icon' => 'ri-task-line'],
-        'all_submissions'        => ['label' => 'Toutes Soumissions',        'icon' => 'ri-file-list-3-line'],
-        'history_audit'          => ['label' => 'Historique & Audit',        'icon' => 'ri-git-commit-line'],
-        // ── Referential ───────────────────────────────────────────────────────
-        'programe'               => ['label' => 'Gestion Programmes',        'icon' => 'ri-trello-fill'],
-        'users'                  => ['label' => 'Gestion Admin',             'icon' => 'ri-admin-line'],
-        'candidats'              => ['label' => 'Base de Bénéficiaires',          'icon' => 'ri-user-community-line'],
-        'addresses'              => ['label' => 'Addresses',                 'icon' => 'ri-map-pin-line'],
-        'formulaires'            => ['label' => 'Formulaires',               'icon' => 'ri-file-list-3-line'],
-        'activity_logs'          => ['label' => 'Activity Logs',             'icon' => 'ri-history-line'],
-        'rh'                     => ['label' => 'Gestion RH',                'icon' => 'ri-team-line'],
-        'gestion_roles'          => ['label' => 'Gestion des Rôles',         'icon' => 'ri-key-line'],
-        'association_parameters' => ['label' => 'Paramètres Association',    'icon' => 'ri-settings-3-line'],
-        'blog'                   => ['label' => 'Actualités',         'icon' => 'ri-article-line'],
-        'dev_tools'              => ['label' => 'Dev Tools',                 'icon' => 'ri-code-s-slash-line'],
-        "association"            => ['label' => 'Association',               'icon' => 'ri-building-2-line'],
-        'finance'                => ['label' => 'Finance',                   'icon' => 'ri-wallet-line'],
-        'material'               => ['label' => 'Matériel & Inventaire',     'icon' => 'ri-box-line'],
-        'project'                => ['label' => 'Gestion Projets',          'icon' => 'ri-trello-fill'],
-        'statistics'            => ['label' => 'Statistiques du site',     'icon' => 'ri-bar-chart-line'],
+
+        // ── Dashboard & Administration ─────────────────────────
+        'users' => [
+            'label' => 'Gestion Admin',
+            'icon' => 'ri-admin-line',
         ],
+        'gestion_roles' => [
+            'label' => 'Gestion des Rôles',
+            'icon' => 'ri-key-line',
+        ],
+        'addresses' => [
+            'label' => 'Gestion des Adresses',
+            'icon' => 'ri-map-pin-line',
+        ],
+        'association_parameters' => [
+            'label' => 'Paramètres Association',
+            'icon' => 'ri-settings-3-line',
+        ],
+
+        // ── Beneficiaries & Forms ───────────────────────────────
+        'candidats' => [
+            'label' => 'Base de Bénéficiaires',
+            'icon' => 'ri-user-community-line',
+        ],
+        'formulaires' => [
+            'label' => 'Gestion des Formulaires',
+            'icon' => 'ri-file-list-3-line',
+        ],
+
+        // ── Programmes & Projects ───────────────────────────────
+        'programe' => [
+            'label' => 'Gestion Programmes',
+            'icon' => 'ri-trello-fill',
+        ],
+        'programmes' => [
+            'label' => 'Soumissions des Programmes',
+            'icon' => 'ri-group-line',
+        ],
+        'project' => [
+            'label' => 'Gestion Projets',
+            'icon' => 'ri-folder-line',
+        ],
+
+        // ── Submissions ─────────────────────────────────────────
+        'my_submissions' => [
+            'label' => 'Mes Assignations',
+            'icon' => 'ri-task-line',
+        ],
+        'all_submissions' => [
+            'label' => 'Toutes les Soumissions',
+            'icon' => 'ri-file-list-3-line',
+        ],
+        'history_audit' => [
+            'label' => 'Historique & Audit',
+            'icon' => 'ri-git-commit-line',
+        ],
+
+        // ── Human Resources ─────────────────────────────────────
+        'rh' => [
+            'label' => 'Gestion RH',
+            'icon' => 'ri-team-line',
+        ],
+
+        // ── Finance & Inventory ─────────────────────────────────
+        'finance' => [
+            'label' => 'Finance',
+            'icon' => 'ri-wallet-line',
+        ],
+        'material' => [
+            'label' => 'Matériel & Inventaire',
+            'icon' => 'ri-box-line',
+        ],
+
+        // ── Website & Media Management ──────────────────────────
+        'media' => [
+            'label' => 'Gestion Média',
+            'icon' => 'ri-image-line',
+        ],
+        'article' => [
+            'label' => 'Gestion des Articles',
+            'icon' => 'ri-article-line',
+        ],
+        'actualite' => [
+            'label' => 'Gestion des Actualités',
+            'icon' => 'ri-newspaper-line',
+        ],
+        'publication' => [
+            'label' => 'Gestion des Publications',
+            'icon' => 'ri-file-text-line',
+        ],
+        'blog' => [
+            'label' => 'Newsletters & Blog',
+            'icon' => 'ri-mail-line',
+        ],
+        'contact' => [
+            'label' => 'Gestion des Contacts',
+            'icon' => 'ri-contacts-line',
+        ],
+        'apropos' => [
+            'label' => 'Page À Propos',
+            'icon' => 'ri-information-line',
+        ],
+        'statistics' => [
+            'label' => 'Statistiques du Site',
+            'icon' => 'ri-bar-chart-line',
+        ],
+
+        // ── Communication & Support ─────────────────────────────
+        'chat' => [
+            'label' => 'Chat & Broadcast',
+            'icon' => 'ri-chat-3-line',
+        ],
+        'support' => [
+            'label' => 'Support Tickets',
+            'icon' => 'ri-customer-service-2-line',
+        ],
+
+        // ── System Administration ───────────────────────────────
+        'activity_logs' => [
+            'label' => 'Activity Logs',
+            'icon' => 'ri-history-line',
+        ],
+        'dev_tools' => [
+            'label' => 'Developer Tools',
+            'icon' => 'ri-code-s-slash-line',
+        ],
+
+    ],
 ];
+
