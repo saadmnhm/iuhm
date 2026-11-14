@@ -90,7 +90,7 @@
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12" id="articles-grid">
                 
                 @forelse($posts as $post)
-                <article class="group flex flex-col bg-[#F8F9FA] rounded-[1.5rem] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                <article class="relative group flex flex-col bg-[#F8F9FA] rounded-[1.5rem] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                     <!-- Image -->
                     <div class="relative h-56 w-full overflow-hidden bg-slate-100 shrink-0">
                         <div class="absolute top-4 left-4 z-20 rounded-full bg-[#82E682] px-3 py-1 text-[0.65rem] font-extrabold uppercase tracking-widest text-[#0a471b] shadow-sm backdrop-blur-sm">

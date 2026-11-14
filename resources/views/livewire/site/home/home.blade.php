@@ -8,14 +8,37 @@
     $stats = [
         ['value' => '10k+', 'label' => __('ui.home_stats_people_helped'), 'icon' => 'users'],
         ['value' => '50+', 'label' => __('ui.home_stats_active_programs'), 'icon' => 'network'],
-        ['value' => '15 ans', 'label' => __('ui.home_stats_years_service'), 'icon' => 'calendar'],
+        ['value' => '+ 23 ans', 'label' => __('ui.home_stats_years_service'), 'icon' => 'calendar'],
+        ['value' => '+ 70', 'label' => __('ui.home_stats_partenair'), 'icon' => 'partenaires'],
     ];
     $services = [
         ['title' => __('ui.home_service_education'), 'description' => __('ui.home_service_education_desc'), 'icon' => 'education'],
         ['title' => __('ui.home_service_health'), 'description' => __('ui.home_service_health_desc'), 'icon' => 'health'],
         ['title' => __('ui.home_service_food'), 'description' => __('ui.home_service_food_desc'), 'icon' => 'food'],
     ];
-    $partners = ['AA', 'IU', 'CB', 'MC', 'RB', 'AS', 'CC', 'UP'];
+    $partnerDirectory = public_path('assets/site/images/partenaires');
+    $partnerExtensions = ['png', 'jpg', 'jpeg', 'webp', 'svg', 'gif'];
+    $partnerFiles = is_dir($partnerDirectory) ? glob($partnerDirectory.'/*') : [];
+    $partnerFiles = array_values(array_filter($partnerFiles ?: [], function ($file) use ($partnerExtensions) {
+        return is_file($file) && in_array(strtolower(pathinfo($file, PATHINFO_EXTENSION)), $partnerExtensions, true);
+    }));
+    sort($partnerFiles, SORT_NATURAL | SORT_FLAG_CASE);
+
+    $partners = array_map(fn ($file) => [
+        'name' => str_replace(['-', '_'], ' ', pathinfo($file, PATHINFO_FILENAME)),
+        'image' => asset('assets/site/images/partenaires/'.basename($file)),
+    ], $partnerFiles);
+
+    // Fallback placeholders while no logo has been added yet.
+    if ($partners === []) {
+        $partners = array_map(fn ($name) => ['name' => $name, 'image' => null], ['AA', 'IU', 'CB', 'MC', 'RB', 'AS', 'CC', 'UP']);
+    }
+
+    // Slider shows 3 partners per page.
+    $partnerPages = array_chunk($partners, 3);
+    // Duplicate the first page at the end so the carousel can loop seamlessly.
+    $partnerSlides = count($partnerPages) > 1 ? [...$partnerPages, $partnerPages[0]] : $partnerPages;
+    $isRtl = in_array(app()->getLocale(), config('app.rtl_locales', []), true);
 @endphp
 
 @section('content')
@@ -42,7 +65,7 @@
                 </p>
             </div>
 
-            <div class="mt-12 grid gap-4 md:grid-cols-3 lg:mt-16">
+            <div class="mt-12 grid gap-4 md:grid-cols-4 lg:mt-16">
                 @foreach ($stats as $stat)
                     <article class="rounded-2xl border border-white/18 bg-white/20 p-5 text-white shadow-xl shadow-black/15 backdrop-blur-md">
                         <div class="flex items-center gap-4">
@@ -57,6 +80,55 @@
                                         <path d="M7 3v3M17 3v3M4.5 9h15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
                                         <rect x="4" y="5" width="16" height="16" rx="3" stroke="currentColor" stroke-width="1.7" />
                                     </svg>
+                                @elseif ($stat['icon'] === 'partenaires')
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="24" height="24" fill="none" stroke="currentColor">
+                                    <g stroke="#000" stroke-width="20" stroke-linecap="round" stroke-linejoin="round">
+
+                                        <!-- Left sleeve -->
+                                        <path stroke="currentColor" d="M12 202 L138 74 L188 125 L62 252 Z" />
+
+                                        <!-- Right sleeve -->
+                                        <path stroke="currentColor" d="M388 61 L501 175 L451 225 L338 112 Z"/>
+
+                                        <!-- Left arm -->
+                                        <path stroke="currentColor" d="M188 125 Q216 125 242 148"/>
+
+                                        <!-- Right arm -->
+                                        <path stroke="currentColor" d="M338 112 Q319 130 295 125 Q268 125 244 148"/>
+
+                                        <!-- Main handshake -->
+                                        <path stroke="currentColor" d="M244 148 L203 190 Q188 207 202 228 Q222 250 246 232 L298 179"/>
+
+                                        <!-- Right palm -->
+                                        <path stroke="currentColor" d="M338 112 L451 225 L384 292 L289 196"/>
+
+                                        <!-- Upper connecting fingers -->
+                                        <path stroke="currentColor" d="M289 196 L382 290"/>
+
+                                        <!-- Right lower fingers -->
+                                        <path stroke="currentColor" d="M312 292 L362 342 Q378 358 394 341 Q409 325 393 309 L383 295"/>
+                                        <path stroke="currentColor" d="M277 328 L326 379 Q342 395 359 378 Q375 362 358 346"/>
+                                        <path stroke="currentColor" d="M248 365 L290 407 Q305 423 322 407 Q338 390 322 375"/>
+                                        <path stroke="currentColor" d="M229 402 L254 427 Q270 445 286 428 Q302 412 286 396"/>
+
+                                        <!-- Left lower fingers -->
+                                        <path stroke="currentColor" d="M95 287 L126 257 Q143 241 161 258 Q179 275 161 292 L128 326 Q110 344 92 326 Q76 310 95 287 Z"/>
+                                        <path stroke="currentColor" d="M128 326 L162 292 Q180 274 198 292 Q215 309 197 327 L163 362 Q145 379 127 361 Q111 345 128 326 Z"/>
+                                        <path stroke="currentColor" d="M163 362 L198 327 Q216 309 234 327 Q251 345 233 363 L198 399 Q180 417 162 399 Q145 381 163 362 Z"/>
+                                        <path stroke="currentColor" d="M198 399 L234 363 Q251 345 269 363 Q286 381 269 399 L235 434 Q217 452 199 434 Q181 416 198 399 Z"/>
+
+                                        <!-- Bottom connection -->
+                                        <path stroke="currentColor" d="M235 434 Q251 449 269 434 L283 420"/>
+
+                                        <!-- Cuff details -->
+                                        <path stroke="currentColor" d="M64 200 L95 169"/>
+                                        <path stroke="currentColor" d="M123 143 L123 143"/>
+                                        <path stroke="currentColor" d="M430 151 L449 171"/>
+                                        <path stroke="currentColor" d="M401 122 L401 122"/>
+
+                                    </g>
+                                    </svg>
+                                
                                 @else
                                     <svg class="size-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                         <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
@@ -210,12 +282,153 @@
                 {{ __('ui.home_trust_description') }}
             </p>
 
-            <div class="mt-10 grid grid-cols-4 gap-4 sm:grid-cols-8">
-                @foreach ($partners as $partner)
-                    <div class="flex aspect-square items-center justify-center rounded-2xl border border-slate-200 bg-slate-100 text-xs font-bold text-slate-500 shadow-sm">
-                        {{ $partner }}
+            <div
+                class="relative mt-10"
+                role="region"
+                aria-roledescription="carousel"
+                aria-label="{{ __('ui.home_trust_title') }}"
+                x-data="{
+                    page: 0,
+                    pages: {{ count($partnerPages) }},
+                    animating: true,
+                    timer: null,
+                    resetTimer: null,
+                    get active() { return this.page % this.pages; },
+                    init() { this.startAuto(); },
+                    startAuto() {
+                        if (this.pages < 2) return;
+                        this.stopAuto();
+                        this.timer = setInterval(() => this.next(), 5000);
+                    },
+                    stopAuto() {
+                        if (this.timer) { clearInterval(this.timer); this.timer = null; }
+                    },
+                    next() {
+                        if (this.pages < 2 || this.page >= this.pages) return;
+                        this.animating = true;
+                        this.page += 1;
+                        if (this.page === this.pages) {
+                            clearTimeout(this.resetTimer);
+                            this.resetTimer = setTimeout(() => this.resetIfClone(), 600);
+                        }
+                    },
+                    prev() {
+                        if (this.pages < 2) return;
+                        if (this.page === 0) {
+                            // Jump to the cloned first slide, then animate back to the real last slide.
+                            this.animating = false;
+                            this.page = this.pages;
+                            this.$nextTick(() => {
+                                requestAnimationFrame(() => {
+                                    this.animating = true;
+                                    requestAnimationFrame(() => { this.page = this.pages - 1; });
+                                });
+                            });
+                            return;
+                        }
+                        this.animating = true;
+                        this.page -= 1;
+                    },
+                    go(index) {
+                        if (index === this.active) { this.startAuto(); return; }
+                        this.animating = true;
+                        this.page = index;
+                        this.startAuto();
+                    },
+                    onTransitionEnd(event) {
+                        if (event.target !== this.$refs.track) return;
+                        this.resetIfClone();
+                    },
+                    resetIfClone() {
+                        if (this.page !== this.pages) return;
+                        clearTimeout(this.resetTimer);
+                        this.animating = false;
+                        this.page = 0;
+                        this.$nextTick(() => {
+                            requestAnimationFrame(() => { this.animating = true; });
+                        });
+                    }
+                }"
+                @mouseenter="stopAuto()"
+                @mouseleave="startAuto()"
+            >
+                <div class="overflow-hidden">
+                    <div
+                        x-ref="track"
+                        class="flex"
+                        :class="animating ? 'transition-transform duration-500 ease-out' : ''"
+                        :style="'transform: translateX(' + (page * {{ $isRtl ? '' : '-' }}100) + '%)'"
+                        @transitionend="onTransitionEnd($event)"
+                    >
+                        @foreach ($partnerSlides as $pageIndex => $pagePartners)
+                            @php($isClone = count($partnerPages) > 1 && $loop->last)
+                            <div
+                                class="w-full shrink-0"
+                                @if ($isClone)
+                                    aria-hidden="true"
+                                @else
+                                    role="group"
+                                    aria-roledescription="slide"
+                                    aria-label="{{ $pageIndex + 1 }} / {{ count($partnerPages) }}"
+                                @endif
+                            >
+                                <div class="grid grid-cols-3 gap-3 sm:gap-5">
+                                    @foreach ($pagePartners as $partner)
+                                        <div class="flex h-28 items-center justify-center rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md sm:h-36 sm:p-6">
+                                            @if ($partner['image'])
+                                                <img
+                                                    src="{{ $partner['image'] }}"
+                                                    alt="{{ $partner['name'] }}"
+                                                    class="max-h-16 w-auto max-w-full object-contain sm:max-h-20"
+                                                    loading="lazy"
+                                                >
+                                            @else
+                                                <span class="text-sm font-bold text-slate-400">{{ $partner['name'] }}</span>
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
-                @endforeach
+                </div>
+
+                @if (count($partnerPages) > 1)
+                    <button
+                        type="button"
+                        class="absolute -left-2 top-1/2 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-[#16254d] shadow-md transition hover:bg-slate-50 sm:-left-5"
+                        @click="prev()"
+                        aria-label="{{ __('ui.home_trust_prev') }}"
+                    >
+                        <svg class="size-5" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                            <path d="M12 5l-5 5 5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="absolute -right-2 top-1/2 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-[#16254d] shadow-md transition hover:bg-slate-50 sm:-right-5"
+                        @click="next()"
+                        aria-label="{{ __('ui.home_trust_next') }}"
+                    >
+                        <svg class="size-5" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                            <path d="M8 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+
+                    <div class="mt-6 flex items-center justify-center gap-2">
+                        @foreach ($partnerPages as $pageIndex => $pagePartners)
+                            <button
+                                type="button"
+                                class="h-2 rounded-full transition-all duration-300"
+                                :class="active === {{ $pageIndex }} ? 'w-6 bg-[#1d6b35]' : 'w-2 bg-slate-300 hover:bg-slate-400'"
+                                :aria-current="active === {{ $pageIndex }} ? 'true' : 'false'"
+                                @click="go({{ $pageIndex }})"
+                                aria-label="{{ __('ui.home_trust_slide') }} {{ $pageIndex + 1 }}"
+                            ></button>
+                        @endforeach
+                    </div>
+                @endif
             </div>
         </div>
     </section>

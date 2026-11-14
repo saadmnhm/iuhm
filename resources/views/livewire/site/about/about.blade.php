@@ -189,7 +189,7 @@
                                     </span>
                                     <div>
                                         <p class="font-semibold text-[#16254d]">Address</p>
-                                        <p>123 Boulevard d'Anfa, Maarif, Casablanca 20100</p>
+                                        <p>9 Rue ibn albaittar, derb saad, hay mohammadi , Casablanca</p>
                                     </div>
                                 </div>
 
