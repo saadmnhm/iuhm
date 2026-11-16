@@ -131,6 +131,24 @@ class ProjectFormUpdateTest extends TestCase
         $this->assertSame(1, Project::count());
     }
 
+    public function test_mount_handles_localized_fields_without_french_or_arabic_keys(): void
+    {
+        $project = Project::create([
+            'title' => ['en' => 'English title'],
+            'description' => ['en' => 'English description'],
+            'short_description' => ['en' => 'English short description'],
+            'slug' => 'english-project',
+            'status' => 'planned',
+            'sort_order' => 0,
+            'is_published' => false,
+        ]);
+
+        Livewire::test(ProjectForm::class, ['id' => $project->id])
+            ->assertSet('title', 'English title')
+            ->assertSet('short_description', 'English short description')
+            ->assertSet('description', 'English description');
+    }
+
     public function test_deleting_a_project_logs_without_array_to_string_error(): void
     {
         $project = $this->makeProject();

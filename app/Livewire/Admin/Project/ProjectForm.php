@@ -83,11 +83,11 @@ class ProjectForm extends Component
                 : Project::where('slug', $id)->firstOrFail();
 
             $this->projectId = $project->id;
-            $this->title = is_array($project->title) ? ($project->title['fr'] ?? $project->title['ar'] ?? reset($project->title) ?? '') : ($project->title ?? '');
+            $this->title = is_array($project->title) ? ($project->title['fr'] ?? $project->title['ar'] ?? (array_values($project->title)[0] ?? '')) : ($project->title ?? '');
             $this->title_ar = is_array($project->title) ? ($project->title['ar'] ?? '') : '';
-            $this->short_description = is_array($project->short_description) ? ($project->short_description['fr'] ?? $project->short_description['ar'] ?? reset($project->short_description) ?? '') : ($project->short_description ?? '');
+            $this->short_description = is_array($project->short_description) ? ($project->short_description['fr'] ?? $project->short_description['ar'] ?? (array_values($project->short_description)[0] ?? '')) : ($project->short_description ?? '');
             $this->short_description_ar = is_array($project->short_description) ? ($project->short_description['ar'] ?? '') : '';
-            $this->description = is_array($project->description) ? ($project->description['fr'] ?? $project->description['ar'] ?? reset($project->description) ?? '') : ($project->description ?? '');
+            $this->description = is_array($project->description) ? ($project->description['fr'] ?? $project->description['ar'] ?? (array_values($project->description)[0] ?? '')) : ($project->description ?? '');
             $this->description_ar = is_array($project->description) ? ($project->description['ar'] ?? '') : '';
             $this->slug = $project->slug;
             $this->featured_image = $project->featured_image;
