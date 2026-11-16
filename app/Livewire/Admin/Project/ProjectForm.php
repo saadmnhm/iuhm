@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Project;
 
+use App\Livewire\Concerns\ManagesGallery;
 use App\Livewire\Concerns\ManagesSeo;
 use App\Models\AdminActivityLog;
 use App\Models\Project;
@@ -10,7 +11,7 @@ use Livewire\WithFileUploads;
 
 class ProjectForm extends Component
 {
-    use ManagesSeo, WithFileUploads;
+    use ManagesGallery, ManagesSeo, WithFileUploads;
 
     public $projectId = null;
 
@@ -68,7 +69,7 @@ class ProjectForm extends Component
             'external_link' => 'nullable|url|max:255',
             'sort_order' => 'nullable|integer',
             'is_published' => 'boolean',
-        ], $this->seoRules('projects', $this->projectId));
+        ], $this->seoRules('projects', $this->projectId), $this->galleryRules());
     }
 
     public function mount($id = 'new')
@@ -97,6 +98,7 @@ class ProjectForm extends Component
             $this->external_link = $project->external_link;
             $this->sort_order = $project->sort_order;
             $this->is_published = $project->is_published;
+            $this->loadGallery($project);
             $this->loadSeo($project);
         } else {
             $this->editMode = false;
@@ -152,6 +154,8 @@ class ProjectForm extends Component
             $project?->deleteStoredMedia($project->featured_image);
         }
 
+        $data['gallery'] = $this->processGalleryUploads('project');
+
         $data = array_merge($data, $this->seoAttributes(Project::class, $project));
 
         try {
@@ -168,6 +172,8 @@ class ProjectForm extends Component
                     $this->newImage = null;
                 }
 
+                $this->syncGalleryState($data['gallery'] ?? [], $project);
+
                 $this->dispatch('alert', [
                     'type' => 'success',
                     'title' => 'Succès',
@@ -179,6 +185,8 @@ class ProjectForm extends Component
 
             $data['author_id'] = auth()->id();
             $project = Project::create($data);
+
+            $this->syncGalleryState($data['gallery'] ?? [], $project);
 
             $title = $project->getLocalized('title') ?: ('Projet #'.$project->id);
             AdminActivityLog::log('project_created', "Created project: {$title}", Project::class, $project->id);

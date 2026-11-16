@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Actualite;
 use App\Models\Article;
 use App\Models\Project;
+use App\Models\SectionItem;
 use Illuminate\Http\Response;
 
 /**
@@ -18,6 +19,8 @@ class SitemapController extends Controller
             $this->url(url('/'), now(), 'daily', '1.0'),
             $this->url(route('articles.index'), now(), 'daily', '0.9'),
             $this->url(route('actualite.index'), now(), 'daily', '0.9'),
+            $this->url(route('clc.index'), now(), 'weekly', '0.8'),
+            $this->url(route('zettat.index'), now(), 'weekly', '0.8'),
             $this->url(route('projects.index'), now(), 'weekly', '0.9'),
             $this->url(route('services.index'), now(), 'monthly', '0.7'),
             $this->url(route('resources.index'), now(), 'weekly', '0.7'),
@@ -35,6 +38,15 @@ class SitemapController extends Controller
 
         foreach (Project::published()->orderByDesc('updated_at')->get(['slug', 'updated_at']) as $project) {
             $urls[] = $this->url(route('projects.show', $project->slug), $project->updated_at, 'monthly', '0.7');
+        }
+
+        foreach (SectionItem::published()->orderByDesc('updated_at')->get(['section', 'slug', 'updated_at']) as $item) {
+            $urls[] = $this->url(
+                route($item->section.'.show', $item->slug),
+                $item->updated_at,
+                'monthly',
+                '0.6'
+            );
         }
 
         return response()

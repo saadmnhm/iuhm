@@ -13,7 +13,6 @@
  * Gestion des Rôles UI — no code changes needed.
  */
 
-
 return [
     'definitions' => [
 
@@ -57,6 +56,14 @@ return [
         'project' => [
             'label' => 'Gestion Projets',
             'icon' => 'ri-folder-line',
+        ],
+        'clc' => [
+            'label' => 'Gestion CLC',
+            'icon' => 'ri-community-line',
+        ],
+        'zettat' => [
+            'label' => 'Gestion ZETTAT',
+            'icon' => 'ri-map-pin-2-line',
         ],
 
         // ── Submissions ─────────────────────────────────────────
@@ -145,4 +152,3 @@ return [
 
     ],
 ];
-

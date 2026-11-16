@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasGallery;
 use App\Models\Concerns\HasSeo;
 use App\Models\Concerns\ResolvesMediaUrls;
 use Illuminate\Database\Eloquent\Model;
@@ -11,10 +12,10 @@ use Illuminate\Support\Str;
 
 class Article extends Model
 {
-    use HasSeo, ResolvesMediaUrls, SoftDeletes;
+    use HasGallery, HasSeo, ResolvesMediaUrls, SoftDeletes;
 
     protected $fillable = [
-        'title', 'title_ar', 'slug', 'excerpt', 'content', 'image',
+        'title', 'title_ar', 'slug', 'excerpt', 'content', 'image', 'gallery',
         'category', 'tags', 'is_published', 'published_at', 'author_id', 'views_count',
         'seo_title', 'meta_description', 'meta_keywords', 'canonical_url', 'focus_keyword',
         'robots_index', 'robots_follow',
@@ -28,6 +29,7 @@ class Article extends Model
     protected $table = 'article';
 
     protected $casts = [
+        'gallery' => 'array',
         'tags' => 'array',
         'is_published' => 'boolean',
         'published_at' => 'datetime',

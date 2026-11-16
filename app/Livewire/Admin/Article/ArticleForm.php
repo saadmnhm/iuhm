@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Article;
 
+use App\Livewire\Concerns\ManagesGallery;
 use App\Livewire\Concerns\ManagesSeo;
 use App\Models\AdminActivityLog;
 use App\Models\Article;
@@ -11,7 +12,7 @@ use Livewire\WithPagination;
 
 class ArticleForm extends Component
 {
-    use ManagesSeo, WithFileUploads, WithPagination;
+    use ManagesGallery, ManagesSeo, WithFileUploads, WithPagination;
 
     public $search = '';
 
@@ -61,7 +62,7 @@ class ArticleForm extends Component
             'category' => 'nullable|string|max:100',
             'tags_input' => 'nullable|string|max:500',
             'is_published' => 'boolean',
-        ], $this->seoRules('article', $this->postId));
+        ], $this->seoRules('article', $this->postId), $this->galleryRules());
     }
 
     public function mount($id = 'new')
@@ -80,6 +81,7 @@ class ArticleForm extends Component
             $this->tags_input = $post->tags ? implode(', ', $post->tags) : '';
             $this->is_published = $post->is_published;
             $this->image = $post->image;
+            $this->loadGallery($post);
             $this->loadSeo($post);
         } else {
             $this->editMode = false;
@@ -117,6 +119,8 @@ class ArticleForm extends Component
             $post?->deleteStoredMedia($post->image);
         }
 
+        $data['gallery'] = $this->processGalleryUploads('article');
+
         $data = array_merge($data, $this->seoAttributes(Article::class, $post));
 
         try {
@@ -142,6 +146,8 @@ class ArticleForm extends Component
                     'message' => 'Article créé avec succès!',
                 ]);
             }
+
+            $this->syncGalleryState($data['gallery'] ?? [], $post);
 
             // clear the new image so it's not re-uploaded next time
             if ($this->newImage) {

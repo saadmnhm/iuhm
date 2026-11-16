@@ -93,14 +93,16 @@
                 <article class="relative group flex flex-col bg-[#F8F9FA] rounded-[1.5rem] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                     <!-- Image -->
                     <div class="relative h-56 w-full overflow-hidden bg-slate-100 shrink-0">
-                        <div class="absolute top-4 left-4 z-20 rounded-full bg-[#82E682] px-3 py-1 text-[0.65rem] font-extrabold uppercase tracking-widest text-[#0a471b] shadow-sm backdrop-blur-sm">
+                        <div class="absolute top-4 left-4 z-30 rounded-full bg-[#82E682] px-3 py-1 text-[0.65rem] font-extrabold uppercase tracking-widest text-[#0a471b] shadow-sm backdrop-blur-sm">
                             {{ $post->category_label ?? __('ui.nav_articles') }}
                         </div>
 
-                        <x-cover-image :src="$post->image_url"
-                             :alt="$post->getLocalized('title')"
-                             class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                             icon-class="size-12" />
+                        <x-image-carousel :images="$post->carousel_images"
+                                          :alt="$post->getLocalized('title')"
+                                          aspect="h-full"
+                                          rounded=""
+                                          class="h-full"
+                                          :show-counter="false" />
                     </div>
                     
                     <!-- Content -->

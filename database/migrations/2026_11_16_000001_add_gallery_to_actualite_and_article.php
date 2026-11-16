@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Additional cover images displayed in the public slider.
+     *
+     * Projects already expose a `gallery` column, so only the news and
+     * article tables need to be extended.
+     *
+     * @var list<string>
+     */
+    private array $tables = ['actualite', 'article'];
+
+    public function up(): void
+    {
+        foreach ($this->tables as $tableName) {
+            Schema::table($tableName, function (Blueprint $table) {
+                $table->json('gallery')->nullable()->after('image');
+            });
+        }
+    }
+
+    public function down(): void
+    {
+        foreach ($this->tables as $tableName) {
+            Schema::table($tableName, function (Blueprint $table) {
+                $table->dropColumn('gallery');
+            });
+        }
+    }
+};

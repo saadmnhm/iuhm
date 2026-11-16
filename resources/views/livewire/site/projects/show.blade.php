@@ -2,7 +2,6 @@
 
 @php
     $title = $project->getLocalized('title');
-    $image = $project->featured_image_url;
     $publishedAt = $project->published_at ?? $project->created_at;
     $date = $publishedAt?->translatedFormat('d F Y');
     $shareUrl = route('projects.show', $project->slug);
@@ -11,10 +10,6 @@
     $description = $rawDescription === strip_tags($rawDescription)
         ? nl2br(e($rawDescription))
         : $rawDescription;
-
-    $gallery = collect((array) $project->gallery)
-        ->filter()
-        ->map(fn ($path) => $project->resolveMediaUrl($path));
 @endphp
 
 @section('seo')
@@ -35,13 +30,18 @@
             </a>
         </div>
 
-        {{-- Featured Image --}}
-        <div class="relative w-full h-[320px] sm:h-[420px] md:h-[500px] lg:h-[560px] rounded-[2rem] overflow-hidden shadow-lg mb-10 md:mb-16">
-            <x-cover-image :src="$image" :alt="$title" class="w-full h-full object-cover" icon-class="size-24" />
-            <span class="absolute bottom-6 md:bottom-10 left-6 md:left-10 z-10 inline-flex items-center rounded-full bg-[#82E682] px-4 py-2 text-[0.7rem] font-extrabold uppercase tracking-widest text-[#0a471b] shadow-md backdrop-blur-sm">
-                {{ $project->status_label_localized }}
-            </span>
-            <div class="absolute inset-0 bottom-0 top-1/2 bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
+        {{-- Featured image slider --}}
+        <div class="mb-10 md:mb-16">
+            <x-image-carousel :images="$project->carousel_images"
+                              :alt="$title"
+                              aspect="h-[320px] sm:h-[420px] md:h-[500px] lg:h-[560px]"
+                              class="shadow-lg"
+                              :show-thumbnails="count($project->carousel_images) > 1">
+                <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+                <span class="absolute bottom-6 md:bottom-10 left-6 md:left-10 z-30 inline-flex items-center rounded-full bg-[#82E682] px-4 py-2 text-[0.7rem] font-extrabold uppercase tracking-widest text-[#0a471b] shadow-md backdrop-blur-sm">
+                    {{ $project->status_label_localized }}
+                </span>
+            </x-image-carousel>
         </div>
 
         {{-- Content Layout --}}
@@ -92,20 +92,6 @@
                 <div class="article-content max-w-none">
                     {!! $description !!}
                 </div>
-
-                {{-- Gallery --}}
-                @if($gallery->isNotEmpty())
-                    <div class="mt-16">
-                        <h2 class="text-2xl md:text-[2rem] font-bold text-[#0B1528] leading-[1.2] mb-6">{{ __('ui.gallery') }}</h2>
-                        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                            @foreach($gallery as $galleryImage)
-                                <a href="{{ $galleryImage }}" target="_blank" rel="noopener" class="block rounded-xl border border-slate-200 overflow-hidden hover:shadow-lg transition-shadow">
-                                    <img src="{{ $galleryImage }}" alt="{{ $title }}" loading="lazy" class="w-full h-64 object-cover hover:scale-105 transition-transform duration-300">
-                                </a>
-                            @endforeach
-                        </div>
-                    </div>
-                @endif
 
                 {{-- External link --}}
                 @if($project->external_link)

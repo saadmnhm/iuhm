@@ -8,7 +8,6 @@
     $showRoute = $isArticle ? 'articles.show' : 'actualite.show';
 
     $title = $post->getLocalized('title');
-    $image = $post->image_url;
     $category = $post->category_label ?? ($isArticle ? __('ui.nav_articles') : __('ui.nav_news'));
     $author = $post->author?->name ?? __('ui.brand_name');
     $publishedAt = $post->published_at ?? $post->created_at;
@@ -37,17 +36,22 @@
             </a>
         </div>
 
-        {{-- Cover Image --}}
-        <div class="relative w-full h-[320px] sm:h-[420px] md:h-[500px] lg:h-[560px] rounded-[2rem] overflow-hidden shadow-lg mb-10 md:mb-16">
-            <x-cover-image :src="$image" :alt="$title" class="w-full h-full object-cover" icon-class="size-24" />
-            @if($category)
-                <div class="absolute bottom-6 md:bottom-10 left-6 md:left-10 z-10">
-                    <span class="inline-flex items-center rounded-full bg-[#82E682] px-4 py-2 text-[0.7rem] font-extrabold uppercase tracking-widest text-[#0a471b] shadow-md backdrop-blur-sm">
-                        {{ $category }}
-                    </span>
-                </div>
-            @endif
-            <div class="absolute inset-0 bottom-0 top-1/2 bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
+        {{-- Cover slider --}}
+        <div class="mb-10 md:mb-16">
+            <x-image-carousel :images="$post->carousel_images"
+                              :alt="$title"
+                              aspect="h-[320px] sm:h-[420px] md:h-[500px] lg:h-[560px]"
+                              class="shadow-lg"
+                              :show-thumbnails="count($post->carousel_images) > 1">
+                <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+                @if($category)
+                    <div class="absolute bottom-6 md:bottom-10 left-6 md:left-10 z-30">
+                        <span class="inline-flex items-center rounded-full bg-[#82E682] px-4 py-2 text-[0.7rem] font-extrabold uppercase tracking-widest text-[#0a471b] shadow-md backdrop-blur-sm">
+                            {{ $category }}
+                        </span>
+                    </div>
+                @endif
+            </x-image-carousel>
         </div>
 
         {{-- Content Layout --}}

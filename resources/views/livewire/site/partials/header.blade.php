@@ -114,6 +114,22 @@
                         @endif
                     </div>
                     <div class="relative inline-block">
+                        <a href="{{ route('clc.index') }}" class="text-sm font-semibold text-[#214f95] transition hover:text-[#122f58]">
+                            {{ __('ui.nav_clc') }}
+                        </a>
+                        @if(request()->routeIs('clc.*'))
+                            <div class="absolute -bottom-1.5 left-0 h-0.5 w-full bg-[#10752d]"></div>
+                        @endif
+                    </div>
+                    <div class="relative inline-block">
+                        <a href="{{ route('zettat.index') }}" class="text-sm font-semibold text-[#214f95] transition hover:text-[#122f58]">
+                            {{ __('ui.nav_zettat') }}
+                        </a>
+                        @if(request()->routeIs('zettat.*'))
+                            <div class="absolute -bottom-1.5 left-0 h-0.5 w-full bg-[#10752d]"></div>
+                        @endif
+                    </div>
+                    <div class="relative inline-block">
                         <a href="{{ route('services.index') }}" class="text-sm font-semibold text-[#214f95] transition hover:text-[#122f58]">
                             {{ __('ui.nav_services') }}
                         </a>
@@ -277,6 +293,12 @@
                     {{-- Fallback navigation --}}
                     <a href="{{ route('actualite.index') }}" class="rounded-xl px-3 py-2 text-sm font-semibold text-[#214f95] hover:bg-slate-100">
                         {{ __('ui.nav_news') }}
+                    </a>
+                    <a href="{{ route('clc.index') }}" class="rounded-xl px-3 py-2 text-sm font-semibold text-[#214f95] hover:bg-slate-100">
+                        {{ __('ui.nav_clc') }}
+                    </a>
+                    <a href="{{ route('zettat.index') }}" class="rounded-xl px-3 py-2 text-sm font-semibold text-[#214f95] hover:bg-slate-100">
+                        {{ __('ui.nav_zettat') }}
                     </a>
                     <a href="{{ route('services.index') }}" class="rounded-xl px-3 py-2 text-sm font-semibold text-[#214f95] hover:bg-slate-100">
                         {{ __('ui.nav_services') }}

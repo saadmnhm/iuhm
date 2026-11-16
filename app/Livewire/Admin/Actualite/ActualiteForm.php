@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Actualite;
 
+use App\Livewire\Concerns\ManagesGallery;
 use App\Livewire\Concerns\ManagesSeo;
 use App\Models\Actualite;
 use App\Models\AdminActivityLog;
@@ -11,7 +12,7 @@ use Livewire\WithPagination;
 
 class ActualiteForm extends Component
 {
-    use ManagesSeo, WithFileUploads, WithPagination;
+    use ManagesGallery, ManagesSeo, WithFileUploads, WithPagination;
 
     public ?int $newsId = null;
 
@@ -60,7 +61,7 @@ class ActualiteForm extends Component
             'category' => 'nullable|string|max:100',
             'tags_input' => 'nullable|string|max:500',
             'is_published' => 'boolean',
-        ], $this->seoRules('actualite', $this->newsId));
+        ], $this->seoRules('actualite', $this->newsId), $this->galleryRules());
     }
 
     public function mount($id = 'new')
@@ -81,6 +82,7 @@ class ActualiteForm extends Component
             $this->tags_input = $post->tags ? implode(', ', $post->tags) : '';
             $this->is_published = $post->is_published;
             $this->image = $post->image;
+            $this->loadGallery($post);
             $this->loadSeo($post);
         } else {
             $this->editMode = false;
@@ -120,6 +122,8 @@ class ActualiteForm extends Component
             $post?->deleteStoredMedia($post->image);
         }
 
+        $data['gallery'] = $this->processGalleryUploads('actualite');
+
         $data = array_merge($data, $this->seoAttributes(Actualite::class, $post));
 
         try {
@@ -145,6 +149,8 @@ class ActualiteForm extends Component
                     'message' => 'Actualité créée avec succès!',
                 ]);
             }
+
+            $this->syncGalleryState($data['gallery'] ?? [], $post);
 
             // clear the new image so it's not re-uploaded next time
             if ($this->newImage) {

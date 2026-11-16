@@ -96,6 +96,17 @@
                     </a>
 
                 @endcanmodule
+
+                @canmodule('clc')
+                    <a wire:navigate href="{{ route('admin.clc.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.clc*') ? 'bg-[#DCFCE7]' : '' }}">
+                        <i class="ri-community-line mr-1"></i> CLC
+                    </a>
+                @endcanmodule
+                @canmodule('zettat')
+                    <a wire:navigate href="{{ route('admin.zettat.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.zettat*') ? 'bg-[#DCFCE7]' : '' }}">
+                        <i class="ri-map-pin-2-line mr-1"></i> ZETTAT
+                    </a>
+                @endcanmodule
             @endif
             @if(request()->is('admin/projects/*') || request()->is('admin/projects') )
 

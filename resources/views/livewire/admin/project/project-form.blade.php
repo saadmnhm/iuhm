@@ -303,6 +303,8 @@ window.iuhmShowEditorError = function (msg) {
                     @endif
                 </div>
 
+                @include('livewire.admin.partials.gallery-manager')
+
                 {{-- Publication Status --}}
                 <div class="rounded-[2rem] border border-slate-200/80 bg-white p-6 shadow-sm shadow-slate-200">
                     <p class="text-[0.65rem] font-extrabold uppercase tracking-widest text-[#23803B] mb-4">Statut de publication</p>

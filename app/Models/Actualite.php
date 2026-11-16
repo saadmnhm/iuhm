@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasGallery;
 use App\Models\Concerns\HasSeo;
 use App\Models\Concerns\ResolvesMediaUrls;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,7 @@ use Illuminate\Support\Str;
 
 class Actualite extends Model
 {
-    use HasSeo, ResolvesMediaUrls, SoftDeletes;
+    use HasGallery, HasSeo, ResolvesMediaUrls, SoftDeletes;
 
     protected $table = 'actualite';
 
@@ -24,6 +25,7 @@ class Actualite extends Model
         'content',
         'content_ar',
         'image',
+        'gallery',
         'category',
         'tags',
         'is_published',
@@ -40,6 +42,7 @@ class Actualite extends Model
     ];
 
     protected $casts = [
+        'gallery' => 'array',
         'tags' => 'array',
         'is_published' => 'boolean',
         'published_at' => 'datetime',

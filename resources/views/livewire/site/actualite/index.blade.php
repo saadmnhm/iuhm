@@ -104,14 +104,16 @@
                 <article class="group relative flex flex-col bg-[#F8F9FA] rounded-[2rem] overflow-hidden transition hover:shadow-lg hover:shadow-slate-200/50 border border-slate-100">
                     <div class="relative h-52 w-full overflow-hidden bg-slate-100 shrink-0">
                         @if($post->category_label)
-                        <div class="absolute top-4 left-4 z-10 rounded-full bg-[#82E682] px-3 py-1 text-[0.65rem] font-extrabold uppercase tracking-widest text-[#0a471b] shadow-sm">
+                        <div class="absolute top-4 left-4 z-30 rounded-full bg-[#82E682] px-3 py-1 text-[0.65rem] font-extrabold uppercase tracking-widest text-[#0a471b] shadow-sm">
                             {{ $post->category_label }}
                         </div>
                         @endif
-                        <x-cover-image :src="$post->image_url"
-                                       :alt="$post->getLocalized('title')"
-                                       class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                       icon-class="size-12" />
+                        <x-image-carousel :images="$post->carousel_images"
+                                          :alt="$post->getLocalized('title')"
+                                          aspect="h-full"
+                                          rounded=""
+                                          class="h-full"
+                                          :show-counter="false" />
                     </div>
                     <div class="flex flex-col flex-1 p-8">
                         <h3 class="text-[1.15rem] font-bold text-[#0f172a] leading-tight mb-3 group-hover:text-[#10752d] transition-colors line-clamp-2">

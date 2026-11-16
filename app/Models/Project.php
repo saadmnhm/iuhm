@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasGallery;
 use App\Models\Concerns\HasSeo;
 use App\Models\Concerns\ResolvesMediaUrls;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,7 @@ use Illuminate\Support\Str;
 
 class Project extends Model
 {
-    use HasSeo, ResolvesMediaUrls, SoftDeletes;
+    use HasGallery, HasSeo, ResolvesMediaUrls, SoftDeletes;
 
     protected $table = 'projects';
 

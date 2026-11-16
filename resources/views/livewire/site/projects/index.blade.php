@@ -55,10 +55,12 @@
                     <article class="relative group flex flex-col bg-[#F8F9FA] rounded-[1.5rem] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
                         <!-- Image -->
                         <div class="relative h-56 w-full overflow-hidden bg-slate-100 shrink-0">
-                            <x-cover-image :src="$project->featured_image_url"
-                                 :alt="$project->getLocalized('title')"
-                                 class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                 icon-class="size-12" />
+                            <x-image-carousel :images="$project->carousel_images"
+                                              :alt="$project->getLocalized('title')"
+                                              aspect="h-full"
+                                              rounded=""
+                                              class="h-full"
+                                              :show-counter="false" />
                         </div>
                         
                         <!-- Content -->
