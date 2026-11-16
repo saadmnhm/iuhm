@@ -25,7 +25,7 @@ return [
     'nav_articles' => 'Articles',
     'nav_deliverables' => 'Livrables',
     'nav_clc' => 'CLC',
-    'nav_zettat' => 'ZETTAT',
+    'nav_zettat' => 'Zettat',
     'clc_badge' => 'Espace CLC',
     'clc_description' => 'Retrouvez les contenus, actualités et initiatives de la section CLC.',
     'zettat_badge' => 'Espace ZETTAT',
