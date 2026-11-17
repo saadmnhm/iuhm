@@ -79,6 +79,20 @@
                     <a wire:navigate href="{{ route('admin.actualite.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.actualite*') ? 'bg-[#DCFCE7]' : '' }}">
                         <i class="ri-newspaper-line mr-1"></i> Actualités
                     </a>
+                    <a wire:navigate href="{{ route('admin.project.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.project.index') ? 'bg-[#DCFCE7]' : '' }}">
+                        <i class="ri-trello-fill mr-1"></i> Gestion Projets
+                    </a>
+                    @canmodule('clc')
+                        <a wire:navigate href="{{ route('admin.clc.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.clc*') ? 'bg-[#DCFCE7]' : '' }}">
+                            <i class="ri-community-line mr-1"></i> CLC
+                        </a>
+                    @endcanmodule
+                    
+                    @canmodule('zettat')
+                        <a wire:navigate href="{{ route('admin.zettat.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.zettat*') ? 'bg-[#DCFCE7]' : '' }}">
+                            <i class="ri-map-pin-2-line mr-1"></i> Zettat
+                        </a>
+                    @endcanmodule
                     <a wire:navigate href="{{ route('admin.publication.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.publication*') ? 'bg-[#DCFCE7]' : '' }}">
                         <i class="ri-file-download-line mr-1"></i> Livrables
                     </a>
@@ -91,22 +105,11 @@
                     <a wire:navigate href="{{ route('admin.apropos.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.apropos*') ? 'bg-[#DCFCE7]' : '' }}">
                         <i class="ri-mail-line mr-1"></i> A propos
                     </a>
-                    <a wire:navigate href="{{ route('admin.project.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.project.index') ? 'bg-[#DCFCE7]' : '' }}">
-                        <i class="ri-trello-fill mr-1"></i> Gestion Projets
-                    </a>
+                    
 
                 @endcanmodule
 
-                @canmodule('clc')
-                    <a wire:navigate href="{{ route('admin.clc.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.clc*') ? 'bg-[#DCFCE7]' : '' }}">
-                        <i class="ri-community-line mr-1"></i> CLC
-                    </a>
-                @endcanmodule
-                @canmodule('zettat')
-                    <a wire:navigate href="{{ route('admin.zettat.index') }}" class="block px-4 py-2 rounded hover:bg-gray-100 {{ request()->routeIs('admin.zettat*') ? 'bg-[#DCFCE7]' : '' }}">
-                        <i class="ri-map-pin-2-line mr-1"></i> ZETTAT
-                    </a>
-                @endcanmodule
+                
             @endif
             @if(request()->is('admin/projects/*') || request()->is('admin/projects') )
 
