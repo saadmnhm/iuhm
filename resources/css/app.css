@@ -403,3 +403,38 @@
     border-left: 0;
     border-right: 4px solid #82E682;
 }
+
+/* ── Partner marquee rows (home page) ── */
+.iuhm-marquee-track {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+    animation-name: iuhm-marquee-left;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+.iuhm-marquee-track--reverse {
+    animation-name: iuhm-marquee-right;
+}
+
+.iuhm-marquee:hover .iuhm-marquee-track {
+    animation-play-state: paused;
+}
+
+@keyframes iuhm-marquee-left {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(-50%, 0, 0); }
+}
+
+@keyframes iuhm-marquee-right {
+    from { transform: translate3d(-50%, 0, 0); }
+    to { transform: translate3d(0, 0, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .iuhm-marquee-track {
+        animation: none;
+        transform: none;
+    }
+}

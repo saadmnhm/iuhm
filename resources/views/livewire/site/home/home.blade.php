@@ -6,16 +6,27 @@
     $heroImage = 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1600&q=80';
     $mapEmbed = 'https://www.openstreetmap.org/export/embed.html?bbox=-7.573990%2C33.585155%2C-7.553990%2C33.605155&layer=mapnik&marker=33.595155%2C-7.563990';
     $stats = [
-        ['value' => '10k+', 'label' => __('ui.home_stats_people_helped'), 'icon' => 'users'],
-        ['value' => '50+', 'label' => __('ui.home_stats_active_programs'), 'icon' => 'network'],
-        ['value' => '+ 23 ans', 'label' => __('ui.home_stats_years_service'), 'icon' => 'calendar'],
-        ['value' => '+ 70', 'label' => __('ui.home_stats_partenair'), 'icon' => 'partenaires'],
+        ['value' => 10000, 'format' => 'compact', 'prefix' => '', 'suffix' => '+', 'label' => __('ui.home_stats_people_helped'), 'icon' => 'users'],
+        ['value' => 50, 'format' => 'plain', 'prefix' => '', 'suffix' => '+', 'label' => __('ui.home_stats_active_programs'), 'icon' => 'network'],
+        ['value' => 23, 'format' => 'plain', 'prefix' => '+ ', 'suffix' => ' '.__('ui.home_stats_years_suffix'), 'label' => __('ui.home_stats_years_service'), 'icon' => 'calendar'],
+        ['value' => 70, 'format' => 'plain', 'prefix' => '+ ', 'suffix' => '', 'label' => __('ui.home_stats_partenair'), 'icon' => 'partenaires'],
     ];
-    $services = [
-        ['title' => __('ui.home_service_education'), 'description' => __('ui.home_service_education_desc'), 'icon' => 'education'],
-        ['title' => __('ui.home_service_health'), 'description' => __('ui.home_service_health_desc'), 'icon' => 'health'],
-        ['title' => __('ui.home_service_food'), 'description' => __('ui.home_service_food_desc'), 'icon' => 'food'],
-    ];
+
+    // Formats a stat for its first paint (before the JS counter kicks in).
+    $formatStat = static function (int $value, string $format): string {
+        if ($format === 'compact' && $value >= 1000) {
+            return rtrim(rtrim(number_format($value / 1000, 1, '.', ''), '0'), '.').'k';
+        }
+
+        return number_format($value, 0, '.', ' ');
+    };
+
+    // Director's photo: drop a file in public/assets/web_site/images/ as
+    // directeur.png (or .jpg/.jpeg/.webp) and it is picked up automatically.
+    $directorImage = collect(['directeur.png', 'directeur.jpg', 'directeur.jpeg', 'directeur.webp', 'director.png', 'director.jpg'])
+        ->map(fn (string $file) => 'assets/web_site/images/'.$file)
+        ->first(fn (string $path) => file_exists(public_path($path))) ?? 'assets/web_site/images/assa_ct.png';
+
     $partnerDirectory = public_path('assets/site/images/partenaires');
     $partnerExtensions = ['png', 'jpg', 'jpeg', 'webp', 'svg', 'gif'];
     $partnerFiles = is_dir($partnerDirectory) ? glob($partnerDirectory.'/*') : [];
@@ -34,11 +45,26 @@
         $partners = array_map(fn ($name) => ['name' => $name, 'image' => null], ['AA', 'IU', 'CB', 'MC', 'RB', 'AS', 'CC', 'UP']);
     }
 
-    // Slider shows 3 partners per page.
-    $partnerPages = array_chunk($partners, 3);
-    // Duplicate the first page at the end so the carousel can loop seamlessly.
-    $partnerSlides = count($partnerPages) > 1 ? [...$partnerPages, $partnerPages[0]] : $partnerPages;
-    $isRtl = in_array(app()->getLocale(), config('app.rtl_locales', []), true);
+    // Partners run in 4 infinite marquee rows, alternating direction.
+    $partnerRows = array_fill(0, 4, []);
+    foreach ($partners as $index => $partner) {
+        $partnerRows[$index % 4][] = $partner;
+    }
+
+    // Pad each row so it is always wider than the screen (seamless loop).
+    foreach ($partnerRows as $rowIndex => $rowPartners) {
+        $original = $rowPartners;
+        if ($original === []) {
+            $partnerRows[$rowIndex] = [];
+            continue;
+        }
+
+        while (count($partnerRows[$rowIndex]) < 12) {
+            $partnerRows[$rowIndex] = [...$partnerRows[$rowIndex], ...$original];
+        }
+    }
+
+    $partnerRows = array_values(array_filter($partnerRows));
 @endphp
 
 @section('content')
@@ -137,7 +163,14 @@
                                 @endif
                             </div>
                             <div>
-                                <div class="text-2xl font-bold tracking-tight">{{ $stat['value'] }}</div>
+                                <div
+                                    class="text-2xl font-bold tracking-tight tabular-nums"
+                                    data-counter
+                                    data-target="{{ $stat['value'] }}"
+                                    data-format="{{ $stat['format'] }}"
+                                    data-prefix="{{ $stat['prefix'] }}"
+                                    data-suffix="{{ $stat['suffix'] }}"
+                                >{{ $stat['prefix'].$formatStat($stat['value'], $stat['format']).$stat['suffix'] }}</div>
                                 <p class="text-sm text-white/72">{{ $stat['label'] }}</p>
                             </div>
                         </div>
@@ -178,48 +211,53 @@
         </div>
     </section>
 
-    <section id="services" class="bg-white py-20 sm:py-24">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="flex items-end justify-between gap-6">
-                <div>
-                    <p class="text-sm font-semibold uppercase tracking-[0.22em] text-[#2d4b86]">{{ __('ui.home_services_label') }}</p>
-                    <h2 class="mt-4 text-3xl font-bold tracking-tight text-[#16254d] sm:text-4xl">{{ __('ui.home_services_title') }}</h2>
+    {{-- Mot du Directeur --}}
+    <section id="director" class="relative overflow-hidden bg-white py-20 sm:py-24">
+        <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(29,107,53,0.08),transparent_55%)]"></div>
+
+        <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+                {{-- Image --}}
+                <div class="relative order-1">
+                    <div class="absolute -left-5 -top-5 hidden size-28 rounded-[1.75rem] border-4 border-[#a7ff8f]/70 sm:block" aria-hidden="true"></div>
+
+                    <div class="relative overflow-hidden rounded-[2rem] bg-slate-100 shadow-2xl shadow-slate-300/50">
+                        <img
+                            src="{{ asset($directorImage) }}"
+                            alt="{{ __('ui.home_director_name') }}"
+                            class="h-[340px] w-full object-cover sm:h-[460px]"
+                            loading="lazy"
+                        >
+                    </div>
+
+                    <div class="absolute -bottom-6 -right-5 hidden rounded-2xl bg-[#1d6b35] px-5 py-4 text-white shadow-xl shadow-emerald-900/25 sm:block">
+                        <p class="text-2xl font-black leading-none">23+</p>
+                        <p class="mt-1 max-w-[7rem] text-[11px] uppercase leading-tight tracking-[0.16em] text-white/80">{{ __('ui.home_stats_years_service') }}</p>
+                    </div>
                 </div>
 
-                <a href="{{ route('services.index') }}" class="hidden text-sm font-semibold text-[#1d6b35] transition hover:text-[#124722] sm:inline-flex">
-                    {{ __('ui.home_view_all_services') }}
-                </a>
-            </div>
+                {{-- Text --}}
+                <div class="order-2">
+                    <p class="text-sm font-semibold uppercase tracking-[0.22em] text-[#2d4b86]">{{ __('ui.home_director_label') }}</p>
+                    <h2 class="mt-4 text-3xl font-bold tracking-tight text-[#16254d] sm:text-4xl">{{ __('ui.home_director_title') }}</h2>
 
-            <div class="mt-10 grid gap-5 md:grid-cols-3">
-                @foreach ($services as $service)
-                    <article class="rounded-3xl border border-white/80 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-300/40">
-                        <div class="flex size-11 items-center justify-center rounded-2xl bg-[#f3f7ef] text-[#1d7a2f] ring-1 ring-[#dcead8]">
-                            @if ($service['icon'] === 'education')
-                                <svg class="size-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                    <path d="M3 8.5 12 4l9 4.5-9 4.5L3 8.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
-                                    <path d="M7 10.5V15c0 1.5 2.2 3 5 3s5-1.5 5-3v-4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
-                            @elseif ($service['icon'] === 'health')
-                                <svg class="size-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                    <path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" />
-                                    <rect x="4" y="4" width="16" height="16" rx="4" stroke="currentColor" stroke-width="1.5" opacity="0.25" />
-                                </svg>
-                            @else
-                                <svg class="size-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                    <path d="M12 4c4.5 0 8 3.5 8 8 0 3.5-2.2 6.4-5.3 7.4-1.1.3-2.1-.5-2.1-1.7V17" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-                                    <path d="M9 14c0-1.5.9-2.5 2-3 1.6-.8 2.2-1.5 2.2-2.6C13.2 7.1 12.3 6 11 6c-1.1 0-2 .7-2.4 1.8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-                                </svg>
-                            @endif
+                    <blockquote class="mt-6 border-s-4 border-[#82E682] ps-5 text-lg font-medium italic leading-8 text-[#16254d] sm:text-xl sm:leading-9">
+                        « {{ __('ui.home_director_quote') }} »
+                    </blockquote>
+
+                    <p class="mt-6 text-base leading-8 text-slate-600">{{ __('ui.home_director_paragraph_1') }}</p>
+                    <p class="mt-4 text-base leading-8 text-slate-600">{{ __('ui.home_director_paragraph_2') }}</p>
+
+                    <div class="mt-8 flex flex-wrap items-center gap-5 border-t border-slate-100 pt-6">
+                        <svg class="h-12 w-28 text-[#1d6b35]" viewBox="0 0 112 48" fill="none" aria-hidden="true">
+                            <path d="M4 34c8-14 14-22 18-24 5-3 5 6 2 14s-7 16-3 16c4 1 10-9 15-19s9-15 11-11c2 5-4 18-1 20 4 2 8-6 12-12 3-5 5-6 6-3 2 5-1 12 2 13 4 2 8-3 13-9 4-5 7-7 9-5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <div>
+                            <p class="text-base font-bold text-[#16254d]">{{ __('ui.home_director_name') }}</p>
+                            <p class="text-sm text-slate-500">{{ __('ui.home_director_role') }}</p>
                         </div>
-                        <h3 class="mt-5 text-lg font-semibold text-[#16254d]">{{ $service['title'] }}</h3>
-                        <p class="mt-3 text-sm leading-7 text-slate-600">{{ $service['description'] }}</p>
-                    </article>
-                @endforeach
-            </div>
-
-            <div class="mt-8 text-right sm:hidden">
-                <a href="{{ route('services.index') }}" class="text-sm font-semibold text-[#1d6b35] transition hover:text-[#124722]">{{ __('ui.home_view_all_services') }}</a>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -281,155 +319,39 @@
             <p class="mx-auto mt-6 max-w-2xl text-sm leading-7 text-slate-500">
                 {{ __('ui.home_trust_description') }}
             </p>
+        </div>
 
-            <div
-                class="relative mt-10"
-                role="region"
-                aria-roledescription="carousel"
-                aria-label="{{ __('ui.home_trust_title') }}"
-                x-data="{
-                    page: 0,
-                    pages: {{ count($partnerPages) }},
-                    animating: true,
-                    timer: null,
-                    resetTimer: null,
-                    get active() { return this.page % this.pages; },
-                    init() { this.startAuto(); },
-                    startAuto() {
-                        if (this.pages < 2) return;
-                        this.stopAuto();
-                        this.timer = setInterval(() => this.next(), 5000);
-                    },
-                    stopAuto() {
-                        if (this.timer) { clearInterval(this.timer); this.timer = null; }
-                    },
-                    next() {
-                        if (this.pages < 2 || this.page >= this.pages) return;
-                        this.animating = true;
-                        this.page += 1;
-                        if (this.page === this.pages) {
-                            clearTimeout(this.resetTimer);
-                            this.resetTimer = setTimeout(() => this.resetIfClone(), 600);
-                        }
-                    },
-                    prev() {
-                        if (this.pages < 2) return;
-                        if (this.page === 0) {
-                            // Jump to the cloned first slide, then animate back to the real last slide.
-                            this.animating = false;
-                            this.page = this.pages;
-                            this.$nextTick(() => {
-                                requestAnimationFrame(() => {
-                                    this.animating = true;
-                                    requestAnimationFrame(() => { this.page = this.pages - 1; });
-                                });
-                            });
-                            return;
-                        }
-                        this.animating = true;
-                        this.page -= 1;
-                    },
-                    go(index) {
-                        if (index === this.active) { this.startAuto(); return; }
-                        this.animating = true;
-                        this.page = index;
-                        this.startAuto();
-                    },
-                    onTransitionEnd(event) {
-                        if (event.target !== this.$refs.track) return;
-                        this.resetIfClone();
-                    },
-                    resetIfClone() {
-                        if (this.page !== this.pages) return;
-                        clearTimeout(this.resetTimer);
-                        this.animating = false;
-                        this.page = 0;
-                        this.$nextTick(() => {
-                            requestAnimationFrame(() => { this.animating = true; });
-                        });
-                    }
-                }"
-                @mouseenter="stopAuto()"
-                @mouseleave="startAuto()"
-            >
-                <div class="overflow-hidden">
+        <div class="relative mt-12 space-y-4 sm:mt-14" aria-label="{{ __('ui.home_trust_title') }}">
+            @foreach ($partnerRows as $rowIndex => $rowPartners)
+                <div class="iuhm-marquee relative w-full overflow-hidden">
+                    <div class="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-[linear-gradient(to_right,#FBF8FD,rgba(251,248,253,0))] sm:w-24" aria-hidden="true"></div>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-[linear-gradient(to_left,#FBF8FD,rgba(251,248,253,0))] sm:w-24" aria-hidden="true"></div>
+
                     <div
-                        x-ref="track"
-                        class="flex"
-                        :class="animating ? 'transition-transform duration-500 ease-out' : ''"
-                        :style="'transform: translateX(' + (page * {{ $isRtl ? '' : '-' }}100) + '%)'"
-                        @transitionend="onTransitionEnd($event)"
+                        class="iuhm-marquee-track {{ $rowIndex % 2 === 1 ? 'iuhm-marquee-track--reverse' : '' }}"
+                        style="animation-duration: {{ 38 + ($rowIndex * 5) }}s"
                     >
-                        @foreach ($partnerSlides as $pageIndex => $pagePartners)
-                            @php($isClone = count($partnerPages) > 1 && $loop->last)
-                            <div
-                                class="w-full shrink-0"
-                                @if ($isClone)
-                                    aria-hidden="true"
-                                @else
-                                    role="group"
-                                    aria-roledescription="slide"
-                                    aria-label="{{ $pageIndex + 1 }} / {{ count($partnerPages) }}"
-                                @endif
-                            >
-                                <div class="grid grid-cols-3 gap-3 sm:gap-5">
-                                    @foreach ($pagePartners as $partner)
-                                        <div class="flex h-28 items-center justify-center rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md sm:h-36 sm:p-6">
-                                            @if ($partner['image'])
-                                                <img
-                                                    src="{{ $partner['image'] }}"
-                                                    alt="{{ $partner['name'] }}"
-                                                    class="max-h-16 w-auto max-w-full object-contain sm:max-h-20"
-                                                    loading="lazy"
-                                                >
-                                            @else
-                                                <span class="text-sm font-bold text-slate-400">{{ $partner['name'] }}</span>
-                                            @endif
-                                        </div>
-                                    @endforeach
+                        @for ($copy = 0; $copy < 2; $copy++)
+                            @foreach ($rowPartners as $partner)
+                                <div class="shrink-0 px-2" @if ($copy === 1) aria-hidden="true" @endif>
+                                    <div class="flex h-24 w-40 items-center justify-center rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md sm:h-28 sm:w-52 sm:p-5">
+                                        @if ($partner['image'])
+                                            <img
+                                                src="{{ $partner['image'] }}"
+                                                alt="{{ $partner['name'] }}"
+                                                class="max-h-14 w-auto max-w-full object-contain sm:max-h-16"
+                                                loading="lazy"
+                                            >
+                                        @else
+                                            <span class="text-sm font-bold text-slate-400">{{ $partner['name'] }}</span>
+                                        @endif
+                                    </div>
                                 </div>
-                            </div>
-                        @endforeach
+                            @endforeach
+                        @endfor
                     </div>
                 </div>
-
-                @if (count($partnerPages) > 1)
-                    <button
-                        type="button"
-                        class="absolute -left-2 top-1/2 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-[#16254d] shadow-md transition hover:bg-slate-50 sm:-left-5"
-                        @click="prev()"
-                        aria-label="{{ __('ui.home_trust_prev') }}"
-                    >
-                        <svg class="size-5" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                            <path d="M12 5l-5 5 5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </button>
-
-                    <button
-                        type="button"
-                        class="absolute -right-2 top-1/2 z-10 flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-[#16254d] shadow-md transition hover:bg-slate-50 sm:-right-5"
-                        @click="next()"
-                        aria-label="{{ __('ui.home_trust_next') }}"
-                    >
-                        <svg class="size-5" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                            <path d="M8 5l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </button>
-
-                    <div class="mt-6 flex items-center justify-center gap-2">
-                        @foreach ($partnerPages as $pageIndex => $pagePartners)
-                            <button
-                                type="button"
-                                class="h-2 rounded-full transition-all duration-300"
-                                :class="active === {{ $pageIndex }} ? 'w-6 bg-[#1d6b35]' : 'w-2 bg-slate-300 hover:bg-slate-400'"
-                                :aria-current="active === {{ $pageIndex }} ? 'true' : 'false'"
-                                @click="go({{ $pageIndex }})"
-                                aria-label="{{ __('ui.home_trust_slide') }} {{ $pageIndex + 1 }}"
-                            ></button>
-                        @endforeach
-                    </div>
-                @endif
-            </div>
+            @endforeach
         </div>
     </section>
 
@@ -507,3 +429,60 @@
         </div>
     </section>
 @endsection
+
+@push('scripts')
+    <script>
+        (function () {
+            const counters = document.querySelectorAll('[data-counter]');
+            if (!counters.length) return;
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+            const format = (value, mode) => {
+                if (mode === 'compact' && value >= 1000) {
+                    return (value / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+                }
+
+                return String(Math.round(value)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+            };
+
+            const run = (el) => {
+                const target = Number(el.dataset.target || 0);
+                const mode = el.dataset.format || 'plain';
+                const prefix = el.dataset.prefix || '';
+                const suffix = el.dataset.suffix || '';
+                const duration = 1800;
+                const start = performance.now();
+
+                const tick = (now) => {
+                    const progress = Math.min((now - start) / duration, 1);
+                    const eased = 1 - Math.pow(1 - progress, 3);
+                    el.textContent = prefix + format(target * eased, mode) + suffix;
+
+                    if (progress < 1) {
+                        requestAnimationFrame(tick);
+                    } else {
+                        el.textContent = prefix + format(target, mode) + suffix;
+                    }
+                };
+
+                el.textContent = prefix + format(0, mode) + suffix;
+                requestAnimationFrame(tick);
+            };
+
+            if (!('IntersectionObserver' in window)) {
+                counters.forEach(run);
+                return;
+            }
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    observer.unobserve(entry.target);
+                    run(entry.target);
+                });
+            }, { threshold: 0.4 });
+
+            counters.forEach((counter) => observer.observe(counter));
+        })();
+    </script>
+@endpush
