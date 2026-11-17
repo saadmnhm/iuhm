@@ -16,10 +16,7 @@
     <div class="iu-container">
         <div class="flex h-20 items-center justify-between gap-3">
             <a href="{{ route('home') }}" class="inline-flex shrink-0 items-center gap-2 text-lg font-semibold text-[#163260]">
-                <svg class="size-5 shrink-0 text-[#214f95]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path d="M4 11.5 12 4l8 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-                    <path d="M7.5 10.5V20h9v-9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
+              
                 <img src="{{ asset('assets/iuhm_pysage.png') }}" alt="{{ __('ui.brand_name') }}" class="h-10 w-auto max-w-[8rem] object-contain">
             </a>
 
