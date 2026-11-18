@@ -95,7 +95,7 @@
                         <svg class="mt-0.5 size-4 shrink-0 text-[#82E682]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 0 1 2-2h2.28a1 1 0 0 1 .95.68l1.2 3.6a1 1 0 0 1-.5 1.2l-1.5.9a12 12 0 0 0 5.4 5.4l.9-1.5a1 1 0 0 1 1.2-.5l3.6 1.2a1 1 0 0 1 .68.95V19a2 2 0 0 1-2 2h-1C9.6 21 3 14.4 3 6V5Z" />
                         </svg>
-                        <a href="tel:{{ preg_replace('/\s+/', '', $footerPhone) }}" class="text-slate-400 transition hover:text-[#82E682]">{{ $footerPhone }}</a>
+                        <a href="tel:{{ preg_replace('/\s+/', '', $footerPhone) }}" class="text-slate-400 transition hover:text-[#82E682]">{{ __('ui.home_contact_phone') }}</a>
                     </li>
                     <li class="flex items-start gap-3">
                         <svg class="mt-0.5 size-4 shrink-0 text-[#82E682]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6">

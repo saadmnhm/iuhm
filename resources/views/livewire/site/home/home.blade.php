@@ -21,50 +21,11 @@
         return number_format($value, 0, '.', ' ');
     };
 
-    // Director's photo: drop a file in public/assets/web_site/images/ as
-    // directeur.png (or .jpg/.jpeg/.webp) and it is picked up automatically.
     $directorImage = collect(['directeur.png', 'directeur.jpg', 'directeur.jpeg', 'directeur.webp', 'director.png', 'director.jpg'])
         ->map(fn (string $file) => 'assets/web_site/images/'.$file)
         ->first(fn (string $path) => file_exists(public_path($path))) ?? 'assets/web_site/images/assa_ct.png';
 
-    $partnerDirectory = public_path('assets/site/images/partenaires');
-    $partnerExtensions = ['png', 'jpg', 'jpeg', 'webp', 'svg', 'gif'];
-    $partnerFiles = is_dir($partnerDirectory) ? glob($partnerDirectory.'/*') : [];
-    $partnerFiles = array_values(array_filter($partnerFiles ?: [], function ($file) use ($partnerExtensions) {
-        return is_file($file) && in_array(strtolower(pathinfo($file, PATHINFO_EXTENSION)), $partnerExtensions, true);
-    }));
-    sort($partnerFiles, SORT_NATURAL | SORT_FLAG_CASE);
 
-    $partners = array_map(fn ($file) => [
-        'name' => str_replace(['-', '_'], ' ', pathinfo($file, PATHINFO_FILENAME)),
-        'image' => asset('assets/site/images/partenaires/'.basename($file)),
-    ], $partnerFiles);
-
-    // Fallback placeholders while no logo has been added yet.
-    if ($partners === []) {
-        $partners = array_map(fn ($name) => ['name' => $name, 'image' => null], ['AA', 'IU', 'CB', 'MC', 'RB', 'AS', 'CC', 'UP']);
-    }
-
-    // Partners run in 4 infinite marquee rows, alternating direction.
-    $partnerRows = array_fill(0, 4, []);
-    foreach ($partners as $index => $partner) {
-        $partnerRows[$index % 4][] = $partner;
-    }
-
-    // Pad each row so it is always wider than the screen (seamless loop).
-    foreach ($partnerRows as $rowIndex => $rowPartners) {
-        $original = $rowPartners;
-        if ($original === []) {
-            $partnerRows[$rowIndex] = [];
-            continue;
-        }
-
-        while (count($partnerRows[$rowIndex]) < 12) {
-            $partnerRows[$rowIndex] = [...$partnerRows[$rowIndex], ...$original];
-        }
-    }
-
-    $partnerRows = array_values(array_filter($partnerRows));
 @endphp
 
 @section('content')
@@ -309,50 +270,9 @@
     @endif
 
     <section id="trust" class="bg-[#FBF8FD] py-20 sm:py-24">
-        <div class="mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8">
-            <h2 class="text-3xl font-bold tracking-tight text-[#16254d] sm:text-4xl">{{ __('ui.home_trust_title') }}</h2>
-            <div class="mt-6 flex justify-center">
-                <span class="inline-flex items-center gap-2 rounded-full bg-[#303a67] px-5 py-3 text-sm font-semibold text-white shadow-xl shadow-slate-400/25">
-                    {{ __('ui.home_trust_badge') }}
-                </span>
-            </div>
-            <p class="mx-auto mt-6 max-w-2xl text-sm leading-7 text-slate-500">
-                {{ __('ui.home_trust_description') }}
-            </p>
-        </div>
 
-        <div class="relative mt-12 space-y-4 sm:mt-14" aria-label="{{ __('ui.home_trust_title') }}">
-            @foreach ($partnerRows as $rowIndex => $rowPartners)
-                <div class="iuhm-marquee relative w-full overflow-hidden">
-                    <div class="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-[linear-gradient(to_right,#FBF8FD,rgba(251,248,253,0))] sm:w-24" aria-hidden="true"></div>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-[linear-gradient(to_left,#FBF8FD,rgba(251,248,253,0))] sm:w-24" aria-hidden="true"></div>
 
-                    <div
-                        class="iuhm-marquee-track {{ $rowIndex % 2 === 1 ? 'iuhm-marquee-track--reverse' : '' }}"
-                        style="animation-duration: {{ 38 + ($rowIndex * 5) }}s"
-                    >
-                        @for ($copy = 0; $copy < 2; $copy++)
-                            @foreach ($rowPartners as $partner)
-                                <div class="shrink-0 px-2" @if ($copy === 1) aria-hidden="true" @endif>
-                                    <div class="flex h-24 w-40 items-center justify-center rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md sm:h-28 sm:w-52 sm:p-5">
-                                        @if ($partner['image'])
-                                            <img
-                                                src="{{ $partner['image'] }}"
-                                                alt="{{ $partner['name'] }}"
-                                                class="max-h-14 w-auto max-w-full object-contain sm:max-h-16"
-                                                loading="lazy"
-                                            >
-                                        @else
-                                            <span class="text-sm font-bold text-slate-400">{{ $partner['name'] }}</span>
-                                        @endif
-                                    </div>
-                                </div>
-                            @endforeach
-                        @endfor
-                    </div>
-                </div>
-            @endforeach
-        </div>
+        @include('livewire.site.home.partenairs')
     </section>
 
     <section id="contact" class="bg-[#FBF8FD] py-20 sm:py-24">

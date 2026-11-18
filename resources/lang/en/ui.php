@@ -81,9 +81,9 @@ return [
     'home_contact_address_label' => 'Address',
     'home_contact_address' => '9 Rue ibn albaittar, derb saad, hay mohammadi , Casablanca',
     'home_contact_phone_label' => 'Phone',
-    'home_contact_phone' => '+212 5 22 00 00 00',
+    'home_contact_phone' => '+212 6 78 62 41 97 / +212 5 22 61 77 91',
     'home_contact_email_label' => 'Email',
-    'home_contact_email' => 'contact@uucasablanca.ma',
+    'home_contact_email' => 'contact@iuhm.org',
     'home_contact_map_button' => 'Open in Google Maps',
 
     'arabic' => 'Arabic',
