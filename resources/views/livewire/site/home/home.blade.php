@@ -12,7 +12,6 @@
         ['value' => 70, 'format' => 'plain', 'prefix' => '+ ', 'suffix' => '', 'label' => __('ui.home_stats_partenair'), 'icon' => 'partenaires'],
     ];
 
-    // Formats a stat for its first paint (before the JS counter kicks in).
     $formatStat = static function (int $value, string $format): string {
         if ($format === 'compact' && $value >= 1000) {
             return rtrim(rtrim(number_format($value / 1000, 1, '.', ''), '0'), '.').'k';
@@ -21,9 +20,6 @@
         return number_format($value, 0, '.', ' ');
     };
 
-    $directorImage = collect(['directeur.png', 'directeur.jpg', 'directeur.jpeg', 'directeur.webp', 'director.png', 'director.jpg'])
-        ->map(fn (string $file) => 'assets/web_site/images/'.$file)
-        ->first(fn (string $path) => file_exists(public_path($path))) ?? 'assets/web_site/images/assa_ct.png';
 
 
 @endphp
@@ -35,6 +31,10 @@
             <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,17,52,0.82)_0%,rgba(5,17,52,0.72)_42%,rgba(8,29,83,0.58)_100%)]"></div>
             <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(115,196,255,0.28),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(101,255,173,0.12),transparent_26%)]"></div>
         </div>
+
+        <!-- <video autoplay muted loop playsinline preload="auto" class="absolute inset-0 h-full w-full object-cover opacity-70" poster="{{ $heroImage }}" >
+            <source src="{{ asset('assets/web_site/hero_vd.mp4') }}" type="video/mp4"> Your browser does not support the video tag.
+        </video> -->
 
         <div class="relative mx-auto max-w-7xl px-4 pb-28 pt-16 sm:px-6 lg:px-8 lg:pb-32 lg:pt-24">
             <div id="hero" class="max-w-3xl">
@@ -184,9 +184,9 @@
 
                     <div class="relative overflow-hidden rounded-[2rem] bg-slate-100 shadow-2xl shadow-slate-300/50">
                         <img
-                            src="{{ asset($directorImage) }}"
+                            src="{{ asset('assets/web_site/images/president.jpg') }}"
                             alt="{{ __('ui.home_director_name') }}"
-                            class="h-[340px] w-full object-cover sm:h-[460px]"
+                            class=" w-full object-cover "
                             loading="lazy"
                         >
                     </div>
@@ -207,7 +207,11 @@
                     </blockquote>
 
                     <p class="mt-6 text-base leading-8 text-slate-600">{{ __('ui.home_director_paragraph_1') }}</p>
-                    <p class="mt-4 text-base leading-8 text-slate-600">{{ __('ui.home_director_paragraph_2') }}</p>
+                    <p class="text-base leading-8 text-slate-600">{{ __('ui.home_director_paragraph_2') }}</p>
+
+                    <p class="mt-4 text-base leading-8 text-slate-600">{{ __('ui.home_director_paragraph_3') }}</p>
+                    <p class="mt-1 text-base leading-8 text-slate-600">{{ __('ui.home_director_paragraph_4') }}</p>
+                    <p class="mt-1 text-base leading-8 text-slate-600">{{ __('ui.home_director_paragraph_5') }}</p>
 
                     <div class="mt-8 flex flex-wrap items-center gap-5 border-t border-slate-100 pt-6">
                         <svg class="h-12 w-28 text-[#1d6b35]" viewBox="0 0 112 48" fill="none" aria-hidden="true">
