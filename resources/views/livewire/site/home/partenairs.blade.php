@@ -227,64 +227,55 @@
                     <!-- Set 1 (Original) -->
                     <div class="shrink-0 px-2">
                         <div class="flex h-24 w-40 items-center justify-center rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md sm:h-28 sm:w-52 sm:p-5">
-                            <img src="assets/site/images/partenaires/logo-13.png" alt="Partner 13" class="max-h-14 w-auto max-w-full object-contain sm:max-h-16" loading="lazy">
+                            <img src="{{ asset('assets/web_site/partners/casadel.png') }}" alt="Partner 13" class="max-h-14 w-auto max-w-full object-contain sm:max-h-16" loading="lazy">
                         </div>
                     </div>
                     <div class="shrink-0 px-2">
                         <div class="flex h-24 w-40 items-center justify-center rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md sm:h-28 sm:w-52 sm:p-5">
-                            <img src="assets/site/images/partenaires/logo-14.png" alt="Partner 14" class="max-h-14 w-auto max-w-full object-contain sm:max-h-16" loading="lazy">
+                            <img src="{{ asset('assets/web_site/partners/foundation.png') }}" alt="Partner 14" class="max-h-14 w-auto max-w-full object-contain sm:max-h-16" loading="lazy">
                         </div>
                     </div>
                     <div class="shrink-0 px-2">
                         <div class="flex h-24 w-40 items-center justify-center rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md sm:h-28 sm:w-52 sm:p-5">
-                            <img src="assets/site/images/partenaires/logo-15.png" alt="Partner 15" class="max-h-14 w-auto max-w-full object-contain sm:max-h-16" loading="lazy">
+                            <img src="{{ asset('assets/web_site/partners/goib.png') }}" alt="Partner 15" class="max-h-14 w-auto max-w-full object-contain sm:max-h-16" loading="lazy">
                         </div>
                     </div>
                     <div class="shrink-0 px-2">
                         <div class="flex h-24 w-40 items-center justify-center rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md sm:h-28 sm:w-52 sm:p-5">
-                            <img src="assets/site/images/partenaires/logo-16.png" alt="Partner 16" class="max-h-14 w-auto max-w-full object-contain sm:max-h-16" loading="lazy">
+                            <img src="{{ asset('assets/web_site/partners/indh.png') }}" alt="Partner 16" class="max-h-14 w-auto max-w-full object-contain sm:max-h-16" loading="lazy">
                         </div>
                     </div>
                     <div class="shrink-0 px-2">
                         <div class="flex h-24 w-40 items-center justify-center rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md sm:h-28 sm:w-52 sm:p-5">
-                            <img src="assets/site/images/partenaires/logo-17.png" alt="Partner 17" class="max-h-14 w-auto max-w-full object-contain sm:max-h-16" loading="lazy">
+                            <img src="{{ asset('assets/web_site/partners/valenciana.png') }}" alt="Partner 17" class="max-h-14 w-auto max-w-full object-contain sm:max-h-16" loading="lazy">
                         </div>
                     </div>
-                    <div class="shrink-0 px-2">
-                        <div class="flex h-24 w-40 items-center justify-center rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md sm:h-28 sm:w-52 sm:p-5">
-                            <img src="assets/site/images/partenaires/logo-18.png" alt="Partner 18" class="max-h-14 w-auto max-w-full object-contain sm:max-h-16" loading="lazy">
-                        </div>
-                    </div>
+                  
 
                     <!-- Set 2 (Exact Duplicate for Seamless Loop) -->
-                    <div class="shrink-0 px-2" aria-hidden="true">
+                    <div class="shrink-0 px-2">
                         <div class="flex h-24 w-40 items-center justify-center rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md sm:h-28 sm:w-52 sm:p-5">
-                            <img src="assets/site/images/partenaires/logo-13.png" alt="Partner 13" class="max-h-14 w-auto max-w-full object-contain sm:max-h-16" loading="lazy">
+                            <img src="{{ asset('assets/web_site/partners/casadel.png') }}" alt="Partner 13" class="max-h-14 w-auto max-w-full object-contain sm:max-h-16" loading="lazy">
                         </div>
                     </div>
-                    <div class="shrink-0 px-2" aria-hidden="true">
+                    <div class="shrink-0 px-2">
                         <div class="flex h-24 w-40 items-center justify-center rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md sm:h-28 sm:w-52 sm:p-5">
-                            <img src="assets/site/images/partenaires/logo-14.png" alt="Partner 14" class="max-h-14 w-auto max-w-full object-contain sm:max-h-16" loading="lazy">
+                            <img src="{{ asset('assets/web_site/partners/foundation.png') }}" alt="Partner 14" class="max-h-14 w-auto max-w-full object-contain sm:max-h-16" loading="lazy">
                         </div>
                     </div>
-                    <div class="shrink-0 px-2" aria-hidden="true">
+                    <div class="shrink-0 px-2">
                         <div class="flex h-24 w-40 items-center justify-center rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md sm:h-28 sm:w-52 sm:p-5">
-                            <img src="assets/site/images/partenaires/logo-15.png" alt="Partner 15" class="max-h-14 w-auto max-w-full object-contain sm:max-h-16" loading="lazy">
+                            <img src="{{ asset('assets/web_site/partners/goib.png') }}" alt="Partner 15" class="max-h-14 w-auto max-w-full object-contain sm:max-h-16" loading="lazy">
                         </div>
                     </div>
-                    <div class="shrink-0 px-2" aria-hidden="true">
+                    <div class="shrink-0 px-2">
                         <div class="flex h-24 w-40 items-center justify-center rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md sm:h-28 sm:w-52 sm:p-5">
-                            <img src="assets/site/images/partenaires/logo-16.png" alt="Partner 16" class="max-h-14 w-auto max-w-full object-contain sm:max-h-16" loading="lazy">
+                            <img src="{{ asset('assets/web_site/partners/indh.png') }}" alt="Partner 16" class="max-h-14 w-auto max-w-full object-contain sm:max-h-16" loading="lazy">
                         </div>
                     </div>
-                    <div class="shrink-0 px-2" aria-hidden="true">
+                    <div class="shrink-0 px-2">
                         <div class="flex h-24 w-40 items-center justify-center rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md sm:h-28 sm:w-52 sm:p-5">
-                            <img src="assets/site/images/partenaires/logo-17.png" alt="Partner 17" class="max-h-14 w-auto max-w-full object-contain sm:max-h-16" loading="lazy">
-                        </div>
-                    </div>
-                    <div class="shrink-0 px-2" aria-hidden="true">
-                        <div class="flex h-24 w-40 items-center justify-center rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md sm:h-28 sm:w-52 sm:p-5">
-                            <img src="assets/site/images/partenaires/logo-18.png" alt="Partner 18" class="max-h-14 w-auto max-w-full object-contain sm:max-h-16" loading="lazy">
+                            <img src="{{ asset('assets/web_site/partners/valenciana.png') }}" alt="Partner 17" class="max-h-14 w-auto max-w-full object-contain sm:max-h-16" loading="lazy">
                         </div>
                     </div>
                 </div>
