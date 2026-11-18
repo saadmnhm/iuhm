@@ -30,7 +30,7 @@
             <img src="{{ $heroImage }}" alt="Casablanca" class="h-full w-full object-cover opacity-70">
             <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,17,52,0.82)_0%,rgba(5,17,52,0.72)_42%,rgba(8,29,83,0.58)_100%)]"></div>
             <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(115,196,255,0.28),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(101,255,173,0.12),transparent_26%)]"></div>
-        </div>
+        </div>  
 
         <!-- <video autoplay muted loop playsinline preload="auto" class="absolute inset-0 h-full w-full object-cover opacity-70" poster="{{ $heroImage }}" >
             <source src="{{ asset('assets/web_site/hero_vd.mp4') }}" type="video/mp4"> Your browser does not support the video tag.
