@@ -35,10 +35,7 @@
             {{-- Brand --}}
             <div class="lg:col-span-4">
                 <a href="{{ route('home') }}" class="inline-flex items-center gap-3">
-                    <span class="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-[#82E682] text-sm font-extrabold text-[#0a471b]">
-                        {{ $footerAcronym }}
-                    </span>
-                    <span class="text-lg font-bold text-white">{{ $footerName }}</span>
+                     <img src="{{ asset('assets/logowhite.png') }}" alt="{{ __('ui.brand_name') }}" class="w-[210px] object-contain">
                 </a>
 
                 @if(filled($footerDescription))

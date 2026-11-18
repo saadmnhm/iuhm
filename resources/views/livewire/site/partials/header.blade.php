@@ -35,10 +35,10 @@
             <div class="flex shrink-0 items-center gap-2 sm:gap-3">
                 @include('livewire.site.partials.language-switcher')
 
-                <a href="https://zettat.iuhm.org/user/login" target="_blank" rel="noopener noreferrer"
+                <!-- <a href="https://zettat.iuhm.org/user/login" target="_blank" rel="noopener noreferrer"
                    class="hidden rounded-full bg-[#0f2454] px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-[#0f2454]/30 transition hover:bg-[#0d1d46] sm:inline-flex xl:px-5 xl:py-2.5">
                     {{ __('ui.zettat') }}
-                </a>
+                </a> -->
 
                 <button type="button"
                         class="inline-flex size-10 items-center justify-center rounded-xl border border-slate-200 text-slate-700 lg:hidden"
@@ -67,10 +67,10 @@
                     </a>
                 @endforeach
 
-                <a href="https://zettat.iuhm.org/user/login" target="_blank" rel="noopener noreferrer"
+                <!-- <a href="https://zettat.iuhm.org/user/login" target="_blank" rel="noopener noreferrer"
                    class="mt-2 rounded-xl bg-[#0f2454] px-3 py-2 text-center text-sm font-semibold text-white">
                     {{ __('ui.zettat') }}
-                </a>
+                </a> -->
             </nav>
         </div>
     </div>

@@ -25,7 +25,7 @@
                                 </span>
                                 <div>
                                     <p class="font-semibold text-[#16254d]">{{ __('ui.contact_address_label') }}</p>
-                                    <p class="mt-0.5 text-slate-500">{{ __('ui.contact_address') }}</p>
+                                    <p class="mt-0.5 text-slate-500">{{ __('ui.home_contact_address') }}</p>
                                 </div>
                             </div>
                             <div class="flex gap-3">
@@ -36,7 +36,7 @@
                                 </span>
                                 <div>
                                     <p class="font-semibold text-[#16254d]">{{ __('ui.contact_phone_label') }}</p>
-                                    <p class="mt-0.5 text-slate-500">{{ __('ui.contact_phone') }}</p>
+                                    <p class="mt-0.5 text-slate-500">{{ __('ui.home_contact_phone') }}</p>
                                 </div>
                             </div>
                             <div class="flex gap-3">
@@ -48,7 +48,7 @@
                                 </span>
                                 <div>
                                     <p class="font-semibold text-[#16254d]">{{ __('ui.contact_email_label') }}</p>
-                                    <p class="mt-0.5 text-slate-500">{{ __('ui.contact_email') }}</p>
+                                    <p class="mt-0.5 text-slate-500">{{ __('ui.home_contact_email') }}</p>
                                 </div>
                             </div>
                         </div>

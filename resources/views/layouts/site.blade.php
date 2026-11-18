@@ -29,6 +29,10 @@
         @unless (app()->runningUnitTests())
             @vite(['resources/css/app.css', 'resources/js/app.js'])
         @endunless
+
+        @stack('head')
+        @stack('styles')
+
         @livewireStyles
     </head>
     <body class="site-shell">
