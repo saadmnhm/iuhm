@@ -1,5 +1,4 @@
 @php
-    // Latest published items of a section, used by the CLC / ZETTAT dropdowns.
     $sectionMenuItems = function (string $section, int $limit = 6): array {
         try {
             if (! \Illuminate\Support\Facades\Schema::hasTable('section_items')) {
@@ -15,7 +14,6 @@
                 ->map(fn (\App\Models\SectionItem $item) => [
                     'label' => $item->getLocalized('title'),
                     'url' => route($section.'.show', $item->slug),
-                    'meta' => $item->category_label ?: $item->published_at?->translatedFormat('d M Y'),
                 ])
                 ->all();
         } catch (\Throwable $e) {
@@ -23,8 +21,6 @@
         }
     };
 
-    // On a CLC / ZETTAT page only the current section's items are listed, so a
-    // section page never leaks the other section's content into its markup.
     $currentSection = request()->routeIs('clc.*') ? 'clc' : (request()->routeIs('zettat.*') ? 'zettat' : null);
 
     $menuItemsFor = function (string $section) use ($currentSection, $sectionMenuItems) {
@@ -41,7 +37,6 @@
             'label' => __('ui.nav_clc'),
             'active' => request()->routeIs('clc.*'),
             'menu' => [
-                'description' => __('ui.clc_description'),
                 'all_url' => route('clc.index'),
                 'items' => $menuItemsFor(\App\Models\SectionItem::SECTION_CLC),
             ],
@@ -50,7 +45,6 @@
             'label' => __('ui.nav_zettat'),
             'active' => request()->routeIs('zettat.*'),
             'menu' => [
-                'description' => __('ui.zettat_description'),
                 'all_url' => route('zettat.index'),
                 'items' => $menuItemsFor(\App\Models\SectionItem::SECTION_ZETTAT),
             ],
@@ -68,7 +62,6 @@
     <div class="iu-container">
         <div class="flex h-20 items-center justify-between gap-3">
             <a href="{{ route('home') }}" class="inline-flex shrink-0 items-center gap-2 text-lg font-semibold text-[#163260]">
-              
                 <img src="{{ asset('assets/iuhm_pysage.png') }}" alt="{{ __('ui.brand_name') }}" class="h-10 w-auto max-w-[8rem] object-contain">
             </a>
 
@@ -99,40 +92,23 @@
                             <div x-show="open"
                                  x-cloak
                                  x-transition.opacity.duration.150ms
-                                 class="absolute left-0 top-full z-50 w-[23rem] pt-3">
-                                <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl shadow-slate-900/10">
-                                    <div class="border-b border-slate-100 bg-slate-50/80 px-5 py-3.5">
-                                        <p class="text-[0.6rem] font-extrabold uppercase tracking-[0.18em] text-[#10752d]">{{ $item['label'] }}</p>
-                                        <p class="mt-1 text-[0.72rem] font-medium leading-relaxed text-slate-500">{{ $item['menu']['description'] }}</p>
-                                    </div>
-
+                                 class="absolute left-0 top-full z-50 w-56 pt-2">
+                                <div class="rounded-xl border border-slate-200 bg-white py-1.5 shadow-lg shadow-slate-900/10">
                                     @if(is_array($item['menu']['items']))
-                                    <ul class="max-h-80 overflow-y-auto p-2">
                                         @forelse($item['menu']['items'] as $child)
-                                            <li>
-                                                <a href="{{ $child['url'] }}"
-                                                   class="group/item flex items-start gap-3 rounded-xl px-3 py-2.5 transition hover:bg-slate-50">
-                                                    <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-[#82E682] transition group-hover/item:bg-[#10752d]"></span>
-                                                    <span class="min-w-0">
-                                                        <span class="block truncate text-[0.82rem] font-semibold text-[#214f95] transition group-hover/item:text-[#0a471b]">{{ $child['label'] }}</span>
-                                                        @if($child['meta'])
-                                                            <span class="mt-0.5 block truncate text-[0.62rem] font-bold uppercase tracking-wider text-slate-400">{{ $child['meta'] }}</span>
-                                                        @endif
-                                                    </span>
-                                                </a>
-                                            </li>
+                                            <a href="{{ $child['url'] }}"
+                                               class="block truncate px-4 py-2 text-[0.8rem] font-semibold text-[#214f95] transition hover:bg-slate-50 hover:text-[#10752d]">
+                                                {{ $child['label'] }}
+                                            </a>
                                         @empty
-                                            <li class="px-3 py-4 text-center text-xs font-medium text-slate-400">{{ __('ui.section_empty_title') }}</li>
+                                            <span class="block px-4 py-2 text-xs text-slate-400">{{ __('ui.section_empty_title') }}</span>
                                         @endforelse
-                                    </ul>
+                                        <div class="my-1 border-t border-slate-100"></div>
                                     @endif
 
                                     <a href="{{ $item['menu']['all_url'] }}"
-                                       class="flex items-center justify-between border-t border-slate-100 bg-slate-50/70 px-5 py-3 text-[0.72rem] font-bold text-[#0f5a1f] transition hover:bg-[#e9fbe9]">
+                                       class="block px-4 py-2 text-[0.78rem] font-bold text-[#10752d] transition hover:bg-slate-50">
                                         {{ __('ui.view_all') }} {{ $item['label'] }}
-                                        <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                            <path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd" />
-                                        </svg>
                                     </a>
                                 </div>
                             </div>
@@ -185,7 +161,7 @@
                                 </svg>
                             </button>
 
-                            <div x-show="sub" x-cloak class="mt-1 space-y-1 border-l-2 border-[#82E682] pl-3">
+                            <div x-show="sub" x-cloak class="mt-1 space-y-1 pl-3">
                                 @foreach($item['menu']['items'] ?? [] as $child)
                                     <a href="{{ $child['url'] }}"
                                        class="block rounded-lg px-3 py-2 text-[0.82rem] font-semibold text-[#214f95] transition hover:bg-slate-100">
@@ -193,7 +169,7 @@
                                     </a>
                                 @endforeach
                                 <a href="{{ $item['menu']['all_url'] }}"
-                                   class="block rounded-lg px-3 py-2 text-[0.78rem] font-bold text-[#0f5a1f] transition hover:bg-[#e9fbe9]">
+                                   class="block rounded-lg px-3 py-2 text-[0.78rem] font-bold text-[#10752d] transition hover:bg-slate-100">
                                     {{ __('ui.view_all') }} {{ $item['label'] }}
                                 </a>
                             </div>
