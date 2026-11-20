@@ -21,6 +21,27 @@
         }
     };
 
+    $projectMenuItems = function (int $limit = 6): array {
+        try {
+            if (! \Illuminate\Support\Facades\Schema::hasTable('projects')) {
+                return [];
+            }
+
+            return \App\Models\Project::query()
+                ->published()
+                ->latest('published_at')
+                ->limit($limit)
+                ->get()
+                ->map(fn (\App\Models\Project $project) => [
+                    'label' => $project->getLocalized('title'),
+                    'url' => route('projects.show', $project->slug),
+                ])
+                ->all();
+        } catch (\Throwable $e) {
+            return [];
+        }
+    };
+
     $navItems = [
         ['label' => __('ui.nav_news'), 'url' => route('actualite.index'), 'active' => request()->routeIs('actualite.*')],
         [
@@ -43,7 +64,14 @@
         ['label' => __('ui.nav_articles'), 'url' => route('articles.index'), 'active' => request()->routeIs('articles.*')],
         ['label' => __('ui.nav_deliverables'), 'url' => route('resources.index'), 'active' => request()->routeIs('resources.*')],
         ['label' => __('ui.history'), 'url' => route('history.index'), 'active' => request()->routeIs('history.*')],
-        ['label' => __('ui.nav_projects'), 'url' => route('projects.index'), 'active' => request()->routeIs('projects.*')],
+        [
+            'label' => __('ui.nav_projects'),
+            'active' => request()->routeIs('projects.*'),
+            'menu' => [
+                'all_url' => route('projects.index'),
+                'items' => $projectMenuItems(),
+            ],
+        ],
         ['label' => __('ui.contact_page_label'), 'url' => route('contact.index'), 'active' => request()->routeIs('contact.*')],
     ];
 @endphp
@@ -92,13 +120,6 @@
                                     @empty
                                         <span class="block px-4 py-2 text-xs text-slate-400">{{ __('ui.section_empty_title') }}</span>
                                     @endforelse
-
-                                    <!-- <div class="my-1 border-t border-slate-100"></div>
-
-                                    <a href="{{ $item['menu']['all_url'] }}"
-                                       class="block px-4 py-2 text-[0.78rem] font-bold text-[#10752d] transition hover:bg-slate-50">
-                                        {{ __('ui.view_all') }} {{ $item['label'] }}
-                                    </a> -->
                                 </div>
                             </div>
                         </div>
