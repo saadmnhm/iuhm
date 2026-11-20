@@ -20,6 +20,7 @@ document.addEventListener('alpine:init', () => {
 
     Alpine.data('iuhmEditor', () => ({
         editor: null,
+        _syncTimer: null,
         init() {
             const wire     = this.$wire;
             const textarea = this.$refs.editorTextarea;
@@ -51,17 +52,24 @@ document.addEventListener('alpine:init', () => {
                         openOnDblClick: true,
                     },
                     events: {
-                        change: async (content) => {
-                            const compressed = await compressBase64Images(content);
-                            try {
-                                await wire.set('description', compressed);
-                            } catch (e) {
-                                window.iuhmShowEditorError(
-                                    e && e.message && e.message.toLowerCase().includes('payload')
-                                        ? 'Image trop lourde même après compression.'
-                                        : 'Erreur de synchronisation.'
-                                );
-                            }
+                        change: () => {
+                            // Debounce the Livewire round-trip so it cannot steal
+                            // focus/selection while the author is formatting text.
+                            clearTimeout(this._syncTimer);
+                            this._syncTimer = setTimeout(async () => {
+                                if (!this.editor) return;
+
+                                const compressed = await compressBase64Images(this.editor.value);
+                                try {
+                                    await wire.set('description', compressed);
+                                } catch (e) {
+                                    window.iuhmShowEditorError(
+                                        e && e.message && e.message.toLowerCase().includes('payload')
+                                            ? 'Image trop lourde même après compression.'
+                                            : 'Erreur de synchronisation.'
+                                    );
+                                }
+                            }, 350);
                         },
                     },
                 });
@@ -69,14 +77,23 @@ document.addEventListener('alpine:init', () => {
                 const raw = wire.get('description');
                 if (raw) this.editor.value = raw;
 
+                const normalize = (html) => (html || '').replace(/\s+/g, ' ').trim();
+
                 wire.$watch('description', (val) => {
-                    if (this.editor && val !== this.editor.value) {
-                        this.editor.value = val || '';
-                    }
+                    if (!this.editor) return;
+                    if (normalize(val) === normalize(this.editor.value)) return;
+
+                    // Never rewrite the editor while it is focused: assigning
+                    // `value` collapses the caret/selection, which applied styles
+                    // at the start of the paragraph instead of the selected text.
+                    if (this.editor.container.contains(document.activeElement)) return;
+
+                    this.editor.value = val || '';
                 });
             });
         },
         destroy() {
+            clearTimeout(this._syncTimer);
             if (this.editor) {
                 this.editor.destruct();
                 this.editor = null;

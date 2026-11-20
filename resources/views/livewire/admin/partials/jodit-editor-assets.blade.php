@@ -41,6 +41,7 @@ document.addEventListener('alpine:init', () => {
 
     Alpine.data('iuhmEditor', () => ({
         editor: null,
+        _syncTimer: null,
         init() {
             const wire     = this.$wire;
             const textarea = this.$refs.editorTextarea;
@@ -75,17 +76,25 @@ document.addEventListener('alpine:init', () => {
                         allowCellResize: true,
                     },
                     events: {
-                        change: async (content) => {
-                            const compressed = await compressBase64Images(content);
-                            try {
-                                await wire.set('content', compressed);
-                            } catch (e) {
-                                window.iuhmShowEditorError(
-                                    e && e.message && e.message.toLowerCase().includes('payload')
-                                        ? 'Image trop lourde même après compression. Veuillez réduire la taille de l\'image.'
-                                        : 'Erreur de synchronisation. Veuillez réessayer.'
-                                );
-                            }
+                        change: () => {
+                            // Debounce the Livewire round-trip: syncing on every
+                            // keystroke re-rendered the component and could steal
+                            // focus/selection while the author was formatting text.
+                            clearTimeout(this._syncTimer);
+                            this._syncTimer = setTimeout(async () => {
+                                if (!this.editor) return;
+
+                                const compressed = await compressBase64Images(this.editor.value);
+                                try {
+                                    await wire.set('content', compressed);
+                                } catch (e) {
+                                    window.iuhmShowEditorError(
+                                        e && e.message && e.message.toLowerCase().includes('payload')
+                                            ? 'Image trop lourde même après compression. Veuillez réduire la taille de l\'image.'
+                                            : 'Erreur de synchronisation. Veuillez réessayer.'
+                                    );
+                                }
+                            }, 350);
                         },
                     },
                 });
@@ -93,14 +102,24 @@ document.addEventListener('alpine:init', () => {
                 const raw = wire.get('content');
                 if (raw) this.editor.value = raw;
 
+                const normalize = (html) => (html || '').replace(/\s+/g, ' ').trim();
+
                 wire.$watch('content', (val) => {
-                    if (this.editor && val !== this.editor.value) {
-                        this.editor.value = val || '';
-                    }
+                    if (!this.editor) return;
+                    if (normalize(val) === normalize(this.editor.value)) return;
+
+                    // Never rewrite the editor while it is focused: assigning
+                    // `value` collapses the caret and the current text selection,
+                    // which made toolbar styles apply to the beginning of the
+                    // paragraph instead of the selected phrase.
+                    if (this.editor.container.contains(document.activeElement)) return;
+
+                    this.editor.value = val || '';
                 });
             });
         },
         destroy() {
+            clearTimeout(this._syncTimer);
             if (this.editor) {
                 this.editor.destruct();
                 this.editor = null;
