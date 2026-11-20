@@ -39,12 +39,37 @@ document.addEventListener('alpine:init', () => {
     if (window.__iuhmEditorRegistered) return;
     window.__iuhmEditorRegistered = true;
 
+    // Livewire property backing this editor ("content" for articles, sections,
+    // actualités…, "description" for projects).
+    const MODEL = @js($model ?? 'content');
+
+    // Commands that act on the current text selection. They must never run on
+    // a caret that the browser moved to the beginning of the paragraph.
+    const SELECTION_COMMANDS = [
+        'bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript',
+        'forecolor', 'background', 'brush', 'fontname', 'fontsize', 'formatblock',
+        'justifyleft', 'justifycenter', 'justifyright', 'justifyfull',
+        'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent',
+        'removeformat', 'link', 'insertimage', 'inserthorizontalrule',
+    ];
+
+    const normalize = (html) => (html || '').replace(/\s+/g, ' ').trim();
+
     Alpine.data('iuhmEditor', () => ({
         editor: null,
         _syncTimer: null,
+        /** Last content known to be stored server-side (echo detection). */
+        _serverValue: '',
+        _pushing: false,
+        /** Last real text selection, used to repair a lost range. */
+        _lastRange: null,
+        _lastRangeAt: 0,
+        _rememberSelection: null,
+
         init() {
             const wire     = this.$wire;
             const textarea = this.$refs.editorTextarea;
+
             this.$nextTick(() => {
                 this.editor = Jodit.make(textarea, {
                     language: 'fr',
@@ -76,50 +101,170 @@ document.addEventListener('alpine:init', () => {
                         allowCellResize: true,
                     },
                     events: {
-                        change: () => {
-                            // Debounce the Livewire round-trip: syncing on every
-                            // keystroke re-rendered the component and could steal
-                            // focus/selection while the author was formatting text.
-                            clearTimeout(this._syncTimer);
-                            this._syncTimer = setTimeout(async () => {
-                                if (!this.editor) return;
-
-                                const compressed = await compressBase64Images(this.editor.value);
-                                try {
-                                    await wire.set('content', compressed);
-                                } catch (e) {
-                                    window.iuhmShowEditorError(
-                                        e && e.message && e.message.toLowerCase().includes('payload')
-                                            ? 'Image trop lourde même après compression. Veuillez réduire la taille de l\'image.'
-                                            : 'Erreur de synchronisation. Veuillez réessayer.'
-                                    );
-                                }
-                            }, 350);
-                        },
+                        change: () => this.scheduleSync(),
                     },
                 });
 
-                const raw = wire.get('content');
+                const raw = wire.get(MODEL);
                 if (raw) this.editor.value = raw;
+                this._serverValue = normalize(raw);
 
-                const normalize = (html) => (html || '').replace(/\s+/g, ' ').trim();
+                this.trackSelection();
 
-                wire.$watch('content', (val) => {
-                    if (!this.editor) return;
-                    if (normalize(val) === normalize(this.editor.value)) return;
-
-                    // Never rewrite the editor while it is focused: assigning
-                    // `value` collapses the caret and the current text selection,
-                    // which made toolbar styles apply to the beginning of the
-                    // paragraph instead of the selected phrase.
-                    if (this.editor.container.contains(document.activeElement)) return;
-
-                    this.editor.value = val || '';
-                });
+                wire.$watch(MODEL, (val) => this.pullFromServer(val));
             });
         },
+
+        /**
+         * Jodit focuses the editing area right before running a command. When
+         * the browser range was lost in the meantime (Livewire re-render,
+         * colour/style dropdown click…), that focus puts the caret at the very
+         * beginning of the paragraph and the style lands there instead of on
+         * the selected phrase. Remember the last real selection and put it
+         * back before such commands.
+         */
+        trackSelection() {
+            this._rememberSelection = () => {
+                const selection = window.getSelection();
+                if (!this.editor || !selection || !selection.rangeCount || selection.isCollapsed) return;
+
+                const range = selection.getRangeAt(0);
+                if (!this.editor.editor.contains(range.commonAncestorContainer)) return;
+
+                this._lastRange = range.cloneRange();
+                this._lastRangeAt = Date.now();
+            };
+
+            document.addEventListener('selectionchange', this._rememberSelection);
+            document.addEventListener('mousedown', this._rememberSelection, true);
+
+            this.editor.events.on('beforeCommand', (command) => {
+                if (!this._lastRange) return;
+                if (!SELECTION_COMMANDS.includes(String(command).toLowerCase())) return;
+                if (Date.now() - this._lastRangeAt > 5000) return;
+                if (!this.editor.editor.contains(this._lastRange.startContainer)) return;
+
+                const selection = window.getSelection();
+                if (!selection) return;
+                if (selection.rangeCount && !selection.isCollapsed) return;
+
+                selection.removeAllRanges();
+                selection.addRange(this._lastRange);
+            });
+        },
+
+        /** Current non-collapsed range inside the editor, if any. */
+        currentRange() {
+            const selection = window.getSelection();
+            if (!this.editor || !selection || !selection.rangeCount || selection.isCollapsed) return null;
+
+            const range = selection.getRangeAt(0);
+            return this.editor.editor.contains(range.commonAncestorContainer) ? range.cloneRange() : null;
+        },
+
+        /** True while the author is selecting/formatting inside the editor. */
+        isAuthoring() {
+            if (!this.editor) return false;
+
+            const active = document.activeElement;
+            if (active && this.editor.container.contains(active)) return true;
+
+            // Jodit renders its dropdowns/dialogs (text styles, colour swatches,
+            // font list…) in a popup root outside `.jodit-container`, so a click
+            // on one of those swatches does not keep focus inside the container.
+            const popups = document.querySelectorAll('.jodit-popup, .jodit-dialog');
+            for (const popup of popups) {
+                if (popup.getClientRects().length > 0) return true;
+            }
+
+            return !!this.currentRange();
+        },
+
+        scheduleSync() {
+            clearTimeout(this._syncTimer);
+            this._syncTimer = setTimeout(() => this.pushToServer(), 400);
+        },
+
+        async pushToServer() {
+            if (!this.editor) return;
+
+            // A round-trip is already running: retry once it settles.
+            if (this._pushing) {
+                this.scheduleSync();
+                return;
+            }
+
+            const wire = this.$wire;
+            const focused = this.editor.container.contains(document.activeElement);
+            const range = this.currentRange();
+
+            this._pushing = true;
+            try {
+                const compressed = await compressBase64Images(this.editor.value);
+                await wire.set(MODEL, compressed);
+                this._serverValue = normalize(compressed);
+            } catch (e) {
+                window.iuhmShowEditorError(
+                    e && e.message && e.message.toLowerCase().includes('payload')
+                        ? 'Image trop lourde même après compression. Veuillez réduire la taille de l\'image.'
+                        : 'Erreur de synchronisation. Veuillez réessayer.'
+                );
+            } finally {
+                this._pushing = false;
+            }
+
+            // The Livewire round-trip must never cost the author the phrase
+            // they had selected.
+            if (focused) {
+                this.$nextTick(() => {
+                    if (!this.editor) return;
+                    this.editor.focus();
+
+                    if (range && this.editor.editor.contains(range.startContainer)) {
+                        const selection = window.getSelection();
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+                    }
+                });
+            }
+        },
+
+        /**
+         * Livewire sends the server value back on every render. Writing it into
+         * the editor while the author is formatting replaces the DOM nodes and
+         * collapses the selection, which made the next style click apply at the
+         * start of the paragraph. Only accept genuine external changes.
+         */
+        pullFromServer(val) {
+            if (!this.editor) return;
+
+            const incoming = normalize(val);
+
+            if (incoming === normalize(this.editor.value)) {
+                this._serverValue = incoming;
+                return;
+            }
+
+            // Echo of our own sync (compressed images make it differ from the
+            // editor HTML) or an older snapshot: keep the local content.
+            if (incoming === this._serverValue) return;
+
+            // Never touch the editor DOM while the author is working in it.
+            if (this.isAuthoring()) return;
+
+            this._serverValue = incoming;
+            this.editor.value = val || '';
+        },
+
         destroy() {
             clearTimeout(this._syncTimer);
+
+            if (this._rememberSelection) {
+                document.removeEventListener('selectionchange', this._rememberSelection);
+                document.removeEventListener('mousedown', this._rememberSelection, true);
+                this._rememberSelection = null;
+            }
+
             if (this.editor) {
                 this.editor.destruct();
                 this.editor = null;
