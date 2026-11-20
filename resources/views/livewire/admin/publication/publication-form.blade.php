@@ -23,8 +23,16 @@
                     Annuler
                 </button>
                 <button type="submit"
-                        class="rounded-full bg-[#0f1d57] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#14256f] transition shadow-sm">
-                    {{ $editMode ? 'Mettre à jour' : 'Enregistrer' }}
+                        wire:loading.attr="disabled"
+                        wire:target="newFile,save"
+                        class="inline-flex items-center gap-2 rounded-full bg-[#0f1d57] px-6 py-2.5 text-sm font-semibold text-white hover:bg-[#14256f] transition shadow-sm disabled:cursor-not-allowed disabled:opacity-60">
+                    <svg wire:loading wire:target="newFile,save" class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <span wire:loading.remove wire:target="newFile,save">{{ $editMode ? 'Mettre à jour' : 'Enregistrer' }}</span>
+                    <span wire:loading wire:target="newFile">Téléversement…</span>
+                    <span wire:loading wire:target="save">Enregistrement…</span>
                 </button>
             </div>
         </div>
@@ -92,8 +100,18 @@
                         <p class="mt-1 text-[11px] text-slate-400">PDF, DOC, DOCX, XLS, XLSX, ZIP — Max 30 MB</p>
                         <input type="file" wire:model="newFile" accept=".pdf,.doc,.docx,.xls,.xlsx,.zip" class="hidden">
                     </label>
+                    <p wire:loading wire:target="newFile" class="mt-3 flex items-center justify-center gap-2 text-xs font-semibold text-[#0f1d57]">
+                        <svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Téléversement en cours… attendez la fin avant d'enregistrer.
+                    </p>
                     @if($newFile)
-                    <p class="mt-2 text-xs text-emerald-600 text-center">Nouveau fichier sélectionné</p>
+                    <p class="mt-2 text-xs text-emerald-600 text-center">
+                        Fichier prêt : {{ $newFile->getClientOriginalName() }}
+                        ({{ number_format($newFile->getSize() / 1048576, 2) }} Mo)
+                    </p>
                     @endif
                     @error('newFile') <p class="mt-1 text-xs text-rose-500">{{ $message }}</p> @enderror
                 </div>

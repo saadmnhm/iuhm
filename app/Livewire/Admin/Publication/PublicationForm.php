@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\Publication;
 
 use App\Models\Publication;
 use App\Models\AdminActivityLog;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
@@ -59,7 +60,18 @@ class PublicationForm extends Component
         }
     }
 
-    public function save(): void
+    /**
+     * Validate the freshly selected file as soon as Livewire finishes the
+     * temporary upload, so the author sees a problem before hitting save.
+     */
+    public function updatedNewFile(): void
+    {
+        $this->resetErrorBag('newFile');
+
+        $this->validateOnly('newFile');
+    }
+
+    public function save()
     {
         $this->validate();
 
@@ -72,43 +84,58 @@ class PublicationForm extends Component
             'status'         => $this->status,
             'due_date'       => $this->due_date ? now()->parse($this->due_date) : null,
             'is_published'   => $this->is_published,
+            'published_at'   => $this->is_published ? now() : null,
         ];
 
-        if ($this->is_published) {
-            $data['published_at'] = now();
-        }
-
         if ($this->newFile) {
-            $filename = uniqid('deliverable_') . '.' . $this->newFile->getClientOriginalExtension();
-            $this->newFile->storeAs('deliverables', $filename, 'uploads');
+            $extension = strtolower($this->newFile->getClientOriginalExtension() ?: $this->newFile->extension());
+            $filename = 'deliverable_' . Str::random(24) . '.' . $extension;
+
+            // `uploads` disk is configured with throw=false: a failed write
+            // returns false instead of raising, which used to save a record
+            // pointing to a file that does not exist.
+            $stored = $this->newFile->storeAs('deliverables', $filename, 'uploads');
+
+            if (! $stored) {
+                $this->addError('newFile', "Le fichier n'a pas pu être enregistré sur le serveur. Vérifiez que le dossier uploads/deliverables est accessible en écriture.");
+
+                return null;
+            }
+
             $data['file_url'] = 'uploads/deliverables/' . $filename;
-            $data['file_type'] = $this->newFile->getClientOriginalExtension();
+            $data['file_type'] = $extension;
         }
 
         if ($this->editMode) {
             $publication = Publication::findOrFail($this->publicationId);
+            $previousFile = $publication->file_url;
+
             $publication->update($data);
+
+            if (isset($data['file_url']) && $previousFile && $previousFile !== $data['file_url']) {
+                $publication->deleteStoredMedia($previousFile);
+            }
+
             AdminActivityLog::log('publication_updated', "Updated publication: {$publication->title}", Publication::class, $publication->id);
-            $this->dispatch('alert', [
-                'type' => 'success',
-                'title' => 'Succès',
-                'message' => 'Publication mise à jour avec succès!'
-            ]);
+            $message = 'Livrable mis à jour avec succès!';
         } else {
             $data['slug'] = Publication::generateSlug($this->title);
             $data['author_id'] = auth()->id();
             $publication = Publication::create($data);
+
             AdminActivityLog::log('publication_created', "Created publication: {$publication->title}", Publication::class, $publication->id);
-            $this->dispatch('alert', [
-                'type' => 'success',
-                'title' => 'Succès',
-                'message' => 'Publication créée avec succès!'
-            ]);
+            $message = 'Livrable ajouté avec succès!';
         }
 
+        // Clear the temporary upload so a second save cannot create a duplicate
+        // record (or store the same file twice).
+        $this->newFile = null;
+        $this->file = $publication->file_url;
+
+        session()->flash('success', $message);
+
+        return redirect()->route('admin.publication.index');
     }
-
-
 
     public function resetForm()
     {
@@ -117,10 +144,7 @@ class PublicationForm extends Component
 
     public function render()
     {
-      
-
         return view('livewire.admin.publication.publication-form', [
-            
         ])->layout('layouts.admin', ['header' => 'Publication Management']);
     }
 }
