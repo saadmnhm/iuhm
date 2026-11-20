@@ -1,5 +1,5 @@
 @php
-    $sectionMenuItems = function (string $section, int $limit = 6): array {
+    $sectionMenuItems = function (string $section, int $limit = 20): array {
         try {
             if (! \Illuminate\Support\Facades\Schema::hasTable('section_items')) {
                 return [];
@@ -21,7 +21,7 @@
         }
     };
 
-    $projectMenuItems = function (int $limit = 6): array {
+    $projectMenuItems = function (int $limit = 20): array {
         try {
             if (! \Illuminate\Support\Facades\Schema::hasTable('projects')) {
                 return [];
