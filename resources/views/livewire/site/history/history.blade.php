@@ -273,7 +273,7 @@
     </section>
 
     {{-- ── President's story ──────────────────────────────────────────────── --}}
-    <section id="president" class="hist-section hist-section--paper">
+    <!-- <section id="president" class="hist-section hist-section--paper">
         <div class="hist-shell">
             <div class="hist-president">
                 <figure class="hist-president__media" data-reveal>
@@ -317,7 +317,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
 
     {{-- ── Legacy in figures ──────────────────────────────────────────────── --}}
     <section id="heritage" class="hist-legacy" aria-labelledby="heritage-title">

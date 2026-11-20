@@ -44,7 +44,7 @@ return [
     'home_hero_description' => 'Une présence locale au service des quartiers, avec des actions durables, inclusives et ancrées dans la vie quotidienne des habitants.',
     'home_stats_people_helped' => 'Personnes aidées',
     'home_stats_active_programs' => 'Programmes actifs',
-    'home_stats_years_service' => 'Années de service',
+    'home_stats_years_service' => 'Au service des jeunes',
     'home_stats_years_suffix' => 'ans',
     'home_stats_partenair' => 'Partenaires',
     'home_history_label' => 'Notre histoire',

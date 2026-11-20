@@ -26,15 +26,15 @@
 
 @section('content')
     <section class="relative isolate overflow-hidden bg-[#081d53] text-white">
-        <div class="absolute inset-0">
+        <!-- <div class="absolute inset-0">
             <img src="{{ $heroImage }}" alt="Casablanca" class="h-full w-full object-cover opacity-70">
             <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,17,52,0.82)_0%,rgba(5,17,52,0.72)_42%,rgba(8,29,83,0.58)_100%)]"></div>
             <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(115,196,255,0.28),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(101,255,173,0.12),transparent_26%)]"></div>
-        </div>  
+        </div>   -->
 
-        <!-- <video autoplay muted loop playsinline preload="auto" class="absolute inset-0 h-full w-full object-cover opacity-70" poster="{{ $heroImage }}" >
+        <video autoplay muted loop playsinline preload="auto" class="absolute inset-0 h-full w-full object-cover opacity-70" >
             <source src="{{ asset('assets/web_site/hero_vd.mp4') }}" type="video/mp4"> Your browser does not support the video tag.
-        </video> -->
+        </video>
 
         <div class="relative mx-auto max-w-7xl px-4 pb-28 pt-16 sm:px-6 lg:px-8 lg:pb-32 lg:pt-24">
             <div id="hero" class="max-w-3xl">
@@ -65,7 +65,7 @@
                                 @elseif ($stat['icon'] === 'calendar')
                                     <svg class="size-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                                         <path d="M7 3v3M17 3v3M4.5 9h15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-                                        <rect x="4" y="5" width="16" height="16" rx="3" stroke="currentColor" stroke-width="1.7" />
+                                        <re{{ asset('assets/iuhm_pysage.png') }} x="4" y="5" width="16" height="16" rx="3" stroke="currentColor" stroke-width="1.7" />
                                     </svg>
                                 @elseif ($stat['icon'] === 'partenaires')
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="24" height="24" fill="none" stroke="currentColor">
@@ -160,8 +160,18 @@
             <div class="relative">
                 <div class="overflow-hidden rounded-[2rem] bg-[radial-gradient(circle_at_top_left,#243a69_0%,#08192f_48%,#07111f_100%)] shadow-2xl shadow-slate-400/30">
                     <div class="relative min-h-[340px] p-8 sm:min-h-[420px]">
-                       <img src="{{ asset('assets/web_site/images/assa_ct.png') }}" alt="{{ __('ui.home_history_title') }}" class="absolute inset-0 size-full object-cover">
-
+                       <!-- <img src="{{ asset('assets/web_site/images/assa_ct.png') }}" alt="{{ __('ui.home_history_title') }}" class="absolute inset-0 size-full object-cover"> -->
+                        <video
+                            class="absolute inset-0 size-full object-cover"
+                            autoplay
+                            muted
+                            loop
+                            playsinline
+                            poster="{{ asset('assets/web_site/images/assa_ct.png') }}"
+                        >
+                            <source src="{{ asset('assets/web_site/hero_ct.mp4') }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
                         <div class="absolute left-8 bottom-8 rounded-2xl bg-[#118a27] px-5 py-4 text-white shadow-xl shadow-emerald-900/30">
                             <p class="text-base font-bold">{{ __('ui.home_founded') }}</p>
                             <p class="mt-1 text-xs text-white/80">{{ __('ui.home_founded_location') }}</p>
@@ -192,7 +202,7 @@
                     </div>
 
                     <div class="absolute -bottom-6 -right-5 hidden rounded-2xl bg-[#1d6b35] px-5 py-4 text-white shadow-xl shadow-emerald-900/25 sm:block">
-                        <p class="text-2xl font-black leading-none">23+</p>
+                        <p class="text-2xl font-black leading-none">+25 ans</p>
                         <p class="mt-1 max-w-[7rem] text-[11px] uppercase leading-tight tracking-[0.16em] text-white/80">{{ __('ui.home_stats_years_service') }}</p>
                     </div>
                 </div>
