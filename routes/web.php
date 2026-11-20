@@ -22,6 +22,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/__editor-harness', \App\Livewire\EditorHarness::class);
+
 // Public Routes (merged from site_iuhm)
 Route::post('locale/{locale}', [LocaleController::class, 'update'])->name('locale.update');
 
