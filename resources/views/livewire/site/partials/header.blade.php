@@ -21,16 +21,6 @@
         }
     };
 
-    $currentSection = request()->routeIs('clc.*') ? 'clc' : (request()->routeIs('zettat.*') ? 'zettat' : null);
-
-    $menuItemsFor = function (string $section) use ($currentSection, $sectionMenuItems) {
-        if ($currentSection !== null && $currentSection !== $section) {
-            return null;
-        }
-
-        return $sectionMenuItems($section);
-    };
-
     $navItems = [
         ['label' => __('ui.nav_news'), 'url' => route('actualite.index'), 'active' => request()->routeIs('actualite.*')],
         [
@@ -38,7 +28,7 @@
             'active' => request()->routeIs('clc.*'),
             'menu' => [
                 'all_url' => route('clc.index'),
-                'items' => $menuItemsFor(\App\Models\SectionItem::SECTION_CLC),
+                'items' => $sectionMenuItems(\App\Models\SectionItem::SECTION_CLC),
             ],
         ],
         [
@@ -46,7 +36,7 @@
             'active' => request()->routeIs('zettat.*'),
             'menu' => [
                 'all_url' => route('zettat.index'),
-                'items' => $menuItemsFor(\App\Models\SectionItem::SECTION_ZETTAT),
+                'items' => $sectionMenuItems(\App\Models\SectionItem::SECTION_ZETTAT),
             ],
         ],
         ['label' => __('ui.nav_services'), 'url' => route('services.index'), 'active' => request()->routeIs('services.*')],
@@ -94,17 +84,16 @@
                                  x-transition.opacity.duration.150ms
                                  class="absolute left-0 top-full z-50 w-56 pt-2">
                                 <div class="rounded-xl border border-slate-200 bg-white py-1.5 shadow-lg shadow-slate-900/10">
-                                    @if(is_array($item['menu']['items']))
-                                        @forelse($item['menu']['items'] as $child)
-                                            <a href="{{ $child['url'] }}"
-                                               class="block truncate px-4 py-2 text-[0.8rem] font-semibold text-[#214f95] transition hover:bg-slate-50 hover:text-[#10752d]">
-                                                {{ $child['label'] }}
-                                            </a>
-                                        @empty
-                                            <span class="block px-4 py-2 text-xs text-slate-400">{{ __('ui.section_empty_title') }}</span>
-                                        @endforelse
-                                        <div class="my-1 border-t border-slate-100"></div>
-                                    @endif
+                                    @forelse($item['menu']['items'] as $child)
+                                        <a href="{{ $child['url'] }}"
+                                           class="block truncate px-4 py-2 text-[0.8rem] font-semibold text-[#214f95] transition hover:bg-slate-50 hover:text-[#10752d]">
+                                            {{ $child['label'] }}
+                                        </a>
+                                    @empty
+                                        <span class="block px-4 py-2 text-xs text-slate-400">{{ __('ui.section_empty_title') }}</span>
+                                    @endforelse
+
+                                    <div class="my-1 border-t border-slate-100"></div>
 
                                     <a href="{{ $item['menu']['all_url'] }}"
                                        class="block px-4 py-2 text-[0.78rem] font-bold text-[#10752d] transition hover:bg-slate-50">
@@ -162,7 +151,7 @@
                             </button>
 
                             <div x-show="sub" x-cloak class="mt-1 space-y-1 pl-3">
-                                @foreach($item['menu']['items'] ?? [] as $child)
+                                @foreach($item['menu']['items'] as $child)
                                     <a href="{{ $child['url'] }}"
                                        class="block rounded-lg px-3 py-2 text-[0.82rem] font-semibold text-[#214f95] transition hover:bg-slate-100">
                                         {{ $child['label'] }}
