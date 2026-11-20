@@ -93,12 +93,12 @@
                                         <span class="block px-4 py-2 text-xs text-slate-400">{{ __('ui.section_empty_title') }}</span>
                                     @endforelse
 
-                                    <div class="my-1 border-t border-slate-100"></div>
+                                    <!-- <div class="my-1 border-t border-slate-100"></div>
 
                                     <a href="{{ $item['menu']['all_url'] }}"
                                        class="block px-4 py-2 text-[0.78rem] font-bold text-[#10752d] transition hover:bg-slate-50">
                                         {{ __('ui.view_all') }} {{ $item['label'] }}
-                                    </a>
+                                    </a> -->
                                 </div>
                             </div>
                         </div>
