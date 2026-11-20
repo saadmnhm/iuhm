@@ -24,7 +24,7 @@
     $footerPageLinks = [
         ['label' => __('ui.home'), 'url' => route('home')],
         ['label' => __('ui.contact_page_label'), 'url' => route('contact.index')],
-        ['label' => __('ui.zettat'), 'url' => 'https://zettat.iuhm.org/user/login'],
+        <!-- ['label' => __('ui.zettat'), 'url' => 'https://zettat.iuhm.org/user/login'], -->
     ];
 @endphp
 
