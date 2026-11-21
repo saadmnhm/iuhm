@@ -59,6 +59,12 @@
     </div>
 
     <div class="flex max-w-sm flex-col items-center">
+        <h3 class="text-xs font-bold uppercase tracking-[0.16em] text-white">Horaires</h3>
+        <p class="mt-5 text-sm leading-7 text-slate-400">Du Lundi au Vendredi</p>
+        <p class="mt-5 text-sm leading-7 text-slate-400">De 8h30 à 18h30</p>
+    </div>
+
+    <div class="flex max-w-sm flex-col items-center">
         <h3 class="text-xs font-bold uppercase tracking-[0.16em] text-white">{{ __('ui.footer_contact') }}</h3>
         <ul class="mt-5 space-y-4 text-sm">
             <li class="flex items-start justify-center gap-3">

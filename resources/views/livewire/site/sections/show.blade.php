@@ -57,10 +57,10 @@
             {{-- Main Content --}}
             <article class="mx-auto w-full min-w-0 lg:mx-0 lg:pl-4">
                 <header class="mb-12">
-                    <span class="mb-5 inline-flex items-center gap-2 rounded-full bg-[#EAECEF] px-4 py-1.5 text-[0.7rem] font-extrabold uppercase tracking-widest text-slate-600">
+                    <!-- <span class="mb-5 inline-flex items-center gap-2 rounded-full bg-[#EAECEF] px-4 py-1.5 text-[0.7rem] font-extrabold uppercase tracking-widest text-slate-600">
                         <i class="{{ $meta['icon'] }} text-base text-[#10752d]"></i>
                         {{ $meta['label_text'] }}
-                    </span>
+                    </span> -->
 
                     <h1 class="mb-8 break-words text-[2.25rem] font-bold leading-[1.1] text-[#0B1528] md:text-[3.2rem]">
                         {{ $title }}
@@ -119,7 +119,7 @@
                     <x-share-buttons :url="$shareUrl" :title="$title" :heading="__('ui.share_project')" />
                 </div>
 
-                <div>
+                <!-- <div>
                     <h3 class="mb-6 text-[1.1rem] font-bold text-[#0B1528]">{{ __('ui.related_projects') }}</h3>
 
                     @if($relatedItems->isNotEmpty())
@@ -151,7 +151,7 @@
                             {{ __('ui.no_related_content') }}
                         </p>
                     @endif
-                </div>
+                </div> -->
 
               
             </aside>

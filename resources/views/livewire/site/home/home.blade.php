@@ -62,9 +62,8 @@
                                         <path d="M4 19c0-2.5 2.5-4.5 5.5-4.5S15 16.5 15 19M13 19c0-2.2 2.1-4 4.8-4 2.7 0 4.2 1.4 4.2 4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
                                     </svg>
                                 @elseif ($stat['icon'] === 'calendar')
-                                    <svg class="size-6" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                        <path d="M7 3v3M17 3v3M4.5 9h15" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
-                                        <re{{ asset('assets/iuhm_pysage.png') }} x="4" y="5" width="16" height="16" rx="3" stroke="currentColor" stroke-width="1.7" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 510 200" width="40" height="40">
+                                        <path stroke="currentColor" d="M 225 84 L 302 84 A 24 24 0 0 0 302 36 L 195 36 A 85 85 0 0 0 132 62 L 48 134 L 154 185 L 184 160 A 55 55 0 0 1 220 146 L 292 146 A 80 80 0 0 0 330 136 L 460 66 A 21 21 0 0 0 440 30 L 325 90 A 50 50 0 0 1 302 96" fill="none" stroke="#000000" stroke-width="25" stroke-linecap="round" stroke-linejoin="round" />
                                     </svg>
                                 @elseif ($stat['icon'] === 'partenaires')
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="24" height="24" fill="none" stroke="currentColor">
