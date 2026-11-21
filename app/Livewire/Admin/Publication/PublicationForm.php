@@ -31,7 +31,7 @@ class PublicationForm extends Component
             'title_ar'       => 'nullable|string|max:255',
             'description'    => 'nullable|string|max:1000',
             'description_ar' => 'nullable|string|max:1000',
-            'newFile'        => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,zip|max:30720',
+            'newFile'        => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,zip|max:102400',
             'category'       => 'nullable|string|max:100',
             'status'         => 'in:pending,completed,overdue',
             'due_date'       => 'nullable|date',

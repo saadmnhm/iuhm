@@ -116,11 +116,11 @@
             {{-- Sidebar --}}
             <aside class="w-full min-w-0 space-y-10">
                 <div class="hidden lg:block">
-                    <x-share-buttons :url="$shareUrl" :title="$title" :heading="__('ui.share_article')" />
+                    <x-share-buttons :url="$shareUrl" :title="$title" :heading="__('ui.share_project')" />
                 </div>
 
                 <div>
-                    <h3 class="mb-6 text-[1.1rem] font-bold text-[#0B1528]">{{ __('ui.related_articles') }}</h3>
+                    <h3 class="mb-6 text-[1.1rem] font-bold text-[#0B1528]">{{ __('ui.related_projects') }}</h3>
 
                     @if($relatedItems->isNotEmpty())
                         <div class="flex flex-col gap-4">
@@ -153,19 +153,7 @@
                     @endif
                 </div>
 
-                <div class="relative overflow-hidden rounded-[2rem] bg-[#0A1633] p-8 shadow-[0_20px_40px_rgba(0,0,0,0.1)]">
-                    <div class="pointer-events-none absolute right-0 top-0 h-32 w-32 rounded-full bg-[#162D5A] opacity-70 mix-blend-screen blur-[40px]"></div>
-                    <div class="relative z-10">
-                        <h3 class="mb-3 text-[1.25rem] font-bold leading-tight text-white">{{ $meta['label_text'] }}</h3>
-                        <p class="mb-6 text-[0.85rem] font-medium leading-relaxed text-slate-400">
-                            {{ $meta['description_text'] ?: __('ui.footer_tagline') }}
-                        </p>
-                        <a href="{{ route($indexRoute) }}" class="inline-flex items-center gap-2 rounded-full bg-[#82E682] px-5 py-2.5 text-[0.8rem] font-bold text-[#0a471b] transition hover:bg-white">
-                            {{ __('ui.all_posts') }}
-                            <i class="ri-arrow-right-line text-base"></i>
-                        </a>
-                    </div>
-                </div>
+              
             </aside>
         </div>
     </div>

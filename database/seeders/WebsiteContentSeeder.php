@@ -475,7 +475,7 @@ class WebsiteContentSeeder extends Seeder
             [
                 'slug' => 'history',
                 'title' => ['fr' => 'Notre histoire', 'ar' => null],
-                'excerpt' => ['fr' => 'Depuis 2009, au plus près des habitants.', 'ar' => null],
+                'excerpt' => ['fr' => 'Depuis 2002, au plus près des habitants.', 'ar' => null],
                 'content' => ['fr' => '<p>Depuis sa création, '.e(__('ui.brand_name')).' agit aux côtés des habitants de Casablanca pour construire une ville plus inclusive, plus solidaire et plus durable. Chaque programme est né d’une rencontre et d’une écoute attentive des besoins du quartier.</p><p>Aujourd’hui, nos équipes et nos bénévoles accompagnent les familles, les jeunes et les porteurs de projets à travers des actions concrètes d’éducation, de santé, de culture et d’aménagement urbain.</p>', 'ar' => null],
                 'sort_order' => 2,
             ],

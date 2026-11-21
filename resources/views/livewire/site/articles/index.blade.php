@@ -21,26 +21,31 @@
             <div class="grid lg:grid-cols-[1.1fr_1fr] gap-12 lg:gap-16 items-center">
                 <!-- Text Content -->
                 <div class="max-w-2xl">
-                    <div class="inline-flex rounded-full bg-[#82E682] px-4 py-1.5 text-[0.8rem] font-bold tracking-wide text-[#0a471b] mb-8">
-                        Perspective Citoyenne
+                    <div class="inline-flex rounded-full bg-[#82E682] px-4 py-1.5 text-[21px] font-bold tracking-wide text-[#0a471b] mb-8">
+                        Veille & Actualités
                     </div>
-                    <h1 class="text-[3.5rem] font-bold tracking-tight text-[#0B1528] leading-[1.05] sm:text-[4rem] mb-6">
-                        L'Observateur Urbain
+                    <h1 class="text-[40px] font-bold tracking-tight text-[#0B1528] leading-[1.05] sm:text-[35px] mb-6">
+                        IUHM en veille  | Infos & Tendances
                     </h1>
                     <p class="text-[1.1rem] leading-relaxed text-slate-600 font-medium">
-                        Analyses approfondies, reportages de terrain et visions d'avenir pour une ville
-                        plus inclusive et durable. Découvrez notre regard sur les transformations urbaines.
+                        C'est un espace dédié au partage d’actualités, d’informations et de tendances du marché, afin de suivre les évolutions économiques, professionnelles et entrepreneuriales.
                     </p>
                 </div>
 
                 <!-- Hero Image -->
                 <div class="relative flex justify-center lg:justify-end">
-                    <div class="relative w-[320px] sm:w-[380px] lg:w-[420px] aspect-square rounded-[2.5rem] bg-[#111827] shadow-lg shadow-slate-300/30 flex items-center justify-center p-12 overflow-hidden group">
-                        <!-- Abstract icon for "L'Observateur Urbain" -->
-                        <div class="absolute inset-0 bg-[#0f172a] rounded-[2.5rem]"></div>
-                        <div class="relative z-10 size-56 rounded-[2rem] bg-[#141d2f]/90 shadow-[0_5px_40px_rgb(0,0,0,0.4)] border border-slate-700/50 backdrop-blur flex items-center justify-center text-[5rem] text-[#64748b] font-serif italic group-hover:scale-105 transition-transform duration-700">
-                            IU
-                        </div>
+                    <div class="relative w-[320px] sm:w-[380px] lg:w-[420px] aspect-square rounded-[2.5rem]  shadow-lg shadow-slate-300/30 flex items-center justify-center p-12 overflow-hidden group">
+                       <video
+                            class="absolute inset-0 size-full object-cover"
+                            autoplay
+                            muted
+                            loop
+                            playsinline
+                            poster="{{ asset('assets/web_site/images/assa_ct.png') }}"
+                        >
+                            <source src="{{ asset('assets/web_site/hero_ct.mp4') }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
                     </div>
                 </div>
             </div>

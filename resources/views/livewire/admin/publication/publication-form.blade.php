@@ -97,7 +97,7 @@
                             <i class="ri-upload-cloud-2-line text-xl text-slate-400"></i>
                         </div>
                         <p class="text-sm font-semibold text-slate-700">{{ $editMode ? 'Remplacer le fichier' : 'Téléverser le fichier' }}</p>
-                        <p class="mt-1 text-[11px] text-slate-400">PDF, DOC, DOCX, XLS, XLSX, ZIP — Max 30 MB</p>
+                        <p class="mt-1 text-[11px] text-slate-400">PDF, DOC, DOCX, XLS, XLSX, ZIP — Max 100 MB</p>
                         <input type="file" wire:model="newFile" accept=".pdf,.doc,.docx,.xls,.xlsx,.zip" class="hidden">
                     </label>
                     <p wire:loading wire:target="newFile" class="mt-3 flex items-center justify-center gap-2 text-xs font-semibold text-[#0f1d57]">

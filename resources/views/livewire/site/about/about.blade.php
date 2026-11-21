@@ -92,7 +92,7 @@
                     <div class="relative min-h-[340px] p-8 sm:min-h-[420px]">
                         <img src="{{ asset('assets/web_site/images/assa_ct.png') }}" alt="{{ __('ui.about_history_title') }}" class="absolute inset-0 size-full object-cover">
                         <div class="absolute left-8 bottom-8 rounded-2xl bg-[#118a27] px-5 py-4 text-white shadow-xl shadow-emerald-900/30">
-                            <p class="text-base font-bold">Founded in 2009</p>
+                            <p class="text-base font-bold">Founded in 2002</p>
                             <p class="mt-1 text-xs text-white/80">In Casablanca, Morocco</p>
                         </div>
                     </div>

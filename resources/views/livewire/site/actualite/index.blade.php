@@ -20,39 +20,35 @@
         <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(circle at 0% 0%, #fdfcff 0%, transparent 60%), radial-gradient(circle at 100% 100%, #f8fafc 0%, transparent 60%);"></div>
 
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="grid lg:grid-cols-[1.1fr_1fr] gap-12 lg:gap-16 items-center">
+            <div class="">
                 <!-- Text Content -->
-                <div class="max-w-xl">
-                    <h1 class="text-[3.5rem] font-medium tracking-tight text-[#0f172a] leading-[1.1] sm:text-[4rem]">
-                        Actualités &<br>
+                <div class="" style=" text-align: center; ">
+                    <h1 class="text-[3.5rem] font-medium tracking-tight text-[#0f172a] leading-[1.1] sm:text-[4rem]" >
+                        Actualités &
                         <span class="text-[#10752d]">Événements</span>
                     </h1>
-                    <p class="mt-8 text-[1.05rem] leading-relaxed text-slate-600 font-medium">
+                    <p class="mt-8 text-[20px] leading-relaxed text-slate-600 font-medium">
                         Restez informé de la vie de votre quartier. Initiative Urbaine s'engage à partager avec vous les projets, les rencontres et les évolutions qui façonnent notre environnement commun.
                     </p>
                     
-                    <div class="mt-10 flex flex-wrap gap-4">
-                        <span class="inline-flex rounded-full bg-[#82E682] px-5 py-2.5 text-[0.8rem] font-bold text-[#0a471b] tracking-wide">
+                    <div class="mt-10 flex flex-wrap gap-4" style=" justify-content: center; ">
+                        <span class="inline-flex rounded-full bg-[#82E682] px-5 py-2.5 text-[15px] font-bold text-[#0a471b] tracking-wide">
                             {{ __('ui.nav_news') }}
-                        </span>
-                        <span class="inline-flex rounded-full bg-[#E2E4E9] px-5 py-2.5 text-[0.8rem] font-bold text-[#475569] tracking-wide">
-                            {{ $posts->total() }} {{ __('ui.nav_news') }}
                         </span>
                     </div>
                 </div>
 
                 <!-- Hero Image with Overlapping Card -->
-                <div class="relative">
+                <!-- <div class="relative">
                     <div class="relative overflow-hidden rounded-[2rem] ">
                         <img src="{{ asset('assets/web_site/images/act.png') }}" alt="Garden" class="w-full h-full object-cover">
                     </div>
                     
-                    <!-- Floating Stats Card -->
                     <div class="absolute -bottom-8 left-8 rounded-3xl bg-white/90 backdrop-blur-md px-8 py-5 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-white">
                         <div class="text-[1.75rem] font-extrabold text-[#0f172a] leading-none mb-1">{{ $posts->total() }}</div>
                         <div class="text-[0.65rem] font-bold uppercase tracking-wider text-slate-500">{{ __('ui.nav_news') }}</div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </section>
@@ -67,7 +63,6 @@
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
                 <h2 class="text-2xl font-bold tracking-tight text-[#0f172a]">
                     Toutes les Actualités
-                    <span class="ml-2 text-base font-medium text-slate-400">({{ $posts->total() }})</span>
                 </h2>
                 <div class="relative w-full sm:w-72">
                     <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">

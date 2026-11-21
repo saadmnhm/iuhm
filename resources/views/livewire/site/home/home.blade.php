@@ -3,12 +3,11 @@
 @section('title', __('ui.home_page_title').' | '.config('app.name'))
 
 @php
-    $heroImage = 'https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=1600&q=80';
     $mapEmbed = 'https://www.openstreetmap.org/export/embed.html?bbox=-7.573990%2C33.585155%2C-7.553990%2C33.605155&layer=mapnik&marker=33.595155%2C-7.563990';
     $stats = [
         ['value' => 10000, 'format' => 'compact', 'prefix' => '', 'suffix' => '+', 'label' => __('ui.home_stats_people_helped'), 'icon' => 'users'],
         ['value' => 50, 'format' => 'plain', 'prefix' => '', 'suffix' => '+', 'label' => __('ui.home_stats_active_programs'), 'icon' => 'network'],
-        ['value' => 23, 'format' => 'plain', 'prefix' => '+ ', 'suffix' => ' '.__('ui.home_stats_years_suffix'), 'label' => __('ui.home_stats_years_service'), 'icon' => 'calendar'],
+        ['value' => 25, 'format' => 'plain', 'prefix' => '+ ', 'suffix' => ' '.__('ui.home_stats_years_suffix'), 'label' => __('ui.home_stats_years_service'), 'icon' => 'calendar'],
         ['value' => 70, 'format' => 'plain', 'prefix' => '+ ', 'suffix' => '', 'label' => __('ui.home_stats_partenair'), 'icon' => 'partenaires'],
     ];
 
@@ -27,7 +26,7 @@
 @section('content')
     <section class="relative isolate overflow-hidden bg-[#081d53] text-white">
         <!-- <div class="absolute inset-0">
-            <img src="{{ $heroImage }}" alt="Casablanca" class="h-full w-full object-cover opacity-70">
+            <img src="{{ asset('assets/web_site/asso_banner.avif') }}" alt="Casablanca" class="h-full w-full object-cover opacity-70">
             <div class="absolute inset-0 bg-[linear-gradient(180deg,rgba(5,17,52,0.82)_0%,rgba(5,17,52,0.72)_42%,rgba(8,29,83,0.58)_100%)]"></div>
             <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(115,196,255,0.28),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(101,255,173,0.12),transparent_26%)]"></div>
         </div>   -->
@@ -224,9 +223,7 @@
                     <p class="mt-1 text-base leading-8 text-slate-600">{{ __('ui.home_director_paragraph_5') }}</p>
 
                     <div class="mt-8 flex flex-wrap items-center gap-5 border-t border-slate-100 pt-6">
-                        <svg class="h-12 w-28 text-[#1d6b35]" viewBox="0 0 112 48" fill="none" aria-hidden="true">
-                            <path d="M4 34c8-14 14-22 18-24 5-3 5 6 2 14s-7 16-3 16c4 1 10-9 15-19s9-15 11-11c2 5-4 18-1 20 4 2 8-6 12-12 3-5 5-6 6-3 2 5-1 12 2 13 4 2 8-3 13-9 4-5 7-7 9-5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
+                    
                         <div>
                             <p class="text-base font-bold text-[#16254d]">{{ __('ui.home_director_name') }}</p>
                             <p class="text-sm text-slate-500">{{ __('ui.home_director_role') }}</p>

@@ -702,6 +702,13 @@
         color: var(--hist-body);
     }
 
+    [data-history-page] .hist-chapter__text_side  {
+        margin-top: 1rem;
+        font-size: .97rem;
+        line-height: 2.85;
+        color: var(--hist-body);
+    }
+
     [data-history-page] .hist-chapter__figure {
         margin: 1.5rem 0 0;
     }
@@ -971,7 +978,8 @@
 
     @media (min-width: 900px) {
         [data-history-page] .hist-legacy__grid {
-            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+                    text-align: center;
         }
 
         [data-history-page] .hist-legacy__item {

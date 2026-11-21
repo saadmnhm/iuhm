@@ -43,7 +43,16 @@
     };
 
     $navItems = [
+        ['label' => __('ui.history'), 'url' => route('history.index'), 'active' => request()->routeIs('history.*')],
         ['label' => __('ui.nav_news'), 'url' => route('actualite.index'), 'active' => request()->routeIs('actualite.*')],
+        [
+            'label' => __('ui.nav_zettat'),
+            'active' => request()->routeIs('zettat.*'),
+            'menu' => [
+                'all_url' => route('zettat.index'),
+                'items' => $sectionMenuItems(\App\Models\SectionItem::SECTION_ZETTAT),
+            ],
+        ],
         [
             'label' => __('ui.nav_clc'),
             'active' => request()->routeIs('clc.*'),
@@ -53,18 +62,6 @@
             ],
         ],
         [
-            'label' => __('ui.nav_zettat'),
-            'active' => request()->routeIs('zettat.*'),
-            'menu' => [
-                'all_url' => route('zettat.index'),
-                'items' => $sectionMenuItems(\App\Models\SectionItem::SECTION_ZETTAT),
-            ],
-        ],
-        ['label' => __('ui.nav_services'), 'url' => route('services.index'), 'active' => request()->routeIs('services.*')],
-        ['label' => __('ui.nav_articles'), 'url' => route('articles.index'), 'active' => request()->routeIs('articles.*')],
-        ['label' => __('ui.nav_deliverables'), 'url' => route('resources.index'), 'active' => request()->routeIs('resources.*')],
-        ['label' => __('ui.history'), 'url' => route('history.index'), 'active' => request()->routeIs('history.*')],
-        [
             'label' => __('ui.nav_projects'),
             'active' => request()->routeIs('projects.*'),
             'menu' => [
@@ -72,6 +69,8 @@
                 'items' => $projectMenuItems(),
             ],
         ],
+        ['label' => __('ui.nav_articles'), 'url' => route('articles.index'), 'active' => request()->routeIs('articles.*')],
+        ['label' => __('ui.nav_deliverables'), 'url' => route('resources.index'), 'active' => request()->routeIs('resources.*')],
         ['label' => __('ui.contact_page_label'), 'url' => route('contact.index'), 'active' => request()->routeIs('contact.*')],
     ];
 @endphp

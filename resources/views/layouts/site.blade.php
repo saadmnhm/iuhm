@@ -25,7 +25,7 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         @unless (app()->runningUnitTests())
             @vite(['resources/css/app.css', 'resources/js/app.js'])
         @endunless
@@ -39,7 +39,7 @@
         <div id="top" class="relative min-h-screen">
             @include('livewire.site.partials.header')
 
-            <main class="pb-16">
+            <main class="">
 
                 @yield('content')
             </main>

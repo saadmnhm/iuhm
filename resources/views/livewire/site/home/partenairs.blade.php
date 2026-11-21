@@ -295,7 +295,7 @@
                     <!-- Set 1 (Original) -->
                     <div class="shrink-0 px-2">
                         <div class="flex h-24 w-40 items-center justify-center rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md sm:h-28 sm:w-52 sm:p-5">
-                            <img src="{{ asset('assets/web_site/partners/atacadoamaroc.png') }}" alt="Partner 19" class="max-h-14 w-auto max-w-full object-contain sm:max-h-16" loading="lazy">
+                            <img src="{{ asset('assets/web_site/partners/atacadaomaroc.png') }}" alt="Partner 19" class="max-h-14 w-auto max-w-full object-contain sm:max-h-16" loading="lazy">
                         </div>
                     </div>
                     <div class="shrink-0 px-2">
@@ -332,7 +332,7 @@
                     <!-- Set 2 (Exact Duplicate for Seamless Loop) -->
                      <div class="shrink-0 px-2">
                         <div class="flex h-24 w-40 items-center justify-center rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md sm:h-28 sm:w-52 sm:p-5">
-                            <img src="{{ asset('assets/web_site/partners/atacadoamaroc.png') }}" alt="Partner 19" class="max-h-14 w-auto max-w-full object-contain sm:max-h-16" loading="lazy">
+                            <img src="{{ asset('assets/web_site/partners/atacadaomaroc.png') }}" alt="Partner 19" class="max-h-14 w-auto max-w-full object-contain sm:max-h-16" loading="lazy">
                         </div>
                     </div>
                     <div class="shrink-0 px-2">
