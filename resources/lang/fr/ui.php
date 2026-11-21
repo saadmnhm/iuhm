@@ -7,7 +7,7 @@ return [
     'open_menu' => 'Ouvrir le menu de navigation',
     'change_language' => 'Changer de langue',
     'brand_name' => 'Initiative Urbaine',
-    'footer_tagline' => 'Engagee aux cotes de Casablanca depuis 2002.',
+    'footer_tagline' => 'Engagée aux côtés des jeunes depuis 2002.',
     'navigation' => 'Navigation',
     'informations' => 'Informations',
     'engagement' => 'Engagement',
