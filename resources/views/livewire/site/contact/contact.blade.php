@@ -55,8 +55,11 @@
                     </div>
 
                     <div class="overflow-hidden rounded-[1.75rem] shadow-xl shadow-slate-200/40" style="height:280px">
+                        @php
+                            $embedSrc = !empty($mapEmbed) && str_contains($mapEmbed, '/maps/embed') ? $mapEmbed :  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d516.8245143512437!2d-7.56409954187208!3d33.59540404871591!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xda7cce3a2a2e28f%3A0xbb1ebec60ce47d4a!2sAssociation%20Initiative%20Urbaine%20Hay%20Mohammadi!5e0!3m2!1sen!2sma!4v1795281492725!5m2!1sen!2sma";
+                        @endphp
                         <iframe
-                            src="{{ $mapEmbed }}"
+                            src="{{ $embedSrc }}"
                             class="h-full w-full"
                             style="border:0"
                             loading="lazy"

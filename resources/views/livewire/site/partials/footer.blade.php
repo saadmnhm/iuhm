@@ -5,8 +5,8 @@
     $footerDescription = __('ui.footer_tagline');
     $footerCopyright = __('ui.footer_copyright');
 
-    $footerEmail = 'contact@initiative-urbaine.ma';
-    $footerPhone = '+212 522 00 00 00';
+    $footerEmail =  __('ui.home_contact_email');
+    $footerPhone = __('ui.home_contact_phone');
     $footerWebsite = 'https://iuhm.org';
     $footerAddress = 'Hay Mohammadi, Casablanca';
 
